@@ -1,7 +1,7 @@
 import { MessageCircle, Scale, ShieldCheck } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import Link from "next/link";
-import { Waitlist } from "@/components/site/waitlist";
+import { AccountPanel } from "@/components/site/account-button";
 import { Badge } from "@/components/ui/badge";
 import {
   GITHUB_CONTRIBUTING_URL,
@@ -47,7 +47,7 @@ export function Footer() {
     <footer className="relative border-t border-hairline bg-abyss/60">
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
-          <Waitlist />
+          <AccountPanel />
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             {COLUMNS.map((column) => (

@@ -6,6 +6,7 @@ import { motion, useScroll, useMotionValueEvent } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { AccountButton } from "@/components/site/account-button";
 import { GITHUB_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -72,9 +73,7 @@ export function Nav() {
               GitHub
             </a>
           </Button>
-          <Button asChild size="sm">
-            <Link href="/#waitlist">Join waitlist</Link>
-          </Button>
+          <AccountButton />
         </div>
 
         <button
@@ -114,11 +113,7 @@ export function Nav() {
                   GitHub
                 </a>
               </Button>
-              <Button asChild size="sm" className="flex-1">
-                <Link href="/#waitlist" onClick={() => setOpen(false)}>
-                  Waitlist
-                </Link>
-              </Button>
+              <AccountButton onNavigate={() => setOpen(false)} />
             </div>
           </div>
         </motion.div>
