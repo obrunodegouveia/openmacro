@@ -13,6 +13,13 @@ steps:
       - NEXT_PUBLIC_GITHUB_REPO=${_GITHUB_REPO}
       - --build-arg
       - NEXT_PUBLIC_DISCORD_URL=${_DISCORD_URL}
+      # Supabase. Both are public by design — the publishable key grants only
+      # what row-level security allows. Empty is the correct default for a
+      # fork: the site then builds with no account UI at all.
+      - --build-arg
+      - NEXT_PUBLIC_SUPABASE_URL=${_SUPABASE_URL}
+      - --build-arg
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${_SUPABASE_ANON_KEY}
       # Reuse the previous image's layers when the lockfile has not changed.
       - --cache-from
       - ${_IMAGE}:latest
@@ -33,6 +40,8 @@ substitutions:
   _TAG: latest
   _GITHUB_REPO: openmacro/openmacro
   _DISCORD_URL: https://discord.gg/openmacro
+  _SUPABASE_URL: ''
+  _SUPABASE_ANON_KEY: ''
 
 options:
   machineType: E2_HIGHCPU_8

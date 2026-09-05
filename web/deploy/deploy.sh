@@ -51,7 +51,7 @@ else
     --project "${PROJECT_ID}" \
     --region "${REGION}" \
     --config "${SCRIPT_DIR}/cloudbuild.yaml" \
-    --substitutions "_IMAGE=${IMAGE},_TAG=${TAG},_GITHUB_REPO=${NEXT_PUBLIC_GITHUB_REPO},_DISCORD_URL=${NEXT_PUBLIC_DISCORD_URL}" \
+    --substitutions "^|^_IMAGE=${IMAGE}|_TAG=${TAG}|_GITHUB_REPO=${NEXT_PUBLIC_GITHUB_REPO}|_DISCORD_URL=${NEXT_PUBLIC_DISCORD_URL}|_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-}|_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}" \
     .
 fi
 
