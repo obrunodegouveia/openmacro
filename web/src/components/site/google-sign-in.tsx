@@ -87,20 +87,26 @@ export function GoogleSignIn({
       {/* Google renders into this node, which stays mounted so the handle is stable. */}
       <div ref={hostRef} hidden={mode !== "google"} />
 
-      {mode !== "google" ? (
+      {/*
+        If the token exchange fails — Supabase rejecting the audience, a clock
+        skew, a network blip — the in-page path is a dead end with no way out.
+        Showing the redirect button alongside the error means there is always a
+        working way to sign in, even if this flow turns out to be misconfigured.
+      */}
+      {mode !== "google" || error ? (
         <Button
           size="lg"
           disabled={mode === "loading" || signingIn}
           onClick={() => void signIn(redirectTo)}
         >
           <GoogleIcon className="size-4" aria-hidden />
-          {signingIn ? "Opening Google" : fallbackLabel}
+          {signingIn ? "Opening Google" : error ? "Continue with Google" : fallbackLabel}
         </Button>
       ) : null}
 
       {error ? (
-        <p role="alert" className="mt-3 text-sm font-bold text-coral">
-          {error}
+        <p role="alert" className="mt-3 max-w-sm text-sm leading-relaxed text-coral">
+          {error} — try the button above, which uses the older redirect sign-in.
         </p>
       ) : null}
     </div>
