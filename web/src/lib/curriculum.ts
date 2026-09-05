@@ -1,3 +1,4 @@
+import { MODULES } from "@openmacro/core/content";
 /**
  * The public content model: the four balance-sheet tiers OpenMacro teaches,
  * the four-track syllabus built on them, and the reward loop.
@@ -100,10 +101,23 @@ export interface Track {
   icon: string;
   status: TrackStatus;
   accent: "emerald" | "gold" | "azure" | "violet";
+  /** Derived from the content registry — never hand-written. */
   lessonCount: number;
 }
 
-export const SYLLABUS: Track[] = [
+/**
+ * How many lessons a track actually contains, from the shared content package.
+ *
+ * Previously each track restated its own count, which is the kind of number
+ * that silently goes stale the moment a lesson ships. `id` here matches the
+ * module id in `@openmacro/core`, so the syllabus cannot advertise a lesson
+ * that does not exist — or omit one that does.
+ */
+function lessonsIn(moduleId: string): number {
+  return MODULES.find((module) => module.id === moduleId)?.lessons.length ?? 0;
+}
+
+const TRACKS: Omit<Track, "lessonCount">[] = [
   {
     id: "foundations-fiduciary-currency",
     index: 1,
@@ -115,7 +129,6 @@ export const SYLLABUS: Track[] = [
     icon: "🪙",
     status: "live",
     accent: "gold",
-    lessonCount: 6,
   },
   {
     id: "commercial-central-interface",
@@ -128,7 +141,6 @@ export const SYLLABUS: Track[] = [
     icon: "🏦",
     status: "live",
     accent: "emerald",
-    lessonCount: 8,
   },
   {
     id: "fed-ecb-levers",
@@ -139,9 +151,8 @@ export const SYLLABUS: Track[] = [
     concepts: ["IORB & the SOFR corridor", "ON RRP floor", "Discount window", "DFR, MRO & TLTROs", "Yield curve control"],
     tiers: ["central_bank", "shadow_bank"],
     icon: "🎛️",
-    status: "beta",
+    status: "live",
     accent: "azure",
-    lessonCount: 9,
   },
   {
     id: "crisis-architecture-global-dollar",
@@ -152,11 +163,19 @@ export const SYLLABUS: Track[] = [
     concepts: ["Central bank swap lines", "Lender of last resort", "Bail-ins vs bail-outs", "Eurodollar squeezes"],
     tiers: ["shadow_bank", "central_bank"],
     icon: "🌍",
-    status: "drafting",
+    status: "live",
     accent: "violet",
-    lessonCount: 7,
   },
 ];
+
+/**
+ * The syllabus as rendered, with each track's lesson count read from the
+ * shared content package rather than restated here.
+ */
+export const SYLLABUS: Track[] = TRACKS.map((track) => ({
+  ...track,
+  lessonCount: lessonsIn(track.id),
+}));
 
 /**
  * A real excerpt from `lesson-02-rrp-floor-mechanics.json` in the app,

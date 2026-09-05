@@ -1,3 +1,4 @@
+import { MODULES } from "@openmacro/core/content";
 import type { MetadataRoute } from "next";
 import { GLOSSARY_SORTED } from "@/lib/glossary";
 import { SITE } from "@/lib/site";
@@ -44,6 +45,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
+    // Every lesson, straight from the content registry: adding a lesson to
+    // packages/core puts it in the sitemap without anyone remembering to.
+    ...MODULES.flatMap((module) =>
+      module.lessons.map((lesson) => ({
+        url: `${SITE.url}/learn/${lesson.id}`,
+        lastModified: now,
+        changeFrequency: "monthly" as const,
+        priority: 0.8,
+      })),
+    ),
     {
       url: `${SITE.url}/login`,
       lastModified: now,

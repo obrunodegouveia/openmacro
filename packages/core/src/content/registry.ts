@@ -23,12 +23,14 @@ import type { Course, Lesson, Module } from './schema';
 import { moduleFoundationsFiduciaryCurrency } from './lessons/module-01-foundations-fiduciary-currency';
 import { moduleCommercialCentralInterface } from './lessons/module-02-commercial-central-interface';
 import { moduleFedEcbLevers } from './lessons/module-03-fed-ecb-levers';
+import { moduleCrisisArchitecture } from './lessons/module-04-crisis-architecture-global-dollar';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
   moduleFoundationsFiduciaryCurrency,
   moduleCommercialCentralInterface,
   moduleFedEcbLevers,
+  moduleCrisisArchitecture,
 ];
 
 export const COURSE: Course = {
