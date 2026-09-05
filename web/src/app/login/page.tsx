@@ -45,7 +45,8 @@ export default function LoginPage() {
               and follow you to your phone.
             </p>
 
-            <AccountPanel className="mt-8" />
+            {/* Signing in from here means you want the dashboard. */}
+            <AccountPanel className="mt-8" redirectTo="/dashboard" />
 
             <p className="mt-6 text-sm leading-relaxed text-ink-faint">
               No account? Signing in with Google creates one. You can also just{" "}

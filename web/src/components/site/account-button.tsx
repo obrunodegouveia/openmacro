@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { LogOut, User } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, LogOut, User } from "lucide-react";
 import { GoogleIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/site/auth-provider";
@@ -51,12 +52,17 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="flex items-center gap-2 rounded-xl border border-hairline bg-white/5 px-3 py-1.5">
+      {/* The name is the way into the dashboard — the obvious place to click. */}
+      <Link
+        href="/dashboard"
+        onClick={onNavigate}
+        className="flex items-center gap-2 rounded-xl border border-hairline bg-white/5 px-3 py-1.5 transition-colors hover:border-mint/50 hover:bg-white/10"
+      >
         <Avatar learner={learner} />
         <span className="max-w-[10rem] truncate text-sm font-bold text-ink">
           {learner.name}
         </span>
-      </span>
+      </Link>
       <Button
         variant="ghost"
         size="sm"
@@ -80,7 +86,14 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
  * commitment without naming the benefit, and the benefit here is small and
  * specific: XP and a streak that survive closing the tab.
  */
-export function AccountPanel({ className }: { className?: string }) {
+export function AccountPanel({
+  className,
+  redirectTo,
+}: {
+  className?: string;
+  /** Where to land after signing in. Defaults to the current page. */
+  redirectTo?: string;
+}) {
   const { enabled, loading, learner, signingIn, error, signIn, signOut } = useAuth();
 
   if (!enabled) return null;
@@ -101,10 +114,18 @@ export function AccountPanel({ className }: { className?: string }) {
             XP and your day streak are saved to your account as you finish
             lessons, so they follow you to any device you sign in on.
           </p>
-          <Button variant="outline" className="mt-6" onClick={() => void signOut()}>
-            <LogOut className="size-4" aria-hidden />
-            Sign out
-          </Button>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button asChild>
+              <Link href="/dashboard">
+                Your progress
+                <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </Button>
+            <Button variant="outline" onClick={() => void signOut()}>
+              <LogOut className="size-4" aria-hidden />
+              Sign out
+            </Button>
+          </div>
         </>
       ) : (
         <>
@@ -117,7 +138,7 @@ export function AccountPanel({ className }: { className?: string }) {
             size="lg"
             className="mt-6 h-12"
             disabled={loading || signingIn}
-            onClick={() => void signIn()}
+            onClick={() => void signIn(redirectTo)}
           >
             <GoogleIcon className="size-4" aria-hidden />
             {signingIn ? "Opening Google" : "Continue with Google"}

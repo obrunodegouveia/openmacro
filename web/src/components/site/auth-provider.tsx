@@ -18,7 +18,8 @@ interface AuthValue {
   learner: Learner | null;
   signingIn: boolean;
   error: string | null;
-  signIn: () => Promise<void>;
+  /** Optional path to land on afterwards; defaults to the current page. */
+  signIn: (redirectTo?: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -59,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, []);
 
-  const signIn = React.useCallback(async () => {
+  const signIn = React.useCallback(async (redirectTo?: string) => {
     const supabase = getSupabase();
     if (!supabase) return;
     setSigningIn(true);
@@ -67,9 +68,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        // Come back to the page they were on, so signing in mid-lesson does
-        // not dump them on the home page.
-        options: { redirectTo: window.location.href },
+        options: {
+          /**
+           * Default to the page they were on, so signing in mid-lesson does not
+           * dump them on the home page. A caller that has somewhere better to
+           * send them — the sign-in page, which means the dashboard — passes it.
+           *
+           * Resolved against the current origin so a caller can only ever
+           * redirect within this site.
+           */
+          redirectTo: redirectTo
+            ? new URL(redirectTo, window.location.origin).toString()
+            : window.location.href,
+        },
       });
       if (oauthError) throw oauthError;
     } catch (cause) {
