@@ -39,3 +39,9 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# OpenMacro
+.env
+
+# Unrelated scaffold that appeared in this directory; not part of the app.
+web/

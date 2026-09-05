@@ -1,0 +1,144 @@
+{
+  "id": "rrp-floor-mechanics",
+  "title": "The Floor Under Every Overnight Rate",
+  "subtitle": "Watch the ON RRP facility drain reserves and set the price of cash.",
+  "icon": "🪜",
+  "difficulty": "advanced",
+  "estimatedMinutes": 5,
+  "challenges": [
+    {
+      "id": "rrp-why-a-floor",
+      "type": "multiple_choice",
+      "prompt": "Why does the ON RRP facility put a floor under overnight rates?",
+      "explanation": "A money market fund cannot hold reserves, so without ON RRP it must lend to banks at whatever they offer. The facility gives it a risk-free alternative at a published rate — so it will not lend below that rate to anyone.",
+      "options": [
+        {
+          "id": "alternative",
+          "label": "It gives non-banks a risk-free rate they can always take instead"
+        },
+        {
+          "id": "cap",
+          "label": "It caps how much banks are allowed to charge each other",
+          "feedback": "Nothing here is a price control. The floor works by competition, not by rule."
+        },
+        {
+          "id": "print",
+          "label": "It creates new reserves for money market funds",
+          "feedback": "The opposite: cash parked at the ON RRP window drains reserves out of the banking system."
+        }
+      ],
+      "correctOptionId": "alternative",
+      "tags": ["central-banking", "money-markets"]
+    },
+    {
+      "id": "rrp-flow-step",
+      "type": "t_account_flow",
+      "prompt": "A money market fund parks $500M at the Fed's ON RRP window overnight.",
+      "instructions": "Post the entries on all three sheets. Nothing grows here — watch what moves instead.",
+      "scenario": "The fund pulls $500M out of its bank deposit and lends it to the Fed overnight against Treasury collateral.",
+      "explanation": "Total Fed liabilities are unchanged: $500M simply moved from the reserves line to the reverse repo line. But reserves are base money and reverse repos are not, so the banking system is $500M smaller while the Fed's sheet is the same size.",
+      "currency": "USD",
+      "entities": [
+        {
+          "id": "fed",
+          "label": "Federal Reserve",
+          "tier": "central_bank",
+          "role": "Sets the corridor",
+          "openingLines": [
+            { "account": "US Treasuries", "side": "asset", "amount": 5200000000000 },
+            { "account": "Commercial bank reserves", "side": "liability", "amount": 3100000000000 },
+            { "account": "Reverse repurchase agreements", "side": "liability", "amount": 420000000000 }
+          ]
+        },
+        {
+          "id": "mmf",
+          "label": "Money Market Fund",
+          "tier": "shadow_bank",
+          "role": "Cannot hold reserves",
+          "openingLines": [
+            { "account": "Bank deposits", "side": "asset", "amount": 12000000000 },
+            { "account": "Reverse repo claims", "side": "asset", "amount": 30000000000 }
+          ]
+        },
+        {
+          "id": "bank",
+          "label": "The Fund's Bank",
+          "tier": "commercial_bank",
+          "role": "Loses the deposit",
+          "openingLines": [
+            { "account": "Reserve deposits at the Fed", "side": "asset", "amount": 80000000000 },
+            { "account": "Customer deposits", "side": "liability", "amount": 640000000000 }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "id": "fed-rrp-up",
+          "shift": { "entityId": "fed", "side": "liability", "account": "Reverse repurchase agreements", "delta": 500000000 }
+        },
+        {
+          "id": "fed-reserves-down",
+          "shift": { "entityId": "fed", "side": "liability", "account": "Commercial bank reserves", "delta": -500000000 }
+        },
+        {
+          "id": "mmf-deposit-down",
+          "shift": { "entityId": "mmf", "side": "asset", "account": "Bank deposits", "delta": -500000000 }
+        },
+        {
+          "id": "mmf-claim-up",
+          "shift": { "entityId": "mmf", "side": "asset", "account": "Reverse repo claims", "delta": 500000000 }
+        },
+        {
+          "id": "bank-reserves-down",
+          "shift": { "entityId": "bank", "side": "asset", "account": "Reserve deposits at the Fed", "delta": -500000000 }
+        },
+        {
+          "id": "bank-deposit-down",
+          "shift": { "entityId": "bank", "side": "liability", "account": "Customer deposits", "delta": -500000000 }
+        },
+        {
+          "id": "fed-treasuries-down",
+          "shift": { "entityId": "fed", "side": "asset", "account": "US Treasuries", "delta": -500000000 },
+          "feedback": "The Fed pledges the collateral, it does not sell it. Its Treasury holdings are untouched overnight."
+        },
+        {
+          "id": "fed-reserves-up",
+          "shift": { "entityId": "fed", "side": "liability", "account": "Commercial bank reserves", "delta": 500000000 },
+          "feedback": "Reserves fall here. The cash left the banking system for the Fed's own window."
+        },
+        {
+          "id": "mmf-reserves-up",
+          "shift": { "entityId": "mmf", "side": "asset", "account": "Reserve deposits at the Fed", "delta": 500000000 },
+          "feedback": "Money market funds are not banks — they cannot hold reserves. That is the whole reason ON RRP exists."
+        }
+      ],
+      "expectedShifts": [
+        { "entityId": "fed", "side": "liability", "account": "Reverse repurchase agreements", "delta": 500000000 },
+        { "entityId": "fed", "side": "liability", "account": "Commercial bank reserves", "delta": -500000000 },
+        { "entityId": "mmf", "side": "asset", "account": "Bank deposits", "delta": -500000000 },
+        { "entityId": "mmf", "side": "asset", "account": "Reverse repo claims", "delta": 500000000 },
+        { "entityId": "bank", "side": "asset", "account": "Reserve deposits at the Fed", "delta": -500000000 },
+        { "entityId": "bank", "side": "liability", "account": "Customer deposits", "delta": -500000000 }
+      ],
+      "aggregateEffects": [
+        {
+          "aggregate": "M0",
+          "direction": "contract",
+          "note": "Reserves fell by $500M. Reverse repos are a Fed liability too, but they are not base money."
+        },
+        {
+          "aggregate": "M2",
+          "direction": "contract",
+          "note": "A bank deposit disappeared. Whether headline M2 moves depends on whether this fund's own shares are counted in it."
+        }
+      ],
+      "xp": 30,
+      "tags": ["central-banking", "money-markets", "t-accounts"]
+    }
+  ],
+  "keyTakeaways": [
+    "The ON RRP window drains reserves without shrinking the Fed's balance sheet.",
+    "A facility open to non-banks sets the floor the whole overnight market prices against.",
+    "Composition of central bank liabilities matters as much as their total."
+  ]
+}
