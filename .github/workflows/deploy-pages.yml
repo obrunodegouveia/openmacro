@@ -42,7 +42,15 @@ jobs:
       # The demo is served from a project subpath, so assets need the prefix.
       # 404.html is the SPA fallback: Pages has no rewrite rules, so a hard
       # refresh on /lesson/... is served this file and the router takes over.
+      # Both values are public by design: the publishable key is designed to
+      # ship inside the bundle and is gated by row-level security. They are
+      # repository *variables*, not secrets, so nothing here implies a
+      # protection that does not exist. Leave them unset and the build simply
+      # has no account UI — which is the correct fallback for a fork.
       - run: npm run build:pages
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Publish to gh-pages
         run: |
