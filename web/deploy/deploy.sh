@@ -41,6 +41,8 @@ if [[ "${BUILD_LOCALLY}" == "true" ]]; then
     --platform linux/amd64 \
     --build-arg "NEXT_PUBLIC_GITHUB_REPO=${NEXT_PUBLIC_GITHUB_REPO}" \
     --build-arg "NEXT_PUBLIC_DISCORD_URL=${NEXT_PUBLIC_DISCORD_URL}" \
+    --build-arg "NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-}" \
+    --build-arg "NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}" \
     -t "${IMAGE_TAGGED}" -t "${IMAGE}:latest" .
   docker push "${IMAGE_TAGGED}"
   docker push "${IMAGE}:latest"

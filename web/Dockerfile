@@ -26,8 +26,15 @@ COPY . .
 # time, so they must be present here rather than at deploy time.
 ARG NEXT_PUBLIC_GITHUB_REPO
 ARG NEXT_PUBLIC_DISCORD_URL
+# Supabase: both are public by design — the publishable key grants only what
+# row-level security allows. Leave them unset and the site builds without any
+# account UI, which is the correct default for a fork.
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_PUBLIC_GITHUB_REPO=$NEXT_PUBLIC_GITHUB_REPO
 ENV NEXT_PUBLIC_DISCORD_URL=$NEXT_PUBLIC_DISCORD_URL
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build

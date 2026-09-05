@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { MultipleChoice } from "@/components/site/multiple-choice";
 import { TAccountPuzzle } from "@/components/site/t-account-puzzle";
 import { exerciseXp, type Exercise, type Lesson } from "@/lib/exercises";
+import { useAuth } from "@/components/site/auth-provider";
+import { getSupabase } from "@/lib/supabase";
+import { recordLessonComplete } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 /**
@@ -23,9 +26,13 @@ import { cn } from "@/lib/utils";
  * as simple as a multiple choice or as involved as a balance-sheet puzzle
  * without the runner knowing the difference.
  *
- * Progress is in-memory for now: refreshing restarts the lesson. Persisting it
- * per learner is what the Supabase project is for — see docs/cloud-sync.md at
- * the repository root.
+ * Progress during a lesson is in-memory; the *result* is written once, on
+ * completion, for a signed-in learner. Writing per step would mean a row per
+ * tap and a lesson abandoned halfway counting as progress — neither is what a
+ * streak should mean.
+ *
+ * Signed out, everything still works and nothing is saved. That is deliberate:
+ * the lessons are free and account-free, and the account only buys memory.
  */
 export function LessonRunner({ lesson }: { lesson: Lesson }) {
   const [index, setIndex] = React.useState(0);
@@ -49,9 +56,34 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
   const currentSolved = current ? solvedIds.includes(current.id) : false;
   const progress = finished ? 1 : solvedIds.length / total;
 
+  const { learner } = useAuth();
+  const [saveState, setSaveState] = React.useState<"idle" | "saving" | "saved" | "failed">(
+    "idle",
+  );
+
+  /**
+   * Persists the result once, when the lesson finishes.
+   *
+   * Guarded by a ref rather than by `saveState` so a re-render mid-write
+   * cannot start a second one; retrying is the learner's call via the button.
+   */
+  const savedRef = React.useRef(false);
+  React.useEffect(() => {
+    const supabase = getSupabase();
+    if (!finished || !learner || !supabase || savedRef.current) return;
+    savedRef.current = true;
+
+    setSaveState("saving");
+    recordLessonComplete(supabase, learner.id, learner.name, lesson.slug, earnedXp)
+      .then(() => setSaveState("saved"))
+      .catch(() => setSaveState("failed"));
+  }, [finished, learner, lesson.slug, earnedXp]);
+
   function restart() {
     setIndex(0);
     setSolvedIds([]);
+    savedRef.current = false;
+    setSaveState("idle");
   }
 
   return (
@@ -92,7 +124,12 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
           transition={{ duration: 0.2 }}
         >
           {finished ? (
-            <LessonComplete lesson={lesson} earnedXp={earnedXp} onRestart={restart} />
+            <LessonComplete
+              lesson={lesson}
+              earnedXp={earnedXp}
+              onRestart={restart}
+              saveState={saveState}
+            />
           ) : current ? (
             <ExerciseView exercise={current} onSolved={() => markSolved(current)} />
           ) : null}
@@ -146,11 +183,14 @@ function LessonComplete({
   lesson,
   earnedXp,
   onRestart,
+  saveState,
 }: {
   lesson: Lesson;
   earnedXp: number;
   onRestart: () => void;
+  saveState: "idle" | "saving" | "saved" | "failed";
 }) {
+  const { enabled, learner, signingIn, signIn } = useAuth();
   return (
     <div className="glass rounded-card p-7 text-center shadow-2xl shadow-black/50 sm:p-10">
       <span className="mx-auto grid size-14 place-items-center rounded-2xl border border-mint/30 bg-mint/10">
@@ -184,9 +224,82 @@ function LessonComplete({
         </Button>
       </div>
 
-      <p className={cn("mt-6 text-xs leading-relaxed text-ink-faint")}>
-        Progress is not saved yet — accounts are coming.
-      </p>
+      <SaveNote
+        enabled={enabled}
+        signedIn={Boolean(learner)}
+        signingIn={signingIn}
+        saveState={saveState}
+        onSignIn={() => void signIn()}
+      />
     </div>
+  );
+}
+
+/**
+ * The one line under the completion screen about whether this counted.
+ *
+ * Stated plainly rather than nagged: someone who does not want an account has
+ * still just finished a lesson, and telling them off for it would be a poor
+ * thank-you.
+ */
+function SaveNote({
+  enabled,
+  signedIn,
+  signingIn,
+  saveState,
+  onSignIn,
+}: {
+  enabled: boolean;
+  signedIn: boolean;
+  signingIn: boolean;
+  saveState: "idle" | "saving" | "saved" | "failed";
+  onSignIn: () => void;
+}) {
+  if (!enabled) {
+    return (
+      <p className="mt-6 text-xs leading-relaxed text-ink-faint">
+        Progress is not saved — this build has no account backend configured.
+      </p>
+    );
+  }
+
+  if (!signedIn) {
+    return (
+      <div className="mt-7 border-t border-hairline pt-6">
+        <p className="text-sm font-semibold text-ink-muted">
+          Sign in to keep this XP and start a streak.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-3"
+          disabled={signingIn}
+          onClick={onSignIn}
+        >
+          {signingIn ? "Opening Google…" : "Continue with Google"}
+        </Button>
+        <p className="mt-3 text-xs text-ink-faint">
+          Optional. The lessons are free either way.
+        </p>
+      </div>
+    );
+  }
+
+  const NOTE: Record<typeof saveState, string> = {
+    idle: "Saving to your account…",
+    saving: "Saving to your account…",
+    saved: "Saved to your account.",
+    failed: "Could not reach your account — this run was not saved.",
+  };
+
+  return (
+    <p
+      className={cn(
+        "mt-6 text-xs leading-relaxed",
+        saveState === "failed" ? "text-coral" : "text-ink-faint",
+      )}
+    >
+      {NOTE[saveState]}
+    </p>
   );
 }

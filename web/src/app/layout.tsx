@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { SITE } from "@/lib/site";
 import "./globals.css";
+import { AuthProvider } from "@/components/site/auth-provider";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -87,7 +88,8 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        {children}
+        {/* Inert when no Supabase project is configured — see lib/supabase.ts. */}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
