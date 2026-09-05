@@ -46,6 +46,18 @@ export NEXT_PUBLIC_DISCORD_URL="${NEXT_PUBLIC_DISCORD_URL:-https://discord.gg/op
 # redirect fallback.
 export NEXT_PUBLIC_GOOGLE_CLIENT_ID="${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-308779065866-9ri4v6221r7umloq22mnr2nevn41asfj.apps.googleusercontent.com}"
 
+# Supabase project for openmacro.org. Both values are public by design and are
+# already served in the client bundle to every visitor: the publishable key
+# grants only what row-level security allows, which is "your own rows".
+#
+# They live here rather than in the deploying shell because they are inlined at
+# BUILD time, and a build that cannot see them produces a site with no sign-in
+# button, no dashboard and no saved progress — a silent, total loss of the
+# account feature that still passes every smoke test. A fork sets its own, or
+# clears them and gets a site where lessons play and nothing is stored.
+export NEXT_PUBLIC_SUPABASE_URL="${NEXT_PUBLIC_SUPABASE_URL:-https://wvbgylwducipwpxzcgzh.supabase.co}"
+export NEXT_PUBLIC_SUPABASE_ANON_KEY="${NEXT_PUBLIC_SUPABASE_ANON_KEY:-sb_publishable_79IMEg597PKTlukVnPDhhQ_dDG_EHAF}"
+
 # --- Guard rails ------------------------------------------------------------
 # Every script runs with these; a failed command must never be ignored.
 set -euo pipefail
@@ -53,6 +65,30 @@ set -euo pipefail
 require_gcloud() {
   if ! command -v gcloud >/dev/null 2>&1; then
     echo "error: gcloud CLI not found. Install it: https://cloud.google.com/sdk/docs/install" >&2
+    exit 1
+  fi
+}
+
+# Refuses to ship a build with no account backend.
+#
+# `cloudSyncConfigured` in the app is `url && anonKey`, and when it is false
+# every piece of account UI is compiled out. Nothing else notices: the pages
+# render, the health check passes, and the only symptom is that the sign-in
+# button is gone. Deploying that by omission has happened, so it is now an
+# error. `ALLOW_NO_ACCOUNTS=1` is the deliberate opt-out for a fork.
+require_account_backend() {
+  if [[ "${ALLOW_NO_ACCOUNTS:-}" == "1" ]]; then
+    echo "note: building with no Supabase project — the site will have no account UI."
+    return 0
+  fi
+  if [[ -z "${NEXT_PUBLIC_SUPABASE_URL:-}" || -z "${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}" ]]; then
+    cat >&2 <<'ERR'
+error: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY are empty.
+
+This build would ship without sign-in, the dashboard, or saved progress, and
+would still pass the smoke test. Set both (deploy/config.sh holds the defaults
+for openmacro.org), or pass ALLOW_NO_ACCOUNTS=1 if that is what you want.
+ERR
     exit 1
   fi
 }

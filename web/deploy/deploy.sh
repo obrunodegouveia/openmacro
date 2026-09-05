@@ -21,6 +21,7 @@ REPO_ROOT="$(cd "${APP_DIR}/.." && pwd)"
 source "${SCRIPT_DIR}/config.sh"
 
 require_gcloud
+require_account_backend
 
 BUILD_LOCALLY=false
 [[ "${1:-}" == "--local" ]] && BUILD_LOCALLY=true
