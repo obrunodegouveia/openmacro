@@ -13,7 +13,7 @@
 import { env } from '@/config/env';
 import { asyncStorageDataProvider } from '@/services/asyncStorageDataProvider';
 import { mockDataProvider } from '@/services/mockDataProvider';
-import type { LearningDataProvider } from '@/services/types';
+import type { LearningDataProvider } from '@openmacro/core/progress/types';
 
 const PROVIDERS: Record<typeof env.dataProvider, LearningDataProvider> = {
   local: asyncStorageDataProvider,
@@ -31,4 +31,4 @@ export type {
   LearningDataProvider,
   LessonProgress,
   LessonResult,
-} from '@/services/types';
+} from '@openmacro/core/progress/types';

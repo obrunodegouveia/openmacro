@@ -20,6 +20,7 @@
     "node_modules",
     "web",
     ".expo",
-    "dist"
+    "dist",
+    "packages"
   ]
 }

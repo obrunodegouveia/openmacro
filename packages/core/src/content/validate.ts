@@ -12,8 +12,8 @@
  * their mistake the moment they hot-reload.
  */
 
-import { isKnownFormulaId } from '@/content/formulas';
-import type { BalanceSheetShift, Challenge, Lesson, Module } from '@/content/schema';
+import { isKnownFormulaId } from './formulas';
+import type { BalanceSheetShift, Challenge, Lesson, Module } from './schema';
 
 /** Amounts are authored as plain numbers; tolerate float noise when summing. */
 const AMOUNT_TOLERANCE = 0.005;

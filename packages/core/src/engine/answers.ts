@@ -6,8 +6,8 @@
  * directly — this is the only contract between UI and grading.
  */
 
-import type { BalanceSheetShift, ChallengeType } from '@/content/schema';
-import type { SimSliderValues } from '@/engine/simulation';
+import type { BalanceSheetShift, ChallengeType } from '../content/schema';
+import type { SimSliderValues } from './simulation';
 
 export interface MultipleChoiceAnswer {
   type: 'multiple_choice';

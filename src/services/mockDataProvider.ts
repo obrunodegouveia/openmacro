@@ -24,8 +24,8 @@ import {
   localDateKey,
   seedSnapshot,
   type ProgressSnapshot,
-} from '@/services/progressRules';
-import type { LearningDataProvider, LessonResult } from '@/services/types';
+} from '@openmacro/core/progress/rules';
+import type { LearningDataProvider, LessonResult } from '@openmacro/core/progress/types';
 
 /** Simulated round-trip, in ms. Set to 0 to make the UI feel instant. */
 const LATENCY_MS = 180;

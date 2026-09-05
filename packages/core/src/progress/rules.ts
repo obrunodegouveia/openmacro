@@ -13,7 +13,7 @@
  * daylight-saving transition).
  */
 
-import type { LearnerProfile, LessonProgress, LessonResult } from '@/services/types';
+import type { LearnerProfile, LessonProgress, LessonResult } from './types';
 
 /** A full snapshot of everything we persist about a learner. */
 export interface ProgressSnapshot {

@@ -28,7 +28,7 @@ import {
   hasLocalProgress,
   mergeSnapshots,
   type ProgressSnapshot,
-} from '@/services/progressRules';
+} from '@openmacro/core/progress/rules';
 import { supabase } from '@/services/supabaseClient';
 import { readCloudSnapshot, writeCloudSnapshot } from '@/services/supabaseDataProvider';
 import {
@@ -41,7 +41,7 @@ import type {
   LearningDataProvider,
   LessonProgress,
   LessonResult,
-} from '@/services/types';
+} from '@openmacro/core/progress/types';
 
 interface ProgressContextValue {
   profile: LearnerProfile | null;

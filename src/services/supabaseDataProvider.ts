@@ -19,8 +19,8 @@ import {
   reconcileSnapshot,
   seedSnapshot,
   type ProgressSnapshot,
-} from '@/services/progressRules';
-import type { LessonProgress } from '@/services/types';
+} from '@openmacro/core/progress/rules';
+import type { LessonProgress } from '@openmacro/core/progress/types';
 
 /** Identity handed down from the auth session. */
 export interface CloudIdentity {

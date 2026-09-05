@@ -78,8 +78,8 @@ registerHooks({
   },
 });
 
-const { MODULES } = await import('@/content/registry');
-const { validateModules } = await import('@/content/validate');
+const { MODULES } = await import('@openmacro/core/content/registry');
+const { validateModules } = await import('@openmacro/core/content/validate');
 
 const lessonCount = MODULES.reduce((total, module) => total + module.lessons.length, 0);
 const challengeCount = MODULES.reduce(

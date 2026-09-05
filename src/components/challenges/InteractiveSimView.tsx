@@ -13,14 +13,14 @@ import Slider from '@react-native-community/slider';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 import type { ChallengeComponentProps } from '@/components/challenges/types';
-import type { SimSlider } from '@/content/schema';
+import type { SimSlider } from '@openmacro/core/content/schema';
 import { emitFeedback } from '@/feedback';
 import {
   buildObjectiveSteps,
   evaluateReadouts,
   initialSliderValues,
   observationKey,
-} from '@/engine/simulation';
+} from '@openmacro/core/engine/simulation';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import { formatValue, snapToStep } from '@/utils/format';
 

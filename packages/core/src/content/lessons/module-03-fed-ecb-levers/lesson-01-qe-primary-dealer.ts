@@ -1,4 +1,4 @@
-import { defineLesson } from '@/content/schema';
+import { defineLesson } from '../../schema';
 
 /**
  * Tier 1 -> Tier 2: how a central bank asset purchase lands on two balance

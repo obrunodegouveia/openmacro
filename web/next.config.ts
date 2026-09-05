@@ -1,4 +1,12 @@
+import path from "node:path";
 import type { NextConfig } from "next";
+
+/**
+ * The workspace root. The site imports lesson content and the grading engine
+ * from `packages/core`, which lives above this directory, so both Turbopack
+ * and the standalone output tracer have to be told where the workspace starts.
+ */
+const repoRoot = path.join(__dirname, "..");
 
 const nextConfig: NextConfig = {
   /**
@@ -57,9 +65,22 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // The repository root holds the Expo app and its own lockfile, so point
-  // Turbopack at this directory explicitly rather than letting it infer.
-  turbopack: { root: __dirname },
+  /**
+   * `packages/core` ships raw TypeScript rather than a build step, so Next has
+   * to compile it like first-party source. That is the trade for letting a
+   * contributor edit a lesson and see it in both apps without publishing
+   * anything.
+   */
+  transpilePackages: ["@openmacro/core"],
+
+  /**
+   * Trace from the workspace root, not from web/. Without this the standalone
+   * bundle would omit the linked workspace package and the container would
+   * start, then fail on the first import of a lesson.
+   */
+  outputFileTracingRoot: repoRoot,
+
+  turbopack: { root: repoRoot },
 };
 
 export default nextConfig;

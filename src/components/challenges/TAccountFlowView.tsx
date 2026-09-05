@@ -24,8 +24,8 @@ import type {
   MonetaryTier,
   TAccountEntity,
   TAccountEntryOption,
-} from '@/content/schema';
-import { entityBalance, openingTotal } from '@/engine/tAccounts';
+} from '@openmacro/core/content/schema';
+import { entityBalance, openingTotal } from '@openmacro/core/engine/tAccounts';
 import { emitFeedback } from '@/feedback';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import { formatCompactCurrency, formatSignedCompactCurrency, seededShuffle } from '@/utils/format';

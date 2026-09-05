@@ -20,9 +20,9 @@ import {
   DEFAULT_HEARTS,
   type Challenge,
   type Lesson,
-} from '@/content/schema';
-import type { ChallengeAnswer } from '@/engine/answers';
-import { gradeChallenge, type GradeResult } from '@/engine/grading';
+} from '../content/schema';
+import type { ChallengeAnswer } from './answers';
+import { gradeChallenge, type GradeResult } from './grading';
 
 export type SessionStatus = 'in_progress' | 'complete' | 'failed';
 

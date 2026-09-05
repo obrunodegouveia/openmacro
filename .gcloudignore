@@ -1,0 +1,11 @@
+# What NOT to upload to Cloud Build. Mirrors .dockerignore, plus git history:
+# without this the whole repository including node_modules is tarred and sent
+# on every deploy.
+.git
+.github
+**/node_modules
+**/.next
+**/dist
+**/out
+**/.expo
+.DS_Store

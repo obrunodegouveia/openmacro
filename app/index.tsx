@@ -13,10 +13,10 @@ import { router } from 'expo-router';
 
 import { AccountBar } from '@/components/ui/AccountBar';
 import { StreakBadge } from '@/components/ui/StatusPills';
-import { COURSE, MODULES } from '@/content/registry';
+import { COURSE, MODULES } from '@openmacro/core/content/registry';
 import { useProgress } from '@/providers/ProgressProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
-import type { Lesson } from '@/content/schema';
+import type { Lesson } from '@openmacro/core/content/schema';
 
 export default function LearningPathScreen() {
   const insets = useSafeAreaInsets();

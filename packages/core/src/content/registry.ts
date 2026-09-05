@@ -19,9 +19,9 @@
  * └──────────────────────────────────────────────────────────────────────────┘
  */
 
-import type { Course, Lesson, Module } from '@/content/schema';
-import { moduleWhereDoesMoneyComeFrom } from '@/content/lessons/module-01-where-does-money-come-from';
-import { moduleFedEcbLevers } from '@/content/lessons/module-03-fed-ecb-levers';
+import type { Course, Lesson, Module } from './schema';
+import { moduleWhereDoesMoneyComeFrom } from './lessons/module-01-where-does-money-come-from';
+import { moduleFedEcbLevers } from './lessons/module-03-fed-ecb-levers';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [

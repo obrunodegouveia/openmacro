@@ -10,14 +10,14 @@
  * three touch points: the schema union, a `case` here, and a component.
  */
 
-import type { Challenge, ConceptPair } from '@/content/schema';
-import type { ChallengeAnswer } from '@/engine/answers';
+import type { Challenge, ConceptPair } from '../content/schema';
+import type { ChallengeAnswer } from './answers';
 import {
   buildObjectiveSteps,
   evaluateReadouts,
   isObjectiveComplete,
-} from '@/engine/simulation';
-import { describeVerdict, evaluateTAccount } from '@/engine/tAccounts';
+} from './simulation';
+import { describeVerdict, evaluateTAccount } from './tAccounts';
 
 export interface GradeResult {
   correct: boolean;

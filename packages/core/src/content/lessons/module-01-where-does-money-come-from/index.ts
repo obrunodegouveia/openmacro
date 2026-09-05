@@ -6,7 +6,7 @@
  * change — the runner, progress tracking and routing are all data-driven.
  */
 
-import { defineModule } from '@/content/schema';
+import { defineModule } from '../../schema';
 import { banksCreateDepositsLesson } from './lesson-01-banks-create-deposits';
 
 export const moduleWhereDoesMoneyComeFrom = defineModule({

@@ -21,6 +21,9 @@ steps:
       - --build-arg
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${_SUPABASE_ANON_KEY}
       # Reuse the previous image's layers when the lockfile has not changed.
+      # Built from the workspace root, so the Dockerfile has to be named.
+      - -f
+      - web/Dockerfile
       - --cache-from
       - ${_IMAGE}:latest
       - -t

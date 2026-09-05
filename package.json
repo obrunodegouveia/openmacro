@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@openmacro/core": "*",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/slider": "5.2.0",
     "@supabase/supabase-js": "^2.115.0",
@@ -34,6 +35,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
+    "typecheck:core": "tsc -p packages/core --noEmit",
     "lint:content": "node ./scripts/validate-content.mjs",
     "build:web": "expo export --platform web",
     "build:pages": "OPENMACRO_BASE_URL=/openmacro expo export --platform web && cp dist/index.html dist/404.html && touch dist/.nojekyll"
@@ -43,5 +45,9 @@
   "license": "MIT",
   "engines": {
     "node": ">=22.18"
-  }
+  },
+  "workspaces": [
+    "packages/*",
+    "web"
+  ]
 }

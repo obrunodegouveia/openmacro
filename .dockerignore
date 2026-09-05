@@ -1,0 +1,33 @@
+# ============================================================================
+# Docker build context — repository root
+# ============================================================================
+# The image is built from the repo root, not from web/, because the site now
+# depends on the `packages/core` workspace and npm has to see the whole
+# workspace to install it.
+
+# Recreated inside the image.
+**/node_modules
+**/.next
+**/dist
+**/out
+**/.expo
+npm-debug.log*
+
+# The mobile app: shares packages/core, but none of its own source is needed
+# to build the website.
+app/
+assets/
+android/
+ios/
+
+# Never reaches the image.
+.env
+.env.local
+**/.env*.local
+.git
+.github
+.DS_Store
+**/deploy/
+supabase/
+scripts/
+docs/

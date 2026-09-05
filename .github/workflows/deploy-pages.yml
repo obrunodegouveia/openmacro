@@ -37,6 +37,10 @@ jobs:
 
       # Fail the deploy rather than publish a broken lesson.
       - run: npm run typecheck
+      # Guards the shared package's platform surface: packages/core must keep
+      # compiling without DOM or React Native globals, because the website and
+      # the content validator both import it.
+      - run: npm run typecheck:core
       - run: npm run lint:content
 
       # The demo is served from a project subpath, so assets need the prefix.

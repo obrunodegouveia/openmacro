@@ -29,8 +29,8 @@ import {
   reconcileSnapshot,
   seedSnapshot,
   type ProgressSnapshot,
-} from '@/services/progressRules';
-import type { LearningDataProvider, LessonResult } from '@/services/types';
+} from '@openmacro/core/progress/rules';
+import type { LearningDataProvider, LessonResult } from '@openmacro/core/progress/types';
 
 const STORAGE_KEY = 'openmacro:progress';
 

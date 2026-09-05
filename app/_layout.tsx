@@ -12,8 +12,8 @@ import { StatusBar } from 'expo-status-bar';
 import { Stack } from 'expo-router';
 
 import { env } from '@/config/env';
-import { MODULES } from '@/content/registry';
-import { validateModules } from '@/content/validate';
+import { MODULES } from '@openmacro/core/content/registry';
+import { validateModules } from '@openmacro/core/content/validate';
 import { setHapticsEnabled, setSoundEnabled } from '@/feedback';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';

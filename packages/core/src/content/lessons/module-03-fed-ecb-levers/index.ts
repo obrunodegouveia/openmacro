@@ -14,7 +14,7 @@
  * (`npm run typecheck` and `npm run lint:content` respectively).
  */
 
-import { defineModule, type Lesson } from '@/content/schema';
+import { defineModule, type Lesson } from '../../schema';
 import { qePrimaryDealerLesson } from './lesson-01-qe-primary-dealer';
 import rrpFloorMechanics from './lesson-02-rrp-floor-mechanics.json';
 

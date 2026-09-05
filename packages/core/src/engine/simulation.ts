@@ -5,12 +5,12 @@
  * web playground) without a renderer.
  */
 
-import { getFormula, type FormulaInputs } from '@/content/formulas';
+import { getFormula, type FormulaInputs } from '../content/formulas';
 import type {
   Comparator,
   InteractiveSimChallenge,
   SimObjective,
-} from '@/content/schema';
+} from '../content/schema';
 
 const DEFAULT_TOLERANCE = 0.001;
 
@@ -46,7 +46,11 @@ export function evaluateReadouts(
     if (!formula) {
       // A missing formula is a content bug, not a runtime crash. Surface it
       // loudly in development and degrade to 0 in production.
-      if (__DEV__) {
+      //
+      // `process.env.NODE_ENV` rather than React Native's `__DEV__`: this file
+      // is shared with the website, where `__DEV__` is not defined and reading
+      // it would throw a ReferenceError instead of warning about the content.
+      if (process.env.NODE_ENV !== 'production') {
         console.warn(
           `[OpenMacro] Unknown formulaId "${readout.formulaId}" on readout "${readout.key}".`,
         );

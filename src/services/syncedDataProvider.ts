@@ -30,7 +30,7 @@ import {
   reconcileSnapshot,
   seedSnapshot,
   type ProgressSnapshot,
-} from '@/services/progressRules';
+} from '@openmacro/core/progress/rules';
 import {
   createTaskQueue,
   isProgressSnapshotLike,
@@ -43,7 +43,7 @@ import {
   writeCloudSnapshot,
   type CloudIdentity,
 } from '@/services/supabaseDataProvider';
-import type { LearningDataProvider, LessonResult } from '@/services/types';
+import type { LearningDataProvider, LessonResult } from '@openmacro/core/progress/types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 const MIRROR_VERSION = 1;

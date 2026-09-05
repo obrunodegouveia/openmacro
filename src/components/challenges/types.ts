@@ -14,9 +14,9 @@
  * TypeScript's exhaustiveness checks will point you at 1–3 automatically.
  */
 
-import type { Challenge, ChallengeType } from '@/content/schema';
-import type { AnswerOf } from '@/engine/answers';
-import type { GradeResult } from '@/engine/grading';
+import type { Challenge, ChallengeType } from '@openmacro/core/content/schema';
+import type { AnswerOf } from '@openmacro/core/engine/answers';
+import type { GradeResult } from '@openmacro/core/engine/grading';
 
 export interface ChallengeComponentProps<T extends ChallengeType> {
   challenge: Extract<Challenge, { type: T }>;

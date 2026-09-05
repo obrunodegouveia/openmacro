@@ -1,0 +1,15 @@
+{
+  "name": "@openmacro/core",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lesson content, schema and grading engine, shared by the mobile app and the website. Contains no UI and no platform code.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./content": "./src/content/index.ts",
+    "./content/*": "./src/content/*.ts",
+    "./engine/*": "./src/engine/*.ts",
+    "./progress/*": "./src/progress/*.ts"
+  },
+  "sideEffects": false
+}

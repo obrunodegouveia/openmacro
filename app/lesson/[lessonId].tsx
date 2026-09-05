@@ -20,15 +20,15 @@ import { ActionButton } from '@/components/ui/ActionButton';
 import { FeedbackSheet } from '@/components/ui/FeedbackSheet';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { ComboPill, HeartsIndicator, StreakBadge } from '@/components/ui/StatusPills';
-import { getLessonById, getNextLesson } from '@/content/registry';
-import type { Lesson } from '@/content/schema';
-import type { ChallengeAnswer } from '@/engine/answers';
+import { getLessonById, getNextLesson } from '@openmacro/core/content/registry';
+import type { Lesson } from '@openmacro/core/content/schema';
+import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
 import {
   createSession,
   currentChallenge,
   lessonSessionReducer,
   progressRatio,
-} from '@/engine/lessonSession';
+} from '@openmacro/core/engine/lessonSession';
 import { emitFeedback } from '@/feedback';
 import { useProgress } from '@/providers/ProgressProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';

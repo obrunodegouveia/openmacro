@@ -18,7 +18,7 @@ import type {
   TAccountEntity,
   TAccountFlowChallenge,
   TAccountLine,
-} from '@/content/schema';
+} from '../content/schema';
 
 /**
  * Currency amounts are integers of the minor unit in practice, but lesson

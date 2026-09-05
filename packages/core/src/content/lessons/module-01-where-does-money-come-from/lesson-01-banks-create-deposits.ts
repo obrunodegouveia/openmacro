@@ -22,7 +22,7 @@
  * if you edit this lesson.
  */
 
-import { defineLesson } from '@/content/schema';
+import { defineLesson } from '../../schema';
 
 export const banksCreateDepositsLesson = defineLesson({
   id: 'banks-create-deposits',

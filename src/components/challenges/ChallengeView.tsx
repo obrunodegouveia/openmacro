@@ -15,9 +15,9 @@ import { InteractiveSimView } from '@/components/challenges/InteractiveSimView';
 import { MultipleChoiceView } from '@/components/challenges/MultipleChoiceView';
 import { OrderFlowView } from '@/components/challenges/OrderFlowView';
 import { TAccountFlowView } from '@/components/challenges/TAccountFlowView';
-import type { Challenge } from '@/content/schema';
-import type { ChallengeAnswer } from '@/engine/answers';
-import type { GradeResult } from '@/engine/grading';
+import type { Challenge } from '@openmacro/core/content/schema';
+import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
+import type { GradeResult } from '@openmacro/core/engine/grading';
 import { palette, spacing, typography } from '@/theme/tokens';
 
 export interface ChallengeViewProps {

@@ -14,6 +14,9 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+# The image is built from the workspace root: the site depends on the
+# `packages/core` workspace, which npm cannot install from inside web/.
+REPO_ROOT="$(cd "${APP_DIR}/.." && pwd)"
 # shellcheck source=deploy/config.sh
 source "${SCRIPT_DIR}/config.sh"
 
@@ -33,12 +36,13 @@ fi
 IMAGE_TAGGED="${IMAGE}:${TAG}"
 
 step "Building ${IMAGE_TAGGED}"
-cd "${APP_DIR}"
+cd "${REPO_ROOT}"
 
 if [[ "${BUILD_LOCALLY}" == "true" ]]; then
   # --platform matters on Apple Silicon: Cloud Run runs linux/amd64.
   docker build \
     --platform linux/amd64 \
+    -f web/Dockerfile \
     --build-arg "NEXT_PUBLIC_GITHUB_REPO=${NEXT_PUBLIC_GITHUB_REPO}" \
     --build-arg "NEXT_PUBLIC_DISCORD_URL=${NEXT_PUBLIC_DISCORD_URL}" \
     --build-arg "NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-}" \
@@ -50,7 +54,7 @@ else
   gcloud builds submit \
     --project "${PROJECT_ID}" \
     --region "${REGION}" \
-    --config "${SCRIPT_DIR}/cloudbuild.yaml" \
+    --config "web/deploy/cloudbuild.yaml" \
     --substitutions "^|^_IMAGE=${IMAGE}|_TAG=${TAG}|_GITHUB_REPO=${NEXT_PUBLIC_GITHUB_REPO}|_DISCORD_URL=${NEXT_PUBLIC_DISCORD_URL}|_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-}|_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}" \
     .
 fi
