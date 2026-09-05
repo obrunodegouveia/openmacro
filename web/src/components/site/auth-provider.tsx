@@ -3,7 +3,6 @@
 import * as React from "react";
 import type { Session } from "@supabase/supabase-js";
 import { cloudSyncConfigured, getSupabase } from "@/lib/supabase";
-import { onGoogleCredential } from "@/lib/google-identity";
 
 export interface Learner {
   id: string;
@@ -21,8 +20,6 @@ interface AuthValue {
   error: string | null;
   /** Optional path to land on afterwards; defaults to the current page. */
   signIn: (redirectTo?: string) => Promise<void>;
-  /** Where an in-page sign-in should land. Set by whichever button is used. */
-  setSignInDestination: (path: string | undefined) => void;
   signOut: () => Promise<void>;
 }
 
@@ -92,67 +89,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  /**
-   * Where to go after an in-page sign-in.
-   *
-   * Held here rather than in the button, because Google's credential callback
-   * is global to the page and cannot tell which button was pressed.
-   */
-  const destination = React.useRef<string | undefined>(undefined);
-  const setSignInDestination = React.useCallback((path: string | undefined) => {
-    destination.current = path;
-  }, []);
-
-  /**
-   * Exchanges a Google ID token for a Supabase session.
-   *
-   * The nonce is tried three ways, and that is deliberate rather than lazy.
-   * Supabase verifies the nonce against the token's claim, but which form it
-   * expects — the raw value or the SHA-256 the token actually carries — is not
-   * something this codebase should be guessing at, and guessing wrong is
-   * exactly what silently broke sign-in before. Each attempt is a single
-   * request and only failures cost anything.
-   *
-   * If every attempt fails, the redirect flow is started rather than leaving
-   * the learner with a button that does nothing. That is the property that
-   * matters: this path can be wrong without anyone being locked out.
-   */
-  const exchangeGoogleCredential = React.useCallback(
-    async (credential: string, nonce: { raw: string; hashed: string }) => {
-      const supabase = getSupabase();
-      if (!supabase) return;
-
-      setSigningIn(true);
-      setError(null);
-
-      const attempts: (string | undefined)[] = [nonce.raw, nonce.hashed, undefined];
-      let lastMessage = "Could not sign in.";
-
-      for (const candidate of attempts) {
-        const { error: idError } = await supabase.auth.signInWithIdToken({
-          provider: "google",
-          token: credential,
-          ...(candidate ? { nonce: candidate } : {}),
-        });
-        if (!idError) {
-          setSigningIn(false);
-          return;
-        }
-        lastMessage = idError.message;
-      }
-
-      // Every in-page attempt failed. Fall back rather than dead-end.
-      setError(`${lastMessage} — falling back to the standard Google sign-in.`);
-      await signIn(destination.current);
-    },
-    [signIn],
-  );
-
-  React.useEffect(
-    () => onGoogleCredential((credential, nonce) => void exchangeGoogleCredential(credential, nonce)),
-    [exchangeGoogleCredential],
-  );
-
   const signOut = React.useCallback(async () => {
     const supabase = getSupabase();
     if (!supabase) return;
@@ -183,10 +119,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signingIn,
       error,
       signIn,
-      setSignInDestination,
       signOut,
     }),
-    [loading, learner, signingIn, error, signIn, setSignInDestination, signOut],
+    [loading, learner, signingIn, error, signIn, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
