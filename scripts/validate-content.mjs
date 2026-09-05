@@ -26,6 +26,10 @@
  * lesson that can never be solved, and it is the mistake a well-meaning
  * contributor makes first.
  *
+ * Requires Node 22.18+: `module.registerHooks` arrived in 22.15 and unflagged
+ * type stripping in 22.18. Running this on an older Node fails with
+ * "does not provide an export named 'registerHooks'".
+ *
  * Node runs the TypeScript sources directly via built-in type stripping. The
  * resolve hook teaches Node the two conventions TypeScript allows but Node's
  * ESM resolver does not: the `@/` path alias, and extensionless / directory

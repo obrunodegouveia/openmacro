@@ -40,5 +40,8 @@
   },
   "private": true,
   "description": "Duolingo-style micro-learning app teaching macroeconomics, monetary policy and fractional-reserve banking.",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18"
+  }
 }

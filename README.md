@@ -42,8 +42,10 @@ cp .env.example .env
 npm start            # then press i (iOS), a (Android) or w (web)
 ```
 
-Requires Node 20+. No backend, no API keys, no account: everything runs from
-local files, and the default `.env` leaves cloud sync switched off.
+Requires **Node 22.18+** — `npm run lint:content` loads the lesson registry
+through Node's built-in TypeScript type stripping, so it needs a runtime that
+has it. No backend, no API keys, no account: everything runs from local files,
+and the default `.env` leaves cloud sync switched off.
 
 | Command                 | What it does                                       |
 |-------------------------|----------------------------------------------------|

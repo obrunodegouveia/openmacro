@@ -25,9 +25,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Node 22.18+ : `module.registerHooks` (22.15) and unflagged TypeScript
+      # type stripping (22.18), both of which scripts/validate-content.mjs
+      # relies on to load the real registry without a build step.
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
