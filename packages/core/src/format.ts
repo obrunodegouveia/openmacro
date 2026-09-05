@@ -33,11 +33,18 @@ export function formatNumber(value: number): string {
   return String(Math.round(value * 100) / 100);
 }
 
-/** Dispatches on the `ValueFormat` declared in the lesson content. */
+/**
+ * Dispatches on the `ValueFormat` declared in the lesson content.
+ *
+ * Money switches to compact suffixes once it passes a million. A sim about a
+ * $1,000 deposit wants "$10,000" spelled out, and a sim about the Fed's
+ * balance sheet emphatically does not want "$2,681,391,000,000" — which does
+ * not fit the hero readout on a phone at any font size worth reading.
+ */
 export function formatValue(value: number, format: ValueFormat): string {
   switch (format) {
     case 'currency':
-      return formatCurrency(value);
+      return Math.abs(value) >= 1e6 ? formatCompactCurrency(value) : formatCurrency(value);
     case 'percent':
       return formatPercent(value);
     case 'multiplier':

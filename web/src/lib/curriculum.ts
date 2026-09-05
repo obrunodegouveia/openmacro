@@ -100,7 +100,7 @@ export interface Track {
   tiers: TierId[];
   icon: string;
   status: TrackStatus;
-  accent: "emerald" | "gold" | "azure" | "violet";
+  accent: "emerald" | "gold" | "azure" | "violet" | "mint";
   /** Derived from the content registry — never hand-written. */
   lessonCount: number;
 }
@@ -166,6 +166,24 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "violet",
   },
+  {
+    id: "reading-the-fed-balance-sheet",
+    index: 5,
+    title: "Reading the Fed's Balance Sheet",
+    promise:
+      "Open the release the Fed published this week and read it without a translator.",
+    concepts: [
+      "The H.4.1 release",
+      "Treasury General Account",
+      "Reserves as a residual",
+      "The ON RRP drain",
+      "QT vs. balance sheet growth",
+    ],
+    tiers: ["central_bank", "fiduciary_core"],
+    icon: "📄",
+    status: "live",
+    accent: "mint",
+  },
 ];
 
 /**
@@ -176,6 +194,29 @@ export const SYLLABUS: Track[] = TRACKS.map((track) => ({
   ...track,
   lessonCount: lessonsIn(track.id),
 }));
+
+const NUMBER_WORDS = [
+  "No",
+  "One",
+  "Two",
+  "Three",
+  "Four",
+  "Five",
+  "Six",
+  "Seven",
+  "Eight",
+  "Nine",
+] as const;
+
+/**
+ * "Five" rather than "5", for the syllabus headline.
+ *
+ * Spelled out because it reads as prose there, and derived because the last
+ * time this was a word in the copy it said "Four" for a while after the fifth
+ * track shipped.
+ */
+export const TRACK_COUNT_LABEL: string =
+  NUMBER_WORDS[SYLLABUS.length] ?? String(SYLLABUS.length);
 
 /**
  * A real excerpt from `lesson-02-rrp-floor-mechanics.json` in the app,

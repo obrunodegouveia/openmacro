@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { ChevronRight, Lock } from "lucide-react";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
-import { SYLLABUS, TIERS, type Track } from "@/lib/curriculum";
+import { SYLLABUS, TIERS, type Track, TRACK_COUNT_LABEL } from "@/lib/curriculum";
 import { cn } from "@/lib/utils";
 
 /**
@@ -33,6 +33,7 @@ const ACCENT_RING: Record<Track["accent"], string> = {
   gold: "border-gold/60 bg-gold/15 shadow-gold/25",
   azure: "border-azure/60 bg-azure/15 shadow-azure/25",
   violet: "border-violet/60 bg-violet/15 shadow-violet/25",
+  mint: "border-mint/60 bg-mint/15 shadow-mint/25",
 };
 
 export function Roadmap() {
@@ -45,7 +46,7 @@ export function Roadmap() {
         overline="Syllabus"
         title={
           <>
-            Four tracks, from <span className="text-gradient">tax liabilities</span>{" "}
+            {TRACK_COUNT_LABEL} tracks, from <span className="text-gradient">tax liabilities</span>{" "}
             to <span className="text-gradient">swap lines</span>.
           </>
         }

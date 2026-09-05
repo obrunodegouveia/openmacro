@@ -303,6 +303,9 @@ function SheetColumn({
 }) {
   const opening = openingTotal(entity, side);
   const openingLines = (entity.openingLines ?? []).filter((line) => line.side === side);
+  // `${side}s` produced "liabilitys" in every one of these labels, which is
+  // what a screen reader actually said out loud.
+  const sideNoun = side === "asset" ? "assets" : "liabilities";
 
   return (
     <div className="rounded-xl border border-hairline bg-white/[0.03] p-3">
@@ -336,7 +339,7 @@ function SheetColumn({
               type="button"
               disabled={locked}
               onClick={() => onRemove(posting.id)}
-              aria-label={`Remove ${posting.shift.account} from ${entity.label} ${side}s`}
+              aria-label={`Remove ${posting.shift.account} from ${entity.label} ${sideNoun}`}
               className="flex w-full items-baseline justify-between gap-2 rounded-lg border border-mint/40 bg-mint/10 px-2 py-1.5 text-left disabled:cursor-default"
             >
               <span className="min-w-0 truncate text-[0.7rem] font-bold text-ink">
@@ -359,7 +362,7 @@ function SheetColumn({
         type="button"
         disabled={!armed}
         onClick={() => onDrop(entity.id, side)}
-        aria-label={`Place the selected entry on ${entity.label}'s ${side}s`}
+        aria-label={`Place the selected entry on ${entity.label}'s ${sideNoun}`}
         className={cn(
           "mt-2 w-full rounded-lg border border-dashed px-2 py-2 text-[0.7rem] font-bold transition-colors",
           armed

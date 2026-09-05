@@ -252,6 +252,51 @@ export const FORMULAS = {
     if (assets <= 0) return 0;
     return equity / assets;
   },
+
+  // -------------------------------------------------------------------------
+  // Reading a central bank balance sheet
+  // -------------------------------------------------------------------------
+
+  /**
+   * Reserve balances as the residual of the Fed's balance sheet:
+   * reserves = assets − currency − TGA − reverse repos − everything else.
+   *
+   * This is the identity the H.4.1's own Table 1 is built around, and it is
+   * the reason banks cannot choose how many reserves the system holds. The
+   * Fed sets the size of the asset side; the Treasury's cash balance, the
+   * public's demand for notes and the take-up at the reverse repo facility
+   * then decide how much of that is left over as reserves. Reserves are what
+   * is left, not what anyone asked for.
+   *
+   * Expects: `totalAssets`, `currency`, `tga`, `rrp`, `otherLiabilities`.
+   */
+  fed_reserve_balances: (inputs) =>
+    read(inputs, 'totalAssets') -
+    read(inputs, 'currency') -
+    read(inputs, 'tga') -
+    read(inputs, 'rrp') -
+    read(inputs, 'otherLiabilities'),
+
+  /**
+   * The "factors absorbing reserve balances": every liability that competes
+   * with reserves for room on a fixed asset side.
+   *
+   * Expects: `currency`, `tga`, `rrp`.
+   */
+  fed_factors_absorbing: (inputs) =>
+    read(inputs, 'currency') + read(inputs, 'tga') + read(inputs, 'rrp'),
+
+  /**
+   * Reserves as a share of the Fed's total assets.
+   *
+   * Chained: expects a `reserves` readout computed earlier in the same sim,
+   * plus `totalAssets`.
+   */
+  fed_reserves_share: (inputs) => {
+    const total = read(inputs, 'totalAssets');
+    if (total <= 0) return 0;
+    return read(inputs, 'reserves') / total;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;

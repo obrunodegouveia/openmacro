@@ -6,7 +6,7 @@ import { Section, SectionHeading } from "@/components/ui/section";
 import { AnswerList } from "@/components/site/answer-list";
 import { Badge } from "@/components/ui/badge";
 import { LEARN_ANSWERS, faqPageLd } from "@/lib/answers";
-import { SYLLABUS } from "@/lib/curriculum";
+import { SYLLABUS, TRACK_COUNT_LABEL } from "@/lib/curriculum";
 import { CourseMap } from "@/components/app/course-map";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
@@ -111,8 +111,8 @@ export default function LearnPage() {
                 },
                 {
                   icon: <GraduationCap className="size-5" aria-hidden />,
-                  title: "Work through the four tracks in order",
-                  body: "From what makes an unbacked token acceptable, through commercial banking and the Fed and ECB levers, to how a dollar crisis is contained. Each track builds the mechanism the next one needs.",
+                  title: `Work through the ${TRACK_COUNT_LABEL.toLowerCase()} tracks in order`,
+                  body: "From what makes an unbacked token acceptable, through commercial banking and the Fed and ECB levers, to how a dollar crisis is contained — and finally the Fed's own balance sheet, as published this week. Each track builds the mechanism the next one needs.",
                   href: "/#curriculum",
                   cta: "See the syllabus",
                 },
