@@ -20,11 +20,13 @@
  */
 
 import type { Course, Lesson, Module } from './schema';
+import { moduleFoundationsFiduciaryCurrency } from './lessons/module-01-foundations-fiduciary-currency';
 import { moduleWhereDoesMoneyComeFrom } from './lessons/module-01-where-does-money-come-from';
 import { moduleFedEcbLevers } from './lessons/module-03-fed-ecb-levers';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
+  moduleFoundationsFiduciaryCurrency,
   moduleWhereDoesMoneyComeFrom,
   // module-02-inflation-and-purchasing-power,
   moduleFedEcbLevers,
