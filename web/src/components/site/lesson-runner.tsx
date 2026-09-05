@@ -11,6 +11,13 @@ import { exerciseXp, type Exercise, type Lesson } from "@/lib/exercises";
 import { useAuth } from "@/components/site/auth-provider";
 import { getSupabase } from "@/lib/supabase";
 import { recordLessonComplete } from "@/lib/progress";
+import {
+  clearCompletion,
+  readCompletion,
+  readNoCompletion,
+  rememberCompletion,
+  subscribeToCompletion,
+} from "@/lib/handoff";
 import { cn } from "@/lib/utils";
 
 /**
@@ -35,10 +42,42 @@ import { cn } from "@/lib/utils";
  * the lessons are free and account-free, and the account only buys memory.
  */
 export function LessonRunner({ lesson }: { lesson: Lesson }) {
-  const [index, setIndex] = React.useState(0);
-  const [solvedIds, setSolvedIds] = React.useState<string[]>([]);
-
   const total = lesson.exercises.length;
+
+  /**
+   * A lesson finished just before an OAuth redirect, if there is one.
+   *
+   * Read through `useSyncExternalStore` rather than in an effect: this page is
+   * prerendered, and the store hook is what lets the server render "nothing
+   * parked" while the browser reads its own storage, with no hydration
+   * mismatch and no cascading render.
+   */
+  const parked = React.useSyncExternalStore(
+    subscribeToCompletion,
+    readCompletion,
+    readNoCompletion,
+  );
+  const restored = parked?.slug === lesson.slug ? parked : null;
+
+  /**
+   * `null` until the learner touches this lesson in this page load, at which
+   * point their own progress supersedes anything restored.
+   */
+  const [live, setLive] = React.useState<{ index: number; solvedIds: string[] } | null>(
+    null,
+  );
+
+  // Only the solved ids come back from storage; XP is recomputed from the
+  // lesson below, so a hand-edited entry cannot invent a score.
+  const state =
+    live ??
+    (restored
+      ? { index: total, solvedIds: restored.solvedIds }
+      : { index: 0, solvedIds: [] });
+
+  const { index, solvedIds } = state;
+  const setIndex = (next: number) => setLive({ ...state, index: next });
+
   const current = lesson.exercises[index];
   const finished = index >= total;
 
@@ -48,18 +87,31 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
 
   /** Idempotent: an exercise may report success more than once. */
   function markSolved(exercise: Exercise) {
-    setSolvedIds((current) =>
-      current.includes(exercise.id) ? current : [...current, exercise.id],
-    );
+    setLive((previous) => {
+      const base = previous ?? state;
+      return base.solvedIds.includes(exercise.id)
+        ? base
+        : { ...base, solvedIds: [...base.solvedIds, exercise.id] };
+    });
   }
 
   const currentSolved = current ? solvedIds.includes(current.id) : false;
   const progress = finished ? 1 : solvedIds.length / total;
 
-  const { learner } = useAuth();
+  const { enabled, learner, signingIn, signIn } = useAuth();
   const [saveState, setSaveState] = React.useState<"idle" | "saving" | "saved" | "failed">(
     "idle",
   );
+
+  /** Parks the result, then leaves for Google. */
+  const signInKeepingProgress = React.useCallback(() => {
+    rememberCompletion({
+      slug: lesson.slug,
+      solvedIds,
+      at: new Date().toISOString(),
+    });
+    void signIn();
+  }, [lesson.slug, solvedIds, signIn]);
 
   /**
    * Persists the result once, when the lesson finishes.
@@ -75,15 +127,20 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
 
     setSaveState("saving");
     recordLessonComplete(supabase, learner.id, learner.name, lesson.slug, earnedXp)
-      .then(() => setSaveState("saved"))
+      .then(() => {
+        // Saved: the handoff has done its job and must not replay.
+        clearCompletion();
+        setSaveState("saved");
+      })
       .catch(() => setSaveState("failed"));
   }, [finished, learner, lesson.slug, earnedXp]);
 
   function restart() {
-    setIndex(0);
-    setSolvedIds([]);
+    setLive({ index: 0, solvedIds: [] });
     savedRef.current = false;
     setSaveState("idle");
+    // Otherwise the restored completion would reappear on the next mount.
+    clearCompletion();
   }
 
   return (
@@ -129,6 +186,10 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
               earnedXp={earnedXp}
               onRestart={restart}
               saveState={saveState}
+              accountsEnabled={enabled}
+              signedIn={Boolean(learner)}
+              signingIn={signingIn}
+              onSignIn={signInKeepingProgress}
             />
           ) : current ? (
             <ExerciseView exercise={current} onSolved={() => markSolved(current)} />
@@ -144,7 +205,7 @@ export function LessonRunner({ lesson }: { lesson: Lesson }) {
               ? "Solved — carry on when you're ready."
               : "Answer correctly to continue."}
           </p>
-          <Button onClick={() => setIndex((i) => i + 1)} disabled={!currentSolved}>
+          <Button onClick={() => setIndex(index + 1)} disabled={!currentSolved}>
             {index + 1 === total ? "Finish" : "Continue"}
             <ArrowRight className="size-4" aria-hidden />
           </Button>
@@ -184,13 +245,20 @@ function LessonComplete({
   earnedXp,
   onRestart,
   saveState,
+  accountsEnabled,
+  signedIn,
+  signingIn,
+  onSignIn,
 }: {
   lesson: Lesson;
   earnedXp: number;
   onRestart: () => void;
   saveState: "idle" | "saving" | "saved" | "failed";
+  accountsEnabled: boolean;
+  signedIn: boolean;
+  signingIn: boolean;
+  onSignIn: () => void;
 }) {
-  const { enabled, learner, signingIn, signIn } = useAuth();
   return (
     <div className="glass rounded-card p-7 text-center shadow-2xl shadow-black/50 sm:p-10">
       <span className="mx-auto grid size-14 place-items-center rounded-2xl border border-mint/30 bg-mint/10">
@@ -225,11 +293,11 @@ function LessonComplete({
       </div>
 
       <SaveNote
-        enabled={enabled}
-        signedIn={Boolean(learner)}
+        enabled={accountsEnabled}
+        signedIn={signedIn}
         signingIn={signingIn}
         saveState={saveState}
-        onSignIn={() => void signIn()}
+        onSignIn={onSignIn}
       />
     </div>
   );
