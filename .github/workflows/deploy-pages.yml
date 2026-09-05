@@ -1,0 +1,53 @@
+# Rebuilds the public demo whenever `main` moves.
+#
+# Deploying by hand works, but a site that drifts from the branch is worse than
+# no site — someone reports a bug that was fixed weeks ago. This keeps them in
+# step. Only first-party actions are used, so there is no third-party action
+# with write access to the repository.
+name: Deploy web build to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Only the deploy job writes, and only to the gh-pages branch.
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Fail the deploy rather than publish a broken lesson.
+      - run: npm run typecheck
+      - run: npm run lint:content
+
+      # The demo is served from a project subpath, so assets need the prefix.
+      # 404.html is the SPA fallback: Pages has no rewrite rules, so a hard
+      # refresh on /lesson/... is served this file and the router takes over.
+      - run: npm run build:pages
+
+      - name: Publish to gh-pages
+        run: |
+          cd dist
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_SHA::7}"
+          git branch -M gh-pages
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages

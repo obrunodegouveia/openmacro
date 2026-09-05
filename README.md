@@ -4,6 +4,12 @@
 fractional-reserve banking.** Five minutes a day, aimed at teenagers and young
 adults who were never taught where money actually comes from.
 
+**▶ Try it: <https://obrunodegouveia.github.io/openmacro/>**
+
+No account needed — the lessons run entirely in the browser. Sign-in is hidden
+on the demo because it has no Supabase project configured; see
+[docs/cloud-sync.md](docs/cloud-sync.md).
+
 Open source, offline-first, and built so that writing a lesson is easier than
 writing a blog post.
 
