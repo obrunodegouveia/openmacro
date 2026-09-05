@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Module 1 · Lesson 1 — "Banks don't lend out the vault"
+ * Module 2 · Lesson 1 — "Banks don't lend out the vault"
  * ============================================================================
  *
  * Learning objective
