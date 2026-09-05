@@ -37,7 +37,7 @@ export CONCURRENCY="${CONCURRENCY:-80}"
 
 # --- Build-time public config ----------------------------------------------
 # Inlined into the client bundle by Next.js, so these are set at build time.
-export NEXT_PUBLIC_GITHUB_REPO="${NEXT_PUBLIC_GITHUB_REPO:-openmacro/openmacro}"
+export NEXT_PUBLIC_GITHUB_REPO="${NEXT_PUBLIC_GITHUB_REPO:-obrunodegouveia/openmacro}"
 export NEXT_PUBLIC_DISCORD_URL="${NEXT_PUBLIC_DISCORD_URL:-https://discord.gg/openmacro}"
 
 # Google OAuth client for openmacro.org. Public by design: a client id names

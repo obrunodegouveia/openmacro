@@ -43,7 +43,7 @@ images:
 substitutions:
   _IMAGE: us-central1-docker.pkg.dev/deep-atlas-484612-m0/openmacro/web
   _TAG: latest
-  _GITHUB_REPO: openmacro/openmacro
+  _GITHUB_REPO: obrunodegouveia/openmacro
   _DISCORD_URL: https://discord.gg/openmacro
   _SUPABASE_URL: ''
   _SUPABASE_ANON_KEY: ''

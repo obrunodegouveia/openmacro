@@ -45,11 +45,13 @@ export async function ContributorHub() {
         <div className="order-2 min-w-0 lg:order-1">
           <CodeSnippet
             code={SAMPLE_LESSON_JSON}
-            filename="src/content/lessons/module-03-fed-ecb-levers/lesson-02-rrp-floor-mechanics.json"
+            filename="packages/core/src/content/lessons/module-03-fed-ecb-levers/lesson-02-rrp-floor-mechanics.json"
           />
           <p className="mt-3 text-xs leading-relaxed text-ink-faint">
             Validated in CI against{" "}
-            <code className="font-mono text-ink-muted">src/content/schema.ts</code>{" "}
+            <code className="font-mono text-ink-muted">
+              packages/core/src/content/schema.ts
+            </code>{" "}
             by{" "}
             <code className="font-mono text-ink-muted">npm run lint:content</code>,
             which rejects any scenario whose expected postings leave a balance
