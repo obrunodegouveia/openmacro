@@ -32,7 +32,7 @@ import {
   rememberCompletion,
   subscribeToCompletion,
 } from "@/lib/handoff";
-import { GoogleIcon } from "@/components/ui/icons";
+import { GoogleSignIn } from "@/components/site/google-sign-in";
 import { cn } from "@/lib/utils";
 
 /**
@@ -268,7 +268,7 @@ function LessonComplete({
   state: ReturnType<typeof createSession>;
   onRestart: () => void;
 }) {
-  const { enabled, learner, signingIn, signIn } = useAuth();
+  const { enabled, learner } = useAuth();
   const [saveState, setSaveState] = React.useState<
     "idle" | "saving" | "saved" | "failed"
   >("idle");
@@ -312,9 +312,15 @@ function LessonComplete({
       .catch(() => setSaveState("failed"));
   }, [learner, lesson.id, xpEarned]);
 
-  function signInKeepingProgress() {
+  /**
+   * Parks the result before any sign-in attempt.
+   *
+   * In-page sign-in does not need it — the component never unmounts — but the
+   * fallback is a full-page redirect, and by the time we know which path was
+   * taken the page may already be gone.
+   */
+  function parkProgress() {
     rememberCompletion({ slug: lesson.id, xp: xpEarned, at: new Date().toISOString() });
-    void signIn();
   }
 
   const perfect = state.missed.length === 0 && state.xpEarned > 0;
@@ -379,15 +385,15 @@ function LessonComplete({
               <p className="text-sm font-semibold text-ink-muted">
                 Sign in to keep this XP and start a streak.
               </p>
-              <Button
-                variant="outline"
-                className="mt-3"
-                disabled={signingIn}
-                onClick={signInKeepingProgress}
-              >
-                <GoogleIcon className="size-4" aria-hidden />
-                {signingIn ? "Opening Google" : "Continue with Google"}
-              </Button>
+              {/*
+                No `redirectTo`: signing in here happens in place, so the run
+                stays on screen and the save effect above fires the moment a
+                learner appears. The parked completion is still written first,
+                because the fallback path is a full-page redirect.
+              */}
+              <div className="mt-3 flex justify-center" onClickCapture={parkProgress}>
+                <GoogleSignIn />
+              </div>
               <p className="mt-3 text-xs text-ink-faint">
                 Optional. The lessons are free either way.
               </p>

@@ -3,6 +3,7 @@
 import * as React from "react";
 import type { Session } from "@supabase/supabase-js";
 import { cloudSyncConfigured, getSupabase } from "@/lib/supabase";
+import { onGoogleCredential } from "@/lib/google-identity";
 
 export interface Learner {
   id: string;
@@ -18,8 +19,18 @@ interface AuthValue {
   learner: Learner | null;
   signingIn: boolean;
   error: string | null;
-  /** Optional path to land on afterwards; defaults to the current page. */
+  /**
+   * The redirect flow. Kept as a fallback for browsers where Google's script
+   * cannot load — it works, but the consent screen shows the Supabase host.
+   *
+   * Optional path to land on afterwards; defaults to the current page.
+   */
   signIn: (redirectTo?: string) => Promise<void>;
+  /**
+   * The preferred path: an ID token obtained in-page, verified by Supabase.
+   * No redirect, and Google's consent screen names this site.
+   */
+  signInWithGoogleCredential: (credential: string, nonce: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -89,6 +100,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const signInWithGoogleCredential = React.useCallback(
+    async (credential: string, nonce: string) => {
+      const supabase = getSupabase();
+      if (!supabase) throw new Error("Accounts are not configured in this build.");
+
+      setSigningIn(true);
+      setError(null);
+      try {
+        const { error: idError } = await supabase.auth.signInWithIdToken({
+          provider: "google",
+          token: credential,
+          // Raw nonce: Supabase checks it hashes to the value inside the token.
+          nonce,
+        });
+        if (idError) throw idError;
+      } catch (cause) {
+        const message =
+          cause instanceof Error ? cause.message : "Could not sign in.";
+        setError(message);
+        throw new Error(message);
+      } finally {
+        setSigningIn(false);
+      }
+    },
+    [],
+  );
+
+  /**
+   * Google's credential callback is global to the page, so one subscription
+   * here handles whichever button was pressed. Doing it per-button would mean
+   * every mounted button racing to exchange the same token.
+   */
+  React.useEffect(
+    () =>
+      onGoogleCredential((credential, nonce) => {
+        void signInWithGoogleCredential(credential, nonce).catch(() => {
+          // The provider already surfaced the message through `error`.
+        });
+      }),
+    [signInWithGoogleCredential],
+  );
+
   const signOut = React.useCallback(async () => {
     const supabase = getSupabase();
     if (!supabase) return;
@@ -119,9 +172,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signingIn,
       error,
       signIn,
+      signInWithGoogleCredential,
       signOut,
     }),
-    [loading, learner, signingIn, error, signIn, signOut],
+    [loading, learner, signingIn, error, signIn, signInWithGoogleCredential, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

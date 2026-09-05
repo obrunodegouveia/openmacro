@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { MODULES } from "@openmacro/core/content";
-import { GoogleIcon } from "@/components/ui/icons";
+import { GoogleSignIn } from "@/components/site/google-sign-in";
 import { Button } from "@/components/ui/button";
 import { CentralBankBalanceSheet } from "@/components/site/balance-sheet";
 import { useAuth } from "@/components/site/auth-provider";
@@ -35,7 +35,7 @@ const LESSON_COUNT = MODULES.reduce((sum, module) => sum + module.lessons.length
  * default for a fork.
  */
 function StartCta() {
-  const { enabled, loading, learner, signingIn, signIn } = useAuth();
+  const { enabled, learner } = useAuth();
 
   const browse = (
     <p className="mt-4 text-sm text-ink-faint">
@@ -79,14 +79,13 @@ function StartCta() {
 
   return (
     <div>
-      <Button
-        size="lg"
-        disabled={loading || signingIn}
-        onClick={() => void signIn("/dashboard")}
-      >
-        <GoogleIcon className="size-4" aria-hidden />
-        {signingIn ? "Opening Google" : "Sign in to start learning"}
-      </Button>
+      <p className="mb-3 font-display text-lg font-extrabold tracking-tight">
+        Start learning
+      </p>
+      <GoogleSignIn
+        redirectTo="/dashboard"
+        fallbackLabel="Sign in to start learning"
+      />
       {browse}
     </div>
   );

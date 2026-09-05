@@ -40,6 +40,12 @@ export CONCURRENCY="${CONCURRENCY:-80}"
 export NEXT_PUBLIC_GITHUB_REPO="${NEXT_PUBLIC_GITHUB_REPO:-openmacro/openmacro}"
 export NEXT_PUBLIC_DISCORD_URL="${NEXT_PUBLIC_DISCORD_URL:-https://discord.gg/openmacro}"
 
+# Google OAuth client for openmacro.org. Public by design: a client id names
+# the application, and every check that matters is the authorised origin list
+# held by Google. A fork should set its own, or leave it empty and get the
+# redirect fallback.
+export NEXT_PUBLIC_GOOGLE_CLIENT_ID="${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-308779065866-9ri4v6221r7umloq22mnr2nevn41asfj.apps.googleusercontent.com}"
+
 # --- Guard rails ------------------------------------------------------------
 # Every script runs with these; a failed command must never be ignored.
 set -euo pipefail

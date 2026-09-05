@@ -6,6 +6,7 @@ import { ArrowRight, LogOut, User } from "lucide-react";
 import { GoogleIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/site/auth-provider";
+import { GoogleSignIn } from "@/components/site/google-sign-in";
 import { cn } from "@/lib/utils";
 
 /**
@@ -98,7 +99,7 @@ export function AccountPanel({
   /** Where to land after signing in. Defaults to the current page. */
   redirectTo?: string;
 }) {
-  const { enabled, loading, learner, signingIn, error, signIn, signOut } = useAuth();
+  const { enabled, learner, error, signOut } = useAuth();
 
   if (!enabled) return null;
 
@@ -138,15 +139,7 @@ export function AccountPanel({
             tab, and carries them to your phone. Signing in with Google creates
             it — there is no separate sign-up, and no password to remember.
           </p>
-          <Button
-            size="lg"
-            className="mt-6 h-12"
-            disabled={loading || signingIn}
-            onClick={() => void signIn(redirectTo)}
-          >
-            <GoogleIcon className="size-4" aria-hidden />
-            {signingIn ? "Opening Google" : "Continue with Google"}
-          </Button>
+          <GoogleSignIn className="mt-6" redirectTo={redirectTo} />
 
           {error ? (
             <p role="alert" className="mt-3 text-sm font-bold text-coral">
