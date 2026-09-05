@@ -10,36 +10,40 @@ import { useAuth } from "@/components/site/auth-provider";
 /**
  * The sign-in control.
  *
- * Renders Google's own button, which is the only way to obtain an ID token
- * in-page — and the reason to want one is that Google's consent screen then
- * names openmacro.org instead of the Supabase project URL.
+ * Uses Google Identity Services so the token is obtained in-page — that is
+ * what makes Google's consent screen name openmacro.org instead of the
+ * Supabase project URL.
  *
- * The credential is handled centrally by the auth provider, not here: the
- * Google callback is global, so a page with two buttons cannot tell which one
- * was pressed. This component only renders a button and, if asked, navigates
- * once a learner appears.
+ * Google's own button is rendered, but kept off screen and driven by ours.
+ * Two reasons:
  *
- * If the script cannot load — an extension blocks it, or the network is down —
- * it falls back to our own button and the redirect flow. Sign-in still works
- * there; the consent screen just shows the Supabase host again.
+ *   1. It ignores `hl` and follows the viewer's Google *account* language, so
+ *      an English page could show a Greek button. Wrapping it puts the wording
+ *      back under our control.
+ *   2. It cannot be styled, and the hero's call to action is not "Continue
+ *      with Google", it is "Sign in to start learning".
+ *
+ * `renderButton` produces same-origin DOM — a `div[role="button"]` — so
+ * forwarding the click is a real click on a real element, synchronously inside
+ * the user's own gesture, which is what keeps the popup from being blocked.
+ * If that element ever stops existing, this falls back to the redirect flow
+ * rather than becoming a dead button.
  */
 export function GoogleSignIn({
   /** Where to go once signed in. Omit to stay put, which is what a lesson wants. */
   redirectTo,
-  /** Label for the fallback button. */
-  fallbackLabel = "Continue with Google",
+  /** Our button's label. */
+  label = "Continue with Google",
   className,
 }: {
   redirectTo?: string;
-  fallbackLabel?: string;
+  label?: string;
   className?: string;
 }) {
   const router = useRouter();
   const { signIn, signingIn, learner, error } = useAuth();
   const hostRef = React.useRef<HTMLDivElement>(null);
-  const [mode, setMode] = React.useState<"loading" | "google" | "fallback">(
-    GOOGLE_CLIENT_ID ? "loading" : "fallback",
-  );
+  const [ready, setReady] = React.useState(false);
 
   React.useEffect(() => {
     if (!GOOGLE_CLIENT_ID) return;
@@ -50,17 +54,17 @@ export function GoogleSignIn({
         if (cancelled || !hostRef.current) return;
         google.accounts.id.renderButton(hostRef.current, {
           type: "standard",
-          theme: "filled_black",
+          theme: "outline",
           size: "large",
           text: "continue_with",
-          shape: "pill",
+          shape: "rectangular",
           logo_alignment: "left",
           width: 300,
         });
-        setMode("google");
+        setReady(true);
       })
       .catch(() => {
-        if (!cancelled) setMode("fallback");
+        // Leave `ready` false: the button below falls back to the redirect.
       });
 
     return () => {
@@ -82,31 +86,65 @@ export function GoogleSignIn({
     wasSignedIn.current = signedIn;
   }, [signedIn, redirectTo, router]);
 
+  /** When the in-page attempt was last made, so a second press can escape. */
+  const attemptedAt = React.useRef(0);
+
+  function start() {
+    // Already failed once — retrying the same path would fail the same way.
+    if (error) {
+      void signIn(redirectTo);
+      return;
+    }
+
+    /**
+     * Second press, a few seconds after the first, still signed out.
+     *
+     * The likeliest cause is a popup that never opened — mobile browsers block
+     * them more aggressively, and a forwarded click is exactly the kind they
+     * distrust. Rather than guess at that with a timer, which would hijack a
+     * flow that was working fine, this treats a deliberate second press as the
+     * signal and switches to the redirect.
+     */
+    const now = Date.now();
+    if (attemptedAt.current && now - attemptedAt.current > 3000) {
+      void signIn(redirectTo);
+      return;
+    }
+    attemptedAt.current = now;
+
+    // Same tick as the user's click, so the popup keeps its gesture.
+    const inner = hostRef.current?.querySelector<HTMLElement>('[role="button"]');
+    if (ready && inner) {
+      inner.click();
+      return;
+    }
+
+    // No Google button to drive — the script was blocked, or its markup
+    // changed. The redirect still signs people in.
+    void signIn(redirectTo);
+  }
+
   return (
     <div className={className}>
-      {/* Google renders into this node, which stays mounted so the handle is stable. */}
-      <div ref={hostRef} hidden={mode !== "google"} />
+      <Button size="lg" disabled={signingIn} onClick={start}>
+        <GoogleIcon className="size-4" aria-hidden />
+        {signingIn ? "Opening Google" : label}
+      </Button>
 
       {/*
-        If the token exchange fails — Supabase rejecting the audience, a clock
-        skew, a network blip — the in-page path is a dead end with no way out.
-        Showing the redirect button alongside the error means there is always a
-        working way to sign in, even if this flow turns out to be misconfigured.
+        Google's button, present and clickable but not shown. `display: none`
+        would stop it rendering at all, so it is taken out of flow and hidden
+        from assistive technology instead — ours is the real control.
       */}
-      {mode !== "google" || error ? (
-        <Button
-          size="lg"
-          disabled={mode === "loading" || signingIn}
-          onClick={() => void signIn(redirectTo)}
-        >
-          <GoogleIcon className="size-4" aria-hidden />
-          {signingIn ? "Opening Google" : error ? "Continue with Google" : fallbackLabel}
-        </Button>
-      ) : null}
+      <div
+        ref={hostRef}
+        aria-hidden
+        className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
+      />
 
       {error ? (
         <p role="alert" className="mt-3 max-w-sm text-sm leading-relaxed text-coral">
-          {error} — try the button above, which uses the older redirect sign-in.
+          {error} — press the button again to try the older redirect sign-in.
         </p>
       ) : null}
     </div>

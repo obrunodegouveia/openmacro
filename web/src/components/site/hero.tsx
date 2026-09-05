@@ -79,12 +79,9 @@ function StartCta() {
 
   return (
     <div>
-      <p className="mb-3 font-display text-lg font-extrabold tracking-tight">
-        Start learning
-      </p>
       <GoogleSignIn
         redirectTo="/dashboard"
-        fallbackLabel="Sign in to start learning"
+        label="Sign in to start learning"
       />
       {browse}
     </div>
