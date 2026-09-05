@@ -105,7 +105,7 @@ export function Footer() {
           <Disclosure
             icon={<ShieldCheck className="size-4 text-mint" aria-hidden />}
             title="Non-custodial rewards"
-            body="MacroXP and MintBucks are a learning score kept on-device. Prize pools are funded and awarded by their sponsor \u2014 we never hold the money."
+            body="MacroXP and MintBucks are a learning score, kept on-device unless you sign in to sync it. Prize pools are funded and awarded by their sponsor \u2014 we never hold the money."
           />
         </div>
 

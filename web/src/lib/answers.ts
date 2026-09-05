@@ -84,7 +84,7 @@ export const TEACH_ANSWERS: Answer[] = [
   {
     question: "Is it safe for children? What data do you collect?",
     answer:
-      "The website has no analytics, no advertising and no third-party tracking scripts, and you can read every page and play the demo without an account. The app requires no sign-in: progress and reward points stay on the device and are never uploaded. We do not knowingly collect personal information from children under 13. The only personal data collected anywhere is an email address, and only if an adult chooses to join the launch waitlist.",
+      "The website has no analytics, no advertising and no third-party tracking scripts, and you can read every page and finish every lesson without an account. Signed out, progress and reward points stay on the device and are never uploaded. Signing in is optional, needs a Google Account — which Google does not issue to under-13s — and saves only your XP, your day streak and which lessons you have finished, stored in the EU. We do not knowingly collect personal information from children under 13.",
   },
   {
     question: "What if I don't understand economics well enough to teach it?",

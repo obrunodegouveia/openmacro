@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 /**
  * Plain-language privacy notice covering the website and the app.
  *
- * This documents the product decisions actually implemented in this repo (no
- * analytics, no accounts, on-device progress, waitlist email only). It is not
- * legal advice: have counsel review it before launch, and update it the moment
- * the data flows change.
+ * This documents the product decisions actually implemented in this repo: no
+ * analytics, optional Google sign-in, and progress stored per learner under
+ * row-level security. It is not legal advice: have counsel review it before
+ * launch, and update it the moment the data flows change.
  */
 export default function PrivacyPage() {
   return (
@@ -40,21 +40,30 @@ export default function PrivacyPage() {
       <div className="mt-10 flex flex-col gap-10">
         <Article title="The short version">
           <p>
-            You can read every page and play every simulation on this site
-            without an account, and we do not run analytics, advertising or
-            third-party tracking scripts. The only personal data we ask for is
-            an email address, and only if you choose to join the launch
-            waitlist.
+            You can read every page, play every simulation and finish every
+            lesson on this site without an account, and we do not run
+            analytics, advertising or third-party tracking scripts. If you
+            choose to sign in with Google, we save your XP and day streak so
+            they follow you between devices — that is the only reason an
+            account exists, and the only personal data we hold.
           </p>
         </Article>
 
         <Article title="What we collect">
           <ul className="ml-5 list-disc space-y-2">
             <li>
-              <strong className="text-ink">Waitlist signups.</strong> The email
-              address you type and the role you pick (learner, parent, educator
-              or developer). Used to email you at launch and when a new module
-              ships. Nothing else.
+              <strong className="text-ink">If you sign in with Google.</strong>{" "}
+              Google sends us your name, email address, profile picture and your
+              Google account identifier. We store your name against your
+              progress, and the email address is held by our authentication
+              provider so you can sign back in.
+            </li>
+            <li>
+              <strong className="text-ink">Your progress, once signed in.</strong>{" "}
+              Total XP, your day streak, the date of your last completed lesson,
+              and for each lesson your best score, how many times you have
+              finished it and when. No answers, no timings, nothing about how
+              you played.
             </li>
             <li>
               <strong className="text-ink">Server logs.</strong> Our host
@@ -74,7 +83,10 @@ export default function PrivacyPage() {
           <ul className="ml-5 list-disc space-y-2">
             <li>No cookies for advertising, profiling or cross-site tracking.</li>
             <li>No analytics or session-recording services.</li>
-            <li>No names, addresses, phone numbers or payment details.</li>
+            <li>
+              No addresses, phone numbers or payment details. We never ask for a
+              password: Google handles sign-in, so there is none for us to hold.
+            </li>
             <li>No selling, renting or trading of any data, ever.</li>
           </ul>
         </Article>
@@ -87,14 +99,21 @@ export default function PrivacyPage() {
           </p>
           <ul className="ml-5 mt-3 list-disc space-y-2">
             <li>
-              The app requires no account and no sign-in. Lesson progress,
-              streaks and reward points are stored on the device and are never
-              uploaded.
+              No account is needed to learn. Every lesson, on the site and in
+              the app, plays in full without signing in, and while you are
+              signed out progress stays on the device and is never uploaded.
+            </li>
+            <li>
+              Signing in is optional and requires a Google Account, which Google
+              does not issue to children under 13 — and under 16 in some
+              countries. A child using a Family Link account signs in only with
+              their parent&apos;s approval.
             </li>
             <li>
               We do not knowingly collect personal information from children
-              under 13. The waitlist form asks that anyone under 13 have a
-              parent or guardian sign up instead.
+              under 13. If you believe a child has signed in, write to{" "}
+              <MailLink /> and we will delete the account and everything
+              attached to it.
             </li>
             <li>
               MacroXP and MintBucks are a learning score. They are not
@@ -118,41 +137,58 @@ export default function PrivacyPage() {
               other child-to-stranger communication anywhere in the product.
             </li>
             <li>
-              If you believe a child has given us an email address, write to{" "}
-              <MailLink /> and we will delete it. No proof of identity is
-              required to ask for a deletion.
+              No proof of identity is required to ask for a deletion, and we
+              never ask a child to prove anything before honouring one.
             </li>
           </ul>
         </Article>
 
         <Article title="Where the data lives">
           <p>
-            The website runs on Google Cloud Run. Waitlist signups are recorded
-            in Google Cloud Logging and, where a mailing provider is configured,
-            forwarded to it so we can send the launch email. We keep waitlist
-            entries until you unsubscribe or ask for deletion, whichever comes
-            first.
+            The website runs on Google Cloud Run. Accounts and progress are
+            stored with Supabase, in their West EU (Ireland) region — learner
+            data does not leave the EU. Sign-in itself is handled by Google.
+          </p>
+          <p className="mt-3">
+            Every row is protected by database row-level security keyed to your
+            account, so one learner cannot read another&apos;s progress, and the
+            key shipped in the website can only ever reach your own rows. We
+            keep your progress until you ask us to delete it.
           </p>
         </Article>
 
         <Article title="Your choices">
           <ul className="ml-5 list-disc space-y-2">
-            <li>Every email we send carries a one-click unsubscribe link.</li>
             <li>
-              Email <MailLink /> to see, correct or delete what we hold. We
-              answer within 30 days.
+              Sign out at any time. You can keep using every lesson signed out.
             </li>
             <li>
-              Delete the app to erase all on-device progress. Nothing survives
-              on our side.
+              Email <MailLink /> to see, correct or delete what we hold,
+              including your whole account. We answer within 30 days.
+            </li>
+            <li>
+              You can also revoke OpenMacro&apos;s access from your{" "}
+              <a
+                href="https://myaccount.google.com/permissions"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-mint-bright underline underline-offset-4"
+              >
+                Google account permissions
+              </a>
+              .
+            </li>
+            <li>
+              Delete the app to erase on-device progress. If you never signed
+              in, nothing survives on our side.
             </li>
           </ul>
         </Article>
 
         <Article title="Changes and questions">
           <p>
-            Material changes will be posted here with a new date, and anyone on
-            the waitlist gets an email. This notice lives in the same
+            Material changes will be posted here with a new date. This notice
+            lives in the same
             open-source repository as the site, so its full history is public —
             read it on{" "}
             <a

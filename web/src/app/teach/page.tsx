@@ -170,22 +170,27 @@ export default function TeachPage() {
               className="flex items-center gap-2 font-display text-xl font-extrabold"
             >
               <ShieldCheck className="size-5 text-mint-bright" aria-hidden />
-              What we collect from your child: nothing
+              What we collect from your child
             </h2>
             <ul className="mt-3 flex max-w-2xl list-disc flex-col gap-2 pl-5 leading-relaxed text-ink-muted">
-              <li>No account or sign-in is required to learn.</li>
+              <li>
+                Nothing, unless they sign in. Every lesson plays in full without
+                an account, and signed out, progress and streaks stay on the
+                device and are never uploaded.
+              </li>
               <li>No analytics, advertising or third-party tracking scripts.</li>
               <li>
-                Progress, streaks and reward points stay on the device and are
-                never uploaded.
+                Signing in is optional and needs a Google Account, which Google
+                does not issue to under-13s. It saves one thing: their XP and
+                day streak, so those follow them to another device.
               </li>
               <li>
                 Reward points are a learning score — not money, not a wallet,
                 with no way to buy or cash them out.
               </li>
               <li>
-                The only personal data collected anywhere is an email address,
-                and only if an adult joins the launch waitlist.
+                Accounts and progress are stored in the EU (Ireland), and one
+                learner can never read another&apos;s.
               </li>
             </ul>
             <Link
