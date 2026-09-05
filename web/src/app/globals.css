@@ -74,8 +74,21 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  /* Anchor targets clear the sticky header. */
+  /*
+   * NOT `scroll-behavior: smooth`.
+   *
+   * On every client-side navigation the App Router calls `scrollIntoView()` on
+   * each top-level element of the incoming page. The footer comes first in that
+   * list, and a smooth scroll is asynchronous: by the time the calls for <main>
+   * and the header run, nothing has moved yet, so they measure `top: 0`, decide
+   * no scroll is needed, and do nothing. The queued glide to the footer is left
+   * as the only real movement — so every link landed at the bottom of the page
+   * it opened. Next tries to suppress smooth scrolling for exactly this, and the
+   * guard does not hold through React's FragmentInstance path.
+   *
+   * In-page anchors keep their glide through <SmoothAnchors />, which is scoped
+   * to same-page hash links and cannot be mistaken for a route transition.
+   */
   scroll-padding-top: 5.5rem;
   color-scheme: dark;
 }
@@ -159,7 +172,6 @@ body::before {
 
 /* Respect the OS reduced-motion setting for every animation on the site. */
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
   *,
   *::before,
   *::after {

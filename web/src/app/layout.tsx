@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 import { AuthProvider } from "@/components/site/auth-provider";
+import { SmoothAnchors } from "@/components/site/smooth-anchors";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -88,6 +89,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+        <SmoothAnchors />
         {/* Inert when no Supabase project is configured — see lib/supabase.ts. */}
         <AuthProvider>{children}</AuthProvider>
       </body>

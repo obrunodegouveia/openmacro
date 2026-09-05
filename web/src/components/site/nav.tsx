@@ -3,10 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { motion, useScroll, useMotionValueEvent } from "motion/react";
-import { Menu, X } from "lucide-react";
+import { LayoutDashboard, Menu, X } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { AccountButton } from "@/components/site/account-button";
+import { useAuth } from "@/components/site/auth-provider";
 import { GITHUB_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ export function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const { scrollY } = useScroll();
+  const { learner } = useAuth();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 24);
@@ -55,6 +57,21 @@ export function Nav() {
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">
+          {/*
+            Signed in, the dashboard is a place, and places belong in the nav
+            with the other places. The account chip on the right links there
+            too, but an avatar is an identity, not a signpost — nobody clicks
+            their own name looking for their progress.
+          */}
+          {learner ? (
+            <Link
+              href="/dashboard"
+              className="mr-1 inline-flex items-center gap-1.5 rounded-lg border border-mint/30 bg-mint/10 px-3 py-2 text-sm font-bold text-mint-bright transition-colors hover:border-mint/60 hover:bg-mint/15"
+            >
+              <LayoutDashboard className="size-4" aria-hidden />
+              Dashboard
+            </Link>
+          ) : null}
           {LINKS.map((link) => (
             <Link
               key={link.href}
@@ -96,6 +113,16 @@ export function Nav() {
           className="overflow-hidden border-t border-hairline bg-canvas/95 backdrop-blur-xl md:hidden"
         >
           <div className="flex flex-col gap-1 px-5 py-4">
+            {learner ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setOpen(false)}
+                className="mb-1 inline-flex items-center gap-2 rounded-lg border border-mint/30 bg-mint/10 px-3 py-3 text-sm font-bold text-mint-bright"
+              >
+                <LayoutDashboard className="size-4" aria-hidden />
+                Dashboard
+              </Link>
+            ) : null}
             {LINKS.map((link) => (
               <Link
                 key={link.href}

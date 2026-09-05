@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, LogOut, User } from "lucide-react";
+import { ArrowRight, ChevronRight, LogOut, User } from "lucide-react";
 import { GoogleIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/site/auth-provider";
@@ -57,16 +57,22 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex items-center gap-2">
-      {/* The name is the way into the dashboard — the obvious place to click. */}
+      {/*
+        Also a way into the dashboard, but not the only one — the nav carries a
+        labelled "Dashboard" link, because a name reads as a label rather than a
+        destination. The chevron is here to say this chip is clickable at all.
+      */}
       <Link
         href="/dashboard"
         onClick={onNavigate}
-        className="flex items-center gap-2 rounded-xl border border-hairline bg-white/5 px-3 py-1.5 transition-colors hover:border-mint/50 hover:bg-white/10"
+        aria-label={`${learner.name} — open your progress`}
+        className="flex items-center gap-2 rounded-xl border border-hairline bg-white/5 py-1.5 pl-3 pr-2 transition-colors hover:border-mint/50 hover:bg-white/10"
       >
         <Avatar learner={learner} />
         <span className="max-w-[10rem] truncate text-sm font-bold text-ink">
           {learner.name}
         </span>
+        <ChevronRight className="size-4 shrink-0 text-ink-faint" aria-hidden />
       </Link>
       <Button
         variant="ghost"
