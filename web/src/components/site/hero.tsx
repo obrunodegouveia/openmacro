@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
-import { ArrowDown, Sparkles } from "lucide-react";
-import { GithubIcon } from "@/components/ui/icons";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { MODULES } from "@openmacro/core/content";
+import { GoogleIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { CentralBankBalanceSheet } from "@/components/site/balance-sheet";
-import { GITHUB_URL } from "@/lib/site";
+import { useAuth } from "@/components/site/auth-provider";
 
 /**
  * Hero.
@@ -18,6 +20,78 @@ import { GITHUB_URL } from "@/lib/site";
  * Framer Motion is reserved for the balance-sheet widget, which is below the
  * fold on a phone and genuinely interactive.
  */
+/** Read from the course itself, so the headline number cannot go stale. */
+const LESSON_COUNT = MODULES.reduce((sum, module) => sum + module.lessons.length, 0);
+
+/**
+ * The single call to action.
+ *
+ * Signing in is the front door: it is what starts a streak and what makes
+ * progress survive closing the tab. But the site's whole promise — and its
+ * COPPA notice — is that no account is required to learn, so the way past it
+ * stays one line below rather than disappearing.
+ *
+ * Degrades to a plain link when the build has no account backend, which is the
+ * default for a fork.
+ */
+function StartCta() {
+  const { enabled, loading, learner, signingIn, signIn } = useAuth();
+
+  const browse = (
+    <p className="mt-4 text-sm text-ink-faint">
+      Or{" "}
+      <Link
+        href="/learn"
+        className="text-ink-muted underline underline-offset-4 hover:text-mint-bright"
+      >
+        browse all {LESSON_COUNT} lessons
+      </Link>{" "}
+      — no account needed.
+    </p>
+  );
+
+  if (!enabled) {
+    return (
+      <div>
+        <Button asChild size="lg">
+          <Link href="/learn">
+            Start learning
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  if (learner) {
+    return (
+      <div>
+        <Button asChild size="lg">
+          <Link href="/dashboard">
+            Continue learning
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </Button>
+        {browse}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <Button
+        size="lg"
+        disabled={loading || signingIn}
+        onClick={() => void signIn("/dashboard")}
+      >
+        <GoogleIcon className="size-4" aria-hidden />
+        {signingIn ? "Opening Google" : "Sign in to start learning"}
+      </Button>
+      {browse}
+    </div>
+  );
+}
+
 export function Hero() {
   return (
     <section
@@ -44,25 +118,14 @@ export function Hero() {
             banking, and credit creation — one balance sheet entry at a time.
           </p>
 
-          <div className="rise rise-2 mt-9 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <a href="#demo">
-                Try Web Demo
-                <ArrowDown className="size-4" aria-hidden />
-              </a>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">
-                <GithubIcon className="size-4" aria-hidden />
-                Contribute on GitHub
-              </a>
-            </Button>
+          <div className="rise rise-2 mt-9">
+            <StartCta />
           </div>
 
           <dl className="rise rise-3 mt-11 grid max-w-lg grid-cols-3 gap-4 border-t border-hairline pt-7">
             {[
               { value: "4", label: "Balance sheet tiers" },
-              { value: "30", label: "Lessons drafted" },
+              { value: String(LESSON_COUNT), label: "Lessons live" },
               { value: "100%", label: "Free, forever" },
             ].map((stat) => (
               <div key={stat.label}>

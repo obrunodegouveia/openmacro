@@ -41,7 +41,11 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
         disabled={signingIn}
         onClick={() => {
           onNavigate?.();
-          void signIn();
+          // Somebody signing in from the header is not mid-lesson, so the
+          // dashboard is where they want to end up. Returning them to the page
+          // they happened to be on leaves them signed in and looking at
+          // nothing that changed.
+          void signIn("/dashboard");
         }}
       >
         <GoogleIcon className="size-4" aria-hidden />
