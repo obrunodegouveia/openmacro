@@ -4,10 +4,10 @@
 fractional-reserve banking.** Five minutes a day, aimed at teenagers and young
 adults who were never taught where money actually comes from.
 
-**▶ Try it: <https://obrunodegouveia.github.io/openmacro/>**
+**▶ Play the course: <https://openmacro.org/learn>**
 
-No account needed — the lessons run entirely in the browser. Sign-in is hidden
-on the demo because it has no Supabase project configured; see
+No account needed — every lesson runs in the browser. Signing in with Google
+saves your XP and day streak across devices and nothing else; see
 [docs/cloud-sync.md](docs/cloud-sync.md).
 
 Open source, offline-first, and built so that writing a lesson is easier than
@@ -15,12 +15,33 @@ writing a blog post.
 
 ---
 
+## Where things run
+
+| | |
+|---|---|
+| **openmacro.org** | The course on the web — Next.js, in `web/`. This is what learners play. |
+| **iOS / Android** | The Expo app at the repository root. |
+| **`packages/core`** | Lesson content, the schema and the grading engine. Shared by both, so a lesson is written once. |
+
+The mobile app can still be run in a browser with `npm run web` for quick
+component work, but that is a debugging convenience, not a deployment target —
+the web course is the Next.js site.
+
 ## Status
 
-MVP. One module ships today — *Where Does Money Come From?* — a complete
-four-step lesson exercising all four challenge types. The engine, schema,
-on-device progress and contributor tooling are done; the content library is
-where help is wanted.
+Four modules ship today — 30 lessons and 116 challenges across all five
+challenge types, from what money is through to diagnosing a crisis while it
+happens. The engine, schema, progress sync and contributor tooling are done.
+
+| Module | Lessons |
+|---|---|
+| Foundations of Fiduciary Currency | 6 |
+| The Commercial–Central Bank Interface | 8 |
+| The Fed & ECB Levers | 9 |
+| Crisis Architecture & The Global Dollar | 7 |
+
+Content is still where help is most wanted: more lessons, more languages, and
+review from people who teach this for a living.
 
 Optional Google sign-in syncs progress across devices — see
 [docs/cloud-sync.md](docs/cloud-sync.md). It is off unless configured, so a

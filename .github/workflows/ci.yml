@@ -1,0 +1,57 @@
+# Checks every push to `main` and every pull request.
+#
+# This used to also publish the Expo web export to GitHub Pages. That target is
+# retired: the mobile app is now iOS and Android only, and the web version of
+# the course is the Next.js site at openmacro.org, which deploys from
+# `web/deploy/deploy.sh`. Keeping two playable web builds meant two things to
+# keep in step, and the one nobody was watching would go stale.
+#
+# Only first-party actions are used, and the workflow has read-only access.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 22.18+ : `module.registerHooks` (22.15) and unflagged TypeScript
+      # type stripping (22.18), both of which scripts/validate-content.mjs
+      # relies on to load the real registry without a build step.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The mobile app.
+      - run: npm run typecheck
+
+      # Guards the shared package's platform surface: packages/core must keep
+      # compiling without DOM or React Native globals, because the website, the
+      # mobile app and the content validator all import it.
+      - run: npm run typecheck:core
+
+      # Content rules the type system cannot express — double-entry balance on
+      # every T-account, formula ids that exist, objectives that target a real
+      # readout.
+      - run: npm run lint:content
+
+      # The website, which is what learners actually play.
+      - run: npm run typecheck --workspace web
+      - run: npm run lint --workspace web
+      - run: npm run build --workspace web

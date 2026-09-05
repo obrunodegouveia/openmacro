@@ -37,8 +37,7 @@
     "typecheck": "tsc --noEmit",
     "typecheck:core": "tsc -p packages/core --noEmit",
     "lint:content": "node ./scripts/validate-content.mjs",
-    "build:web": "expo export --platform web",
-    "build:pages": "OPENMACRO_BASE_URL=/openmacro expo export --platform web && cp dist/index.html dist/404.html && touch dist/.nojekyll"
+    "build:web": "expo export --platform web"
   },
   "private": true,
   "description": "Duolingo-style micro-learning app teaching macroeconomics, monetary policy and fractional-reserve banking.",

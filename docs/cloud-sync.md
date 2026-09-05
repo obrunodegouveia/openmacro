@@ -139,10 +139,11 @@ Vercel:
 Netlify (`_redirects`): `/*  /index.html  200`
 Cloudflare Pages: SPA fallback is the default.
 
-GitHub Pages has no rewrite rules at all; the workaround is a `404.html` copy
-of `index.html`, which `npm run build:pages` creates. It works — the router
-takes over once the bundle boots — but the response still carries a 404 status,
-so crawlers see deep links as missing. Fine for a demo, not for the real
+GitHub Pages has no rewrite rules at all, so the workaround was a `404.html`
+copy of `index.html` — the router takes over once the bundle boots, but the
+response still carries a 404 status and crawlers read deep links as missing.
+That target is retired: the web course is now the Next.js site at
+openmacro.org, which prerenders every lesson as real HTML. Fine for a demo, not for the real
 domain: put openmacro.org on a host that can return 200.
 
 Then point `openmacro.org` at the host and make sure the domain matches the
