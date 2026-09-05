@@ -13,7 +13,7 @@ import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanim
 import type { ChallengeComponentProps } from '@/components/challenges/types';
 import { emitFeedback } from '@/feedback';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
-import { seededShuffle } from '@/utils/format';
+import { seededShuffle } from '@openmacro/core/format';
 
 export function OrderFlowView({
   challenge,

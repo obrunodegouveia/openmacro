@@ -14,7 +14,7 @@ import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 import type { ChallengeComponentProps } from '@/components/challenges/types';
 import { emitFeedback } from '@/feedback';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
-import { seededShuffle } from '@/utils/format';
+import { seededShuffle } from '@openmacro/core/format';
 
 /** Link colours cycle so simultaneous pairs stay visually distinct. */
 const LINK_COLORS = [palette.blue, palette.gold, palette.mint, palette.coral, '#9B5DE5'] as const;

@@ -7,6 +7,7 @@ import { AnswerList } from "@/components/site/answer-list";
 import { Badge } from "@/components/ui/badge";
 import { LEARN_ANSWERS, faqPageLd } from "@/lib/answers";
 import { SYLLABUS } from "@/lib/curriculum";
+import { CourseMap } from "@/components/app/course-map";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
@@ -74,7 +75,11 @@ export default function LearnPage() {
             lede="Most money is not printed by a government. It is created by commercial banks when they lend, and by central banks when they buy assets. Everything else follows from that, and this is the shortest honest path to understanding it."
           />
 
-          <div className="mt-10 flex flex-wrap gap-3">
+          <div className="mt-14">
+            <CourseMap />
+          </div>
+
+          <div className="mt-14 flex flex-wrap gap-3">
             <Badge tone="mint">Free forever</Badge>
             <Badge tone="neutral">No account needed</Badge>
             <Badge tone="gold">MIT licensed</Badge>

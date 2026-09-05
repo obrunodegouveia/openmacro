@@ -22,7 +22,7 @@ import {
   observationKey,
 } from '@openmacro/core/engine/simulation';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
-import { formatValue, snapToStep } from '@/utils/format';
+import { formatValue, snapToStep } from '@openmacro/core/format';
 
 export function InteractiveSimView({
   challenge,

@@ -28,7 +28,7 @@ import type {
 import { entityBalance, openingTotal } from '@openmacro/core/engine/tAccounts';
 import { emitFeedback } from '@/feedback';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
-import { formatCompactCurrency, formatSignedCompactCurrency, seededShuffle } from '@/utils/format';
+import { formatCompactCurrency, formatSignedCompactCurrency, seededShuffle } from '@openmacro/core/format';
 
 const TIER_LABELS: Readonly<Record<MonetaryTier, string>> = {
   central_bank: 'Central bank',

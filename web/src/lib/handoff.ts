@@ -18,9 +18,11 @@
  *   - `sessionStorage`, not `localStorage`. The handoff belongs to one tab's
  *     round trip. Surviving a browser restart would only mean resurrecting a
  *     completion screen someone walked away from days ago.
- *   - only the *ids* of solved exercises are stored, never the XP. XP is
- *     recomputed from the lesson definition on the way back, so nothing a
- *     learner can edit in devtools decides what their score is.
+ *   - the XP is stored, but the reader clamps it to the most the lesson could
+ *     possibly award. It cannot be recomputed from scratch on the way back —
+ *     the engine halves XP for a challenge answered on the second attempt, so
+ *     the score depends on how the run went, not just which challenges were
+ *     cleared. Clamping is what stops a hand-edited entry inventing a score.
  */
 
 const KEY = "openmacro:pending-completion";
@@ -29,8 +31,10 @@ const KEY = "openmacro:pending-completion";
 const MAX_AGE_MS = 60 * 60 * 1000;
 
 export interface PendingCompletion {
+  /** Lesson id, matching `Lesson.id` in the shared content package. */
   slug: string;
-  solvedIds: string[];
+  /** XP earned on the run. Clamped by the reader — see the note above. */
+  xp: number;
   /** ISO timestamp, used only to expire stale entries. */
   at: string;
 }
@@ -74,12 +78,13 @@ function parse(raw: string): PendingCompletion | null {
     if (
       typeof value.slug !== "string" ||
       !fresh ||
-      !Array.isArray(value.solvedIds) ||
-      !value.solvedIds.every((id) => typeof id === "string")
+      typeof value.xp !== "number" ||
+      !Number.isFinite(value.xp) ||
+      value.xp < 0
     ) {
       return null;
     }
-    return { slug: value.slug, solvedIds: value.solvedIds, at: value.at as string };
+    return { slug: value.slug, xp: value.xp, at: value.at as string };
   } catch {
     return null;
   }

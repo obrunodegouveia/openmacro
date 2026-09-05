@@ -80,7 +80,13 @@ const nextConfig: NextConfig = {
    */
   outputFileTracingRoot: repoRoot,
 
-  turbopack: { root: repoRoot },
+  /**
+   * Turbopack's root stays at this directory even though tracing is workspace
+   * wide. Pointing it at the repo root makes Next discover the Expo app's
+   * `babel.config.js` and apply babel-preset-expo to the website, which both
+   * disables SWC and is simply the wrong toolchain for these files.
+   */
+  turbopack: { root: __dirname },
 };
 
 export default nextConfig;

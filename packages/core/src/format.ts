@@ -5,7 +5,7 @@
  * Hermes, JSC and web, which keeps snapshot tests meaningful.
  */
 
-import type { ValueFormat } from '@openmacro/core/content/schema';
+import type { ValueFormat } from './content/schema';
 
 /** `1000` -> `"$1,000"`, `1234.5` -> `"$1,234.50"`. */
 export function formatCurrency(value: number, currency = '$'): string {
