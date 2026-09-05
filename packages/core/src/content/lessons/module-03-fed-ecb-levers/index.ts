@@ -16,6 +16,13 @@
 
 import { defineModule, type Lesson } from '../../schema';
 import { qePrimaryDealerLesson } from './lesson-01-qe-primary-dealer';
+import { iorbPolicyRateLesson } from './lesson-03-iorb-the-real-policy-rate';
+import { discountWindowLesson } from './lesson-04-discount-window';
+import { openMarketOperationsLesson } from './lesson-05-open-market-operations';
+import { ecbToolkitLesson } from './lesson-06-ecb-toolkit';
+import { quantitativeTighteningLesson } from './lesson-07-quantitative-tightening';
+import { yieldCurveControlLesson } from './lesson-08-yield-curve-control';
+import { forwardGuidanceLesson } from './lesson-09-forward-guidance';
 import rrpFloorMechanics from './lesson-02-rrp-floor-mechanics.json';
 
 /**
@@ -27,10 +34,21 @@ import rrpFloorMechanics from './lesson-02-rrp-floor-mechanics.json';
 const rrpFloorMechanicsLesson = rrpFloorMechanics as unknown as Lesson;
 
 export const moduleFedEcbLevers = defineModule({
-  id: 'module-03-fed-ecb-levers',
+  // Matches the track id the website advertises in its syllabus.
+  id: 'fed-ecb-levers',
   title: 'The Fed & ECB Levers',
   description:
     'IORB, the ON RRP floor, the discount window and the DFR corridor — posted entry by entry.',
   accent: 'blue',
-  lessons: [qePrimaryDealerLesson, rrpFloorMechanicsLesson],
+  lessons: [
+    qePrimaryDealerLesson,
+    rrpFloorMechanicsLesson,
+    iorbPolicyRateLesson,
+    discountWindowLesson,
+    openMarketOperationsLesson,
+    ecbToolkitLesson,
+    quantitativeTighteningLesson,
+    yieldCurveControlLesson,
+    forwardGuidanceLesson,
+  ],
 });
