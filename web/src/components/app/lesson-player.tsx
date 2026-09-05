@@ -24,14 +24,7 @@ import { Button } from "@/components/ui/button";
 import { ChallengeView } from "@/components/challenges/challenge-view";
 import { useAuth } from "@/components/site/auth-provider";
 import { getSupabase } from "@/lib/supabase";
-import { recordLessonComplete } from "@/lib/progress";
-import {
-  clearCompletion,
-  readCompletion,
-  readNoCompletion,
-  rememberCompletion,
-  subscribeToCompletion,
-} from "@/lib/handoff";
+import { recordCompletion } from "@/lib/progress";
 import { GoogleSignIn } from "@/components/site/google-sign-in";
 import { cn } from "@/lib/utils";
 
@@ -269,59 +262,48 @@ function LessonComplete({
   onRestart: () => void;
 }) {
   const { enabled, learner } = useAuth();
+  /** `local` means kept on this device — the signed-out case, not a failure. */
   const [saveState, setSaveState] = React.useState<
-    "idle" | "saving" | "saved" | "failed"
+    "idle" | "local" | "saving" | "saved" | "failed"
   >("idle");
 
+  const xpEarned = state.xpEarned;
+
   /**
-   * A run finished just before an OAuth redirect, if there is one.
+   * Saves the run exactly once.
    *
-   * Read through `useSyncExternalStore` because this page is prerendered: the
-   * server must render "nothing parked" while the browser reads its own
-   * storage, with no hydration mismatch.
+   * Local always, account too when there is one. Guarded by a ref rather than
+   * by `saveState` so a re-render mid-write cannot start a second save.
    */
-  const parked = React.useSyncExternalStore(
-    subscribeToCompletion,
-    readCompletion,
-    readNoCompletion,
-  );
-
-  /** The most this lesson could ever award, used to clamp a restored score. */
-  const maxXp = React.useMemo(
-    () => lesson.challenges.reduce((sum, challenge) => sum + (challenge.xp ?? 10), 0),
-    [lesson],
-  );
-
-  const restoredXp =
-    parked && parked.slug === lesson.id ? Math.min(parked.xp, maxXp) : null;
-  const xpEarned = state.xpEarned || (restoredXp ?? 0);
-
-  /** Saved once per completion; a re-render mid-write must not start a second. */
   const savedRef = React.useRef(false);
   React.useEffect(() => {
-    const supabase = getSupabase();
-    if (!learner || !supabase || savedRef.current || xpEarned <= 0) return;
+    if (savedRef.current || xpEarned <= 0) return;
     savedRef.current = true;
 
-    setSaveState("saving");
-    recordLessonComplete(supabase, learner.id, learner.name, lesson.id, xpEarned)
-      .then(() => {
-        clearCompletion();
-        setSaveState("saved");
-      })
-      .catch(() => setSaveState("failed"));
-  }, [learner, lesson.id, xpEarned]);
+    const supabase = getSupabase();
+    const account =
+      learner && supabase
+        ? { client: supabase, userId: learner.id, displayName: learner.name }
+        : undefined;
 
-  /**
-   * Parks the result before any sign-in attempt.
-   *
-   * In-page sign-in does not need it — the component never unmounts — but the
-   * fallback is a full-page redirect, and by the time we know which path was
-   * taken the page may already be gone.
-   */
-  function parkProgress() {
-    rememberCompletion({ slug: lesson.id, xp: xpEarned, at: new Date().toISOString() });
-  }
+    setSaveState(account ? "saving" : "local");
+    recordCompletion(
+      {
+        lessonId: lesson.id,
+        xpEarned,
+        heartsRemaining: state.hearts,
+        maxHearts: state.maxHearts,
+        bestCombo: state.bestCombo,
+        completed: true,
+      },
+      account,
+    )
+      .then(() => setSaveState(account ? "saved" : "local"))
+      .catch(() => setSaveState("failed"));
+    // Runs once per completion; `learner` arriving later is handled by the
+    // sign-in merge, which pushes whatever is in local storage.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const perfect = state.missed.length === 0 && state.xpEarned > 0;
 
@@ -362,7 +344,7 @@ function LessonComplete({
         <Button asChild>
           <Link href="/learn">Back to lessons</Link>
         </Button>
-        <Button variant="outline" onClick={() => { clearCompletion(); onRestart(); }}>
+        <Button variant="outline" onClick={onRestart}>
           <RotateCcw className="size-4" aria-hidden />
           Practise again
         </Button>
@@ -377,13 +359,14 @@ function LessonComplete({
                 : saveState === "saved"
                   ? `Saved to ${learner.name}'s account.`
                   : saveState === "failed"
-                    ? "Could not save this one — your XP is safe on this device."
+                    ? "Could not reach your account — this run is safe on this device and will sync next time."
                     : "Signed in."}
             </p>
           ) : (
             <>
               <p className="text-sm font-semibold text-ink-muted">
-                Sign in to keep this XP and start a streak.
+                Saved on this device. Sign in to keep it across devices and
+                start a streak.
               </p>
               {/*
                 No `redirectTo`: signing in here happens in place, so the run
@@ -391,7 +374,7 @@ function LessonComplete({
                 learner appears. The parked completion is still written first,
                 because the fallback path is a full-page redirect.
               */}
-              <div className="mt-3 flex justify-center" onClickCapture={parkProgress}>
+              <div className="mt-3 flex justify-center">
                 <GoogleSignIn />
               </div>
               <p className="mt-3 text-xs text-ink-faint">

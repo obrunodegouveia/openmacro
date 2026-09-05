@@ -18,7 +18,14 @@ import { Button } from "@/components/ui/button";
 import { AccountPanel } from "@/components/site/account-button";
 import { useAuth } from "@/components/site/auth-provider";
 import { getSupabase } from "@/lib/supabase";
-import { readProgress, type ProgressSnapshot } from "@/lib/progress";
+import {
+  peekLocalProgress,
+  readCloudProgress,
+  readNoLocalProgress,
+  subscribeToLocalProgress,
+  syncLocalIntoAccount,
+  type ProgressSnapshot,
+} from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 /**
@@ -50,14 +57,29 @@ export function Dashboard() {
     | null
   >(null);
 
+  /**
+   * This device's progress, read through the store hook rather than an effect:
+   * the page is prerendered, so the server must render nothing while the
+   * browser reads its own storage, and setting it in an effect would cost a
+   * second render pass on every visit.
+   */
+  const localSnapshot = React.useSyncExternalStore(
+    subscribeToLocalProgress,
+    peekLocalProgress,
+    readNoLocalProgress,
+  );
+
   React.useEffect(() => {
+    let cancelled = false;
     const supabase = getSupabase();
     if (!learner || !supabase) return;
 
     const userId = learner.id;
-    let cancelled = false;
-
-    readProgress(supabase, userId)
+    // Signed in: fold anything played on this device into the account first,
+    // so arriving here after signing in shows the merged total rather than
+    // whatever the account happened to hold.
+    syncLocalIntoAccount({ client: supabase, userId, displayName: learner.name })
+      .catch(() => readCloudProgress(supabase, userId, learner.name))
       .then((snapshot) => {
         if (!cancelled) setResult({ userId, status: "ready", snapshot });
       })
@@ -70,12 +92,23 @@ export function Dashboard() {
     };
   }, [learner]);
 
-  // A result from a previous session is not this learner's.
+  // A result belonging to a different learner — or to the signed-out store
+  // after signing in — is not this view's.
   const current = result && learner && result.userId === learner.id ? result : null;
-  const snapshot = current?.status === "ready" ? current.snapshot : null;
-  const state: "loading" | "ready" | "failed" = !current
-    ? "loading"
-    : current.status;
+
+  // Signed out, the local store is the whole answer and needs no request.
+  const snapshot = learner
+    ? current?.status === "ready"
+      ? current.snapshot
+      : null
+    : localSnapshot;
+  const state: "loading" | "ready" | "failed" = learner
+    ? !current
+      ? "loading"
+      : current.status
+    : localSnapshot
+      ? "ready"
+      : "loading";
 
   if (!enabled) {
     return (
@@ -96,26 +129,18 @@ export function Dashboard() {
     return <div className="h-64 animate-pulse rounded-card bg-white/5" aria-hidden />;
   }
 
-  if (!learner) {
-    return (
-      <div>
-        <p className="mb-6 text-base leading-relaxed text-ink-muted">
-          Sign in to see your XP, your streak and where you left off.
-        </p>
-        <AccountPanel />
-      </div>
-    );
-  }
 
   return (
     <DashboardView
-      learner={learner}
+      learner={learner ?? { name: "Your progress", avatarUrl: null }}
       snapshot={snapshot}
       state={state}
+      signedIn={Boolean(learner)}
       onSignOut={() => void signOut()}
     />
   );
 }
+
 
 /**
  * The dashboard itself, with no data fetching in it.
@@ -128,11 +153,14 @@ export function DashboardView({
   learner,
   snapshot,
   state,
+  signedIn = true,
   onSignOut,
 }: {
   learner: { name: string; avatarUrl: string | null };
   snapshot: ProgressSnapshot | null;
   state: "loading" | "ready" | "failed";
+  /** Signed out, the same view shows this device's progress instead. */
+  signedIn?: boolean;
   onSignOut: () => void;
 }) {
   const progress = summarise(snapshot);
@@ -154,10 +182,12 @@ export function DashboardView({
             </p>
           </div>
         </div>
-        <Button variant="ghost" size="sm" onClick={onSignOut}>
-          <LogOut className="size-4" aria-hidden />
-          Sign out
-        </Button>
+        {signedIn ? (
+          <Button variant="ghost" size="sm" onClick={onSignOut}>
+            <LogOut className="size-4" aria-hidden />
+            Sign out
+          </Button>
+        ) : null}
       </header>
 
       {state === "failed" ? (
@@ -237,6 +267,20 @@ export function DashboardView({
         </section>
       ) : null}
 
+      {!signedIn ? (
+        <section className="rounded-card border border-hairline bg-white/[0.03] p-5">
+          <h2 className="font-display text-lg font-extrabold tracking-tight">
+            This is kept on this device
+          </h2>
+          <p className="mt-1 max-w-md text-sm leading-relaxed text-ink-muted">
+            Everything above is saved in this browser. Signing in keeps it if
+            you clear your browser, and carries it to your phone — what you have
+            already done is folded in, not replaced.
+          </p>
+          <AccountPanel className="mt-5" redirectTo="/dashboard" />
+        </section>
+      ) : null}
+
       {/* What is done ----------------------------------------------------- */}
       <section aria-label="All modules" className="flex flex-col gap-8">
         {MODULES.map((module) => (
@@ -255,7 +299,7 @@ function ModuleRow({
   module: Module;
   snapshot: ProgressSnapshot | null;
 }) {
-  const done = module.lessons.filter((lesson) => snapshot?.lessons[lesson.id]).length;
+  const done = module.lessons.filter((lesson) => snapshot?.progress[lesson.id]).length;
   const ratio = module.lessons.length ? done / module.lessons.length : 0;
 
   return (
@@ -285,7 +329,7 @@ function ModuleRow({
       <ul className="mt-3 grid gap-2 sm:grid-cols-2">
         {module.lessons.map((lesson) => (
           <li key={lesson.id}>
-            <LessonRow lesson={lesson} record={snapshot?.lessons[lesson.id]} />
+            <LessonRow lesson={lesson} record={snapshot?.progress[lesson.id]} />
           </li>
         ))}
       </ul>
@@ -412,7 +456,7 @@ function summarise(snapshot: ProgressSnapshot | null) {
     module.lessons.map((lesson) => ({ module, lesson })),
   );
   const completed = snapshot
-    ? all.filter(({ lesson }) => snapshot.lessons[lesson.id]).length
+    ? all.filter(({ lesson }) => snapshot.progress[lesson.id]).length
     : 0;
 
   return {
@@ -422,6 +466,6 @@ function summarise(snapshot: ProgressSnapshot | null) {
     completed,
     total: all.length,
     percent: all.length ? Math.round((completed / all.length) * 100) : 0,
-    next: all.find(({ lesson }) => !snapshot?.lessons[lesson.id]) ?? null,
+    next: all.find(({ lesson }) => !snapshot?.progress[lesson.id]) ?? null,
   };
 }
