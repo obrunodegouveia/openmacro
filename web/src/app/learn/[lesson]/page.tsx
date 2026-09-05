@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, Coins, Heart } from "lucide-react";
 import {
   DEFAULT_CHALLENGE_XP,
-  DEFAULT_HEARTS,
   MODULES,
   getLessonById,
   getModuleForLesson,
 } from "@openmacro/core/content";
-import { Nav } from "@/components/site/nav";
-import { Footer } from "@/components/site/footer";
-import { Section } from "@/components/ui/section";
-import { Badge } from "@/components/ui/badge";
+import { FooterMinimal } from "@/components/site/footer";
 import { LessonPlayer } from "@/components/app/lesson-player";
 import { JsonLd, breadcrumbs, pageMetadata } from "@/lib/seo";
 
@@ -48,6 +42,14 @@ export async function generateMetadata({
   });
 }
 
+/**
+ * A lesson is a surface of its own, not a page of the site with a quiz on it.
+ *
+ * The marketing nav and the full footer are deliberately absent: a learner
+ * halfway through posting a T-account does not need "For parents", "Contribute"
+ * or a three-column sitemap in their field of view, and every one of those is a
+ * way to lose the run. The player supplies the one exit that matters.
+ */
 export default async function LessonPage({
   params,
 }: {
@@ -65,62 +67,20 @@ export default async function LessonPage({
 
   return (
     <>
-      <Nav />
       <main id="main">
-        <Section className="pt-28">
-          <JsonLd
-            data={breadcrumbs([
-              { name: "Learn", path: "/learn" },
-              { name: lesson.title, path: `/learn/${lesson.id}` },
-            ])}
-          />
-
-          <Link
-            href="/learn"
-            className="inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-ink"
-          >
-            <ArrowLeft className="size-4" aria-hidden />
-            All lessons
-          </Link>
-
-          <header className="mt-6 max-w-3xl">
-            {parentModule ? <Badge tone="azure">{parentModule.title}</Badge> : null}
-            <h1 className="mt-4 text-balance font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
-              <span aria-hidden className="mr-2">
-                {lesson.icon}
-              </span>
-              {lesson.title}
-            </h1>
-            <p className="mt-3 text-lg leading-relaxed text-ink-muted">
-              {lesson.subtitle}
-            </p>
-
-            <div className="mt-5 flex flex-wrap items-center gap-4 text-xs font-bold text-ink-faint">
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="size-3.5" aria-hidden />
-                {lesson.estimatedMinutes} min
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Coins className="size-3.5" aria-hidden />
-                {xpAvailable} XP available
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Heart className="size-3.5" aria-hidden />
-                {lesson.hearts ?? DEFAULT_HEARTS} hearts
-              </span>
-              <span>
-                {lesson.challenges.length} challenge
-                {lesson.challenges.length === 1 ? "" : "s"}
-              </span>
-            </div>
-          </header>
-
-          <div className="mt-12 max-w-4xl">
-            <LessonPlayer lesson={lesson} />
-          </div>
-        </Section>
+        <JsonLd
+          data={breadcrumbs([
+            { name: "Learn", path: "/learn" },
+            { name: lesson.title, path: `/learn/${lesson.id}` },
+          ])}
+        />
+        <LessonPlayer
+          lesson={lesson}
+          moduleTitle={parentModule?.title}
+          xpAvailable={xpAvailable}
+        />
       </main>
-      <Footer />
+      <FooterMinimal />
     </>
   );
 }

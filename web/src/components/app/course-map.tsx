@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { Clock, Coins, Play } from "lucide-react";
+import { ArrowRight, Check, Clock, Coins, Play, RotateCcw, Trophy } from "lucide-react";
 import { DEFAULT_CHALLENGE_XP, MODULES } from "@openmacro/core/content";
 import type { Lesson } from "@openmacro/core/content/schema";
+import type { LessonProgress } from "@openmacro/core/progress/types";
+import { useProgressSnapshot } from "@/lib/use-progress";
+import { cn } from "@/lib/utils";
 
 /**
  * Every playable lesson, grouped by module.
@@ -9,9 +14,21 @@ import type { Lesson } from "@openmacro/core/content/schema";
  * Built from the shared registry, so a contributor who adds a lesson to
  * `packages/core` gets it listed here and on the mobile app's path without
  * touching either UI.
+ *
+ * It also knows what the learner has already done. This page is the one the
+ * nav points at and the one search sends people to, and a course index that
+ * cannot tell you where you got to is a brochure, not a course. The progress
+ * comes from the same hook the dashboard uses, so "finished" means one thing
+ * across the site.
  */
 export function CourseMap() {
-  const lessonCount = MODULES.reduce((sum, module) => sum + module.lessons.length, 0);
+  const { snapshot, state } = useProgressSnapshot();
+  const all = MODULES.flatMap((module) => module.lessons);
+  const done = snapshot
+    ? all.filter((lesson) => snapshot.progress[lesson.id]).length
+    : 0;
+  const resume = all.find((lesson) => !snapshot?.progress[lesson.id]);
+  const ready = state === "ready" && Boolean(snapshot);
 
   return (
     <div>
@@ -20,50 +37,110 @@ export function CourseMap() {
           Play a lesson
         </h2>
         <p className="text-xs font-bold text-ink-faint">
-          {lessonCount} live · more shipping
+          {ready ? `${done} of ${all.length} finished` : `${all.length} live · more shipping`}
         </p>
       </div>
 
-      <div className="mt-6 flex flex-col gap-8">
-        {MODULES.map((module) => (
-          <section key={module.id}>
-            <h3 className="font-display text-base font-extrabold tracking-tight text-ink">
-              {module.title}
-            </h3>
-            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">
-              {module.description}
-            </p>
+      {/* Resume ---------------------------------------------------------- */}
+      {ready && done > 0 && resume ? (
+        <Link
+          href={`/learn/${resume.id}`}
+          className="group mt-5 flex items-center gap-4 rounded-card border border-mint/30 bg-mint/[0.06] p-4 transition-colors hover:border-mint/60 hover:bg-mint/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
+        >
+          <span aria-hidden className="text-2xl">
+            {resume.icon}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-xs font-extrabold uppercase tracking-wider text-mint-bright">
+              Pick up where you left off
+            </span>
+            <span className="mt-0.5 block truncate font-display font-extrabold text-ink">
+              {resume.title}
+            </span>
+          </span>
+          <ArrowRight
+            className="size-5 shrink-0 text-mint-bright transition-transform group-hover:translate-x-1"
+            aria-hidden
+          />
+        </Link>
+      ) : null}
 
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-              {module.lessons.map((lesson) => (
-                <li key={lesson.id}>
-                  <LessonCard lesson={lesson} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+      <div className="mt-6 flex flex-col gap-8">
+        {MODULES.map((module) => {
+          const moduleDone = module.lessons.filter(
+            (lesson) => snapshot?.progress[lesson.id],
+          ).length;
+
+          return (
+            <section key={module.id}>
+              <div className="flex items-baseline justify-between gap-4">
+                <h3 className="font-display text-base font-extrabold tracking-tight text-ink">
+                  {module.title}
+                </h3>
+                {ready ? (
+                  <p className="shrink-0 text-xs font-bold text-ink-faint">
+                    {moduleDone} / {module.lessons.length}
+                  </p>
+                ) : null}
+              </div>
+              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">
+                {module.description}
+              </p>
+
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                {module.lessons.map((lesson) => (
+                  <li key={lesson.id}>
+                    <LessonCard
+                      lesson={lesson}
+                      record={snapshot?.progress[lesson.id]}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function LessonCard({ lesson }: { lesson: Lesson }) {
+function LessonCard({
+  lesson,
+  record,
+}: {
+  lesson: Lesson;
+  record?: LessonProgress;
+}) {
   const xp = lesson.challenges.reduce(
     (sum, challenge) => sum + (challenge.xp ?? DEFAULT_CHALLENGE_XP),
     0,
   );
+  const perfect = record ? record.bestXp >= xp : false;
 
   return (
     <Link
       href={`/learn/${lesson.id}`}
-      className="group flex h-full gap-4 rounded-2xl border border-hairline bg-white/[0.03] p-4 transition-colors hover:border-mint/50 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
+      className={cn(
+        "group flex h-full gap-4 rounded-2xl border p-4 transition-colors",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
+        record
+          ? "border-mint/25 bg-mint/[0.05] hover:border-mint/50"
+          : "border-hairline bg-white/[0.03] hover:border-mint/50 hover:bg-white/[0.06]",
+      )}
     >
       <span
         aria-hidden
-        className="grid size-11 shrink-0 place-items-center rounded-xl border border-hairline bg-white/5 text-xl"
+        className={cn(
+          "grid size-11 shrink-0 place-items-center rounded-xl border text-xl",
+          record ? "border-mint/40 bg-mint/10" : "border-hairline bg-white/5",
+        )}
       >
-        {lesson.icon}
+        {record ? (
+          <Check className="size-5 text-mint-bright" strokeWidth={3} />
+        ) : (
+          lesson.icon
+        )}
       </span>
 
       <span className="min-w-0 flex-1">
@@ -75,18 +152,34 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
         </span>
 
         <span className="mt-3 flex flex-wrap items-center gap-3 text-[0.7rem] font-bold text-ink-faint">
-          <span className="inline-flex items-center gap-1">
-            <Clock className="size-3" aria-hidden />
-            {lesson.estimatedMinutes} min
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Coins className="size-3" aria-hidden />
-            {xp} XP
-          </span>
-          <span className="capitalize">{lesson.difficulty}</span>
+          {record ? (
+            <>
+              <span className="inline-flex items-center gap-1 text-mint-bright">
+                {perfect ? (
+                  <Trophy className="size-3" aria-hidden />
+                ) : (
+                  <RotateCcw className="size-3" aria-hidden />
+                )}
+                Best {record.bestXp} / {xp} XP
+              </span>
+              {record.completions > 1 ? <span>{record.completions} runs</span> : null}
+            </>
+          ) : (
+            <>
+              <span className="inline-flex items-center gap-1">
+                <Clock className="size-3" aria-hidden />
+                {lesson.estimatedMinutes} min
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <Coins className="size-3" aria-hidden />
+                {xp} XP
+              </span>
+              <span className="capitalize">{lesson.difficulty}</span>
+            </>
+          )}
           <span className="ml-auto inline-flex items-center gap-1 text-mint-bright opacity-0 transition-opacity group-hover:opacity-100">
             <Play className="size-3" aria-hidden />
-            Play
+            {record ? "Replay" : "Play"}
           </span>
         </span>
       </span>

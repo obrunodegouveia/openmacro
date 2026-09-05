@@ -9,7 +9,7 @@ export function Section({
 }: React.HTMLAttributes<HTMLElement>) {
   return (
     <section
-      className={cn("relative px-5 py-20 sm:px-8 md:py-28", className)}
+      className={cn("relative px-5 py-16 sm:px-8 md:py-24", className)}
       {...props}
     >
       <div className="mx-auto w-full max-w-6xl">{children}</div>

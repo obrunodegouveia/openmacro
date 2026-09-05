@@ -17,15 +17,8 @@ import type { Lesson, Module } from "@openmacro/core/content/schema";
 import { Button } from "@/components/ui/button";
 import { AccountPanel } from "@/components/site/account-button";
 import { useAuth } from "@/components/site/auth-provider";
-import { getSupabase } from "@/lib/supabase";
-import {
-  peekLocalProgress,
-  readCloudProgress,
-  readNoLocalProgress,
-  subscribeToLocalProgress,
-  syncLocalIntoAccount,
-  type ProgressSnapshot,
-} from "@/lib/progress";
+import { useProgressSnapshot } from "@/lib/use-progress";
+import type { ProgressSnapshot } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 /**
@@ -41,74 +34,8 @@ import { cn } from "@/lib/utils";
  * so this component can only ever see the signed-in learner's own rows.
  */
 export function Dashboard() {
-  const { enabled, loading, learner, signOut } = useAuth();
-
-  /**
-   * The fetched progress, tagged with whose it is.
-   *
-   * Tagged rather than cleared on sign-out, so the "still loading" state can be
-   * *derived* — `result === null` for the current learner — instead of being
-   * set synchronously in the effect, which would cost a second render pass on
-   * every load and is what the lint rule is protecting against.
-   */
-  const [result, setResult] = React.useState<
-    | { userId: string; status: "ready"; snapshot: ProgressSnapshot }
-    | { userId: string; status: "failed" }
-    | null
-  >(null);
-
-  /**
-   * This device's progress, read through the store hook rather than an effect:
-   * the page is prerendered, so the server must render nothing while the
-   * browser reads its own storage, and setting it in an effect would cost a
-   * second render pass on every visit.
-   */
-  const localSnapshot = React.useSyncExternalStore(
-    subscribeToLocalProgress,
-    peekLocalProgress,
-    readNoLocalProgress,
-  );
-
-  React.useEffect(() => {
-    let cancelled = false;
-    const supabase = getSupabase();
-    if (!learner || !supabase) return;
-
-    const userId = learner.id;
-    // Signed in: fold anything played on this device into the account first,
-    // so arriving here after signing in shows the merged total rather than
-    // whatever the account happened to hold.
-    syncLocalIntoAccount({ client: supabase, userId, displayName: learner.name })
-      .catch(() => readCloudProgress(supabase, userId, learner.name))
-      .then((snapshot) => {
-        if (!cancelled) setResult({ userId, status: "ready", snapshot });
-      })
-      .catch(() => {
-        if (!cancelled) setResult({ userId, status: "failed" });
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [learner]);
-
-  // A result belonging to a different learner — or to the signed-out store
-  // after signing in — is not this view's.
-  const current = result && learner && result.userId === learner.id ? result : null;
-
-  // Signed out, the local store is the whole answer and needs no request.
-  const snapshot = learner
-    ? current?.status === "ready"
-      ? current.snapshot
-      : null
-    : localSnapshot;
-  const state: "loading" | "ready" | "failed" = learner
-    ? !current
-      ? "loading"
-      : current.status
-    : localSnapshot
-      ? "ready"
-      : "loading";
+  const { signOut, learner } = useAuth();
+  const { snapshot, state, signedIn, enabled, restoring } = useProgressSnapshot();
 
   if (!enabled) {
     return (
@@ -125,17 +52,16 @@ export function Dashboard() {
 
   // Hold the layout while the stored session is restored, rather than flashing
   // a sign-in prompt at somebody who is already signed in.
-  if (loading) {
+  if (restoring) {
     return <div className="h-64 animate-pulse rounded-card bg-white/5" aria-hidden />;
   }
-
 
   return (
     <DashboardView
       learner={learner ?? { name: "Your progress", avatarUrl: null }}
       snapshot={snapshot}
       state={state}
-      signedIn={Boolean(learner)}
+      signedIn={signedIn}
       onSignOut={() => void signOut()}
     />
   );

@@ -6,12 +6,15 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Check,
+  Clock,
   Coins,
   Flame,
   Heart,
   PartyPopper,
   RotateCcw,
+  X,
 } from "lucide-react";
+import { MODULES } from "@openmacro/core/content";
 import type { Lesson } from "@openmacro/core/content/schema";
 import type { ChallengeAnswer } from "@openmacro/core/engine/answers";
 import {
@@ -38,10 +41,21 @@ import { cn } from "@/lib/utils";
  * retry and the combo counter are all decided there, so the two apps cannot
  * disagree about what a lesson result means.
  *
- * This component owns only what is genuinely presentational: which view is on
- * screen, the feedback sheet, and saving the result for a signed-in learner.
+ * The player owns the whole screen rather than sitting inside the marketing
+ * page. A lesson is a focused surface: one way out, one thing to read, one
+ * action. The two things that must never scroll away are the state of the run
+ * (progress, hearts, XP) and the button that advances it, so both are pinned —
+ * top and bottom — and everything else moves between them.
  */
-export function LessonPlayer({ lesson }: { lesson: Lesson }) {
+export function LessonPlayer({
+  lesson,
+  moduleTitle,
+  xpAvailable,
+}: {
+  lesson: Lesson;
+  moduleTitle?: string;
+  xpAvailable: number;
+}) {
   const [state, dispatch] = React.useReducer(
     lessonSessionReducer,
     lesson,
@@ -63,6 +77,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const progress = progressRatio(state);
   const finished = state.status === "complete";
   const failed = state.status === "failed";
+  const playing = !finished && !failed;
 
   const answer = draft.step === state.stepSerial ? draft.answer : null;
 
@@ -78,68 +93,134 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
     dispatch({ kind: "submit", answer });
   }
 
+  /**
+   * Once the run is under way, the title block goes.
+   *
+   * It is orientation for someone deciding whether to start, and clutter for
+   * someone already answering — on a phone it is the difference between the
+   * first option being on screen and being below the fold. Derived from the
+   * session, so there is no state to keep in sync.
+   */
+  const started = state.stepSerial > 0 || Boolean(state.feedback) || !playing;
+
   return (
-    <div>
-      <SessionBar state={state} progress={progress} />
+    <div className="flex min-h-svh flex-col">
+      <SessionBar
+        state={state}
+        progress={progress}
+        lessonTitle={lesson.title}
+        showTitle={started && playing}
+      />
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={finished || failed ? "outcome" : `${state.stepSerial}:${challenge?.id}`}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.2 }}
-        >
-          {finished ? (
-            <LessonComplete lesson={lesson} state={state} onRestart={() => dispatch({ kind: "restart" })} />
-          ) : failed ? (
-            <OutOfHearts lesson={lesson} onRestart={() => dispatch({ kind: "restart" })} />
-          ) : challenge ? (
-            <section className="glass rounded-card p-5 sm:p-7">
-              <header className="mb-5">
-                <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
-                  {CHALLENGE_LABELS[challenge.type]}
-                </p>
-                <h2 className="mt-2 font-display text-xl font-extrabold leading-snug tracking-tight sm:text-2xl">
-                  {challenge.prompt}
-                </h2>
-              </header>
+      <div className="mx-auto w-full max-w-3xl flex-1 px-5 pb-28 pt-6 sm:px-8">
+        {!started ? (
+          <header className="mb-8">
+            {moduleTitle ? (
+              <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-azure">
+                {moduleTitle}
+              </p>
+            ) : null}
+            <h1 className="mt-2 text-balance font-display text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
+              <span aria-hidden className="mr-2">
+                {lesson.icon}
+              </span>
+              {lesson.title}
+            </h1>
+            <p className="mt-2 text-pretty leading-relaxed text-ink-muted">
+              {lesson.subtitle}
+            </p>
+            <p className="mt-3 flex flex-wrap items-center gap-4 text-xs font-bold text-ink-faint">
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="size-3.5" aria-hidden />
+                {lesson.estimatedMinutes} min
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Coins className="size-3.5" aria-hidden />
+                {xpAvailable} XP available
+              </span>
+              <span>
+                {lesson.challenges.length} challenge
+                {lesson.challenges.length === 1 ? "" : "s"}
+              </span>
+            </p>
+          </header>
+        ) : null}
 
-              <ChallengeView
-                challenge={challenge}
-                onAnswerChange={publish}
-                locked={Boolean(state.feedback)}
-                result={state.feedback}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={finished || failed ? "outcome" : `${state.stepSerial}:${challenge?.id}`}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+          >
+            {finished ? (
+              <LessonComplete
+                lesson={lesson}
+                state={state}
+                onRestart={() => dispatch({ kind: "restart" })}
               />
-            </section>
-          ) : null}
-        </motion.div>
-      </AnimatePresence>
+            ) : failed ? (
+              <OutOfHearts lesson={lesson} onRestart={() => dispatch({ kind: "restart" })} />
+            ) : challenge ? (
+              <section className="glass rounded-card p-5 sm:p-7">
+                <header className="mb-5">
+                  <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
+                    {CHALLENGE_LABELS[challenge.type]}
+                  </p>
+                  <h2 className="mt-2 font-display text-xl font-extrabold leading-snug tracking-tight sm:text-2xl">
+                    {challenge.prompt}
+                  </h2>
+                </header>
 
-      {/* Advance ---------------------------------------------------------- */}
-      {!finished && !failed ? (
-        <div className="mt-6 flex items-center justify-between gap-4">
-          <p className="text-xs font-semibold text-ink-faint">
-            {state.feedback
+                <ChallengeView
+                  challenge={challenge}
+                  onAnswerChange={publish}
+                  locked={Boolean(state.feedback)}
+                  result={state.feedback}
+                />
+              </section>
+            ) : null}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/*
+        The verdict, for anyone not reading the screen. The graded feedback is
+        rendered inside the challenge, which a screen reader will not revisit on
+        its own — this announces it at the moment it appears.
+      */}
+      <p role="status" aria-live="polite" className="sr-only">
+        {state.feedback
+          ? `${state.feedback.correct ? "Correct." : "Not quite."} ${
+              state.feedback.detail ?? state.feedback.explanation ?? ""
+            }`
+          : ""}
+      </p>
+
+      {playing ? (
+        <ActionBar
+          hint={
+            state.feedback
               ? state.feedback.correct
                 ? "Nice — keep going."
                 : "We'll come back to this one."
               : answer
                 ? "Ready when you are."
-                : "Answer to continue."}
-          </p>
-
+                : "Answer to continue."
+          }
+        >
           {state.feedback ? (
-            <Button onClick={() => dispatch({ kind: "continue" })}>
+            <Button size="lg" onClick={() => dispatch({ kind: "continue" })}>
               Continue
               <ArrowRight className="size-4" aria-hidden />
             </Button>
           ) : (
-            <Button onClick={submit} disabled={!answer}>
+            <Button size="lg" onClick={submit} disabled={!answer}>
               Check
             </Button>
           )}
-        </div>
+        </ActionBar>
       ) : null}
     </div>
   );
@@ -153,66 +234,122 @@ const CHALLENGE_LABELS: Record<string, string> = {
   t_account_flow: "Post the entries",
 };
 
-/** Progress, hearts, streak and XP — the persistent header of a run. */
+/**
+ * The state of the run, pinned to the top.
+ *
+ * Carries the only way out of the lesson as well. A learner mid-lesson needs
+ * exactly one exit, not a site nav offering six other destinations — leaving
+ * should be a decision, not an accident.
+ */
 function SessionBar({
   state,
   progress,
+  lessonTitle,
+  showTitle,
 }: {
   state: ReturnType<typeof createSession>;
   progress: number;
+  lessonTitle: string;
+  showTitle: boolean;
 }) {
   return (
-    <div className="mb-8 flex items-center gap-4">
-      <div
-        className="h-3 flex-1 overflow-hidden rounded-full bg-white/10"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(progress * 100)}
-        aria-label="Lesson progress"
-      >
-        {/* Hidden below a hair's width: a rounded fill at 0% still paints a
-            visible stub, which reads as progress that has not happened. */}
-        {progress > 0.001 ? (
-          <motion.div
-            className="h-full rounded-full bg-mint"
-            initial={false}
-            animate={{ width: `${progress * 100}%` }}
-            transition={{ type: "spring", stiffness: 180, damping: 24 }}
-          />
+    <div className="sticky top-0 z-40 border-b border-hairline bg-canvas/85 backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-5 py-3 sm:gap-4 sm:px-8">
+        <Link
+          href="/learn"
+          aria-label="Leave this lesson"
+          className="grid size-9 shrink-0 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-white/5 hover:text-ink"
+        >
+          <X className="size-5" aria-hidden />
+        </Link>
+
+        <div
+          className="h-3 min-w-0 flex-1 overflow-hidden rounded-full bg-white/10"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress * 100)}
+          aria-label="Lesson progress"
+        >
+          {/* Hidden below a hair's width: a rounded fill at 0% still paints a
+              visible stub, which reads as progress that has not happened. */}
+          {progress > 0.001 ? (
+            <motion.div
+              className="h-full rounded-full bg-mint"
+              initial={false}
+              animate={{ width: `${progress * 100}%` }}
+              transition={{ type: "spring", stiffness: 180, damping: 24 }}
+            />
+          ) : null}
+        </div>
+
+        <p
+          className="flex shrink-0 items-center gap-0.5"
+          aria-label={`${state.hearts} of ${state.maxHearts} hearts remaining`}
+        >
+          {Array.from({ length: state.maxHearts }, (_, index) => (
+            <Heart
+              key={index}
+              aria-hidden
+              className={cn(
+                "size-4",
+                index < state.hearts ? "fill-coral text-coral" : "text-white/15",
+              )}
+            />
+          ))}
+        </p>
+
+        {state.combo >= 2 ? (
+          <span
+            className="hidden shrink-0 items-center gap-1 text-xs font-extrabold text-gold sm:inline-flex"
+            aria-label={`${state.combo} in a row`}
+          >
+            <Flame className="size-3.5" aria-hidden />
+            {state.combo}
+          </span>
         ) : null}
+
+        <span
+          className="inline-flex shrink-0 items-center gap-1.5 text-xs font-extrabold text-gold"
+          aria-label={`${state.xpEarned} XP earned`}
+        >
+          <Coins className="size-3.5" aria-hidden />
+          <span aria-hidden>{state.xpEarned} XP</span>
+        </span>
       </div>
 
-      <p
-        className="flex shrink-0 items-center gap-1"
-        aria-label={`${state.hearts} of ${state.maxHearts} hearts remaining`}
-      >
-        {Array.from({ length: state.maxHearts }, (_, index) => (
-          <Heart
-            key={index}
-            aria-hidden
-            className={cn(
-              "size-4",
-              index < state.hearts ? "fill-coral text-coral" : "text-white/15",
-            )}
-          />
-        ))}
-      </p>
-
-      {state.combo >= 2 ? (
-        <span
-          className="inline-flex shrink-0 items-center gap-1 text-xs font-extrabold text-gold"
-          aria-label={`${state.combo} in a row`}
-        >
-          <Flame className="size-3.5" aria-hidden />
-          {state.combo}
-        </span>
+      {/* Once the title block above the challenge is gone, the lesson's name
+          lives here so the learner never loses track of what they are in. */}
+      {showTitle ? (
+        <p className="mx-auto -mt-1 w-full max-w-3xl truncate px-5 pb-2 text-xs font-bold text-ink-faint sm:px-8">
+          {lessonTitle}
+        </p>
       ) : null}
+    </div>
+  );
+}
 
-      <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-extrabold text-gold">
-        <Coins className="size-3.5" aria-hidden />
-        {state.xpEarned} XP
-      </span>
+/**
+ * The primary action, pinned to the bottom.
+ *
+ * On a phone the Check button used to sit at the end of the answers, below the
+ * fold on any challenge with more than three options — the learner had to
+ * scroll to find out they could submit. Here it is always under the thumb, and
+ * the safe-area padding keeps it clear of the iOS home indicator.
+ */
+function ActionBar({
+  hint,
+  children,
+}: {
+  hint: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="sticky bottom-0 z-40 border-t border-hairline bg-canvas/90 backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-8">
+        <p className="min-w-0 text-xs font-semibold text-ink-faint">{hint}</p>
+        {children}
+      </div>
     </div>
   );
 }
@@ -306,6 +443,7 @@ function LessonComplete({
   }, []);
 
   const perfect = state.missed.length === 0 && state.xpEarned > 0;
+  const next = nextLessonAfter(lesson.id);
 
   return (
     <div className="glass rounded-card p-7 text-center shadow-2xl shadow-black/50 sm:p-10">
@@ -342,7 +480,12 @@ function LessonComplete({
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button asChild>
-          <Link href="/learn">Back to lessons</Link>
+          {/* The actual next lesson, not the index. Finishing one thing should
+              offer the next thing — sending someone back to a list of thirty is
+              where a session ends. */}
+          <Link href={next ? `/learn/${next.id}` : "/learn"}>
+            {next ? "Next lesson" : "Back to lessons"}
+          </Link>
         </Button>
         <Button variant="outline" onClick={onRestart}>
           <RotateCcw className="size-4" aria-hidden />
@@ -386,4 +529,11 @@ function LessonComplete({
       ) : null}
     </div>
   );
+}
+
+/** The lesson that follows this one in course order, if there is one. */
+function nextLessonAfter(lessonId: string): Lesson | null {
+  const all = MODULES.flatMap((module) => module.lessons);
+  const index = all.findIndex((lesson) => lesson.id === lessonId);
+  return index >= 0 ? (all[index + 1] ?? null) : null;
 }

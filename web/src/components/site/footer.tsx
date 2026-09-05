@@ -105,7 +105,7 @@ export function Footer() {
           <Disclosure
             icon={<ShieldCheck className="size-4 text-mint" aria-hidden />}
             title="Non-custodial rewards"
-            body="MacroXP and MintBucks are a learning score, kept on-device unless you sign in to sync it. Prize pools are funded and awarded by their sponsor \u2014 we never hold the money."
+            body="MacroXP and MintBucks are a learning score, kept on-device unless you sign in to sync it. Prize pools are funded and awarded by their sponsor — we never hold the money."
           />
         </div>
 
@@ -167,5 +167,44 @@ function Disclosure({
       </h5>
       <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">{body}</p>
     </div>
+  );
+}
+
+/**
+ * The footer for a lesson.
+ *
+ * A learner who has just finished a run needs a licence line and a way back —
+ * not an account pitch, a sitemap and three compliance cards. The full
+ * <Footer /> is for the pages people arrive on, not the one they work in.
+ */
+export function FooterMinimal() {
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="border-t border-hairline bg-abyss/60">
+      <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-6 text-xs text-ink-faint sm:px-8">
+        <p>
+          <Link
+            href="/"
+            className="font-display font-extrabold text-ink-muted transition-colors hover:text-ink"
+          >
+            Open<span className="text-mint-bright">Macro</span>
+          </Link>{" "}
+          · © {year} contributors. Educational content only — nothing here is
+          financial advice.
+        </p>
+        <nav aria-label="Footer" className="flex items-center gap-4 font-semibold">
+          <Link href="/learn" className="transition-colors hover:text-ink">
+            All lessons
+          </Link>
+          <Link href="/glossary" className="transition-colors hover:text-ink">
+            Glossary
+          </Link>
+          <Link href="/privacy" className="transition-colors hover:text-ink">
+            Privacy
+          </Link>
+        </nav>
+      </div>
+    </footer>
   );
 }

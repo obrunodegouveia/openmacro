@@ -15,6 +15,12 @@ import { cn } from "@/lib/utils";
  *
  * Definitions are shuffled with a seed derived from the challenge id, so the
  * order looks arbitrary but never changes under the learner mid-attempt.
+ *
+ * On a phone the two lists are shown one at a time — terms, then definitions —
+ * rather than stacked. Ten rows in a single column put the term you just
+ * picked a full screen above the definition you are choosing for it, which
+ * turns a matching exercise into a memory test about your own last tap.
+ * Side by side from `sm` up, where both fit.
  */
 export function ConceptMatchView({
   challenge,
@@ -84,9 +90,29 @@ export function ConceptMatchView({
           : "Pick a term, then its definition"}
       </p>
 
+      {activeTerm && !locked ? (
+        <p className="flex items-center justify-between gap-3 rounded-xl border border-mint/30 bg-mint/[0.08] px-4 py-2.5 sm:hidden">
+          <span className="min-w-0 truncate text-sm font-bold text-ink">
+            {challenge.pairs.find((pair) => pair.id === activeTerm)?.term}
+          </span>
+          <button
+            type="button"
+            onClick={() => setActiveTerm(null)}
+            className="shrink-0 text-xs font-extrabold text-mint-bright underline-offset-4 hover:underline"
+          >
+            Change
+          </button>
+        </p>
+      ) : null}
+
       <div className="grid gap-3 sm:grid-cols-2">
         {/* Terms ------------------------------------------------------- */}
-        <ul className="flex flex-col gap-2">
+        <ul
+          className={cn(
+            "min-w-0 flex-col gap-2",
+            activeTerm && !locked ? "hidden sm:flex" : "flex",
+          )}
+        >
           {challenge.pairs.map((pair) => {
             const matched = pairings[pair.id];
             const verdict = verdictFor(pair.id);
@@ -94,7 +120,7 @@ export function ConceptMatchView({
               <li key={pair.id}>
                 <button
                   type="button"
-                  disabled={locked}
+                  aria-disabled={locked || undefined}
                   onClick={() => pickTerm(pair.id)}
                   aria-pressed={activeTerm === pair.id}
                   className={cn(
@@ -113,7 +139,7 @@ export function ConceptMatchView({
                 >
                   {pair.term}
                   {matched ? (
-                    <span className="mt-1 block truncate text-xs font-semibold text-ink-faint">
+                    <span className="mt-1 block text-xs font-semibold leading-snug text-ink-faint">
                       {challenge.pairs.find((p) => p.id === matched)?.definition}
                     </span>
                   ) : null}
@@ -124,19 +150,24 @@ export function ConceptMatchView({
         </ul>
 
         {/* Definitions -------------------------------------------------- */}
-        <ul className="flex flex-col gap-2">
+        <ul
+          className={cn(
+            "min-w-0 flex-col gap-2",
+            activeTerm ? "flex" : "hidden sm:flex",
+          )}
+        >
           {definitions.map((pair) => {
             const takenBy = definitionToTerm[pair.id];
             return (
               <li key={pair.id}>
                 <button
                   type="button"
-                  disabled={locked || !activeTerm}
+                  aria-disabled={locked || !activeTerm || undefined}
                   onClick={() => pickDefinition(pair.id)}
                   className={cn(
                     "w-full rounded-xl border px-4 py-3 text-left text-sm leading-snug transition-colors",
                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
-                    "disabled:cursor-default",
+                    "aria-disabled:cursor-default",
                     takenBy
                       ? "border-white/20 bg-white/[0.07] text-ink-faint line-through"
                       : activeTerm
