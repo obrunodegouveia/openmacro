@@ -7,6 +7,15 @@
 
 import type { ValueFormat } from './content/schema';
 
+/** Currency symbols for the codes lessons actually use. */
+const CURRENCY_SYMBOLS: Readonly<Record<string, string>> = {
+  USD: '$',
+  EUR: '\u20AC',
+  GBP: '\u00A3',
+  JPY: '\u00A5',
+  CHF: 'CHF\u00A0',
+};
+
 /** `1000` -> `"$1,000"`, `1234.5` -> `"$1,234.50"`. */
 export function formatCurrency(value: number, currency = '$'): string {
   const rounded = Math.round(value * 100) / 100;
@@ -41,10 +50,16 @@ export function formatNumber(value: number): string {
  * balance sheet emphatically does not want "$2,681,391,000,000" — which does
  * not fit the hero readout on a phone at any font size worth reading.
  */
-export function formatValue(value: number, format: ValueFormat): string {
+export function formatValue(
+  value: number,
+  format: ValueFormat,
+  currency = 'USD',
+): string {
   switch (format) {
     case 'currency':
-      return Math.abs(value) >= 1e6 ? formatCompactCurrency(value) : formatCurrency(value);
+      return Math.abs(value) >= 1e6
+        ? formatCompactCurrency(value, currency)
+        : formatCurrency(value, CURRENCY_SYMBOLS[currency] ?? `${currency}\u00A0`);
     case 'percent':
       return formatPercent(value);
     case 'multiplier':
@@ -100,14 +115,6 @@ export function snapToStep(value: number, min: number, step: number): number {
   return Number((min + steps * step).toFixed(6));
 }
 
-/** Currency symbols for the codes lessons actually use. */
-const CURRENCY_SYMBOLS: Readonly<Record<string, string>> = {
-  USD: '$',
-  EUR: '\u20AC',
-  GBP: '\u00A3',
-  JPY: '\u00A5',
-  CHF: 'CHF\u00A0',
-};
 
 /**
  * Balance-sheet scale money: `5.2e12` -> `"$5.2T"`, `-5e8` -> `"-$500M"`.

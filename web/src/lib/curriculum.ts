@@ -184,6 +184,24 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "mint",
   },
+  {
+    id: "reading-the-ecb-balance-sheet",
+    index: 6,
+    title: "Reading the ECB's Balance Sheet",
+    promise:
+      "Read the Eurosystem's weekly statement, and know which parts of the Fed's were choices.",
+    concepts: [
+      "The weekly financial statement",
+      "Gold and revaluation accounts",
+      "Deposit facility vs. current accounts",
+      "€STR under the floor",
+      "Two central banks diverging",
+    ],
+    tiers: ["central_bank", "commercial_bank"],
+    icon: "🇪🇺",
+    status: "live",
+    accent: "azure",
+  },
 ];
 
 /**

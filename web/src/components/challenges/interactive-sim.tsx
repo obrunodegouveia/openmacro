@@ -28,6 +28,7 @@ export function InteractiveSimView({
   locked,
   result,
 }: ChallengeComponentProps<"interactive_sim">) {
+  const currency = challenge.currency ?? "USD";
   const [values, setValues] = React.useState<SimSliderValues>(() =>
     initialSliderValues(challenge),
   );
@@ -45,9 +46,9 @@ export function InteractiveSimView({
     () =>
       buildObjectiveSteps(challenge.objective, observed, readouts, (value, sliderKey) => {
         const slider = challenge.sliders.find((s) => s.key === sliderKey);
-        return formatValue(value, slider?.format ?? "number");
+        return formatValue(value, slider?.format ?? "number", currency);
       }),
-    [challenge, observed, readouts],
+    [challenge, observed, readouts, currency],
   );
 
   const complete = isObjectiveComplete(steps);
@@ -86,7 +87,7 @@ export function InteractiveSimView({
               {hero.label}
             </p>
             <p className="mt-1 font-display text-4xl font-extrabold tracking-tight text-mint-bright tabular-nums">
-              {formatValue(readouts[hero.key] ?? 0, hero.format)}
+              {formatValue(readouts[hero.key] ?? 0, hero.format, currency)}
             </p>
             {hero.caption ? (
               <p className="mt-1 font-mono text-xs text-ink-faint">{hero.caption}</p>
@@ -107,7 +108,7 @@ export function InteractiveSimView({
                   {readout.label}
                 </dt>
                 <dd className="mt-0.5 font-display text-xl font-extrabold tabular-nums text-ink">
-                  {formatValue(readouts[readout.key] ?? 0, readout.format)}
+                  {formatValue(readouts[readout.key] ?? 0, readout.format, currency)}
                 </dd>
                 {readout.caption ? (
                   <p className="mt-0.5 font-mono text-[0.7rem] text-ink-faint">
@@ -134,7 +135,7 @@ export function InteractiveSimView({
                   {slider.label}
                 </label>
                 <span className="font-display text-base font-extrabold tabular-nums text-gold">
-                  {formatValue(value, slider.format)}
+                  {formatValue(value, slider.format, currency)}
                 </span>
               </div>
               <input

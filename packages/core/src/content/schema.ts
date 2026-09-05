@@ -210,6 +210,12 @@ export interface SimObjective {
 
 export interface InteractiveSimChallenge extends BaseChallenge {
   type: 'interactive_sim';
+  /**
+   * ISO 4217 code used to render every `currency`-formatted slider and
+   * readout. Default 'USD' — a euro-area sim must say so, or it will label
+   * the ECB's balance sheet in dollars.
+   */
+  currency?: string;
   /** Fixed inputs available to formulas, e.g. { initialDeposit: 1000 }. */
   constants: Record<string, number>;
   sliders: SimSlider[];

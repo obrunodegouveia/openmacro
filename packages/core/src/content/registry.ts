@@ -25,6 +25,7 @@ import { moduleCommercialCentralInterface } from './lessons/module-02-commercial
 import { moduleFedEcbLevers } from './lessons/module-03-fed-ecb-levers';
 import { moduleCrisisArchitecture } from './lessons/module-04-crisis-architecture-global-dollar';
 import { moduleReadingTheFedBalanceSheet } from './lessons/module-05-reading-the-fed-balance-sheet';
+import { moduleReadingTheEcbBalanceSheet } from './lessons/module-06-reading-the-ecb-balance-sheet';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
@@ -33,6 +34,7 @@ export const MODULES: readonly Module[] = [
   moduleFedEcbLevers,
   moduleCrisisArchitecture,
   moduleReadingTheFedBalanceSheet,
+  moduleReadingTheEcbBalanceSheet,
 ];
 
 export const COURSE: Course = {
