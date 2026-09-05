@@ -1,0 +1,15 @@
+# Build artefacts and dependencies are recreated inside the image.
+node_modules
+.next
+out
+npm-debug.log*
+
+# Local-only files that must never reach the image.
+.env
+.env.local
+.env*.local
+.git
+.gitignore
+.DS_Store
+README.md
+deploy/

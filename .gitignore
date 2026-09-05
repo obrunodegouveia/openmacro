@@ -43,5 +43,5 @@ yarn-error.*
 # OpenMacro
 .env
 
-# Unrelated scaffold that appeared in this directory; not part of the app.
-web/
+# web/ is the Next.js site served at openmacro.org. Its own .gitignore
+# excludes node_modules and .next, so only source is tracked.

@@ -1,0 +1,41 @@
+# ============================================================================
+# Cloud Build pipeline for openmacro.org
+# ============================================================================
+# Invoked by deploy/deploy.sh, and suitable as-is for a GitHub push trigger.
+# Builds the image and pushes both an immutable tag and `latest`.
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --build-arg
+      - NEXT_PUBLIC_GITHUB_REPO=${_GITHUB_REPO}
+      - --build-arg
+      - NEXT_PUBLIC_DISCORD_URL=${_DISCORD_URL}
+      # Reuse the previous image's layers when the lockfile has not changed.
+      - --cache-from
+      - ${_IMAGE}:latest
+      - -t
+      - ${_IMAGE}:${_TAG}
+      - -t
+      - ${_IMAGE}:latest
+      - .
+    env:
+      - DOCKER_BUILDKIT=1
+
+images:
+  - ${_IMAGE}:${_TAG}
+  - ${_IMAGE}:latest
+
+substitutions:
+  _IMAGE: us-central1-docker.pkg.dev/deep-atlas-484612-m0/openmacro/web
+  _TAG: latest
+  _GITHUB_REPO: openmacro/openmacro
+  _DISCORD_URL: https://discord.gg/openmacro
+
+options:
+  machineType: E2_HIGHCPU_8
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1200s
