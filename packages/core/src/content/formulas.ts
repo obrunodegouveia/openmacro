@@ -393,6 +393,54 @@ export const FORMULAS = {
     if (g <= -1) return 0;
     return (read(inputs, 'debtRatio') * (read(inputs, 'interestRate') - g)) / (1 + g);
   },
+
+  // -------------------------------------------------------------------------
+  // Speculating against a peg
+  // -------------------------------------------------------------------------
+
+  /**
+   * Profit on a short currency position, as an amount of the notional.
+   *
+   *   profit = position x (entryRate - exitRate) / entryRate
+   *
+   * You borrowed the currency, sold it at `entryRate`, and buy it back at
+   * `exitRate`. Rates are quoted as foreign units per unit of the currency
+   * being shorted, so a fall in the rate is a gain.
+   *
+   * Expects: `position`, `entryRate`, `exitRate`.
+   */
+  fx_short_profit: (inputs) => {
+    const entry = read(inputs, 'entryRate');
+    if (entry <= 0) return 0;
+    return (read(inputs, 'position') * (entry - read(inputs, 'exitRate'))) / entry;
+  },
+
+  /**
+   * What holding the position costs while you wait.
+   *
+   * A short is a borrowing: you pay the interest rate of the currency you sold
+   * and earn the rate of the one you hold. Defending a peg means raising the
+   * first, which is the only weapon the authorities have against a speculator's
+   * patience — and it is why the cost is worth putting beside the payoff.
+   *
+   * Expects: `position`, `domesticRate`, `foreignRate`, `months`.
+   */
+  fx_carry_cost: (inputs) =>
+    read(inputs, 'position') *
+    (read(inputs, 'domesticRate') - read(inputs, 'foreignRate')) *
+    (read(inputs, 'months') / 12),
+
+  /**
+   * The asymmetry, as a plain multiple: what the bet pays against what it costs
+   * to place. This single number is the whole reason a peg attracts an attack.
+   *
+   * Chained: expects `profit` and `carry` readouts computed earlier.
+   */
+  payoff_to_carry: (inputs) => {
+    const carry = read(inputs, 'carry');
+    if (carry <= 0) return 0;
+    return read(inputs, 'profit') / carry;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;

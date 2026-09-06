@@ -100,7 +100,7 @@ export interface Track {
   tiers: TierId[];
   icon: string;
   status: TrackStatus;
-  accent: "emerald" | "gold" | "azure" | "violet" | "mint";
+  accent: "emerald" | "gold" | "azure" | "violet" | "mint" | "coral";
   /** Derived from the content registry — never hand-written. */
   lessonCount: number;
 }
@@ -235,6 +235,24 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     icon: "🏗️",
     status: "live",
     accent: "violet",
+  },
+  {
+    id: "breaking-a-peg-1992",
+    index: 9,
+    title: "Breaking a Peg: September 1992",
+    promise:
+      "Price the sterling trade yourself, and know why the defence could not win.",
+    concepts: [
+      "The ERM and the trilemma",
+      "Shorting a pegged currency",
+      "Carry cost vs. devaluation payoff",
+      "Intervention and sterilisation",
+      "Reflexivity at size",
+    ],
+    tiers: ["central_bank", "shadow_bank"],
+    icon: "📉",
+    status: "live",
+    accent: "coral",
   },
 ];
 

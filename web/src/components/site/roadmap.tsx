@@ -34,6 +34,7 @@ const ACCENT_RING: Record<Track["accent"], string> = {
   azure: "border-azure/60 bg-azure/15 shadow-azure/25",
   violet: "border-violet/60 bg-violet/15 shadow-violet/25",
   mint: "border-mint/60 bg-mint/15 shadow-mint/25",
+  coral: "border-coral/60 bg-coral/15 shadow-coral/25",
 };
 
 export function Roadmap() {
