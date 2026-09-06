@@ -70,6 +70,77 @@ function answerOf(challenge: Challenge): string | null {
   }
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * The same brief as a bare HTML document.
+ *
+ * This exists because NotebookLM rejects `text/markdown` outright — it answers
+ * "this URL type is not supported" and refuses the source. It wants a web page,
+ * and it states that only the visible text will be imported. So this emits the
+ * plainest possible page: semantic headings, paragraphs and lists, no
+ * navigation, no styling worth the name and no script. Everything on it is
+ * content, which is exactly what an ingester should be handed.
+ */
+export function buildModuleBriefHtml(module: Module): string {
+  const md = buildModuleBrief(module);
+  const body: string[] = [];
+  let list: string[] = [];
+
+  const flush = () => {
+    if (!list.length) return;
+    body.push(`<ul>${list.map((item) => `<li>${item}</li>`).join("")}</ul>`);
+    list = [];
+  };
+
+  // Inline: **bold** and _italic_ are all the builder emits.
+  const inline = (line: string) =>
+    escapeHtml(line)
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/_(.+?)_/g, "<em>$1</em>");
+
+  for (const raw of md.split("\n")) {
+    const line = raw.trimEnd();
+    if (!line) {
+      flush();
+      continue;
+    }
+    if (line.startsWith("### ")) {
+      flush();
+      body.push(`<h3>${inline(line.slice(4))}</h3>`);
+    } else if (line.startsWith("## ")) {
+      flush();
+      body.push(`<h2>${inline(line.slice(3))}</h2>`);
+    } else if (line.startsWith("# ")) {
+      flush();
+      body.push(`<h1>${inline(line.slice(2))}</h1>`);
+    } else if (line.startsWith("- ")) {
+      list.push(inline(line.slice(2)));
+    } else {
+      flush();
+      body.push(`<p>${inline(line)}</p>`);
+    }
+  }
+  flush();
+
+  return [
+    "<!doctype html>",
+    '<html lang="en"><head><meta charset="utf-8">',
+    `<title>${escapeHtml(module.title)} — OpenMacro module brief</title>`,
+    `<meta name="description" content="${escapeHtml(module.description)}">`,
+    '<meta name="robots" content="noindex, follow">',
+    "</head><body>",
+    body.join("\n"),
+    "</body></html>",
+  ].join("\n");
+}
+
 export function buildModuleBrief(module: Module): string {
   const out: string[] = [];
   const xp = module.lessons.reduce(
