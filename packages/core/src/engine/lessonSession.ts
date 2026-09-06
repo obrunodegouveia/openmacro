@@ -63,7 +63,16 @@ export interface LessonSessionState {
 export type LessonSessionAction =
   | { kind: 'submit'; answer: ChallengeAnswer }
   | { kind: 'continue' }
-  | { kind: 'restart' };
+  | { kind: 'restart' }
+  /**
+   * Bring a challenge to the front of the queue.
+   *
+   * For arriving on a shared link to one particular question. It rotates
+   * rather than skips: everything ahead of the target moves behind it and is
+   * still answered, so a shared link changes the order of a run and never its
+   * contents.
+   */
+  | { kind: 'jump'; challengeId: string };
 
 export function createSession(lesson: Lesson): LessonSessionState {
   const hearts = lesson.hearts ?? DEFAULT_HEARTS;
@@ -113,6 +122,24 @@ export function lessonSessionReducer(
   action: LessonSessionAction,
 ): LessonSessionState {
   switch (action.kind) {
+    // -----------------------------------------------------------------------
+    case 'jump': {
+      // Only from a clean start: rotating mid-run would strand a feedback
+      // sheet on a challenge that is no longer on screen.
+      if (state.status !== 'in_progress' || state.feedback) return state;
+      if (state.resolved.length > 0 || state.submissionCount > 0) return state;
+      const index = state.queue.indexOf(action.challengeId);
+      if (index <= 0) return state;
+      return {
+        ...state,
+        queue: [
+          action.challengeId,
+          ...state.queue.slice(0, index),
+          ...state.queue.slice(index + 1),
+        ],
+      };
+    }
+
     // -----------------------------------------------------------------------
     case 'submit': {
       // Ignore double submissions while the feedback sheet is already open.

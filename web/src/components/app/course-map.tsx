@@ -6,6 +6,7 @@ import { DEFAULT_CHALLENGE_XP, MODULES } from "@openmacro/core/content";
 import type { Lesson } from "@openmacro/core/content/schema";
 import type { LessonProgress } from "@openmacro/core/progress/types";
 import { useProgressSnapshot } from "@/lib/use-progress";
+import { Permalink } from "@/components/ui/permalink";
 import { cn } from "@/lib/utils";
 
 /**
@@ -72,10 +73,20 @@ export function CourseMap() {
           ).length;
 
           return (
-            <section key={module.id}>
+            /* The `id` makes each module a real destination — without one,
+               "share the module" has nothing to point at. No scroll offset
+               here: `scroll-padding-top` on <html> already clears the fixed
+               header, and adding a margin as well lands 88px too low. */
+            <section key={module.id} id={module.id}>
               <div className="flex items-baseline justify-between gap-4">
-                <h3 className="font-display text-base font-extrabold tracking-tight text-ink">
+                <h3 className="min-w-0 font-display text-base font-extrabold tracking-tight text-ink">
                   {module.title}
+                  <Permalink
+                    href={`/learn#${module.id}`}
+                    label={module.title}
+                    size="sm"
+                    className="ml-1.5 translate-y-[-0.05em]"
+                  />
                 </h3>
                 {ready ? (
                   <p className="shrink-0 text-xs font-bold text-ink-faint">

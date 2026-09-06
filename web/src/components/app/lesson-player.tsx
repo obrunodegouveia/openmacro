@@ -10,7 +10,6 @@ import {
   Coins,
   Flame,
   Heart,
-  Link2,
   PartyPopper,
   RotateCcw,
   X,
@@ -30,6 +29,7 @@ import { useAuth } from "@/components/site/auth-provider";
 import { getSupabase } from "@/lib/supabase";
 import { recordCompletion } from "@/lib/progress";
 import { GoogleSignIn } from "@/components/site/google-sign-in";
+import { Permalink } from "@/components/ui/permalink";
 import { cn } from "@/lib/utils";
 
 /**
@@ -62,6 +62,28 @@ export function LessonPlayer({
     lesson,
     createSession,
   );
+
+  /**
+   * Arriving on a link to one particular question.
+   *
+   * Read from the hash in an effect rather than during render: the page is
+   * prerendered, so deriving the first challenge from the URL would render one
+   * thing on the server and another in the browser. The hash never reaches the
+   * server at all, which is what makes it the right place to put this.
+   */
+  React.useEffect(() => {
+    const jumpToHash = () => {
+      const match = /^#q=(.+)$/.exec(window.location.hash);
+      if (!match?.[1]) return;
+      dispatch({ kind: "jump", challengeId: decodeURIComponent(match[1]) });
+    };
+    jumpToHash();
+    // Also when the hash changes without a reload — pasting a shared link into
+    // the address bar while already on the lesson is a same-document
+    // navigation, so a mount effect alone would never see it.
+    window.addEventListener("hashchange", jumpToHash);
+    return () => window.removeEventListener("hashchange", jumpToHash);
+  }, []);
   /**
    * The answer the challenge component is currently offering.
    *
@@ -109,6 +131,7 @@ export function LessonPlayer({
       <SessionBar
         state={state}
         progress={progress}
+        lessonId={lesson.id}
         lessonTitle={lesson.title}
         showTitle={started && playing}
       />
@@ -126,7 +149,11 @@ export function LessonPlayer({
                 {lesson.icon}
               </span>
               {lesson.title}
-              <Permalink lessonId={lesson.id} title={lesson.title} />
+              <Permalink
+                href={`/learn/${lesson.id}`}
+                label={lesson.title}
+                className="ml-2 translate-y-[-0.1em]"
+              />
             </h1>
             <p className="mt-2 text-pretty leading-relaxed text-ink-muted">
               {lesson.subtitle}
@@ -172,6 +199,14 @@ export function LessonPlayer({
                   </p>
                   <h2 className="mt-2 font-display text-xl font-extrabold leading-snug tracking-tight sm:text-2xl">
                     {challenge.prompt}
+                    {/* Links to this question specifically — the recipient
+                        lands on it, and still answers the rest afterwards. */}
+                    <Permalink
+                      href={`/learn/${lesson.id}#q=${encodeURIComponent(challenge.id)}`}
+                      label="this question"
+                      size="sm"
+                      className="ml-2 translate-y-[-0.1em]"
+                    />
                   </h2>
                 </header>
 
@@ -228,62 +263,6 @@ export function LessonPlayer({
   );
 }
 
-/**
- * Permalink to the lesson, as an anchor beside its title.
- *
- * It is a real `<a href>` so that middle-click, right-click and "open in new
- * tab" all behave — but a plain self-link would do nothing visible when
- * clicked, so a click copies the absolute URL instead. That is what somebody
- * reaching for a link icon actually wants: the address, on the clipboard,
- * ready to send to whoever they were going to send it to.
- *
- * Falls back to following the link when the clipboard is unavailable, which it
- * is over plain HTTP and in some embedded browsers.
- */
-function Permalink({ lessonId, title }: { lessonId: string; title: string }) {
-  const [copied, setCopied] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!copied) return;
-    const timer = setTimeout(() => setCopied(false), 2000);
-    return () => clearTimeout(timer);
-  }, [copied]);
-
-  return (
-    <a
-      href={`/learn/${lessonId}`}
-      aria-label={copied ? "Link copied" : `Copy a link to ${title}`}
-      title={copied ? "Link copied" : "Copy a link to this lesson"}
-      onClick={(event) => {
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        const url = new URL(`/learn/${lessonId}`, window.location.origin).toString();
-        if (!navigator.clipboard?.writeText) return;
-        event.preventDefault();
-        void navigator.clipboard
-          .writeText(url)
-          .then(() => setCopied(true))
-          .catch(() => setCopied(false));
-      }}
-      className={cn(
-        "ml-2 inline-flex size-7 shrink-0 translate-y-[-0.1em] items-center justify-center rounded-lg align-middle transition-colors",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
-        copied
-          ? "text-mint-bright"
-          : "text-ink-faint hover:bg-white/5 hover:text-mint-bright",
-      )}
-    >
-      {copied ? (
-        <Check className="size-4" strokeWidth={3} aria-hidden />
-      ) : (
-        <Link2 className="size-4" aria-hidden />
-      )}
-      <span role="status" aria-live="polite" className="sr-only">
-        {copied ? "Link copied to clipboard" : ""}
-      </span>
-    </a>
-  );
-}
-
 const CHALLENGE_LABELS: Record<string, string> = {
   multiple_choice: "Pick the best answer",
   concept_match: "Match each pair",
@@ -302,11 +281,13 @@ const CHALLENGE_LABELS: Record<string, string> = {
 function SessionBar({
   state,
   progress,
+  lessonId,
   lessonTitle,
   showTitle,
 }: {
   state: ReturnType<typeof createSession>;
   progress: number;
+  lessonId: string;
   lessonTitle: string;
   showTitle: boolean;
 }) {
@@ -379,8 +360,9 @@ function SessionBar({
       {/* Once the title block above the challenge is gone, the lesson's name
           lives here so the learner never loses track of what they are in. */}
       {showTitle ? (
-        <p className="mx-auto -mt-1 w-full max-w-3xl truncate px-5 pb-2 text-xs font-bold text-ink-faint sm:px-8">
-          {lessonTitle}
+        <p className="mx-auto -mt-1 flex w-full max-w-3xl items-center gap-1 px-5 pb-2 text-xs font-bold text-ink-faint sm:px-8">
+          <span className="min-w-0 truncate">{lessonTitle}</span>
+          <Permalink href={`/learn/${lessonId}`} label={lessonTitle} size="sm" />
         </p>
       ) : null}
     </div>
