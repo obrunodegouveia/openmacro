@@ -746,6 +746,87 @@ export const FORMULAS = {
     }
     return 0;
   },
+
+  // -------------------------------------------------------------------------
+  // Property bought as an investment
+  // -------------------------------------------------------------------------
+
+  /**
+   * IMT on a property that is not a permanent primary residence — the 2026
+   * Table III schedule, which starts charging at the first euro rather than
+   * at €106,346.
+   *
+   * Expects: `price`.
+   */
+  pt_imt_investment: (inputs) => {
+    const price = read(inputs, 'price');
+    if (price <= 106346) return price * 0.01;
+    if (price <= 145470) return price * 0.02 - 1063.46;
+    if (price <= 198347) return price * 0.05 - 5427.56;
+    if (price <= 330539) return price * 0.07 - 9394.5;
+    if (price <= 633931) return price * 0.08 - 12699.89;
+    if (price <= 1150853) return price * 0.06;
+    return price * 0.075;
+  },
+
+  /**
+   * Net euro position on a property held purely as an investment.
+   *
+   * No rent is credited for living in it, because you do not. Rent received is
+   * credited net of the Category F rate. Capital gains tax is charged on half
+   * the gain at the marginal IRS rate, with the acquisition value uplifted by
+   * an inflation coefficient and the purchase and selling costs deductible —
+   * which is the actual Portuguese computation, and materially kinder than
+   * taxing the raw price difference.
+   *
+   * Expects: `price`, `ltv`, `loanRate`, `loanTerm`, `years`, `entryCosts`,
+   * `carryAnnual`, `sellingRate`, `growth`, `grossYield`, `rentTax`,
+   * `cgtMarginal`, `inflCoefficient`.
+   */
+  buy_to_let_net: (inputs) => {
+    const price = read(inputs, 'price');
+    const loan = price * read(inputs, 'ltv');
+    const equity = price - loan;
+    const term = read(inputs, 'loanTerm') * 12;
+    const rate = read(inputs, 'loanRate') / 12;
+    const years = Math.min(Math.max(Math.round(read(inputs, 'years')), 0), 40);
+    const entry = read(inputs, 'entryCosts');
+    const selling = read(inputs, 'sellingRate');
+
+    let payment = 0;
+    let balance = loan;
+    if (loan > 0 && term > 0) {
+      payment = rate <= 0 ? loan / term : (loan * rate) / (1 - Math.pow(1 + rate, -term));
+      for (let month = 0; month < years * 12 && month < term; month += 1) {
+        balance -= payment - balance * rate;
+      }
+    }
+
+    const sale = price * Math.pow(1 + read(inputs, 'growth'), years);
+    const basis =
+      price * Math.pow(1 + read(inputs, 'inflCoefficient'), years) + entry + sale * selling;
+    const gain = sale - basis;
+    const cgt = gain > 0 ? gain * 0.5 * read(inputs, 'cgtMarginal') : 0;
+
+    const rentNet = price * read(inputs, 'grossYield') * (1 - read(inputs, 'rentTax'));
+    const cashIn = sale * (1 - selling) - balance - cgt;
+    const cashOut =
+      equity + entry + read(inputs, 'carryAnnual') * years + payment * 12 * years - rentNet * years;
+    return cashIn - cashOut;
+  },
+
+  /**
+   * The same position as a return on the cash actually committed.
+   *
+   * Chained: expects a `net` readout computed earlier, plus `price` and `ltv`.
+   * This is the number leverage is supposed to move, and the one that shows it
+   * moving the wrong way when nothing is servicing the debt.
+   */
+  buy_to_let_return_on_equity: (inputs) => {
+    const equity = read(inputs, 'price') * (1 - read(inputs, 'ltv'));
+    if (equity <= 0) return 0;
+    return read(inputs, 'net') / equity;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
