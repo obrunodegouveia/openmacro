@@ -307,6 +307,24 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "violet",
   },
+  {
+    id: "euribor",
+    index: 13,
+    title: "Euribor",
+    promise:
+      "Read the euro money market from four numbers, and know what your mortgage is indexed to.",
+    concepts: [
+      "The hybrid waterfall",
+      "Euribor against €STR",
+      "Tenors as an expectations curve",
+      "The reset and its lag",
+      "The Euribor–OIS spread",
+    ],
+    tiers: ["commercial_bank", "shadow_bank"],
+    icon: "📌",
+    status: "live",
+    accent: "azure",
+  },
 ];
 
 /**

@@ -525,6 +525,58 @@ export const FORMULAS = {
     const debt = value * (1 - deposit);
     return (value * Math.pow(1 + read(inputs, 'houseGrowth'), read(inputs, 'years')) - debt) / equity;
   },
+
+  // -------------------------------------------------------------------------
+  // Floating-rate mortgages
+  // -------------------------------------------------------------------------
+
+  /**
+   * A floating rate plus its contract spread — the rate actually charged.
+   *
+   * Trivial arithmetic, and it earns its place as a readout: seeing the index
+   * and the margin resolve into one number is most of the point of the reset
+   * lesson.
+   *
+   * Expects: `euribor`, `spread`.
+   */
+  rate_plus_spread: (inputs) => read(inputs, 'euribor') + read(inputs, 'spread'),
+
+  /**
+   * The level monthly payment on an annuity mortgage.
+   *
+   *   m = P x i / (1 - (1 + i)^-n),  i = annualRate / 12,  n = years x 12
+   *
+   * At a zero rate it degenerates to the principal spread evenly, which is
+   * what a euro area borrower on Euribor plus a thin spread was close to
+   * paying in 2021.
+   *
+   * Expects: `principal`, `annualRate`, `years`.
+   */
+  mortgage_monthly_payment: (inputs) => {
+    const principal = read(inputs, 'principal');
+    const months = read(inputs, 'years') * 12;
+    const rate = read(inputs, 'annualRate') / 12;
+    if (months <= 0) return 0;
+    if (rate <= 0) return principal / months;
+    return (principal * rate) / (1 - Math.pow(1 + rate, -months));
+  },
+
+  /**
+   * How much bigger the payment is than at some reference rate, as a fraction.
+   *
+   * Chained: expects a `payment` readout computed earlier, plus `principal`,
+   * `baseRate` and `years`.
+   */
+  mortgage_payment_increase: (inputs) => {
+    const principal = read(inputs, 'principal');
+    const months = read(inputs, 'years') * 12;
+    const base = read(inputs, 'baseRate') / 12;
+    if (months <= 0 || principal <= 0) return 0;
+    const basePayment =
+      base <= 0 ? principal / months : (principal * base) / (1 - Math.pow(1 + base, -months));
+    if (basePayment <= 0) return 0;
+    return read(inputs, 'payment') / basePayment - 1;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;

@@ -32,6 +32,7 @@ import { moduleBreakingAPeg } from './lessons/module-09-breaking-a-peg-1992';
 import { moduleTheBisAndTheEcb } from './lessons/module-10-the-bis-and-the-ecb';
 import { moduleAfricanCentralBanks } from './lessons/module-11-african-central-banks';
 import { moduleRealAssetsAndProperty } from './lessons/module-12-real-assets-and-property';
+import { moduleEuribor } from './lessons/module-13-euribor';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
@@ -47,6 +48,7 @@ export const MODULES: readonly Module[] = [
   moduleTheBisAndTheEcb,
   moduleAfricanCentralBanks,
   moduleRealAssetsAndProperty,
+  moduleEuribor,
 ];
 
 export const COURSE: Course = {
