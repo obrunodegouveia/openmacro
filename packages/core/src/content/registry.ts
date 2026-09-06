@@ -20,6 +20,7 @@
  */
 
 import type { Course, Lesson, Module } from './schema';
+import { moduleStartHere } from './lessons/module-00-start-here';
 import { moduleFoundationsFiduciaryCurrency } from './lessons/module-01-foundations-fiduciary-currency';
 import { moduleCommercialCentralInterface } from './lessons/module-02-commercial-central-interface';
 import { moduleFedEcbLevers } from './lessons/module-03-fed-ecb-levers';
@@ -37,6 +38,7 @@ import { moduleBuyingPropertyPortugal } from './lessons/module-14-buying-propert
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
+  moduleStartHere,
   moduleFoundationsFiduciaryCurrency,
   moduleCommercialCentralInterface,
   moduleFedEcbLevers,

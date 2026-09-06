@@ -119,8 +119,26 @@ function lessonsIn(moduleId: string): number {
 
 const TRACKS: Omit<Track, "lessonCount">[] = [
   {
-    id: "foundations-fiduciary-currency",
+    id: "start-here",
     index: 1,
+    title: "Start Here",
+    promise:
+      "Understand the number in your banking app, and why a decision in Frankfurt reaches your mortgage.",
+    concepts: [
+      "Deposits as promises",
+      "What a bank is",
+      "What an interest rate pays for",
+      "Who is and is not in charge",
+      "What inflation does to whom",
+    ],
+    tiers: ["commercial_bank", "fiduciary_core"],
+    icon: "🚪",
+    status: "live",
+    accent: "mint",
+  },
+  {
+    id: "foundations-fiduciary-currency",
+    index: 2,
     title: "Foundations of Fiduciary Currency",
     promise:
       "Explain why a piece of unbacked paper is accepted at all — without hand-waving about trust.",
@@ -132,7 +150,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "commercial-central-interface",
-    index: 2,
+    index: 3,
     title: "The Commercial–Central Bank Interface",
     promise:
       "Trace a payment from one bank to another and say exactly what settles, and in what.",
@@ -144,7 +162,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "fed-ecb-levers",
-    index: 3,
+    index: 4,
     title: "The Fed & ECB Levers",
     promise:
       "Post every major policy operation yourself — QE, the floor, the corridor, the window.",
@@ -156,7 +174,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "crisis-architecture-global-dollar",
-    index: 4,
+    index: 5,
     title: "Crisis Architecture & The Global Dollar",
     promise:
       "Follow the offshore dollar system, and read a rescue as it happens rather than after.",
@@ -168,7 +186,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "reading-the-fed-balance-sheet",
-    index: 5,
+    index: 6,
     title: "Reading the Fed's Balance Sheet",
     promise:
       "Open the release the Fed published this week and read it without a translator.",
@@ -186,7 +204,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "reading-the-ecb-balance-sheet",
-    index: 6,
+    index: 7,
     title: "Reading the ECB's Balance Sheet",
     promise:
       "Read the Eurosystem's weekly statement, and know which parts of the Fed's were choices.",
@@ -204,7 +222,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "the-treasury-yield-curve",
-    index: 7,
+    index: 8,
     title: "The Treasury Yield Curve",
     promise:
       "Look at eleven numbers and say what the market thinks is coming.",
@@ -221,7 +239,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "debt-debasement-and-capital",
-    index: 8,
+    index: 9,
     title: "Debt, Debasement and Capital",
     promise:
       "Work out who pays for a debt that is never repaid, and what the same resources build instead.",
@@ -238,7 +256,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "breaking-a-peg-1992",
-    index: 9,
+    index: 10,
     title: "Breaking a Peg: September 1992",
     promise:
       "Price the sterling trade yourself, and know why the defence could not win.",
@@ -256,7 +274,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "the-bis-and-the-ecb",
-    index: 10,
+    index: 11,
     title: "The BIS and the ECB",
     promise:
       "Tell the real channels of influence between Basel and Frankfurt from the imagined ones.",
@@ -273,7 +291,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "african-central-banks",
-    index: 11,
+    index: 12,
     title: "African Central Banks and the CFA Franc",
     promise:
       "Read a monetary arrangement well enough to name who bears each cost and who takes each benefit.",
@@ -291,7 +309,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "real-assets-and-property",
-    index: 12,
+    index: 13,
     title: "Real Assets and the Price of an Address",
     promise:
       "Work out who pays for a housing boom, and what would have to be true for it to reverse.",
@@ -309,7 +327,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "euribor",
-    index: 13,
+    index: 14,
     title: "Euribor",
     promise:
       "Read the euro money market from four numbers, and know what your mortgage is indexed to.",
@@ -327,7 +345,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   },
   {
     id: "buying-property-portugal",
-    index: 14,
+    index: 15,
     title: "Buying Property in Portugal: The Arithmetic",
     promise:
       "Know to the euro what a purchase costs, and how many years of appreciation clear it.",
