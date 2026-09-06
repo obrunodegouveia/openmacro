@@ -33,6 +33,7 @@ import { moduleTheBisAndTheEcb } from './lessons/module-10-the-bis-and-the-ecb';
 import { moduleAfricanCentralBanks } from './lessons/module-11-african-central-banks';
 import { moduleRealAssetsAndProperty } from './lessons/module-12-real-assets-and-property';
 import { moduleEuribor } from './lessons/module-13-euribor';
+import { moduleBuyingPropertyPortugal } from './lessons/module-14-buying-property-portugal';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
@@ -49,6 +50,7 @@ export const MODULES: readonly Module[] = [
   moduleAfricanCentralBanks,
   moduleRealAssetsAndProperty,
   moduleEuribor,
+  moduleBuyingPropertyPortugal,
 ];
 
 export const COURSE: Course = {

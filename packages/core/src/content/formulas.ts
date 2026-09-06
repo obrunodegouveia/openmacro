@@ -577,6 +577,87 @@ export const FORMULAS = {
     if (basePayment <= 0) return 0;
     return read(inputs, 'payment') / basePayment - 1;
   },
+
+  // -------------------------------------------------------------------------
+  // Buying property in Portugal
+  // -------------------------------------------------------------------------
+
+  /**
+   * IMT on a permanent primary residence, Continente, 2026 table.
+   *
+   * Progressive with a deduction per bracket, then two flat bands at the top.
+   * Figures from Ofício Circulado n.º 40129/2026; the table reproduces the
+   * Tax Authority's own worked example exactly (€150,000 -> €1,008.98).
+   *
+   * Expects: `price`.
+   */
+  pt_imt_own_home: (inputs) => {
+    const price = read(inputs, 'price');
+    if (price <= 106346) return 0;
+    if (price <= 145470) return price * 0.02 - 2126.92;
+    if (price <= 198347) return price * 0.05 - 6491.02;
+    if (price <= 330539) return price * 0.07 - 10457.96;
+    if (price <= 660982) return price * 0.08 - 13763.35;
+    if (price <= 1150853) return price * 0.06;
+    return price * 0.075;
+  },
+
+  /**
+   * Everything payable to complete a purchase: IMT, stamp duty at 0.8% of the
+   * price, and the notary and registry bill.
+   *
+   * Chained: expects an `imt` readout computed earlier, plus `price` and
+   * `deedCosts`.
+   */
+  pt_purchase_costs: (inputs) =>
+    read(inputs, 'imt') + read(inputs, 'price') * 0.008 + read(inputs, 'deedCosts'),
+
+  /**
+   * Where the position stands after `years`, in euro.
+   *
+   *   sale proceeds net of selling costs
+   *   - the price paid
+   *   - the costs of buying
+   *   - the annual carry, times the years
+   *
+   * Ignores the mortgage entirely: interest is the price of not paying cash,
+   * and its correct comparator is the rent not paid rather than the
+   * appreciation. Keeping it out isolates the question actually being asked.
+   *
+   * Expects: `price`, `growth`, `years`, `purchaseCosts`, `sellingRate`,
+   * `carryAnnual`.
+   */
+  pt_net_position: (inputs) => {
+    const price = read(inputs, 'price');
+    const years = read(inputs, 'years');
+    const sale = price * Math.pow(1 + read(inputs, 'growth'), years);
+    return (
+      sale * (1 - read(inputs, 'sellingRate')) -
+      price -
+      read(inputs, 'purchaseCosts') -
+      read(inputs, 'carryAnnual') * years
+    );
+  },
+
+  /**
+   * The first whole year at which the position turns positive, or 0 if it
+   * never does inside forty years — which is the answer whenever appreciation
+   * runs below the annual carry.
+   *
+   * Same inputs as `pt_net_position`, except it searches over `years`.
+   */
+  pt_breakeven_years: (inputs) => {
+    const price = read(inputs, 'price');
+    const growth = read(inputs, 'growth');
+    const purchase = read(inputs, 'purchaseCosts');
+    const selling = read(inputs, 'sellingRate');
+    const carry = read(inputs, 'carryAnnual');
+    for (let year = 1; year <= 40; year += 1) {
+      const sale = price * Math.pow(1 + growth, year);
+      if (sale * (1 - selling) - price - purchase - carry * year > 0) return year;
+    }
+    return 0;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;

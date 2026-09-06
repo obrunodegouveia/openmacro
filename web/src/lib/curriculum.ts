@@ -325,6 +325,24 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "azure",
   },
+  {
+    id: "buying-property-portugal",
+    index: 14,
+    title: "Buying Property in Portugal: The Arithmetic",
+    promise:
+      "Know to the euro what a purchase costs, and how many years of appreciation clear it.",
+    concepts: [
+      "The 2026 IMT table",
+      "Stamp duty and the deed",
+      "IMI, VPT and maintenance",
+      "Round-trip transaction costs",
+      "The carry rate as a hurdle",
+    ],
+    tiers: ["commercial_bank", "fiduciary_core"],
+    icon: "🔑",
+    status: "live",
+    accent: "emerald",
+  },
 ];
 
 /**
