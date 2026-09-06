@@ -271,6 +271,24 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "emerald",
   },
+  {
+    id: "african-central-banks",
+    index: 11,
+    title: "African Central Banks and the CFA Franc",
+    promise:
+      "Read a monetary arrangement well enough to name who bears each cost and who takes each benefit.",
+    concepts: [
+      "Two CFA francs, two central banks",
+      "The operations account, and the 2020 reform",
+      "Imported monetary policy",
+      "Real appreciation under a peg",
+      "Who gains from a fixed rate",
+    ],
+    tiers: ["central_bank", "fiduciary_core"],
+    icon: "🗺️",
+    status: "live",
+    accent: "gold",
+  },
 ];
 
 /**

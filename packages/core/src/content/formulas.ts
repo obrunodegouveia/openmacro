@@ -441,6 +441,31 @@ export const FORMULAS = {
     if (carry <= 0) return 0;
     return read(inputs, 'profit') / carry;
   },
+
+  // -------------------------------------------------------------------------
+  // Living with a fixed exchange rate
+  // -------------------------------------------------------------------------
+
+  /**
+   * Cumulative real appreciation under a fixed nominal peg.
+   *
+   *   drift = (1 + domestic)^n / (1 + anchor)^n - 1
+   *
+   * If your prices rise faster than the anchor's and the nominal rate cannot
+   * move, the whole difference accumulates in the real exchange rate: your
+   * exports get dearer abroad every year and nothing corrects it. This is the
+   * slow, invisible cost of a peg, and it is why pegs that survive for decades
+   * still end in one large devaluation rather than many small ones.
+   *
+   * Expects: `domesticInflation`, `anchorInflation`, `years`.
+   */
+  real_exchange_rate_drift: (inputs) => {
+    const domestic = read(inputs, 'domesticInflation');
+    const anchor = read(inputs, 'anchorInflation');
+    const years = read(inputs, 'years');
+    if (anchor <= -1 || domestic <= -1) return 0;
+    return Math.pow(1 + domestic, years) / Math.pow(1 + anchor, years) - 1;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
