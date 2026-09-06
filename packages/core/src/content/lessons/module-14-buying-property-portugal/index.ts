@@ -19,9 +19,13 @@
  * loses ground every year no matter how long it is held. That cliff — at the
  * carry rate rather than at zero — is the finding the module is built around.
  *
- * Mortgage interest is deliberately excluded and the exclusion is taught: its
- * comparator is the rent not paid, not the appreciation on the flat, and
- * mixing the two produces a number that answers neither question. The last
+ * Mortgage interest is deliberately excluded from the break-even and the
+ * exclusion is taught: its comparator is the rent not paid, not the
+ * appreciation on the flat, and mixing the two produces a number that answers
+ * neither question. The fifth lesson then runs the other calculation properly,
+ * with the mortgage in and the rent credited — where 3% appreciation and a
+ * normal rent puts owning ahead in about four years, against the twenty-five
+ * the same interest gives when nothing is credited back. The last
  * lesson returns everything that was left out — capital gains tax, the rent
  * comparison, illiquidity, the IMT Jovem exemption — and notes that three of
  * the four make the honest break-even later, which is why a simple model of a
@@ -33,6 +37,7 @@ import { theCostOfTheDeedLesson } from './lesson-01-the-cost-of-the-deed';
 import { theCarryLesson } from './lesson-02-the-carry';
 import { theBreakEvenLesson } from './lesson-03-the-break-even';
 import { whatItLeavesOutLesson } from './lesson-04-what-it-leaves-out';
+import { rentOrBuyLesson } from './lesson-05-rent-or-buy';
 
 export const moduleBuyingPropertyPortugal = defineModule({
   id: 'buying-property-portugal',
@@ -45,5 +50,6 @@ export const moduleBuyingPropertyPortugal = defineModule({
     theCarryLesson,
     theBreakEvenLesson,
     whatItLeavesOutLesson,
+    rentOrBuyLesson,
   ],
 });

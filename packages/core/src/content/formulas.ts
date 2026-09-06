@@ -658,6 +658,94 @@ export const FORMULAS = {
     }
     return 0;
   },
+
+  // -------------------------------------------------------------------------
+  // Renting against buying
+  // -------------------------------------------------------------------------
+
+  /** Monthly payment on the loan implied by a price and a deposit share. */
+  home_loan_payment: (inputs) => {
+    const loan = read(inputs, 'price') * (1 - read(inputs, 'depositShare'));
+    const months = read(inputs, 'loanTerm') * 12;
+    const rate = read(inputs, 'loanRate') / 12;
+    if (months <= 0) return 0;
+    if (rate <= 0) return loan / months;
+    return (loan * rate) / (1 - Math.pow(1 + rate, -months));
+  },
+
+  /**
+   * Where owning stands against renting after `holdYears`, in euro.
+   *
+   * Cash in at exit is the sale net of selling costs, less whatever is still
+   * owed. Cash out is the deposit, the purchase costs, the carry, and every
+   * mortgage payment made — less the rent that was not paid, which is the
+   * whole reason this is a different question from whether the asset covers
+   * its own costs.
+   *
+   * Expects: `price`, `depositShare`, `loanRate`, `loanTerm`, `holdYears`,
+   * `entryCosts`, `carryAnnual`, `sellingRate`, `growth`, `monthlyRent`.
+   */
+  rent_vs_buy_net: (inputs) => {
+    const price = read(inputs, 'price');
+    const deposit = price * read(inputs, 'depositShare');
+    const loan = price - deposit;
+    const term = read(inputs, 'loanTerm') * 12;
+    const rate = read(inputs, 'loanRate') / 12;
+    const years = Math.min(Math.max(Math.round(read(inputs, 'holdYears')), 0), 40);
+    if (term <= 0) return 0;
+    const payment =
+      rate <= 0 ? loan / term : (loan * rate) / (1 - Math.pow(1 + rate, -term));
+
+    let balance = loan;
+    for (let month = 0; month < years * 12 && month < term; month += 1) {
+      balance -= payment - balance * rate;
+    }
+    const sale = price * Math.pow(1 + read(inputs, 'growth'), years);
+    const cashIn = sale * (1 - read(inputs, 'sellingRate')) - balance;
+    const cashOut =
+      deposit +
+      read(inputs, 'entryCosts') +
+      read(inputs, 'carryAnnual') * years +
+      payment * 12 * years -
+      read(inputs, 'monthlyRent') * 12 * years;
+    return cashIn - cashOut;
+  },
+
+  /**
+   * The first whole year at which owning is ahead of renting, or 0 if it never
+   * happens inside forty years.
+   *
+   * Same inputs as `rent_vs_buy_net`, searching over the holding period.
+   */
+  rent_vs_buy_breakeven: (inputs) => {
+    const price = read(inputs, 'price');
+    const deposit = price * read(inputs, 'depositShare');
+    const loan = price - deposit;
+    const term = read(inputs, 'loanTerm') * 12;
+    const rate = read(inputs, 'loanRate') / 12;
+    const growth = read(inputs, 'growth');
+    const selling = read(inputs, 'sellingRate');
+    const entry = read(inputs, 'entryCosts');
+    const carry = read(inputs, 'carryAnnual');
+    const rent = read(inputs, 'monthlyRent');
+    if (term <= 0) return 0;
+    const payment =
+      rate <= 0 ? loan / term : (loan * rate) / (1 - Math.pow(1 + rate, -term));
+
+    let balance = loan;
+    for (let year = 1; year <= 40; year += 1) {
+      for (let month = 0; month < 12; month += 1) {
+        if ((year - 1) * 12 + month < term) balance -= payment - balance * rate;
+      }
+      const sale = price * Math.pow(1 + growth, year);
+      const net =
+        sale * (1 - selling) -
+        balance -
+        (deposit + entry + carry * year + payment * 12 * year - rent * 12 * year);
+      if (net > 0) return year;
+    }
+    return 0;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
