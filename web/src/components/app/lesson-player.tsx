@@ -10,6 +10,7 @@ import {
   Coins,
   Flame,
   Heart,
+  Link2,
   PartyPopper,
   RotateCcw,
   X,
@@ -125,6 +126,7 @@ export function LessonPlayer({
                 {lesson.icon}
               </span>
               {lesson.title}
+              <Permalink lessonId={lesson.id} title={lesson.title} />
             </h1>
             <p className="mt-2 text-pretty leading-relaxed text-ink-muted">
               {lesson.subtitle}
@@ -223,6 +225,62 @@ export function LessonPlayer({
         </ActionBar>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * Permalink to the lesson, as an anchor beside its title.
+ *
+ * It is a real `<a href>` so that middle-click, right-click and "open in new
+ * tab" all behave — but a plain self-link would do nothing visible when
+ * clicked, so a click copies the absolute URL instead. That is what somebody
+ * reaching for a link icon actually wants: the address, on the clipboard,
+ * ready to send to whoever they were going to send it to.
+ *
+ * Falls back to following the link when the clipboard is unavailable, which it
+ * is over plain HTTP and in some embedded browsers.
+ */
+function Permalink({ lessonId, title }: { lessonId: string; title: string }) {
+  const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  return (
+    <a
+      href={`/learn/${lessonId}`}
+      aria-label={copied ? "Link copied" : `Copy a link to ${title}`}
+      title={copied ? "Link copied" : "Copy a link to this lesson"}
+      onClick={(event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const url = new URL(`/learn/${lessonId}`, window.location.origin).toString();
+        if (!navigator.clipboard?.writeText) return;
+        event.preventDefault();
+        void navigator.clipboard
+          .writeText(url)
+          .then(() => setCopied(true))
+          .catch(() => setCopied(false));
+      }}
+      className={cn(
+        "ml-2 inline-flex size-7 shrink-0 translate-y-[-0.1em] items-center justify-center rounded-lg align-middle transition-colors",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
+        copied
+          ? "text-mint-bright"
+          : "text-ink-faint hover:bg-white/5 hover:text-mint-bright",
+      )}
+    >
+      {copied ? (
+        <Check className="size-4" strokeWidth={3} aria-hidden />
+      ) : (
+        <Link2 className="size-4" aria-hidden />
+      )}
+      <span role="status" aria-live="polite" className="sr-only">
+        {copied ? "Link copied to clipboard" : ""}
+      </span>
+    </a>
   );
 }
 
