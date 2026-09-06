@@ -293,6 +293,9 @@ const NUMBER_WORDS = [
   "Seven",
   "Eight",
   "Nine",
+  "Ten",
+  "Eleven",
+  "Twelve",
 ] as const;
 
 /**
