@@ -254,6 +254,23 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "coral",
   },
+  {
+    id: "the-bis-and-the-ecb",
+    index: 10,
+    title: "The BIS and the ECB",
+    promise:
+      "Tell the real channels of influence between Basel and Frankfurt from the imagined ones.",
+    concepts: [
+      "A bank for central banks",
+      "Basel standards into EU law",
+      "Central bank independence",
+      "Influence without authority",
+    ],
+    tiers: ["central_bank", "fiduciary_core"],
+    icon: "🏛️",
+    status: "live",
+    accent: "emerald",
+  },
 ];
 
 /**

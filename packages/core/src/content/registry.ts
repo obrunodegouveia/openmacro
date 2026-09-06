@@ -29,6 +29,7 @@ import { moduleReadingTheEcbBalanceSheet } from './lessons/module-06-reading-the
 import { moduleTheTreasuryYieldCurve } from './lessons/module-07-the-treasury-yield-curve';
 import { moduleDebtDebasementAndCapital } from './lessons/module-08-debt-debasement-and-capital';
 import { moduleBreakingAPeg } from './lessons/module-09-breaking-a-peg-1992';
+import { moduleTheBisAndTheEcb } from './lessons/module-10-the-bis-and-the-ecb';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
@@ -41,6 +42,7 @@ export const MODULES: readonly Module[] = [
   moduleTheTreasuryYieldCurve,
   moduleDebtDebasementAndCapital,
   moduleBreakingAPeg,
+  moduleTheBisAndTheEcb,
 ];
 
 export const COURSE: Course = {
