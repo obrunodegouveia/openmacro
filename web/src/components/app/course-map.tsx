@@ -7,6 +7,7 @@ import type { Lesson } from "@openmacro/core/content/schema";
 import type { LessonProgress } from "@openmacro/core/progress/types";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import { Permalink } from "@/components/ui/permalink";
+import { ModuleVideo } from "@/components/app/module-video";
 import { cn } from "@/lib/utils";
 
 /**
@@ -97,6 +98,14 @@ export function CourseMap() {
               <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">
                 {module.description}
               </p>
+
+              {/* Watch first, then play. Only rendered for modules that have
+                  a video — every other module is unchanged. */}
+              {module.video ? (
+                <div className="max-w-2xl">
+                  <ModuleVideo video={module.video} moduleTitle={module.title} />
+                </div>
+              ) : null}
 
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {module.lessons.map((lesson) => (

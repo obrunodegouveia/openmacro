@@ -257,6 +257,12 @@ export function validateModules(modules: readonly Module[]): ContentIssue[] {
   const lessonIds: string[] = [];
 
   for (const module of modules) {
+    if (module.video && !module.video.url.startsWith('https://')) {
+      issues.push({
+        path: `module:${module.id}`,
+        message: 'Module video URL must be https — an http embed will be blocked.',
+      });
+    }
     if (module.lessons.length === 0) {
       issues.push({ path: `module:${module.id}`, message: 'Module has no lessons.' });
     }

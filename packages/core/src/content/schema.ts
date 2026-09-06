@@ -378,7 +378,30 @@ export interface Module {
   description: string;
   /** Accent colour for the module header. Any token from `palette`. */
   accent: string;
+  /**
+   * An overview video to watch before the lessons.
+   *
+   * Optional, and absent on every module until one is made. The intended
+   * workflow is that `/modules/<id>` on the website emits a brief written for
+   * a generative tool to turn into a narrated overview; the resulting video is
+   * published, and its URL lands here.
+   */
+  video?: ModuleVideo;
   lessons: Lesson[];
+}
+
+/** A watch-first overview for a module. */
+export interface ModuleVideo {
+  /** Full https URL. YouTube is what the player understands today. */
+  url: string;
+  /** Rough running time in minutes, shown before anyone commits to it. */
+  minutes?: number;
+  /**
+   * Where it came from — "NotebookLM", "recorded", and so on. Shown to the
+   * learner, because a viewer is owed the knowledge that a narrator is
+   * synthetic.
+   */
+  source?: string;
 }
 
 export interface Course {
