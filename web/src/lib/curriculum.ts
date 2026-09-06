@@ -289,6 +289,24 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "gold",
   },
+  {
+    id: "real-assets-and-property",
+    index: 12,
+    title: "Real Assets and the Price of an Address",
+    promise:
+      "Work out who pays for a housing boom, and what would have to be true for it to reverse.",
+    concepts: [
+      "Real assets vs. nominal claims",
+      "The Cantillon effect",
+      "Mortgages as created money",
+      "Replacement cost and supply",
+      "What actually predicts a crash",
+    ],
+    tiers: ["commercial_bank", "fiduciary_core"],
+    icon: "🏘️",
+    status: "live",
+    accent: "violet",
+  },
 ];
 
 /**

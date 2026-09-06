@@ -466,6 +466,65 @@ export const FORMULAS = {
     if (anchor <= -1 || domestic <= -1) return 0;
     return Math.pow(1 + domestic, years) / Math.pow(1 + anchor, years) - 1;
   },
+
+  // -------------------------------------------------------------------------
+  // Real assets against nominal claims
+  // -------------------------------------------------------------------------
+
+  /**
+   * What holding cash returns in real terms: nothing nominal, minus inflation.
+   *
+   * Independent of the amount, which is the point — the loss is a rate, and it
+   * applies to every euro held for the period regardless of who holds it.
+   *
+   * Expects: `inflation`, `years`.
+   */
+  cash_real_return: (inputs) => {
+    const inflation = read(inputs, 'inflation');
+    if (inflation <= -1) return 0;
+    return 1 / Math.pow(1 + inflation, read(inputs, 'years')) - 1;
+  },
+
+  /**
+   * Real return on the equity in a leveraged property purchase.
+   *
+   *   equity(0) = value x deposit
+   *   debt      = value x (1 - deposit)          — fixed in nominal terms
+   *   equity(n) = value x (1 + growth)^n - debt
+   *
+   * Deliberately interest-only: it ignores mortgage payments, maintenance,
+   * transaction taxes and rent forgone or earned. That overstates the return,
+   * and it isolates the thing being taught — that the debt does not grow with
+   * the asset, so the whole appreciation lands on the deposit.
+   *
+   * Expects: `propertyValue`, `depositShare`, `houseGrowth`, `inflation`,
+   * `years`.
+   */
+  leveraged_equity_real_return: (inputs) => {
+    const value = read(inputs, 'propertyValue');
+    const deposit = read(inputs, 'depositShare');
+    const inflation = read(inputs, 'inflation');
+    const years = read(inputs, 'years');
+    const equity = value * deposit;
+    if (equity <= 0 || inflation <= -1) return 0;
+    const debt = value * (1 - deposit);
+    const grown = value * Math.pow(1 + read(inputs, 'houseGrowth'), years);
+    return (grown - debt) / equity / Math.pow(1 + inflation, years) - 1;
+  },
+
+  /**
+   * The same position before inflation: how many times the deposit came back.
+   *
+   * Expects: `propertyValue`, `depositShare`, `houseGrowth`, `years`.
+   */
+  leveraged_equity_multiple: (inputs) => {
+    const value = read(inputs, 'propertyValue');
+    const deposit = read(inputs, 'depositShare');
+    const equity = value * deposit;
+    if (equity <= 0) return 0;
+    const debt = value * (1 - deposit);
+    return (value * Math.pow(1 + read(inputs, 'houseGrowth'), read(inputs, 'years')) - debt) / equity;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
