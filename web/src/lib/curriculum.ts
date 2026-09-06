@@ -350,6 +350,14 @@ const NUMBER_WORDS = [
   "Ten",
   "Eleven",
   "Twelve",
+  "Thirteen",
+  "Fourteen",
+  "Fifteen",
+  "Sixteen",
+  "Seventeen",
+  "Eighteen",
+  "Nineteen",
+  "Twenty",
 ] as const;
 
 /**
