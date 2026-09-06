@@ -26,6 +26,8 @@ import { moduleFedEcbLevers } from './lessons/module-03-fed-ecb-levers';
 import { moduleCrisisArchitecture } from './lessons/module-04-crisis-architecture-global-dollar';
 import { moduleReadingTheFedBalanceSheet } from './lessons/module-05-reading-the-fed-balance-sheet';
 import { moduleReadingTheEcbBalanceSheet } from './lessons/module-06-reading-the-ecb-balance-sheet';
+import { moduleTheTreasuryYieldCurve } from './lessons/module-07-the-treasury-yield-curve';
+import { moduleDebtDebasementAndCapital } from './lessons/module-08-debt-debasement-and-capital';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
@@ -35,6 +37,8 @@ export const MODULES: readonly Module[] = [
   moduleCrisisArchitecture,
   moduleReadingTheFedBalanceSheet,
   moduleReadingTheEcbBalanceSheet,
+  moduleTheTreasuryYieldCurve,
+  moduleDebtDebasementAndCapital,
 ];
 
 export const COURSE: Course = {

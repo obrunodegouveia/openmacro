@@ -202,6 +202,40 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "azure",
   },
+  {
+    id: "the-treasury-yield-curve",
+    index: 7,
+    title: "The Treasury Yield Curve",
+    promise:
+      "Look at eleven numbers and say what the market thinks is coming.",
+    concepts: [
+      "Par yields and term premium",
+      "Price, yield and duration",
+      "Inversion and what it says",
+      "Bull and bear steepeners",
+    ],
+    tiers: ["shadow_bank", "fiduciary_core"],
+    icon: "📐",
+    status: "live",
+    accent: "gold",
+  },
+  {
+    id: "debt-debasement-and-capital",
+    index: 8,
+    title: "Debt, Debasement and Capital",
+    promise:
+      "Work out who pays for a debt that is never repaid, and what the same resources build instead.",
+    concepts: [
+      "The inflation tax",
+      "War finance through the ages",
+      "r − g and the debt path",
+      "Capital formation and allocation",
+    ],
+    tiers: ["fiduciary_core", "commercial_bank"],
+    icon: "🏗️",
+    status: "live",
+    accent: "violet",
+  },
 ];
 
 /**

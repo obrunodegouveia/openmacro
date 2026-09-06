@@ -192,8 +192,8 @@ export const twoPlacesToParkAEuroLesson = defineLesson({
       narrative:
         'The corridor runs from the deposit facility rate at 2.25% to the marginal lending facility at 2.65%. While liquidity is abundant nobody lends below the floor and the market sits on it — €STR fixed at 2.189% on 3 September 2026, just under the DFR. Drain enough and the overnight rate lifts off the floor toward the ceiling.',
       constants: {
-        floorRate: 2.25,
-        ceilingRate: 2.65,
+        floorRate: 0.0225,
+        ceilingRate: 0.0265,
         saturationPoint: 1000000000000,
       },
       sliders: [
@@ -213,9 +213,9 @@ export const twoPlacesToParkAEuroLesson = defineLesson({
           key: 'overnight',
           label: 'Where the overnight rate settles',
           formulaId: 'corridor_rate',
-          format: 'number',
+          format: 'percent',
           emphasis: true,
-          caption: 'Per cent. Floor 2.25, ceiling 2.65.',
+          caption: 'Floor 2.25%, ceiling 2.65%',
         },
       ],
       objective: {
@@ -227,7 +227,7 @@ export const twoPlacesToParkAEuroLesson = defineLesson({
         target: {
           readoutKey: 'overnight',
           comparator: 'gte',
-          value: 2.5,
+          value: 0.025,
         },
       },
       explanation:

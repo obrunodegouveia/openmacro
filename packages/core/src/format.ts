@@ -26,10 +26,18 @@ export function formatCurrency(value: number, currency = '$'): string {
   return `${sign}${currency}${grouped}${cents ? `.${cents}` : ''}`;
 }
 
-/** `0.1` -> `"10%"`. Trailing zeros are dropped when the result is round. */
-export function formatPercent(value: number, fractionDigits = 0): string {
+/**
+ * `0.1` -> `"10%"`, `0.0425` -> `"4.25%"`.
+ *
+ * Two decimals, with trailing zeros dropped so a round number still reads
+ * round. It used to round to whole per cent, which quietly broke every rate
+ * sim: a corridor running from 3% to 4% displayed "3%" for its floor, its
+ * target of 3.01% and everything up to 3.49%, so the learner could not see the
+ * number they were being asked to move.
+ */
+export function formatPercent(value: number, fractionDigits = 2): string {
   const rounded = Number((value * 100).toFixed(fractionDigits));
-  return `${Number.isInteger(rounded) ? rounded : rounded.toFixed(fractionDigits)}%`;
+  return `${rounded}%`;
 }
 
 /** `10` -> `"10x"`, `6.6666` -> `"6.7x"`. */

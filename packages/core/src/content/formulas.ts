@@ -202,6 +202,7 @@ export const FORMULAS = {
    *
    * Expects: `floorRate`, `ceilingRate`, `excessReserves`, `saturationPoint`.
    */
+  // Rates are decimals (0.0225 = 2.25%), matching `format: 'percent'`.
   corridor_rate: (inputs) => {
     const floor = read(inputs, 'floorRate');
     const ceiling = read(inputs, 'ceilingRate');
@@ -296,6 +297,101 @@ export const FORMULAS = {
     const total = read(inputs, 'totalAssets');
     if (total <= 0) return 0;
     return read(inputs, 'reserves') / total;
+  },
+
+  // -------------------------------------------------------------------------
+  // Bonds and the yield curve
+  // -------------------------------------------------------------------------
+
+  /**
+   * Present value of a plain bond: the coupons plus the principal, each
+   * discounted at the yield.
+   *
+   *   P = C x (1 - (1 + y)^-n) / y  +  F x (1 + y)^-n
+   *
+   * Annual coupons and annual compounding — the Treasury pays semi-annually
+   * and the difference is a few cents on a hundred, which is not what this is
+   * teaching. What it is teaching is the sign: the yield is in the
+   * denominator, so price and yield can only ever move opposite ways.
+   *
+   * Expects: `face`, `couponRate`, `yieldRate`, `years` (rates as decimals).
+   */
+  bond_price: (inputs) => {
+    const face = read(inputs, 'face');
+    const coupon = face * read(inputs, 'couponRate');
+    const y = read(inputs, 'yieldRate');
+    const n = read(inputs, 'years');
+    if (n <= 0) return face;
+    // A zero yield discounts nothing: every cash flow is worth its face value.
+    if (y === 0) return coupon * n + face;
+    const discount = Math.pow(1 + y, -n);
+    return coupon * ((1 - discount) / y) + face * discount;
+  },
+
+  /**
+   * What the holder gains or loses against par, as a fraction of face.
+   *
+   * Chained: expects a `price` readout computed earlier, plus `face`.
+   */
+  bond_price_change: (inputs) => {
+    const face = read(inputs, 'face');
+    if (face <= 0) return 0;
+    return (read(inputs, 'price') - face) / face;
+  },
+
+  /**
+   * The slope of the curve in percentage points: the long yield minus the
+   * short one. Negative is an inversion.
+   *
+   * Expects: `longYield`, `shortYield` (decimals).
+   */
+  curve_slope: (inputs) => read(inputs, 'longYield') - read(inputs, 'shortYield'),
+
+  // -------------------------------------------------------------------------
+  // Public debt dynamics
+  // -------------------------------------------------------------------------
+
+  /**
+   * The debt ratio after `years`, rolled forward one year at a time:
+   *
+   *   d(t+1) = d(t) x (1 + r) / (1 + g)  -  primaryBalance
+   *
+   * where d is debt as a share of GDP, r the nominal interest rate on the
+   * stock, g nominal GDP growth, and the primary balance is the surplus
+   * (positive) or deficit (negative) before interest, also as a share of GDP.
+   *
+   * The whole argument about whether a debt is sustainable is contained in
+   * `r - g`. Above zero the stock compounds faster than the economy and the
+   * ratio climbs even with the budget balanced; below zero it melts on its own.
+   * No opinion required — it is the same arithmetic either way.
+   *
+   * Expects: `debtRatio`, `interestRate`, `growthRate`, `primaryBalance`,
+   * `years`.
+   */
+  debt_ratio_after: (inputs) => {
+    const r = read(inputs, 'interestRate');
+    const g = read(inputs, 'growthRate');
+    const primary = read(inputs, 'primaryBalance');
+    // Bounded so a content bug cannot spin the UI.
+    const years = Math.min(Math.max(Math.round(read(inputs, 'years')), 0), 200);
+    let debt = read(inputs, 'debtRatio');
+    if (g <= -1) return debt;
+    for (let year = 0; year < years; year += 1) {
+      debt = (debt * (1 + r)) / (1 + g) - primary;
+    }
+    return debt;
+  },
+
+  /**
+   * The snowball: how much the ratio moves in a year from interest and growth
+   * alone, before anyone decides anything.
+   *
+   * Expects: `debtRatio`, `interestRate`, `growthRate`.
+   */
+  debt_snowball: (inputs) => {
+    const g = read(inputs, 'growthRate');
+    if (g <= -1) return 0;
+    return (read(inputs, 'debtRatio') * (read(inputs, 'interestRate') - g)) / (1 + g);
   },
 } satisfies Record<string, Formula>;
 
