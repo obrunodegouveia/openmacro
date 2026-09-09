@@ -827,6 +827,52 @@ export const FORMULAS = {
     if (equity <= 0) return 0;
     return read(inputs, 'net') / equity;
   },
+
+  /**
+   * Cost of trading against an automated market-maker, in basis points, as a
+   * function of trade size relative to the depth of the liquidity pool.
+   *
+   * Project Mariana calibrated a hybrid-function market-maker for three
+   * wholesale CBDCs and then simulated the resulting trading costs. The
+   * published anchor: a €50 million EUR/CHF trade costs roughly one basis
+   * point against a pool of about €1.8 billion (BIS, Project Mariana final
+   * report, September 2023, Graph 4). The report also states that holding the
+   * cost steady while doubling the trade size requires roughly doubling the
+   * pool — that is, cost is approximately proportional to trade ÷ pool.
+   *
+   * So: cost_bp = 36 x (trade / pool), where 36 = 1,800 / 50 is the pool-to-
+   * trade ratio the report puts at one basis point. This is a straight-line
+   * reading of a convex bonding curve. It is faithful in the region the report
+   * plots and increasingly wrong outside it, which is why the sliders that use
+   * it stay inside that region.
+   *
+   * Expects: `tradeSize`, `poolSize`, in the same currency units.
+   */
+  amm_trading_cost_bp: (inputs) => {
+    const pool = read(inputs, 'poolSize');
+    if (pool <= 0) return 0;
+    return 36 * (read(inputs, 'tradeSize') / pool);
+  },
+
+  /**
+   * The same cost as money, so a basis point stops being an abstraction.
+   *
+   * Chained: expects a `costBp` readout computed earlier, plus `tradeSize`.
+   */
+  amm_trading_cost_amount: (inputs) =>
+    read(inputs, 'tradeSize') * (read(inputs, 'costBp') / 10_000),
+
+  /**
+   * How many times the trade the pool has to hold — the ratio that actually
+   * sets the price impact, stated the way a treasurer would think about it.
+   *
+   * Expects: `poolSize`, `tradeSize`.
+   */
+  amm_pool_to_trade: (inputs) => {
+    const trade = read(inputs, 'tradeSize');
+    if (trade <= 0) return 0;
+    return read(inputs, 'poolSize') / trade;
+  },
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;

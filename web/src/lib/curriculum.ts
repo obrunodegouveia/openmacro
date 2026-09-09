@@ -361,6 +361,24 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
     status: "live",
     accent: "emerald",
   },
+  {
+    id: "scrutinising-cbdcs",
+    index: 16,
+    title: "Scrutinising CBDCs: Project Mariana",
+    promise:
+      "Read a CBDC experiment well enough to say what it built, and who would have to say yes before it was money.",
+    concepts: [
+      "Wholesale against retail",
+      "wCBDC issuance as a liability swap",
+      "Bridges, pools and bonding curves",
+      "Pre-funding against net settlement",
+      "The control features, C.1 to C.5",
+    ],
+    tiers: ["central_bank", "commercial_bank"],
+    icon: "🔍",
+    status: "live",
+    accent: "violet",
+  },
 ];
 
 /**

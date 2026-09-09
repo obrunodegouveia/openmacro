@@ -35,6 +35,7 @@ import { moduleAfricanCentralBanks } from './lessons/module-11-african-central-b
 import { moduleRealAssetsAndProperty } from './lessons/module-12-real-assets-and-property';
 import { moduleEuribor } from './lessons/module-13-euribor';
 import { moduleBuyingPropertyPortugal } from './lessons/module-14-buying-property-portugal';
+import { moduleScrutinisingCbdcs } from './lessons/module-15-scrutinising-cbdcs';
 
 /** Ordered list of every module shipped with the app. Add yours here. */
 export const MODULES: readonly Module[] = [
@@ -53,6 +54,7 @@ export const MODULES: readonly Module[] = [
   moduleRealAssetsAndProperty,
   moduleEuribor,
   moduleBuyingPropertyPortugal,
+  moduleScrutinisingCbdcs,
 ];
 
 export const COURSE: Course = {
