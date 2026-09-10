@@ -58,7 +58,12 @@
         "language": "en-US",
         "metadataPath": "./store.config.json",
         "appName": "OpenMacro Economics",
-        "sku": "OPENMACRO001"
+        "sku": "OPENMACRO001",
+        "ascAppId": "6810758729",
+        "appleTeamId": "BNZ6TZNAG6",
+        "ascApiKeyPath": "./credentials/AuthKey_6JJJ7N8Y6U.p8",
+        "ascApiKeyId": "6JJJ7N8Y6U",
+        "ascApiKeyIssuerId": "c9006604-c0e3-4f29-be54-0fb2b796f6b0"
       },
       "android": {
         "track": "internal",
