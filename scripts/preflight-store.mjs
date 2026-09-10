@@ -194,7 +194,20 @@ if (!eas) {
   // app. OpenMacro's sign-in is optional and off by default, which is why it
   // can ship without one — turning it on for a store build is what makes the
   // requirement bite, and it bites at review, days later.
-  if (eas.build?.production?.env?.EXPO_PUBLIC_SUPABASE_URL) {
+  /**
+   * Resolve a profile's env through `extends`, because a value inherited from
+   * a base profile is just as present in the build as one written inline —
+   * and this check missed exactly that the first time it mattered.
+   */
+  const resolvedEnv = (name, seen = new Set()) => {
+    const profile = eas.build?.[name];
+    if (!profile || seen.has(name)) return {};
+    seen.add(name);
+    const inherited = profile.extends ? resolvedEnv(profile.extends, seen) : {};
+    return { ...inherited, ...(profile.env ?? {}) };
+  };
+
+  if (resolvedEnv('production').EXPO_PUBLIC_SUPABASE_URL) {
     warn(
       'eas.json',
       'the production profile configures Supabase, so the store build will offer Google ' +
