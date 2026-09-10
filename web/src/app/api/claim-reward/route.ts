@@ -6,8 +6,8 @@ import {
   eurosToBaseUnits,
   PayoutError,
   sendEurcReward,
-  type RecipientKey,
 } from "@/lib/blockchain/payout";
+import { resolvePayableRecipient } from "@/lib/rewards/recipients";
 
 /**
  * ============================================================================
@@ -40,22 +40,14 @@ import {
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-/** Who each recipient key pays, in euros. Strings, never floats. */
-function rewardAmountEuros(recipient: RecipientKey): string {
-  const value =
-    recipient === "wife"
-      ? process.env.REWARD_AMOUNT_WIFE
-      : process.env.REWARD_AMOUNT_DAUGHTER;
-  return (value ?? "").trim() || "1.00";
-}
-
 interface ClaimBody {
   gameSessionId?: unknown;
   recipient?: unknown;
 }
 
-function isRecipientKey(value: unknown): value is RecipientKey {
-  return value === "wife" || value === "daughter";
+/** Shape only. Whether a key is *payable* is the database's answer, not this. */
+function isRecipientKeyShape(value: unknown): value is string {
+  return typeof value === "string" && /^[a-z][a-z0-9_-]{1,30}$/.test(value);
 }
 
 export async function POST(request: Request) {
@@ -81,16 +73,13 @@ export async function POST(request: Request) {
   }
 
   /**
-   * The recipient is a key, never an address, and it is checked against a
-   * closed set here as well as by a database constraint. The request may
-   * choose *which* family member is paid; it may never choose where the money
-   * goes. Addresses live only in server configuration.
+   * The recipient is a key, never an address. The request may choose *which*
+   * family member is paid; it may never choose where the money goes. The
+   * address is resolved below from an active row, and an inactive or unknown
+   * key simply does not resolve.
    */
-  if (!isRecipientKey(body.recipient)) {
-    return NextResponse.json(
-      { error: 'recipient must be "wife" or "daughter".' },
-      { status: 400 },
-    );
+  if (!isRecipientKeyShape(body.recipient)) {
+    return NextResponse.json({ error: "recipient is not a valid key." }, { status: 400 });
   }
   const recipient = body.recipient;
 
@@ -120,10 +109,23 @@ export async function POST(request: Request) {
     );
   }
 
-  // --- 3. claim the session, idempotently ----------------------------------
+  // --- 3. is this recipient payable? ---------------------------------------
+  //
+  // Unknown, pending and disabled are one answer to the player. A pending
+  // address is one an admin has entered but not yet confirmed receives funds,
+  // and it must never be paid by this path.
+  const payee = await resolvePayableRecipient(recipient);
+  if (!payee) {
+    return NextResponse.json(
+      { error: "That reward is not available." },
+      { status: 409 },
+    );
+  }
+
   let amountBaseUnits: string;
   try {
-    amountBaseUnits = eurosToBaseUnits(rewardAmountEuros(recipient)).toString();
+    const euros = payee.amountEuros ?? process.env.REWARD_AMOUNT_DEFAULT ?? "1.00";
+    amountBaseUnits = eurosToBaseUnits(euros).toString();
   } catch (error) {
     console.error("[claim-reward] bad reward configuration", error);
     return NextResponse.json({ error: "Reward is misconfigured." }, { status: 500 });
@@ -205,7 +207,7 @@ export async function POST(request: Request) {
   // --- 5. pay ---------------------------------------------------------------
   try {
     const payout = await sendEurcReward({
-      recipient,
+      toAddress: payee.address,
       amountBaseUnits,
       // Recorded before broadcast so a crash here leaves something to
       // reconcile against rather than a guess.
@@ -220,6 +222,8 @@ export async function POST(request: Request) {
       .update({
         status: "PAID",
         tx_hash: payout.txHash,
+        // The address actually paid, so history survives an address change.
+        paid_to_address: payout.recipientAddress,
         updated_at: new Date().toISOString(),
       })
       .eq("id", claimId);

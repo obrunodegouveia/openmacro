@@ -13,8 +13,13 @@ can lose money if you get them wrong.
 | `supabase/migrations/0002_reward_claims.sql` | `game_sessions` and `reward_claims`, plus the compare-and-set that makes double payment impossible |
 | `web/src/lib/blockchain/payout.ts` | The only module holding the key or broadcasting. `server-only` |
 | `web/src/lib/supabase-admin.ts` | Service-role client and bearer-token authentication. `server-only` |
+| `supabase/migrations/0003_reward_recipients.sql` | Managed recipients and the admin audit trail |
+| `web/src/lib/rewards/recipients.ts` | Turns a key into an address, only for `active` rows. `server-only` |
+| `web/src/lib/rewards/admin.ts` | Who may administer the treasury, and the audit log. `server-only` |
 | `web/src/app/api/claim-reward/route.ts` | Authenticates, verifies, claims, pays, records |
+| `web/src/app/api/admin/rewards/route.ts` | Everything the dashboard reads and does |
 | `web/src/components/game/claim-reward.tsx` | The card the player sees |
+| `web/src/components/app/treasury.tsx` | The dashboard at `/dashboard/treasury` |
 
 ---
 
@@ -26,9 +31,14 @@ can lose money if you get them wrong.
 supabase db push
 ```
 
-Then check **Authentication → Policies**. `reward_claims` must show RLS enabled
-with exactly one policy, a `SELECT`. If it has an insert or update policy, stop:
-a browser that can write claim state can pay itself twice.
+Then check **Authentication → Policies**:
+
+- `reward_claims` — RLS enabled, exactly one policy, a `SELECT`. If it has an
+  insert or update policy, stop: a browser that can write claim state can pay
+  itself twice.
+- `reward_recipients` and `reward_admin_events` — RLS enabled and **no policies
+  at all**. That is what makes them unreadable and unwritable except through
+  the service role.
 
 ### 2. Create the treasury wallet
 
@@ -50,8 +60,10 @@ In each family member's Coinbase account: Receive → EURC → **set the network
 Base** → copy the address.
 
 The same account shows a *different address per network*. EURC sent to their
-Ethereum-mainnet address will not arrive and is not recoverable. **Send €1 to
-each address and confirm it lands before configuring it here.**
+Ethereum-mainnet address will not arrive and is not recoverable.
+
+You do not configure these in the environment — they are added in the dashboard,
+which walks the add / test / confirm / activate sequence described below.
 
 ### 4. Configure
 
@@ -72,6 +84,42 @@ console.log(await readTreasuryStatus());
 Confirms the key parses, the RPC answers, and both balances are what you think.
 
 ---
+
+## The treasury dashboard
+
+`/dashboard/treasury`, for anyone whose signed-in email is listed in
+`REWARDS_ADMIN_EMAILS`. It shows the treasury balances and the address to top
+up, manages who may be paid, and surfaces claims that need a human.
+
+Admin identity is an environment variable, never a database column. A column is
+one leaked service key or one careless migration away from promoting an
+attacker, and none of that is visible in a code review. Changing an env var
+needs a deploy, which for a treasury is the right bar.
+
+The page itself is not gated — the shell renders for anyone and is empty. All
+of the value comes from `/api/admin/rewards`, which checks the caller and
+answers **404** to everyone else, so the endpoint's existence is not confirmed
+to someone guessing. Gating the page instead would be the wrong way round: a
+redirect still confirms the route, and a client-side check protects nothing.
+
+### Adding someone who can be paid
+
+The dashboard enforces the sequence you would follow by hand anyway:
+
+1. **Add** the recipient with their Coinbase deposit address on Base. It lands
+   as `pending`, which cannot receive a game reward at all.
+2. **Send a €1 test.** This is the only path that pays a pending address, and
+   only an admin can trigger it.
+3. **Confirm it arrived** in their Coinbase account.
+4. **Activate.** Now the game can pay that key.
+
+Adding an address and paying it are deliberately two separate actions. A
+mistyped or malicious address has to survive a second look, and a €1 test, and
+an explicit confirmation, before anything larger can reach it.
+
+Every one of those steps is written to `reward_admin_events` with the email
+that did it — the only way to answer "when did this address change, and who
+changed it" after the fact.
 
 ## Wiring it into a game
 
@@ -163,6 +211,20 @@ frequent, allocate nonces from Postgres instead.
 the transaction, not when it is mined, so a slow block cannot fail a claim. The
 card links to BaseScan; `waitForPayout()` exists if you would rather block.
 
-**The recipients are fixed.** By design. An endpoint that accepts an address is
-an endpoint that pays whoever asks, and no amount of validation makes that safe
-in a system holding its own key.
+**Recipients are managed, not fixed.** 0002 read addresses from environment
+variables, which was safer: changing where money goes required a deploy. That
+was relaxed so the dashboard could manage them, and the cost is real — a row in
+`reward_recipients` decides where money goes, so write access to that table is
+write access to the treasury.
+
+What replaces the deploy gate: RLS grants anon and authenticated nothing, so
+the only path in is an admin route; admin identity comes from the environment,
+so no row can promote anyone; and a new address is unpayable until explicitly
+activated. If you would rather have the deploy gate back, delete the
+`add-recipient` and `set-status` actions and seed the table by migration —
+everything else keeps working.
+
+**The claim API still never accepts an address.** It takes a key and resolves
+it against an active row. An endpoint that accepts an address is an endpoint
+that pays whoever asks, and no amount of validation makes that safe in a system
+holding its own key.

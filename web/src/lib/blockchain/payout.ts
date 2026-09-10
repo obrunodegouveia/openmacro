@@ -36,9 +36,10 @@ import { base } from "viem/chains";
  *
  *   - Fund it like a petty cash drawer. Tens of euros, not thousands. Top it
  *     up deliberately. The blast radius of a compromise is exactly the balance.
- *   - Recipients are resolved from configuration by key, never from the
- *     request. A payout API that accepts an address is a payout API that pays
- *     whoever asks.
+ *   - This module never decides *who* gets paid. It is handed an address that
+ *     `lib/rewards/recipients.ts` has already resolved from an active row, and
+ *     an API that accepts an address from a request is an API that pays
+ *     whoever asks. Keep that resolution in one place, and keep it out of here.
  */
 
 /** Circle's EURC on Base mainnet. Six decimals, unlike ETH's eighteen. */
@@ -47,11 +48,16 @@ export const EURC_ADDRESS: Address = getAddress(
 );
 export const EURC_DECIMALS = 6;
 
-/** Who a reward can be paid to. Extend here, not at call sites. */
-export type RecipientKey = "wife" | "daughter";
-
 export interface PayoutRequest {
-  recipient: RecipientKey;
+  /**
+   * Where the money goes. Resolved by the caller from `reward_recipients`,
+   * never from a request body — see lib/rewards/recipients.ts.
+   *
+   * This module deliberately does not look addresses up. Keeping resolution
+   * out of here means there is exactly one place that decides who may be paid,
+   * and it is the place that also checks the recipient is active.
+   */
+  toAddress: Address;
   /** Base units as a decimal string, e.g. "10000000" for €10.00. */
   amountBaseUnits: string;
   /**
@@ -117,24 +123,6 @@ function treasuryAccount() {
     );
   }
   return privateKeyToAccount(key as Hex);
-}
-
-/**
- * Resolve a recipient key to an address.
- *
- * `getAddress` both validates and checksums. A typo in an env var becomes a
- * startup error here rather than euros sent to an address nobody holds — an
- * ERC-20 transfer to a mistyped-but-valid address is irreversible.
- */
-function recipientAddress(recipient: RecipientKey): Address {
-  const envName =
-    recipient === "wife" ? "REWARD_ADDRESS_WIFE" : "REWARD_ADDRESS_DAUGHTER";
-  try {
-    return getAddress(required(envName));
-  } catch (error) {
-    if (error instanceof PayoutError) throw error;
-    throw new PayoutError(`${envName} is not a valid address.`, "CONFIG", false);
-  }
 }
 
 function publicClient() {
@@ -245,7 +233,9 @@ export async function sendEurcReward(request: PayoutRequest): Promise<PayoutResu
   }
 
   const account = treasuryAccount();
-  const to = recipientAddress(request.recipient);
+  // Re-checksum on the way in: a malformed address should fail here, before a
+  // nonce is spent, rather than at the chain.
+  const to = getAddress(request.toAddress);
   const client = publicClient();
 
   return serialise(async () => {
