@@ -69,7 +69,7 @@ non-interactive build in CI has no way to ask.
 - Enrol in the **Apple Developer Program** ($99/year). An individual enrolment
   is fine; an organisation enrolment needs a D-U-N-S number and takes weeks.
 - In **App Store Connect**, create the app record: bundle id
-  `com.openmacro.app`, name *OpenMacro*, primary language English (U.S.). Note
+  `org.openmacro.app`, name *OpenMacro*, primary language English (U.S.). Note
   the numeric **Apple ID** it gives the app — that is `ascAppId`.
 - Create an **App Store Connect API key** (Users and Access → Integrations →
   App Store Connect API) with the **App Manager** role. You get a `.p8` file
@@ -101,7 +101,7 @@ Then put the App Store Connect ids into `eas.json` under
   opened after 2023 must run a **closed test with 12 testers for 14 days**
   before production access is granted — start that clock early, it is usually
   the longest pole in the whole release.
-- Create the app in the console with package name `com.openmacro.app`.
+- Create the app in the console with package name `org.openmacro.app`.
 - In the linked Google Cloud project, create a **service account**, grant it
   access in Play Console (Users and permissions → Invite user → the service
   account email → *Release* permissions), and download its JSON key.
