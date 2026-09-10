@@ -164,9 +164,26 @@ only warns about them, and `npm run metadata:push` (which passes `--metadata`)
 is the command that refuses.
 
 ```bash
-npm run build:store:ios      # preflight, then build on EAS
-npm run submit:ios           # upload to App Store Connect
+npm run build:store:ios      # preflight, then build
+npm run upload:ios           # upload to App Store Connect
 ```
+
+**Upload with `altool`, not `eas submit`.** This is not a preference. On this
+project `eas submit` reported `Uploaded to EAS Submit` in one second, created
+the TestFlight group, then sat at 0% CPU for 33 minutes without transferring
+anything to Apple and registered no build. `xcrun altool` did the same job in
+five seconds. It also needs no EAS plan, which matters — the free tier's iOS
+build quota is exhaustible and `eas submit` is not the only thing it gates.
+
+```bash
+xcrun altool --validate-app -f build.ipa -t ios \
+  --apiKey <KEY_ID> --apiIssuer <ISSUER_ID>      # optional, catches problems early
+xcrun altool --upload-app  -f build.ipa -t ios \
+  --apiKey <KEY_ID> --apiIssuer <ISSUER_ID>
+```
+
+`altool` finds the key by name in `~/.appstoreconnect/private_keys/`, so the
+`.p8` must be there as `AuthKey_<KEY_ID>.p8`.
 
 The **first** run of each is interactive and cannot be scripted:
 
@@ -242,6 +259,17 @@ store build is the peer-dependency check: `react-native-reanimated` needs
 `react-native-worklets` installed directly, and without it the app runs in Expo
 Go and crashes in a native build. That is a class of failure a development
 build finds and a typecheck never will.
+
+### Builds are local, not on EAS
+
+`npm run build:store:ios` runs `eas build --local`, compiling on this machine
+rather than EAS's servers. The free plan's iOS build allowance is spent, and a
+local build needs no allowance at all — it needs Xcode, CocoaPods and fastlane,
+which a Mac set up for iOS work already has.
+
+The cost is that a release occupies your laptop for twenty minutes and the
+GitHub workflow cannot do it, since no runner here has Xcode. A paid EAS plan
+is what makes that workflow real; until then, releases are a local job.
 
 ### Screenshots
 
