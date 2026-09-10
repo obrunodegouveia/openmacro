@@ -10,9 +10,7 @@
       "env": {
         "EXPO_PUBLIC_DATA_PROVIDER": "local",
         "EXPO_PUBLIC_ENABLE_HAPTICS": "true",
-        "EXPO_PUBLIC_ENABLE_SOUND": "true",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://wvbgylwducipwpxzcgzh.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_79IMEg597PKTlukVnPDhhQ_dDG_EHAF"
+        "EXPO_PUBLIC_ENABLE_SOUND": "true"
       }
     },
     "development": {

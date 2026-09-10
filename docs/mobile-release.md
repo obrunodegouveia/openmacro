@@ -146,8 +146,31 @@ npx eas-cli@24 env:create --name EXPO_PUBLIC_SUPABASE_ANON_KEY \
 ```
 
 Leave them unset and the store build behaves exactly like a fresh clone: fully
-offline, no accounts, no sign-in UI. **That is the recommended shape for the
-first release** — see the accounts trap below.
+offline, no accounts, no sign-in UI.
+
+These reach a **local** build too — `eas build --local` resolves the EAS
+environment for the profile, so they do not need to be in `eas.json` and the
+publishable key stays out of the repository.
+
+### Verifying an EXPO_PUBLIC_* value actually shipped
+
+`EXPO_PUBLIC_*` is inlined at build time and its absence is silent: with no
+Supabase configured the app is a working offline app with no sign-in UI, which
+looks exactly like a correct build. So check the binary, and check it with
+`strings`:
+
+```bash
+unzip -q -o build.ipa -d /tmp/check
+strings -a /tmp/check/Payload/*.app/main.jsbundle | grep -F '<your-project-ref>'
+```
+
+`grep -r` over the .app **does not work** — the bundle is Hermes bytecode and
+grep silently finds nothing, which reads as "the value is missing" when it is
+present. That false negative cost a discarded build here.
+
+Pick a search term that is genuinely conditional. `"Continue with Google"` is
+not: the string compiles into every build and is gated at runtime, so it is
+found whether or not sign-in is configured. The project ref is.
 
 ---
 
