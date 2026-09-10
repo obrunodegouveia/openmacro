@@ -83,26 +83,15 @@ const CLIPS = {
 } as const satisfies Record<FeedbackCue, unknown>;
 
 /**
- * Per-cue volume. The generator normalises every file to the same peak, which
- * is right for consistency and wrong for balance: `select` fires on every
- * single tap and would dominate a lesson at the same level as `complete`.
- */
-const VOLUME: Record<FeedbackCue, number> = {
-  select: 0.28,
-  correct: 0.75,
-  incorrect: 0.6,
-  advance: 0.35,
-  complete: 0.85,
-  fail: 0.7,
-};
-
-/**
- * One player per cue, created on first use and kept.
+ * There is deliberately no per-cue volume table here.
  *
- * Creating a player per playback leaks native resources, and re-creating one
- * for a cue that fires on every tap is far too slow — `select` has to be
- * instant or it feels laggy rather than responsive.
+ * Balance belongs in the files: `scripts/generate-sounds.mjs` normalises the
+ * whole set against its loudest cue, so `select` sits at 15% of `complete` by
+ * construction. Correcting levels at playback instead means the mix lives in
+ * two places and the WAVs lie about how loud they are.
  */
+
+/** One player per cue. Created once — see `preloadSounds`. */
 const players = new Map<FeedbackCue, AudioPlayer>();
 
 /** True once the audio session has been configured. See `configureAudio`. */
@@ -128,18 +117,44 @@ function configureAudio(): void {
   });
 }
 
+/** Get the player for a cue, creating it if `preloadSounds` has not run. */
+function playerFor(cue: FeedbackCue): AudioPlayer {
+  let player = players.get(cue);
+  if (!player) {
+    player = createAudioPlayer(CLIPS[cue]);
+    players.set(cue, player);
+  }
+  return player;
+}
+
+/**
+ * Create every player up front, so no cue pays a load cost the first time it
+ * fires.
+ *
+ * This is why sounds felt late rather than wrong: a lazily-created player has
+ * to decode its clip before the first `play()`, so the first correct answer of
+ * a session arrived after the animation it was meant to accompany, and only
+ * the first. Building them at boot costs a few milliseconds once and makes
+ * every cue land on time.
+ *
+ * Safe to call more than once, and safe to call with sound disabled — the
+ * learner can switch it on mid-session and it should be instant then too.
+ */
+export function preloadSounds(): void {
+  try {
+    configureAudio();
+    for (const cue of Object.keys(CLIPS) as FeedbackCue[]) playerFor(cue);
+  } catch {
+    // A device that cannot prepare audio simply plays none.
+  }
+}
+
 function playCue(cue: FeedbackCue): void {
   if (!soundEnabled) return;
 
   try {
     configureAudio();
-
-    let player = players.get(cue);
-    if (!player) {
-      player = createAudioPlayer(CLIPS[cue]);
-      player.volume = VOLUME[cue];
-      players.set(cue, player);
-    }
+    const player = playerFor(cue);
 
     // Rewind first: a cue re-fired before its tail finishes must restart, not
     // be ignored, or fast tapping goes silent.

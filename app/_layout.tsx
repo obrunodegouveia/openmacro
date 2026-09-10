@@ -14,7 +14,7 @@ import { Stack } from 'expo-router';
 import { env } from '@/config/env';
 import { MODULES } from '@openmacro/core/content/registry';
 import { validateModules } from '@openmacro/core/content/validate';
-import { setHapticsEnabled, setSoundEnabled } from '@/feedback';
+import { preloadSounds, setHapticsEnabled, setSoundEnabled } from '@/feedback';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';
 import { palette } from '@/theme/tokens';
@@ -24,6 +24,14 @@ export default function RootLayout() {
   useEffect(() => {
     setHapticsEnabled(env.hapticsEnabled);
     setSoundEnabled(env.soundEnabled);
+
+    /**
+     * Build the audio players now rather than on first use. A player created
+     * lazily has to decode its clip before it can sound, which made the first
+     * cue of a session land after the animation it belonged to — and only the
+     * first, which is what made the timing feel unpredictable.
+     */
+    preloadSounds();
   }, []);
 
   /**
