@@ -214,11 +214,12 @@ npm run submit:android
 Or, from CI: push a `v1.0.0` tag, or run **Mobile release** from the Actions
 tab. A tag builds *and* submits; a manual run only submits if you tick the box.
 
-Build numbers are **not** in this repository. `eas.json` sets
-`appVersionSource: "remote"` with `autoIncrement`, so EAS holds the iOS build
-number and the Android version code and bumps them per build. The `1` in
-`app.json` is only a starting point. Do not raise them by hand — you will
-collide with the server's count and get a duplicate-version rejection.
+Build numbers are **not** in this repository, and `app.json` deliberately has
+no `ios.buildNumber` or `android.versionCode`: `eas.json` sets
+`appVersionSource: "remote"` with `autoIncrement`, so EAS holds both and bumps
+them per build. Leaving them in the config does nothing except mislead — EAS
+ignores them and says so on every build. Do not add them back to "fix" a
+version; you will only collide with the server's count.
 
 The marketing version (`1.0.0`) *is* in this repository, and it lives in two
 files that must agree: `app.json` `expo.version` and `store.config.json`
