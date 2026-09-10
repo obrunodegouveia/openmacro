@@ -45,3 +45,12 @@ yarn-error.*
 
 # web/ is the Next.js site served at openmacro.org. Its own .gitignore
 # excludes node_modules and .next, so only source is tracked.
+
+# Store credentials. Nothing here belongs in git: the App Store Connect API
+# key, the Google Play service account and any signing material EAS hands back.
+# `*.p8`, `*.p12`, `*.jks`, `*.key` and `*.mobileprovision` are covered above;
+# these are the paths eas-cli reaches for by name.
+credentials/
+credentials.json
+google-play-service-account*.json
+*.keystore

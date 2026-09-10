@@ -2,13 +2,25 @@
   "expo": {
     "name": "OpenMacro",
     "slug": "openmacro",
+    "owner": "care-to-beauty",
     "version": "1.0.0",
+    "description": "Duolingo-style micro-learning for macroeconomics, monetary policy and fractional-reserve banking. Five minutes a day, no account needed.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "primaryColor": "#2FBF71",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.openmacro.app"
+      "bundleIdentifier": "com.openmacro.app",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "CFBundleLocalizations": [
+          "en"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +30,13 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.openmacro.app"
+      "package": "com.openmacro.app",
+      "versionCode": 1,
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -28,12 +46,35 @@
     "plugins": [
       "expo-router",
       "expo-status-bar",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#F7F9FB"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ]
     ],
     "scheme": "openmacro",
-    "newArchEnabled": true,
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "bda4f7da-046e-4b61-9041-cb2aaaf13b8b"
+      }
     }
   }
 }

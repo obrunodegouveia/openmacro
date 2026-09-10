@@ -74,6 +74,21 @@ and the default `.env` leaves cloud sync switched off.
 | `npm run ios` / `android` / `web` | Launch on a specific platform            |
 | `npm run typecheck`     | `tsc --noEmit`                                     |
 | `npm run lint:content`  | Validate every lesson without launching the app    |
+| `npm run preflight:store` | Check everything the stores will check, before building |
+| `npm run build:store`   | Production build for both stores via EAS           |
+
+## Releasing to the App Store and Google Play
+
+The repository carries the whole release path: EAS build profiles
+(`eas.json`), the App Store listing copy (`store.config.json`), a preflight
+check for the things a compiler cannot see, and a GitHub workflow that builds,
+submits and pushes metadata from a `v*` tag.
+
+What it cannot carry is the accounts — an Apple Developer Program enrolment, a
+Play Console account, and the keys that go with them.
+**[docs/mobile-release.md](docs/mobile-release.md)** is the full runbook: the
+one-time setup, the release sequence, and the traps that cost a review cycle
+each.
 
 ## How it works
 
@@ -200,9 +215,34 @@ asked to rewrite.
 
 ## Tech
 
-Expo SDK 57 · React Native 0.86 · React 19 · TypeScript (strict) · Expo Router ·
+Expo SDK 57 · React Native 0.86 · React 19 · TypeScript 7 (strict) · Expo Router ·
 Reanimated 4 · AsyncStorage · Supabase (optional) ·
 `@react-native-community/slider` · `expo-haptics`
+
+### Why there are three TypeScripts
+
+`npm run typecheck` runs **TypeScript 7**, the native compiler, installed as
+`typescript-native` (an alias for `typescript@7`). It checks this repository in
+about half a second where the JavaScript compiler took two and a half.
+
+TypeScript 7 is a *checker*, not a library: it ships `bin/tsc` and a native
+binary, and `require('typescript')` does not resolve to it at all. So the tools
+that consume the compiler programmatically still need a JavaScript build, and
+they keep the ones they already had:
+
+| | Version | Used by |
+|---|---|---|
+| `typescript-native` | 7.0.2 | `npm run typecheck`, `typecheck:core`, and `web`'s typecheck |
+| `typescript` (root) | 6.0.3 | Anything calling the compiler API; your editor's language service |
+| `typescript` (`web/`) | 5.9.3 | `typescript-eslint`, whose peer range is `>=4.8.4 <6.1.0`, and Next's build-time checking |
+
+This is why the typecheck scripts call the binary by path instead of plain
+`tsc` — two installed packages both provide a `tsc` bin, and which one npm
+links is not something to depend on.
+
+Collapsing this back to one version becomes possible when `typescript-eslint`
+widens its peer range past 7. Until then, deleting the alias does not simplify
+anything; it just makes typechecking four times slower.
 
 ## Licence
 

@@ -1,0 +1,108 @@
+# Builds the iOS and Android apps on EAS, and optionally hands them to the
+# stores.
+#
+# Deliberately manual. There is no over-the-air update channel here, so every
+# release is a native build that a human has decided to make, and a store review
+# that takes days — nothing about that benefits from firing on every push to
+# `main`. Tagging `v1.2.3` starts a release; `workflow_dispatch` does the same
+# thing for a one-off or a preview build.
+#
+# Like `ci.yml`, this uses only first-party actions and read-only repository
+# access. The EAS CLI is fetched by `npx` at a pinned major, so there is no
+# third-party action holding the credential.
+#
+# One secret is required: EXPO_TOKEN, a robot access token from
+# https://expo.dev/settings/access-tokens. Everything else — signing keys, the
+# App Store Connect API key, the Google Play service account — lives on EAS and
+# is never in this repository. See docs/mobile-release.md.
+name: Mobile release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Which stores to build for
+        type: choice
+        options: [all, ios, android]
+        default: all
+      profile:
+        description: EAS build profile
+        type: choice
+        options: [production, preview]
+        default: production
+      submit:
+        description: Submit the finished build to the stores
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# A release is not something to run twice at once: two builds racing produce
+# two build numbers and one of them gets submitted by mistake.
+concurrency:
+  group: mobile-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: mobile-release
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The same gates `ci.yml` applies, because a tag can point at a commit
+      # that never went through a pull request.
+      - name: Typecheck
+        run: |
+          npm run typecheck
+          npm run typecheck:core
+
+      - name: Validate lesson content
+        run: npm run lint:content
+
+      # The checks a compiler cannot make: version agreement between app.json
+      # and store.config.json, icon transparency, placeholder review contacts,
+      # secrets in EXPO_PUBLIC_* variables.
+      - name: Store preflight
+        run: npm run preflight:store
+
+      - name: Build on EAS
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          PLATFORM: ${{ inputs.platform || 'all' }}
+          PROFILE: ${{ inputs.profile || 'production' }}
+          # A tag release always submits; a manual run only if asked.
+          SUBMIT: ${{ github.event_name == 'push' || inputs.submit }}
+        run: |
+          if [ "$SUBMIT" = "true" ]; then
+            AUTO_SUBMIT="--auto-submit"
+          else
+            AUTO_SUBMIT=""
+          fi
+          npx eas-cli@24 build \
+            --platform "$PLATFORM" \
+            --profile "$PROFILE" \
+            --non-interactive \
+            --wait \
+            $AUTO_SUBMIT
+
+      # App Store listing copy, keywords, age rating and review notes. Pushed
+      # after the build so the version it attaches to exists in App Store
+      # Connect. Google Play's listing is not covered — EAS Metadata is Apple
+      # only, and the Play listing is managed in the console.
+      - name: Push App Store metadata
+        if: ${{ (github.event_name == 'push' || inputs.submit) && (inputs.platform || 'all') != 'android' && (inputs.profile || 'production') == 'production' }}
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx eas-cli@24 metadata:push --non-interactive
