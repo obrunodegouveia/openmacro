@@ -1,8 +1,12 @@
 # Game rewards — paying EURC on Base
 
-A finished game pays a fixed family member in Circle's EURC on Base, straight
-to their Coinbase account. This is the setup, the design, and the parts that
-can lose money if you get them wrong.
+Finishing a module in the course pays the learner €1 in Circle's EURC on Base,
+straight to their Coinbase account. This is the setup, the design, and the
+parts that can lose money if you get them wrong.
+
+The whole scheme is capped by construction: one claim per learner per module,
+so a person can ever earn `number of modules × the reward`. At sixteen modules
+and €1 that is sixteen euros, and no bug or cheat raises it.
 
 ---
 
@@ -14,11 +18,13 @@ can lose money if you get them wrong.
 | `web/src/lib/blockchain/payout.ts` | The only module holding the key or broadcasting. `server-only` |
 | `web/src/lib/supabase-admin.ts` | Service-role client and bearer-token authentication. `server-only` |
 | `supabase/migrations/0003_reward_recipients.sql` | Managed recipients and the admin audit trail |
+| `supabase/migrations/0004_module_rewards.sql` | Claims keyed on modules; recipients bound to an account |
+| `web/src/lib/rewards/modules.ts` | Whether a module is genuinely finished. `server-only` |
+| `web/src/components/app/module-rewards.tsx` | The claim list on `/dashboard` |
 | `web/src/lib/rewards/recipients.ts` | Turns a key into an address, only for `active` rows. `server-only` |
 | `web/src/lib/rewards/admin.ts` | Who may administer the treasury, and the audit log. `server-only` |
 | `web/src/app/api/claim-reward/route.ts` | Authenticates, verifies, claims, pays, records |
 | `web/src/app/api/admin/rewards/route.ts` | Everything the dashboard reads and does |
-| `web/src/components/game/claim-reward.tsx` | The card the player sees |
 | `web/src/components/app/treasury.tsx` | The dashboard at `/dashboard/treasury` |
 
 ---
@@ -106,8 +112,10 @@ redirect still confirms the route, and a client-side check protects nothing.
 
 The dashboard enforces the sequence you would follow by hand anyway:
 
-1. **Add** the recipient with their Coinbase deposit address on Base. It lands
-   as `pending`, which cannot receive a game reward at all.
+1. **Add** the recipient with their Coinbase deposit address on Base, and the
+   **email of the account that claims into it**. Without that email the wallet
+   exists but nobody can earn into it. It lands as `pending`, which cannot
+   receive a reward at all.
 2. **Send a €1 test.** This is the only path that pays a pending address, and
    only an admin can trigger it.
 3. **Confirm it arrived** in their Coinbase account.
@@ -121,34 +129,39 @@ Every one of those steps is written to `reward_admin_events` with the email
 that did it — the only way to answer "when did this address change, and who
 changed it" after the fact.
 
-## Wiring it into a game
+## How a claim works
 
-The game owns the session; the reward system only reads it.
+Nothing needs wiring into the course. A module is finished when every lesson in
+it has a completion in `lesson_progress`, which the app already writes, and
+`ModuleRewards` on `/dashboard` shows the state of all sixteen.
 
-```ts
-// When play begins
-const { data: session } = await supabase
-  .from("game_sessions")
-  .insert({ user_id: user.id, game_id: "money-machine" })
-  .select("id")
-  .single();
+The request names **one** thing — which module. It does not name a recipient,
+an address, or an amount:
 
-// When the player finishes
-await supabase
-  .from("game_sessions")
-  .update({ finished_at: new Date().toISOString(), score })
-  .eq("id", session.id);
-```
+- **Who is paid** comes from `claimant_email` on an active recipient, matched
+  against the signed-in account. One family member cannot claim into another's
+  wallet, by accident or otherwise.
+- **How much** comes from that recipient's row, or `REWARD_AMOUNT_DEFAULT`.
+- **Where** comes from that row's address.
 
-Then render the card:
+A signed-in account with no wallet bound to it sees no rewards UI at all. This
+is a private arrangement inside a public course, and to everyone else it should
+look like it does not exist.
 
-```tsx
-<ClaimReward gameSessionId={session.id} recipient="daughter" recipientName="Sofia" />
-```
+### What the completion check cannot prove
 
-The component names a session and a family member. It never names an address or
-an amount — both are resolved server-side, so a tampered client cannot redirect
-a payout or inflate one.
+`lesson_progress` is writable by the learner — deliberately, per migration
+0001, because the honest-client model is right for XP where the worst a cheat
+achieves is lying to themselves.
+
+Money changes what that costs. Somebody using the anon key directly can insert
+completions they did not earn and claim the reward. Fixing it properly means
+grading server-side, which means moving the engine off the device and giving up
+offline play.
+
+What makes it acceptable is the cap rather than the check: sixteen euros a
+person, ever. If the reward ever grows past what you would hand over on trust,
+this is the assumption to revisit first.
 
 ---
 

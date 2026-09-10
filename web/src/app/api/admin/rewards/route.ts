@@ -58,7 +58,7 @@ export async function GET(request: Request) {
 
   const { data: claims } = await db
     .from("reward_claims")
-    .select("id, recipient_key, amount_base_units, status, tx_hash, paid_to_address, failure_reason, broadcast_nonce, created_at")
+    .select("id, recipient_key, claim_key, amount_base_units, status, tx_hash, paid_to_address, failure_reason, broadcast_nonce, created_at")
     .order("created_at", { ascending: false })
     .limit(50);
 
@@ -124,6 +124,9 @@ export async function POST(request: Request) {
         label,
         address: parsed.address,
         amountEuros: str("amountEuros") || null,
+        // Which signed-in account may claim into this wallet. Without it the
+        // wallet exists but nobody can earn into it.
+        claimantEmail: str("claimantEmail") || null,
         note: str("note") || null,
       });
       if ("error" in result) {
@@ -134,6 +137,7 @@ export async function POST(request: Request) {
         key,
         label,
         address: parsed.address,
+        claimantEmail: str("claimantEmail") || null,
       });
       return NextResponse.json({ recipient: result.recipient });
     }

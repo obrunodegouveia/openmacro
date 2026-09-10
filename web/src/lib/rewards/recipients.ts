@@ -31,6 +31,8 @@ export interface Recipient {
   address: Address;
   status: RecipientStatus;
   amountEuros: string | null;
+  /** The signed-in account allowed to claim into this wallet, if any. */
+  claimantEmail: string | null;
   note: string | null;
   createdAt: string;
   activatedAt: string | null;
@@ -43,6 +45,7 @@ interface RecipientRow {
   address: string;
   status: RecipientStatus;
   amount_euros: string | null;
+  claimant_email: string | null;
   note: string | null;
   created_at: string;
   activated_at: string | null;
@@ -56,6 +59,7 @@ function toRecipient(row: RecipientRow): Recipient {
     address: getAddress(row.address),
     status: row.status,
     amountEuros: row.amount_euros,
+    claimantEmail: row.claimant_email,
     note: row.note,
     createdAt: row.created_at,
     activatedAt: row.activated_at,
@@ -75,11 +79,33 @@ export function normaliseAddress(input: string): { address: Address } | { error:
 }
 
 /**
+ * The wallet a signed-in account may claim into, or null.
+ *
+ * This is the resolution that matters: the request never names a recipient, so
+ * a learner can only ever be paid into the wallet an admin bound to their
+ * account. Null covers unbound, pending and disabled alike.
+ */
+export async function resolveRecipientForClaimant(email: string): Promise<Recipient | null> {
+  const { data, error } = await getSupabaseAdmin()
+    .from("reward_recipients")
+    .select("*")
+    .ilike("claimant_email", email)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) {
+    console.error("[rewards] claimant lookup failed", error);
+    return null;
+  }
+  return data ? toRecipient(data as RecipientRow) : null;
+}
+
+/**
  * The address to pay for a key, or null.
  *
- * Null means "not payable" and covers unknown, pending and disabled alike —
- * the claim route should treat all three the same way and say nothing more
- * specific to the player.
+ * Used by admin test sends, which address a wallet directly rather than going
+ * through a claimant. Null means "not payable" and covers unknown, pending and
+ * disabled alike.
  */
 export async function resolvePayableRecipient(key: string): Promise<Recipient | null> {
   const { data, error } = await getSupabaseAdmin()
@@ -133,6 +159,7 @@ export async function addRecipient(input: {
   label: string;
   address: Address;
   amountEuros?: string | null;
+  claimantEmail?: string | null;
   note?: string | null;
 }): Promise<{ recipient: Recipient } | { error: string }> {
   const { data, error } = await getSupabaseAdmin()
@@ -143,6 +170,7 @@ export async function addRecipient(input: {
       // Stored lowercase; checksummed on read.
       address: input.address.toLowerCase(),
       amount_euros: input.amountEuros?.trim() || null,
+      claimant_email: input.claimantEmail?.trim().toLowerCase() || null,
       note: input.note?.trim() || null,
       status: "pending",
     })

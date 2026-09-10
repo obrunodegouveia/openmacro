@@ -2,6 +2,7 @@ import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Section } from "@/components/ui/section";
 import { Dashboard } from "@/components/app/dashboard";
+import { ModuleRewards } from "@/components/app/module-rewards";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 
@@ -33,6 +34,8 @@ export default function DashboardPage() {
         <Section className="pt-28 sm:pt-32">
           <div className="mx-auto max-w-3xl">
             <Dashboard />
+            {/* Renders nothing unless this account has a reward wallet bound. */}
+            <ModuleRewards />
           </div>
         </Section>
       </main>

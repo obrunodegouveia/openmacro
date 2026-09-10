@@ -26,6 +26,7 @@ interface Recipient {
   address: string;
   status: "pending" | "active" | "disabled";
   amountEuros: string | null;
+  claimantEmail: string | null;
   note: string | null;
   activatedAt: string | null;
 }
@@ -33,6 +34,7 @@ interface Recipient {
 interface Claim {
   id: string;
   recipient_key: string;
+  claim_key: string;
   amount_base_units: string;
   status: string;
   tx_hash: string | null;
@@ -301,8 +303,13 @@ export function Treasury() {
                 {short(r.address)}
               </p>
               <p className="mt-1 text-xs text-neutral-500">
-                {r.amountEuros ? `€${r.amountEuros} per game` : "default amount"}
+                {r.amountEuros ? `€${r.amountEuros} per module` : "default amount"}
                 {r.note ? ` · ${r.note}` : ""}
+              </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                {r.claimantEmail
+                  ? `claimed by ${r.claimantEmail}`
+                  : "no account bound — nobody can earn into this wallet"}
               </p>
 
               <div className="mt-3 flex flex-wrap gap-2">
@@ -358,7 +365,8 @@ export function Treasury() {
           {data.claims.map((claim) => (
             <li key={claim.id} className="flex flex-wrap items-baseline justify-between gap-2 py-2">
               <span>
-                {claim.recipient_key} · €{euros(claim.amount_base_units)}
+                {claim.recipient_key} · €{euros(claim.amount_base_units)}{" "}
+                <span className="text-xs text-neutral-500">{claim.claim_key}</span>
               </span>
               <span className="flex items-center gap-3">
                 <span className="text-xs text-neutral-500">{claim.status}</span>
@@ -425,7 +433,9 @@ function AddRecipient({
   onAdd: (payload: Record<string, unknown>) => void;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [form, setForm] = React.useState({ key: "", label: "", address: "", amountEuros: "", note: "" });
+  const [form, setForm] = React.useState({
+    key: "", label: "", address: "", amountEuros: "", claimantEmail: "", note: "",
+  });
 
   if (!open) {
     return (
@@ -446,7 +456,7 @@ function AddRecipient({
         event.preventDefault();
         onAdd(form);
         setOpen(false);
-        setForm({ key: "", label: "", address: "", amountEuros: "", note: "" });
+        setForm({ key: "", label: "", address: "", amountEuros: "", claimantEmail: "", note: "" });
       }}
     >
       <Field label="Key (used by the game)" value={form.key} placeholder="daughter"
@@ -455,8 +465,10 @@ function AddRecipient({
         onChange={(v) => setForm((f) => ({ ...f, label: v }))} />
       <Field label="Coinbase deposit address on Base" value={form.address} placeholder="0x…" mono
         onChange={(v) => setForm((f) => ({ ...f, address: v }))} />
-      <Field label="Reward per game in euros (optional)" value={form.amountEuros} placeholder="2.50"
+      <Field label="Reward per module in euros (optional)" value={form.amountEuros} placeholder="1.00"
         onChange={(v) => setForm((f) => ({ ...f, amountEuros: v }))} />
+      <Field label="Account that claims into it" value={form.claimantEmail} placeholder="her@email.com"
+        onChange={(v) => setForm((f) => ({ ...f, claimantEmail: v }))} />
       <Field label="Note (optional)" value={form.note} placeholder=""
         onChange={(v) => setForm((f) => ({ ...f, note: v }))} />
 
