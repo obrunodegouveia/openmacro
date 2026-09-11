@@ -26,7 +26,7 @@ export const kabDiscountRateLesson = defineLesson({
         {
           id: 'last-resort',
           label:
-            'So banks borrow from each other first and only come to the central bank when they must',
+            'So banks try each other first and come to the window last',
         },
         {
           id: 'profit',

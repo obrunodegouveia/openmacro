@@ -60,17 +60,17 @@ export const kabRateToLendingLesson = defineLesson({
         {
           id: 'hundred-percent',
           label:
-            'Because the new deposit arrives fully backed by reserves — a 100% ratio on the increment, far above the 10% it must hold',
+            'The new deposit arrives fully backed by reserves — 100% on the increment',
         },
         {
           id: 'liabilities-fall',
-          label: 'Because its liabilities fall',
+          label: 'Because its liabilities fall as the bond leaves the system',
           feedback:
             'They rise — the seller now has a checking account. The ratio improves despite that, because the reserves arrived alongside it one for one.',
         },
         {
           id: 'loans-fall',
-          label: 'Because its loans are written down',
+          label: 'Because its loan book shrinks when reserves are injected',
           feedback:
             'Nothing happens to the loan book. Only cash and a matching deposit are added.',
         },

@@ -30,17 +30,17 @@ export const kabWhatABankIsForLesson = defineLesson({
         {
           id: 'matching',
           label:
-            'Savers cannot evaluate projects, entrepreneurs cannot find savers, and no single saver is large enough to fund a big project',
+            'Nobody can find, judge or pool with enough counterparties to fund a canal',
         },
         {
           id: 'storage',
-          label: 'Gold rusts, so it needs professional storage',
+          label: 'Savings need safekeeping, and a vault is safer than a mattress',
           feedback:
             'Gold famously does not corrode — that is part of why it was chosen. Safekeeping is a service the bank sells, but it is not the problem that made a bank worth inventing.',
         },
         {
           id: 'printing',
-          label: 'Somebody has to print the money',
+          label: 'The village has too little money for the projects it wants to build',
           feedback:
             'No printing happens in this video. The village already has its 1,000 gold pieces; the trouble is that they are doing nothing.',
         },

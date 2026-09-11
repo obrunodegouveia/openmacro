@@ -27,7 +27,7 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
         {
           id: 'arbitrage',
           label:
-            'Borrowing at the short end of the yield curve and lending at the long end, with the spread underwritten by insurance',
+            'Borrowing at the short end and lending at the long end, spread insured',
         },
         {
           id: 'intermediation',
@@ -64,7 +64,7 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
         {
           id: 'cds',
           label:
-            'Demand money is held aside and pays no interest; money lent out is locked in term deposits, with interest rising by term',
+            'Demand money sits idle and unpaid; lent money is locked in term deposits',
         },
         {
           id: 'no-lending',
@@ -74,7 +74,7 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
         },
         {
           id: 'gold',
-          label: 'It returns to a gold standard',
+          label: 'It returns to a gold standard and lends only what it holds',
           feedback:
             'Full reserve and the gold standard are separate choices. The video explicitly lays them out as two independent axes.',
         },

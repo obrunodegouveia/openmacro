@@ -65,8 +65,9 @@ export const kabTreasuriesLesson = defineLesson({
         { id: 'bond', term: 'Treasury bond', definition: 'Longer than ten years' },
         {
           id: 'why',
-          term: 'Why the Fed holds them',
-          definition: 'The safest, most liquid asset to buy when injecting reserves',
+          term: 'Open market operations',
+          definition:
+            'Buying and selling these is how the central bank injects or drains reserves',
         },
       ],
       explanation:

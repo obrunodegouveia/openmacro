@@ -30,11 +30,11 @@ export const kabLendingWithoutGoldLesson = defineLesson({
         {
           id: 'both-grow',
           label:
-            'Assets grow by a 300 loan and liabilities grow by a 300 deposit — both sides expand together',
+            'Both sides grow: a 300 loan asset, a 300 deposit liability',
         },
         {
           id: 'gold-falls',
-          label: 'Gold falls by 300 and loans rise by 300',
+          label: 'Gold falls by 300 and loans rise by 300, leaving the total unchanged',
           feedback:
             'That is the older version, where the bank handed over metal and waited for it to be redeposited. The point of this video is that the gold never needs to move at all.',
         },
@@ -67,11 +67,11 @@ export const kabLendingWithoutGoldLesson = defineLesson({
         {
           id: 'reserves',
           label:
-            'The reserve requirement — how much it must hold against the deposits and notes it has issued',
+            'The reserve requirement it must hold against its demand liabilities',
         },
         {
           id: 'gold-stock',
-          label: 'Running out of gold in the vault',
+          label: 'Running out of gold, since every loan draws the vault down',
           feedback:
             'The gold is not being spent, so it does not run down. What binds is the ratio between the gold and the claims written against it.',
         },

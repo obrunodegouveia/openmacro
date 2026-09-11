@@ -27,7 +27,7 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
         {
           id: 'geology',
           label:
-            'It ties the money supply to how much metal is dug up, which has nothing to do with how much an economy produces',
+            'It ties the money supply to mining rather than to output',
         },
         {
           id: 'inflation',
@@ -37,13 +37,13 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
         },
         {
           id: 'heavy',
-          label: 'Gold is heavy and difficult to move',
+          label: 'Gold is heavy, and moving it between vaults is impractical',
           feedback:
             'True and already solved by notes and cheques, several videos ago. The objection here is about the constraint on quantity.',
         },
         {
           id: 'worthless',
-          label: 'Gold has no value at all',
+          label: 'Gold has no value, so it cannot back anything',
           feedback:
             'The video is careful not to claim that. Its claim is that gold represents wealth rather than being wealth — it cannot be eaten or lived in.',
         },
@@ -64,11 +64,11 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
         {
           id: 'tax',
           label:
-            'The power to tax a real economy — its labour, land, ideas and productive capacity',
+            'Its power to tax a real economy',
         },
         {
           id: 'military',
-          label: 'Military power',
+          label: 'Its military power and the stability that buys',
           feedback:
             'Not the argument. The claim is economic: a government can levy on the output of the economy it governs.',
         },

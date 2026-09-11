@@ -63,7 +63,7 @@ export const kabFrbCommentaryLesson = defineLesson({
         {
           id: 'risky',
           label:
-            'The risky one — higher interest on its loans lets it pay higher interest on deposits',
+            'The risky one, because it can pay the highest deposit rate',
         },
         {
           id: 'prudent',
@@ -73,13 +73,13 @@ export const kabFrbCommentaryLesson = defineLesson({
         },
         {
           id: 'same',
-          label: 'They look identical',
+          label: 'They look identical, since all deposits are equally safe',
           feedback:
             'Worse than identical: the riskiest is visibly the most generous, which actively attracts deposits.',
         },
         {
           id: 'largest',
-          label: 'Whichever is largest',
+          label: 'Whichever is largest, since size implies safety',
           feedback:
             'Size is not the signal discussed. The signal depositors actually see is the interest rate.',
         },

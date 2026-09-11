@@ -27,13 +27,13 @@ export const kabFedBalanceSheetLesson = defineLesson({
         { id: 'treasuries', label: 'Treasuries — roughly $780 billion of bills, notes and bonds' },
         {
           id: 'gold',
-          label: 'Gold',
+          label: 'Gold, held since the founding of the system',
           feedback:
             'About $12 billion including certificates and coin — well under 2%. The video pauses on exactly this: for an institution founded on metal, there is remarkably little of it.',
         },
         {
           id: 'loans',
-          label: 'Loans to banks',
+          label: 'Loans to banks through the discount window',
           feedback:
             'Outright loans were $39 million — peanuts, in the video’s word. That changed dramatically in the crisis that followed.',
         },
@@ -60,11 +60,11 @@ export const kabFedBalanceSheetLesson = defineLesson({
         {
           id: 'spread',
           label:
-            'It earned interest on its treasuries while paying none on its liabilities — surplus goes to the Treasury',
+            'Interest on its treasuries, against liabilities that pay none',
         },
         {
           id: 'fees',
-          label: 'Fees charged to member banks',
+          label: 'Fees charged to member banks for holding their reserves',
           feedback:
             'Not the mechanism described. The asymmetry is the point: interest-bearing assets funded by non-interest-bearing liabilities.',
         },

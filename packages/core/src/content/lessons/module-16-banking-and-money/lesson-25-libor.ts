@@ -26,11 +26,11 @@ export const kabLiborLesson = defineLesson({
         {
           id: 'survey',
           label:
-            'An average of the rates at which a panel of London banks reported lending to each other',
+            'An average of rates a panel of London banks reported paying',
         },
         {
           id: 'set-by-boe',
-          label: 'A rate set by the Bank of England',
+          label: 'A benchmark rate set each day by the Bank of England',
           feedback:
             'No central bank set it. That is the contrast the video draws with the fed funds rate, which a central bank actively steers.',
         },
@@ -62,11 +62,11 @@ export const kabLiborLesson = defineLesson({
         {
           id: 'policy',
           label:
-            'Both measure interbank borrowing, but the funds rate is actively steered by policy and quoted in dollars alone',
+            'Both are interbank rates, but the funds rate is steered by policy',
         },
         {
           id: 'same',
-          label: 'They are the same measure under two names',
+          label: 'They are the same measure published under two names',
           feedback:
             'Both are interbank rates, but one is a multi-currency survey run by a trade body and the other is a domestic rate a central bank targets.',
         },

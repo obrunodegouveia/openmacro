@@ -75,13 +75,13 @@ export const kabNotesAndChequesLesson = defineLesson({
         },
         {
           id: 'note-small',
-          term: 'Why notes suit small payments',
-          definition: 'Settlement is instant and needs no paperwork from the bank',
+          term: 'Instant settlement',
+          definition: 'The note is the payment — the bank does nothing and need not be told',
         },
         {
           id: 'cheque-large',
-          term: 'Why cheques suit large ones',
-          definition: 'Any amount can be written without carrying anything worth stealing',
+          term: 'Arbitrary amount',
+          definition: 'Any sum can be written without carrying anything worth stealing',
         },
       ],
       explanation:

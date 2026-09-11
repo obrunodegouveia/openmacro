@@ -46,7 +46,7 @@ export const kabOpenMarketOperationsLesson = defineLesson({
         {
           id: 'unwind',
           label:
-            'Because raising the requirement back is brutal — banks at the limit would have to dump assets or unwind loans',
+            'Because raising it back forces banks to dump assets or unwind loans',
         },
         {
           id: 'illegal',
@@ -62,7 +62,7 @@ export const kabOpenMarketOperationsLesson = defineLesson({
         },
         {
           id: 'slow',
-          label: 'Because it takes months to take effect',
+          label: 'Because a change in the requirement takes months to reach lending',
           feedback:
             'Speed is not the complaint. The problem is that the tool is hard to reverse without breaking the banks that responded to it.',
         },

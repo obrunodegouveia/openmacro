@@ -27,11 +27,11 @@ export const kabDepositInsuranceLesson = defineLesson({
         {
           id: 'indifference',
           label:
-            'Depositors stop caring how a bank invests, so they simply chase the highest rate — which is the riskiest bank',
+            'Depositors stop caring how a bank invests and chase the highest rate',
         },
         {
           id: 'cost',
-          label: 'The premiums are expensive for banks',
+          label: 'The premiums are expensive, and the cost reaches depositors',
           feedback:
             'The opposite: a fraction of a percent, and far cheaper than the extra interest a bank would have to pay without it. Cheapness is the problem.',
         },
@@ -64,7 +64,7 @@ export const kabDepositInsuranceLesson = defineLesson({
         {
           id: 'correlated',
           label:
-            'Bank failures are correlated — one failing makes others more likely, so the losses arrive together',
+            'Bank failures are correlated, so the claims all arrive at once',
         },
         {
           id: 'rare',
@@ -74,7 +74,7 @@ export const kabDepositInsuranceLesson = defineLesson({
         },
         {
           id: 'large',
-          label: 'Because each failure is too large',
+          label: 'Because a single failure is too large for any premium to cover',
           feedback:
             'Size can be handled with enough premium. What cannot be handled is every claim arriving in the same quarter.',
         },

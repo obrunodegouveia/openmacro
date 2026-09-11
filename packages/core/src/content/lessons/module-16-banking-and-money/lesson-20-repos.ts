@@ -27,17 +27,17 @@ export const kabReposLesson = defineLesson({
         {
           id: 'ownership',
           label:
-            'Legal ownership of the collateral genuinely transfers to the lender for the duration',
+            'Legal ownership of the collateral actually transfers',
         },
         {
           id: 'interest',
-          label: 'A repo charges no interest',
+          label: 'A repo charges no interest, only a fee for the service',
           feedback:
             'It does — buried in the price. The borrower repurchases for more than was paid, and the difference is the interest.',
         },
         {
           id: 'no-collateral',
-          label: 'A repo needs no collateral',
+          label: 'A repo needs no collateral, resting on the borrower’s credit',
           feedback:
             'The collateral is the whole structure. It has simply been sold rather than pledged.',
         },

@@ -27,7 +27,7 @@ export const kabReserveRatiosLesson = defineLesson({
         {
           id: 'demand',
           label:
-            'Total *demand* liabilities — checking accounts and notes outstanding, the things claimable today',
+            'Demand liabilities — checking accounts and notes outstanding',
         },
         {
           id: 'all-liabilities',
@@ -37,13 +37,13 @@ export const kabReserveRatiosLesson = defineLesson({
         },
         {
           id: 'assets',
-          label: 'Total assets',
+          label: 'Total assets, since reserves are held against what the bank owns',
           feedback:
             'That would measure something closer to leverage. The reserve ratio is about meeting demands, not about solvency.',
         },
         {
           id: 'equity',
-          label: 'Equity',
+          label: 'Equity, the owner’s cushion against loss',
           feedback:
             'Reserves against equity would tell you nothing about whether depositors can be paid — equity is what is left over after they have been.',
         },

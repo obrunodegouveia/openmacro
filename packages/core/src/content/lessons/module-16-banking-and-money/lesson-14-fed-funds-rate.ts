@@ -62,11 +62,11 @@ export const kabFedFundsRateLesson = defineLesson({
         {
           id: 'buy',
           label:
-            'Buy treasuries — reserves flood in, the short bank needs less and the long bank has more to lend',
+            'Buy treasuries, so reserves become plentiful and cheap',
         },
         {
           id: 'sell',
-          label: 'Sell treasuries, draining reserves',
+          label: 'Sell treasuries, draining reserves out of the banking system',
           feedback:
             'That raises the rate. Scarcer reserves mean the borrowing bank is more desperate and the lending bank has less to spare.',
         },
@@ -78,7 +78,7 @@ export const kabFedFundsRateLesson = defineLesson({
         },
         {
           id: 'reserve-req',
-          label: 'Raise the reserve requirement',
+          label: 'Raise the reserve requirement so banks need fewer reserves',
           feedback:
             'That would make reserves scarcer still and push the rate up — the opposite of the intent.',
         },

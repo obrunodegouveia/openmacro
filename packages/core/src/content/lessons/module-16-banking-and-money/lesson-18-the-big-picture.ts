@@ -64,11 +64,11 @@ export const kabBigPictureLesson = defineLesson({
         {
           id: 'bet-on-humans',
           label:
-            'That holding a medium of exchange is a bet on what people will do — and Paul Volcker was not forecastable',
+            'That holding a medium of exchange is a bet on what people will do',
         },
         {
           id: 'gold-bad',
-          label: 'That gold is a bad investment',
+          label: 'That gold is a poor investment over any long horizon',
           feedback:
             'Too strong. The point is about the difficulty of pricing something that generates no return, not a verdict on the asset.',
         },
@@ -80,7 +80,7 @@ export const kabBigPictureLesson = defineLesson({
         },
         {
           id: 'cash-better',
-          label: 'That cash always beats gold',
+          label: 'That a savings account always beats gold in the long run',
           feedback:
             'The comparison offered is a bank account earning 3–4% over that particular span, not a general law.',
         },

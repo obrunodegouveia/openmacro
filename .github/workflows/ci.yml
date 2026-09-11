@@ -51,6 +51,13 @@ jobs:
       # readout.
       - run: npm run lint:content
 
+      # Quality rather than validity: duplicated content, a correctOptionId
+      # pointing at nothing, two options reading the same. Exits non-zero only
+      # on those errors — the style warnings are advisory and reported, not
+      # enforced, because a good lesson occasionally has a reason.
+      - name: Audit content quality
+        run: npm run audit:content
+
       # The website, which is what learners actually play.
       - run: npm run typecheck --workspace web
       - run: npm run lint --workspace web
