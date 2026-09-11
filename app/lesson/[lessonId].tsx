@@ -15,9 +15,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
 
-import * as WebBrowser from 'expo-web-browser';
-
 import { ChallengeView } from '@/components/challenges/ChallengeView';
+import { LessonVideo } from '@/components/ui/LessonVideo';
 import { ActionButton } from '@/components/ui/ActionButton';
 import { FeedbackSheet } from '@/components/ui/FeedbackSheet';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -193,28 +192,19 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
       <ComboPill combo={state.combo} />
 
       {/*
-        Lessons built around a video open it in the browser rather than
-        embedding it. Embedding YouTube in React Native needs a WebView — a
-        native dependency carried by every build for the sake of one module —
-        and the system browser plays it better anyway. Shown only before the
-        first answer, because afterwards it is a distraction.
+        Lessons built around a video play it inline, before the questions and
+        only before the first answer. Once answering is under way it would be
+        the largest thing on screen and the least useful.
       */}
       {lesson.video && state.stepSerial === 0 && !state.feedback ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Watch the video for ${lesson.title}`}
-          style={styles.watchVideo}
-          onPress={() => {
-            void WebBrowser.openBrowserAsync(lesson.video!.url);
-          }}
-        >
-          <Text style={styles.watchVideoText}>
-            ▶︎ Watch the video{lesson.video.minutes ? ` · ${lesson.video.minutes} min` : ''}
-          </Text>
-          {lesson.video.source ? (
-            <Text style={styles.watchVideoSource}>{lesson.video.source}</Text>
-          ) : null}
-        </Pressable>
+        <View style={styles.videoWrap}>
+          <LessonVideo
+            url={lesson.video.url}
+            title={lesson.title}
+            minutes={lesson.video.minutes}
+            source={lesson.video.source}
+          />
+        </View>
       ) : null}
 
       {/* ---- the current challenge ------------------------------------- */}
@@ -420,24 +410,8 @@ const styles = StyleSheet.create({
   progressWrap: {
     flex: 1,
   },
-  watchVideo: {
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.sm,
-    paddingVertical: spacing.md,
+  videoWrap: {
     paddingHorizontal: spacing.lg,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: palette.border,
-    backgroundColor: palette.surface,
-  },
-  watchVideoText: {
-    ...typography.bodyStrong,
-    color: palette.ink,
-  },
-  watchVideoSource: {
-    ...typography.caption,
-    color: palette.inkMuted,
-    marginTop: 2,
   },
   body: {
     flex: 1,

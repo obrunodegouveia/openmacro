@@ -236,6 +236,7 @@ crash.
 | Lesson content, copy, styling | ✅ | It is all JavaScript and assets |
 | Engine, grading, providers | ✅ | Same bundle |
 | A new Expo module or native dependency | ❌ | The binary does not contain it |
+| Anything needing react-native-webview | ❌ | It is native; the video player depends on it |
 | Permissions, icons, splash, bundle id | ❌ | Native project configuration |
 | An SDK upgrade | ❌ | New native code throughout |
 

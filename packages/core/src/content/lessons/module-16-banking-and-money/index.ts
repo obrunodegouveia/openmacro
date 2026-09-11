@@ -18,10 +18,12 @@
  * 10:3 leverage wiped out by a 50% loss, $871 billion of Fed assets on 14
  * February 2007 of which barely $12 billion is gold.
  *
- * Nothing of Khan Academy's is redistributed. The videos are embedded from
- * YouTube and play on their terms; the questions are original work under this
- * repository's licence. The embed loads nothing from Google until the learner
- * presses play, which is the same promise every other video in the course makes.
+ * Nothing of Khan Academy's is redistributed. The videos play inline in the
+ * official YouTube iframe player — a WebView on mobile, an iframe on the web —
+ * so they run on YouTube's terms with the creator's attribution intact. The
+ * questions are original work under this repository's licence. Neither player
+ * loads anything from Google until the learner presses play, which is the same
+ * promise every other video in the course makes.
  *
  * WHY IT BELONGS HERE
  *
