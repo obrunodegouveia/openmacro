@@ -33,23 +33,21 @@ import type { UiDictionary } from './en';
  * • **Untranslated is not broken.** Any key omitted here falls back to
  *   English on its own, per key. Removing a bad translation is always safe.
  */
+// ─── generated below · `npm run i18n:import` rewrites from here ───────────
+
 export const ptPT: UiDictionary = {
-  // ---- conta -------------------------------------------------------------
   'account.signIn': 'Continuar com a Google',
   'account.signOut': 'Terminar sessão',
   'account.signOutOf': 'Terminar a sessão da conta de {name}',
-  'account.optional':
-    'Opcional — podes aprender sem conta. Iniciar sessão guarda a tua sequência e os teus XP em todos os dispositivos, e leva contigo o progresso deste.',
+  'account.optional': 'Opcional — podes aprender sem conta. Iniciar sessão guarda a tua sequência e os teus XP em todos os dispositivos, e leva contigo o progresso deste.',
   'account.sync.merging': 'A juntar o progresso que fizeste offline…',
   'account.sync.pushing': 'A sincronizar…',
   'account.sync.pending': 'Guardado neste dispositivo · sincroniza quando voltares a ter rede',
   'account.sync.synced': 'Progresso sincronizado com a tua conta',
-
   'account.delete': 'Eliminar conta',
   'account.delete.open': 'Eliminar a tua conta',
   'account.delete.title': 'Eliminar esta conta',
-  'account.delete.body':
-    'Os teus XP, a tua sequência e o histórico de lições são apagados e não podem ser recuperados. O curso continua a funcionar neste dispositivo, com a sessão terminada.',
+  'account.delete.body': 'Os teus XP, a tua sequência e o histórico de lições são apagados e não podem ser recuperados. O curso continua a funcionar neste dispositivo, com a sessão terminada.',
   'account.delete.confirmLabel': 'Escreve {email} para confirmar',
   'account.delete.confirmLabelGeneric': 'Escreve o teu endereço de email para confirmar',
   'account.delete.placeholder': 'o teu email',
@@ -60,8 +58,6 @@ export const ptPT: UiDictionary = {
   'account.delete.failed': 'Não resultou.',
   'account.delete.unreachable': 'Não foi possível contactar o servidor.',
   'account.delete.expired': 'A tua sessão expirou. Inicia sessão outra vez.',
-
-  // ---- o percurso --------------------------------------------------------
   'path.xp': '{count, number} XP',
   'path.module': 'Módulo {number, number}',
   'path.streak': '{count, plural, one {sequência de # dia} other {sequência de # dias}}',
@@ -70,13 +66,10 @@ export const ptPT: UiDictionary = {
   'path.lesson.best': 'melhor: {count, number} XP',
   'path.lesson.open': 'Começar a lição: {title}',
   'path.contribute.title': 'Vêm aí mais lições',
-  'path.contribute.body':
-    'O OpenMacro é open source. Uma lição é um único ficheiro TypeScript — põe o teu em {lessons}, regista-o em {registry} e aparece aqui mesmo.',
+  'path.contribute.body': 'O OpenMacro é open source. Uma lição é um único ficheiro TypeScript — põe o teu em {lessons}, regista-o em {registry} e aparece aqui mesmo.',
   'path.reset': 'Apagar progresso',
   'path.reset.armed': 'Toca outra vez para apagar todo o progresso',
   'path.reset.armedA11y': 'Toca outra vez para confirmar que queres apagar o progresso',
-
-  // ---- durante a lição ---------------------------------------------------
   'lesson.exit': 'Sair da lição',
   'lesson.check': 'Verificar',
   'lesson.continue': 'Continuar',
@@ -88,8 +81,6 @@ export const ptPT: UiDictionary = {
   'lesson.video.minutes': '{count, number} min',
   'lesson.video.watchFirst': 'Vê primeiro',
   'lesson.video.privacy': 'Não carrega nada até carregares em reproduzir',
-
-  // ---- os tipos de exercício ---------------------------------------------
   'challenge.order.empty': 'Toca nos acontecimentos abaixo para construir a cadeia',
   'challenge.order.remaining': 'Em falta',
   'challenge.order.remove': 'Passo {number, number}: {label}. Toca para remover.',
@@ -115,8 +106,6 @@ export const ptPT: UiDictionary = {
   'entity.commercial_bank': 'Banco comercial',
   'entity.shadow_bank': 'Banco paralelo',
   'entity.fiduciary_core': 'Núcleo fiduciário',
-
-  // ---- correção ----------------------------------------------------------
   'grade.correct.1': 'É isso mesmo!',
   'grade.correct.2': 'Exatamente',
   'grade.correct.3': 'Acertaste em cheio',
@@ -127,14 +116,11 @@ export const ptPT: UiDictionary = {
   'grade.match.partial': 'Acertaste {matched, number} de {total, plural, one {# par} other {# pares}}.',
   'grade.order.step': 'O passo {number, number} devia ser «{label}».',
   'grade.sim.open': '{count, plural, one {Falta # objetivo} other {Faltam # objetivos}}.',
-  'grade.taccount.unbalanced':
-    'O balanço de {entity} não fecha — o ativo e o passivo têm de se mover juntos.',
+  'grade.taccount.unbalanced': 'O balanço de {entity} não fecha — o ativo e o passivo têm de se mover juntos.',
   'grade.taccount.unexpected': '{entity} não devia ter uma rubrica «{account}» nesta operação.',
   'grade.taccount.wrongAmount': 'O montante de «{account}» em {entity} não está certo.',
   'grade.taccount.missingAsset': 'Falta um lançamento no ativo de {entity}.',
   'grade.taccount.missingLiability': 'Falta um lançamento no passivo de {entity}.',
-
-  // ---- no fim -------------------------------------------------------------
   'complete.flawless': 'Sem um único erro!',
   'complete.title': 'Lição concluída',
   'complete.xpEarned': 'XP ganhos',
@@ -148,13 +134,9 @@ export const ptPT: UiDictionary = {
   'failed.retry': 'Tentar outra vez',
   'notFound.title': 'Lição não encontrada',
   'notFound.body': 'Não há nenhuma lição registada com o id «{id}».',
-
-  // ---- atualizações -------------------------------------------------------
   'update.ready': 'Há lições novas prontas.',
   'update.restart': 'Reiniciar',
   'update.restartA11y': 'Reiniciar para carregar as lições novas',
-
-  // ---- o índice do curso ---------------------------------------------------
   'map.title': 'Faz uma lição',
   'map.finished': '{done, number} de {total, number} concluídas',
   'map.live': '{count, plural, one {# lição disponível} other {# lições disponíveis}} · vêm mais a caminho',
@@ -164,8 +146,6 @@ export const ptPT: UiDictionary = {
   'difficulty.intro': 'Introdução',
   'difficulty.core': 'Base',
   'difficulty.advanced': 'Avançado',
-
-  // ---- o leitor na web -----------------------------------------------------
   'challenge.kind.multiple_choice': 'Escolhe a melhor resposta',
   'challenge.kind.concept_match': 'Liga cada par',
   'challenge.kind.order_flow': 'Põe isto por ordem',
@@ -181,23 +161,17 @@ export const ptPT: UiDictionary = {
   'lesson.hint.answer': 'Responde para continuar.',
   'lesson.announceCorrect': 'Certo.',
   'lesson.announceIncorrect': 'Não é bem assim.',
-  'failed.webBody':
-    'Não perdeste nada — as vidas existem para te obrigar a abrandar no mecanismo, não para te fechar a porta. Faz {lesson} outra vez e o que já sabias passa depressa.',
+  'failed.webBody': 'Não perdeste nada — as vidas existem para te obrigar a abrandar no mecanismo, não para te fechar a porta. Faz {lesson} outra vez e o que já sabias passa depressa.',
   'complete.backToLessons': 'Voltar às lições',
   'complete.next': 'Lição seguinte',
   'complete.noMistakes': 'Sem erros',
   'complete.saving': 'A guardar na tua conta…',
   'complete.saved': 'Guardado na conta de {name}.',
-  'complete.saveFailed':
-    'Não foi possível contactar a tua conta — esta sessão está segura neste dispositivo e sincroniza da próxima vez.',
+  'complete.saveFailed': 'Não foi possível contactar a tua conta — esta sessão está segura neste dispositivo e sincroniza da próxima vez.',
   'complete.signedIn': 'Sessão iniciada.',
-  'complete.savedLocally':
-    'Guardado neste dispositivo. Inicia sessão para o manteres em todos os dispositivos e começares uma sequência.',
+  'complete.savedLocally': 'Guardado neste dispositivo. Inicia sessão para o manteres em todos os dispositivos e começares uma sequência.',
   'complete.optional': 'Opcional. As lições são gratuitas de qualquer maneira.',
-
-  // ---- idioma --------------------------------------------------------------
   'language.label': 'Idioma',
   'language.choose': 'Mostrar o curso em {name}',
-  'language.partial':
-    'Este idioma ainda está a ser traduzido. O que ainda não estiver traduzido aparece em inglês.',
+  'language.partial': 'Este idioma ainda está a ser traduzido. O que ainda não estiver traduzido aparece em inglês.',
 };

@@ -26,416 +26,234 @@ import type { ContentDictionary } from '../../localise';
  *   is doing work — it is the line that makes the lesson stick. A translation
  *   that flattens the tone into a textbook has lost more than it kept.
  */
+// ─── generated below · `npm run i18n:import` rewrites from here ───────────
+
 export const startHerePtPT: ContentDictionary = {
   'module.title': 'Começa Aqui',
-  'module.description':
-    'Não é preciso saber nada de antemão. O que é realmente o número na tua app do banco, o que o banco faz com ele, para que serve uma taxa de juro, e porque é que uma decisão em Frankfurt chega ao teu crédito à habitação.',
-
-  // ---- lição 1: o número na app -------------------------------------------
+  'module.description': 'Não é preciso saber nada de antemão. O que é realmente o número na tua app do banco, o que o banco faz com ele, para que serve uma taxa de juro, e porque é que uma decisão em Frankfurt chega ao teu crédito à habitação.',
   'your-money-is-a-promise.title': 'O Número na Tua App do Banco',
-  'your-money-is-a-promise.subtitle':
-    'Abres a app e vês 2400 €. O que é aquilo exatamente? Não são notas, e não estão numa caixa com o teu nome.',
-  'your-money-is-a-promise.takeaway.0':
-    'O saldo da tua conta é uma promessa do teu banco, não dinheiro guardado à parte para ti.',
-  'your-money-is-a-promise.takeaway.1':
-    'Essa promessa é tão fiável que lhe chamamos dinheiro e deixamos de pensar nela.',
-  'your-money-is-a-promise.takeaway.2':
-    'Só importa quando o banco está em apuros — é por isso que existem garantias de depósitos.',
-  'your-money-is-a-promise.takeaway.3':
-    'Quase todo o dinheiro que anda a circular são promessas de bancos, não notas.',
+  'your-money-is-a-promise.subtitle': 'Abres a app e vês 2400 €. O que é aquilo exatamente? Não são notas, e não estão numa caixa com o teu nome.',
+  'your-money-is-a-promise.takeaway.0': 'O saldo da tua conta é uma promessa do teu banco, não dinheiro guardado à parte para ti.',
+  'your-money-is-a-promise.takeaway.1': 'Essa promessa é tão fiável que lhe chamamos dinheiro e deixamos de pensar nela.',
+  'your-money-is-a-promise.takeaway.2': 'Só importa quando o banco está em apuros — é por isso que existem garantias de depósitos.',
+  'your-money-is-a-promise.takeaway.3': 'Quase todo o dinheiro que anda a circular são promessas de bancos, não notas.',
   'your-money-is-a-promise.mc-what-is-it.prompt': 'A tua app diz 2400 €. O que é esse número?',
   'your-money-is-a-promise.mc-what-is-it.instructions': 'Escolhe a melhor resposta',
-  'your-money-is-a-promise.mc-what-is-it.explanation':
-    'O teu saldo é uma dívida a teu favor. O banco deve-te 2400 € e entrega-tos quando pedires, e essa promessa é tão fiável que lhe chamamos «dinheiro» e não voltamos a pensar no assunto. Mas é uma promessa, feita por uma empresa — e tudo o resto neste curso decorre de reparares nisso.',
-  'your-money-is-a-promise.mc-what-is-it.option.promise.label':
-    'Uma promessa do teu banco de te dar 2400 € sempre que os pedires',
-  'your-money-is-a-promise.mc-what-is-it.option.cash-vault.label':
-    '2400 € em notas, guardados para ti no cofre do banco',
-  'your-money-is-a-promise.mc-what-is-it.option.cash-vault.feedback':
-    'Repara no número de pessoas com conta no teu banco e imagina o cofre. As notas não existem nem perto dessa quantidade — e não precisam de existir, porque quase ninguém as pede todas ao mesmo tempo.',
+  'your-money-is-a-promise.mc-what-is-it.explanation': 'O teu saldo é uma dívida a teu favor. O banco deve-te 2400 € e entrega-tos quando pedires, e essa promessa é tão fiável que lhe chamamos «dinheiro» e não voltamos a pensar no assunto. Mas é uma promessa, feita por uma empresa — e tudo o resto neste curso decorre de reparares nisso.',
+  'your-money-is-a-promise.mc-what-is-it.option.promise.label': 'Uma promessa do teu banco de te dar 2400 € sempre que os pedires',
+  'your-money-is-a-promise.mc-what-is-it.option.cash-vault.label': '2400 € em notas, guardados para ti no cofre do banco',
+  'your-money-is-a-promise.mc-what-is-it.option.cash-vault.feedback': 'Repara no número de pessoas com conta no teu banco e imagina o cofre. As notas não existem nem perto dessa quantidade — e não precisam de existir, porque quase ninguém as pede todas ao mesmo tempo.',
   'your-money-is-a-promise.mc-what-is-it.option.gold.label': 'Ouro que o banco guarda por ti',
-  'your-money-is-a-promise.mc-what-is-it.option.gold.feedback':
-    'Há muito que nenhum banco cobre depósitos com ouro. Essa ligação foi cortada em todo o lado até 1971.',
-  'your-money-is-a-promise.mc-what-is-it.option.government.label':
-    'Dinheiro que o Estado tem à tua guarda',
-  'your-money-is-a-promise.mc-what-is-it.option.government.feedback':
-    'O Estado não tem nada que ver com a tua conta à ordem. A promessa é do teu banco — e é por isso que interessa qual é o banco.',
-  'your-money-is-a-promise.mc-so-what.prompt':
-    'Se o teu saldo é uma promessa, quando é que isso chega a importar?',
+  'your-money-is-a-promise.mc-what-is-it.option.gold.feedback': 'Há muito que nenhum banco cobre depósitos com ouro. Essa ligação foi cortada em todo o lado até 1971.',
+  'your-money-is-a-promise.mc-what-is-it.option.government.label': 'Dinheiro que o Estado tem à tua guarda',
+  'your-money-is-a-promise.mc-what-is-it.option.government.feedback': 'O Estado não tem nada que ver com a tua conta à ordem. A promessa é do teu banco — e é por isso que interessa qual é o banco.',
+  'your-money-is-a-promise.mc-so-what.prompt': 'Se o teu saldo é uma promessa, quando é que isso chega a importar?',
   'your-money-is-a-promise.mc-so-what.instructions': 'Escolhe a melhor resposta',
-  'your-money-is-a-promise.mc-so-what.explanation':
-    'É por isto que existem garantias de depósitos — na UE, 100 000 € por pessoa e por banco. Alguém teve de prometer honrar a promessa, porque a promessa de uma empresa que faliu não vale nada. Quando ouves que um governo «salvou um banco», é isto que está a ser salvo: a convicção corrente de que o número na app é real.',
-  'your-money-is-a-promise.mc-so-what.option.bank-trouble.label':
-    'Quando o banco se mete em apuros — uma promessa vale o que valer quem a fez',
+  'your-money-is-a-promise.mc-so-what.explanation': 'É por isto que existem garantias de depósitos — na UE, 100 000 € por pessoa e por banco. Alguém teve de prometer honrar a promessa, porque a promessa de uma empresa que faliu não vale nada. Quando ouves que um governo «salvou um banco», é isto que está a ser salvo: a convicção corrente de que o número na app é real.',
+  'your-money-is-a-promise.mc-so-what.option.bank-trouble.label': 'Quando o banco se mete em apuros — uma promessa vale o que valer quem a fez',
   'your-money-is-a-promise.mc-so-what.option.never.label': 'Nunca, na prática',
-  'your-money-is-a-promise.mc-so-what.option.never.feedback':
-    'É invisível quase sempre, e é precisamente por isso que vale a pena saber. As pessoas descobrem-no no único dia em que deixa de ser invisível.',
+  'your-money-is-a-promise.mc-so-what.option.never.feedback': 'É invisível quase sempre, e é precisamente por isso que vale a pena saber. As pessoas descobrem-no no único dia em que deixa de ser invisível.',
   'your-money-is-a-promise.mc-so-what.option.abroad.label': 'Só quando viajas',
   'your-money-is-a-promise.mc-so-what.option.interest.label': 'Só quando estás a receber juros',
-  'your-money-is-a-promise.match-kinds-of-money.prompt':
-    'Três coisas a que todos chamamos «dinheiro». Liga cada uma a quem fez a promessa.',
-  'your-money-is-a-promise.match-kinds-of-money.instructions':
-    'Escolhe um termo e depois o significado',
-  'your-money-is-a-promise.match-kinds-of-money.explanation':
-    'Quase todo o dinheiro da zona euro é do segundo tipo: promessas de bancos comerciais correntes. As notas são uma pequena fatia. Por isso, quando se pergunta «quanto dinheiro existe», pergunta-se sobretudo quanto é que os bancos prometeram — o que afinal é uma pergunta sobre crédito, e é essa a lição a seguir.',
+  'your-money-is-a-promise.match-kinds-of-money.prompt': 'Três coisas a que todos chamamos «dinheiro». Liga cada uma a quem fez a promessa.',
+  'your-money-is-a-promise.match-kinds-of-money.instructions': 'Escolhe um termo e depois o significado',
+  'your-money-is-a-promise.match-kinds-of-money.explanation': 'Quase todo o dinheiro da zona euro é do segundo tipo: promessas de bancos comerciais correntes. As notas são uma pequena fatia. Por isso, quando se pergunta «quanto dinheiro existe», pergunta-se sobretudo quanto é que os bancos prometeram — o que afinal é uma pergunta sobre crédito, e é essa a lição a seguir.',
   'your-money-is-a-promise.match-kinds-of-money.pair.notes.term': 'Uma nota de 20 € no bolso',
-  'your-money-is-a-promise.match-kinds-of-money.pair.notes.definition':
-    'Uma promessa do banco central — a única que podes ter na mão',
+  'your-money-is-a-promise.match-kinds-of-money.pair.notes.definition': 'Uma promessa do banco central — a única que podes ter na mão',
   'your-money-is-a-promise.match-kinds-of-money.pair.deposit.term': 'O saldo na tua app',
-  'your-money-is-a-promise.match-kinds-of-money.pair.deposit.definition':
-    'Uma promessa do teu banco comercial, e quase todo o dinheiro que usas',
+  'your-money-is-a-promise.match-kinds-of-money.pair.deposit.definition': 'Uma promessa do teu banco comercial, e quase todo o dinheiro que usas',
   'your-money-is-a-promise.match-kinds-of-money.pair.card.term': 'Passar o cartão',
-  'your-money-is-a-promise.match-kinds-of-money.pair.card.definition':
-    'Não é dinheiro nenhum — é só uma instrução para mover a promessa de alguém',
-
-  // ---- lição 2: o que é um banco ------------------------------------------
+  'your-money-is-a-promise.match-kinds-of-money.pair.card.definition': 'Não é dinheiro nenhum — é só uma instrução para mover a promessa de alguém',
   'what-a-bank-actually-is.title': 'O Que É Realmente um Banco',
-  'what-a-bank-actually-is.subtitle':
-    'Duas listas: o que tem e o que deve. Todos os bancos do mundo são isso, e todas as pessoas também.',
-  'what-a-bank-actually-is.takeaway.0':
-    'Qualquer balanço são duas listas: o que se tem e o que se deve. O teu também.',
-  'what-a-bank-actually-is.takeaway.1':
-    'O teu depósito está na lista do «deve» do banco — é a obrigação dele para contigo.',
-  'what-a-bank-actually-is.takeaway.2':
-    'Depositar notas não enriquece ninguém; troca notas por uma promessa.',
-  'what-a-bank-actually-is.takeaway.3':
-    'Os bancos só guardam o preciso para os levantamentos normais e põem o resto a render.',
-  'what-a-bank-actually-is.mc-two-lists.prompt':
-    'As contas de um banco são duas listas: o que tem e o que deve. Onde entra o teu depósito?',
+  'what-a-bank-actually-is.subtitle': 'Duas listas: o que tem e o que deve. Todos os bancos do mundo são isso, e todas as pessoas também.',
+  'what-a-bank-actually-is.takeaway.0': 'Qualquer balanço são duas listas: o que se tem e o que se deve. O teu também.',
+  'what-a-bank-actually-is.takeaway.1': 'O teu depósito está na lista do «deve» do banco — é a obrigação dele para contigo.',
+  'what-a-bank-actually-is.takeaway.2': 'Depositar notas não enriquece ninguém; troca notas por uma promessa.',
+  'what-a-bank-actually-is.takeaway.3': 'Os bancos só guardam o preciso para os levantamentos normais e põem o resto a render.',
+  'what-a-bank-actually-is.mc-two-lists.prompt': 'As contas de um banco são duas listas: o que tem e o que deve. Onde entra o teu depósito?',
   'what-a-bank-actually-is.mc-two-lists.instructions': 'Escolhe a melhor resposta',
-  'what-a-bank-actually-is.mc-two-lists.explanation':
-    'O teu depósito é o passivo do banco — a promessa da lição anterior, escrita nas contas dele. Este é o hábito mais útil de todo o curso: sempre que encontrares uma quantia, pergunta de quem é a promessa e em qual das duas listas dessa pessoa está. Todo o resto é esta pergunta, repetida em instituições cada vez maiores.',
-  'what-a-bank-actually-is.mc-two-lists.option.owes.label':
-    'Na lista do «deve» — o banco deve-to a ti',
-  'what-a-bank-actually-is.mc-two-lists.option.owns.label':
-    'Na lista do «tem» — o banco ficou com o teu dinheiro',
-  'what-a-bank-actually-is.mc-two-lists.option.owns.feedback':
-    'Está com ele, mas não é dele. Pensa no bengaleiro: o casaco está no edifício e continua a ser teu, e a obrigação do bengaleiro é devolvê-lo.',
-  'what-a-bank-actually-is.mc-two-lists.option.neither.label':
-    'Em nenhuma — os depósitos ficam à parte',
+  'what-a-bank-actually-is.mc-two-lists.explanation': 'O teu depósito é o passivo do banco — a promessa da lição anterior, escrita nas contas dele. Este é o hábito mais útil de todo o curso: sempre que encontrares uma quantia, pergunta de quem é a promessa e em qual das duas listas dessa pessoa está. Todo o resto é esta pergunta, repetida em instituições cada vez maiores.',
+  'what-a-bank-actually-is.mc-two-lists.option.owes.label': 'Na lista do «deve» — o banco deve-to a ti',
+  'what-a-bank-actually-is.mc-two-lists.option.owns.label': 'Na lista do «tem» — o banco ficou com o teu dinheiro',
+  'what-a-bank-actually-is.mc-two-lists.option.owns.feedback': 'Está com ele, mas não é dele. Pensa no bengaleiro: o casaco está no edifício e continua a ser teu, e a obrigação do bengaleiro é devolvê-lo.',
+  'what-a-bank-actually-is.mc-two-lists.option.neither.label': 'Em nenhuma — os depósitos ficam à parte',
   'what-a-bank-actually-is.mc-two-lists.option.both.label': 'Nas duas, já que o tem e o deve',
-  'what-a-bank-actually-is.mc-two-lists.option.both.feedback':
-    'Mais perto do que parece. Depois de depositares, o banco fica mesmo com *alguma coisa* do lado do ativo — mas não é o teu depósito, e o ecrã seguinte mostra exatamente o que é.',
-  'what-a-bank-actually-is.deposit-posting.prompt':
-    'Entras num banco e depositas 1000 € em notas. Faz os lançamentos.',
-  'what-a-bank-actually-is.deposit-posting.instructions':
-    'Escolhe um lançamento e depois em que lista fica. Quatro lançamentos ao todo.',
-  'what-a-bank-actually-is.deposit-posting.explanation':
-    'Não ficaste mais rico: trocaste notas por uma promessa. O banco também não: ganhou 1000 € de notas e assumiu 1000 € de obrigação, que se anulam exatamente. É isso que um balanço faz — equilibra, sempre, para toda a gente, e se não equilibrar é porque ficou alguma coisa de fora. Acabaste de fazer aquilo em que assenta o resto deste curso.',
-  'what-a-bank-actually-is.mc-where-does-it-go.prompt':
-    'O banco tem agora os teus 1000 € no cofre. O que faz com eles?',
+  'what-a-bank-actually-is.mc-two-lists.option.both.feedback': 'Mais perto do que parece. Depois de depositares, o banco fica mesmo com *alguma coisa* do lado do ativo — mas não é o teu depósito, e o ecrã seguinte mostra exatamente o que é.',
+  'what-a-bank-actually-is.deposit-posting.prompt': 'Entras num banco e depositas 1000 € em notas. Faz os lançamentos.',
+  'what-a-bank-actually-is.deposit-posting.instructions': 'Escolhe um lançamento e depois em que lista fica. Quatro lançamentos ao todo.',
+  'what-a-bank-actually-is.deposit-posting.explanation': 'Não ficaste mais rico: trocaste notas por uma promessa. O banco também não: ganhou 1000 € de notas e assumiu 1000 € de obrigação, que se anulam exatamente. É isso que um balanço faz — equilibra, sempre, para toda a gente, e se não equilibrar é porque ficou alguma coisa de fora. Acabaste de fazer aquilo em que assenta o resto deste curso.',
+  'what-a-bank-actually-is.mc-where-does-it-go.prompt': 'O banco tem agora os teus 1000 € no cofre. O que faz com eles?',
   'what-a-bank-actually-is.mc-where-does-it-go.instructions': 'Escolhe a melhor resposta',
-  'what-a-bank-actually-is.mc-where-does-it-go.explanation':
-    'O negócio é todo este: guardar o suficiente para os levantamentos que acontecem mesmo, e pôr o resto a render mais do que aquilo que te paga. Funciona porque os depositantes não aparecem todos ao mesmo tempo — e as raras vezes em que aparecem têm nome, corrida aos depósitos, tema de uma lição mais à frente. O que isto *não* explica é de onde vem quase todo o dinheiro, e é o que vem a seguir.',
-  'what-a-bank-actually-is.mc-where-does-it-go.option.lends-most.label':
-    'Guarda uma pequena parte disponível e empresta ou investe o resto',
-  'what-a-bank-actually-is.mc-where-does-it-go.option.keeps-all.label':
-    'Guarda tudo, à tua disposição',
-  'what-a-bank-actually-is.mc-where-does-it-go.option.keeps-all.feedback':
-    'Então o banco não ganhava nada e não podia pagar balcões, pessoal nem juros. Nunca houve um banco assim, e um que o fizesse teria de te cobrar pelo armazenamento.',
-  'what-a-bank-actually-is.mc-where-does-it-go.option.central-bank.label':
-    'Envia tudo para o banco central',
-  'what-a-bank-actually-is.mc-where-does-it-go.option.spends.label':
-    'Gasta-o nas despesas da casa',
-  'what-a-bank-actually-is.mc-where-does-it-go.option.spends.feedback':
-    'Não pode — deve-te esse dinheiro. Emprestá-lo é diferente de gastá-lo, porque um empréstimo é um ativo que o banco continua a ter.',
-
-  // ---- lição 3: o preço do tempo ------------------------------------------
+  'what-a-bank-actually-is.mc-where-does-it-go.explanation': 'O negócio é todo este: guardar o suficiente para os levantamentos que acontecem mesmo, e pôr o resto a render mais do que aquilo que te paga. Funciona porque os depositantes não aparecem todos ao mesmo tempo — e as raras vezes em que aparecem têm nome, corrida aos depósitos, tema de uma lição mais à frente. O que isto *não* explica é de onde vem quase todo o dinheiro, e é o que vem a seguir.',
+  'what-a-bank-actually-is.mc-where-does-it-go.option.lends-most.label': 'Guarda uma pequena parte disponível e empresta ou investe o resto',
+  'what-a-bank-actually-is.mc-where-does-it-go.option.keeps-all.label': 'Guarda tudo, à tua disposição',
+  'what-a-bank-actually-is.mc-where-does-it-go.option.keeps-all.feedback': 'Então o banco não ganhava nada e não podia pagar balcões, pessoal nem juros. Nunca houve um banco assim, e um que o fizesse teria de te cobrar pelo armazenamento.',
+  'what-a-bank-actually-is.mc-where-does-it-go.option.central-bank.label': 'Envia tudo para o banco central',
+  'what-a-bank-actually-is.mc-where-does-it-go.option.spends.label': 'Gasta-o nas despesas da casa',
+  'what-a-bank-actually-is.mc-where-does-it-go.option.spends.feedback': 'Não pode — deve-te esse dinheiro. Emprestá-lo é diferente de gastá-lo, porque um empréstimo é um ativo que o banco continua a ter.',
   'the-price-of-time.title': 'O Que É Realmente uma Taxa de Juro',
-  'the-price-of-time.subtitle':
-    'Uma taxa é um preço — o preço de ter o dinheiro agora em vez de depois. Todo o resto decorre daí.',
-  'the-price-of-time.takeaway.0':
-    'Uma taxa de juro é o preço de ter o dinheiro agora em vez de depois.',
-  'the-price-of-time.takeaway.1':
-    'Paga três coisas ao mesmo tempo: a espera, o risco de não ser reembolsado e a inflação.',
-  'the-price-of-time.takeaway.2':
-    'Juro menos inflação é o número que decide se valeu a pena poupar.',
-  'the-price-of-time.takeaway.3':
-    'Um banco central fixa uma taxa a um dia, e todas as outras taxas são construídas a partir dela.',
-  'the-price-of-time.mc-what-is-a-rate.prompt':
-    'Pedes 1000 € emprestados por um ano e devolves 1040 €. O que compraram os 40 €?',
+  'the-price-of-time.subtitle': 'Uma taxa é um preço — o preço de ter o dinheiro agora em vez de depois. Todo o resto decorre daí.',
+  'the-price-of-time.takeaway.0': 'Uma taxa de juro é o preço de ter o dinheiro agora em vez de depois.',
+  'the-price-of-time.takeaway.1': 'Paga três coisas ao mesmo tempo: a espera, o risco de não ser reembolsado e a inflação.',
+  'the-price-of-time.takeaway.2': 'Juro menos inflação é o número que decide se valeu a pena poupar.',
+  'the-price-of-time.takeaway.3': 'Um banco central fixa uma taxa a um dia, e todas as outras taxas são construídas a partir dela.',
+  'the-price-of-time.mc-what-is-a-rate.prompt': 'Pedes 1000 € emprestados por um ano e devolves 1040 €. O que compraram os 40 €?',
   'the-price-of-time.mc-what-is-a-rate.instructions': 'Escolhe a melhor resposta',
-  'the-price-of-time.mc-what-is-a-rate.explanation':
-    'Uma taxa de juro é o preço do tempo. Quem tem dinheiro agora entrega-o a quem o quer agora, e recebe-o de volta mais tarde — e a comissão é pela espera, pelo risco de não ser reembolsado e pelo poder de compra perdido para a subida de preços entretanto. Três coisas distintas, cotadas como um único número.',
-  'the-price-of-time.mc-what-is-a-rate.option.use-of-money.label':
-    'Um ano de ter o dinheiro agora em vez de depois',
-  'the-price-of-time.mc-what-is-a-rate.option.bank-costs.label':
-    'Os custos administrativos do banco',
-  'the-price-of-time.mc-what-is-a-rate.option.bank-costs.feedback':
-    'Uma parte cobre custos, e essa parte quase não muda quando as taxas se mexem. Quando uma taxa passa de 1% para 5%, a papelada não ficou cinco vezes mais difícil.',
-  'the-price-of-time.mc-what-is-a-rate.option.inflation.label':
-    'Compensação apenas pela inflação',
-  'the-price-of-time.mc-what-is-a-rate.option.inflation.feedback':
-    'A inflação é uma das coisas que quem empresta quer coberta, e há mais: o risco de não pagares e o simples facto de não poder usar o dinheiro entretanto.',
+  'the-price-of-time.mc-what-is-a-rate.explanation': 'Uma taxa de juro é o preço do tempo. Quem tem dinheiro agora entrega-o a quem o quer agora, e recebe-o de volta mais tarde — e a comissão é pela espera, pelo risco de não ser reembolsado e pelo poder de compra perdido para a subida de preços entretanto. Três coisas distintas, cotadas como um único número.',
+  'the-price-of-time.mc-what-is-a-rate.option.use-of-money.label': 'Um ano de ter o dinheiro agora em vez de depois',
+  'the-price-of-time.mc-what-is-a-rate.option.bank-costs.label': 'Os custos administrativos do banco',
+  'the-price-of-time.mc-what-is-a-rate.option.bank-costs.feedback': 'Uma parte cobre custos, e essa parte quase não muda quando as taxas se mexem. Quando uma taxa passa de 1% para 5%, a papelada não ficou cinco vezes mais difícil.',
+  'the-price-of-time.mc-what-is-a-rate.option.inflation.label': 'Compensação apenas pela inflação',
+  'the-price-of-time.mc-what-is-a-rate.option.inflation.feedback': 'A inflação é uma das coisas que quem empresta quer coberta, e há mais: o risco de não pagares e o simples facto de não poder usar o dinheiro entretanto.',
   'the-price-of-time.mc-what-is-a-rate.option.profit.label': 'Lucro puro para quem emprestou',
-  'the-price-of-time.match-rate-parts.prompt':
-    'A taxa de quem empresta tem partes. Liga cada uma ao que está a pagar.',
+  'the-price-of-time.match-rate-parts.prompt': 'A taxa de quem empresta tem partes. Liga cada uma ao que está a pagar.',
   'the-price-of-time.match-rate-parts.instructions': 'Escolhe um termo e depois o significado',
-  'the-price-of-time.match-rate-parts.explanation':
-    'É por isto que duas pessoas que pedem o mesmo montante no mesmo dia recebem taxas diferentes: a espera é igual, o risco não é. É também por isto que as taxas sobem em toda a economia quando se espera inflação — todos os credores querem essa terceira parte coberta, e não há quem os demova.',
+  'the-price-of-time.match-rate-parts.explanation': 'É por isto que duas pessoas que pedem o mesmo montante no mesmo dia recebem taxas diferentes: a espera é igual, o risco não é. É também por isto que as taxas sobem em toda a economia quando se espera inflação — todos os credores querem essa terceira parte coberta, e não há quem os demova.',
   'the-price-of-time.match-rate-parts.pair.waiting.term': 'Espera',
-  'the-price-of-time.match-rate-parts.pair.waiting.definition':
-    'Não podem usar o dinheiro enquanto o tiveres tu',
+  'the-price-of-time.match-rate-parts.pair.waiting.definition': 'Não podem usar o dinheiro enquanto o tiveres tu',
   'the-price-of-time.match-rate-parts.pair.risk.term': 'Risco',
-  'the-price-of-time.match-rate-parts.pair.risk.definition':
-    'Podes não pagar, e há quem não pague',
+  'the-price-of-time.match-rate-parts.pair.risk.definition': 'Podes não pagar, e há quem não pague',
   'the-price-of-time.match-rate-parts.pair.inflation.term': 'Inflação',
-  'the-price-of-time.match-rate-parts.pair.inflation.definition':
-    'Os euros que voltam compram menos do que os que foram entregues',
-  'the-price-of-time.mc-real-rate.prompt':
-    'As tuas poupanças rendem 2% ao ano. Os preços sobem 3% ao ano. O que aconteceu às tuas poupanças?',
+  'the-price-of-time.match-rate-parts.pair.inflation.definition': 'Os euros que voltam compram menos do que os que foram entregues',
+  'the-price-of-time.mc-real-rate.prompt': 'As tuas poupanças rendem 2% ao ano. Os preços sobem 3% ao ano. O que aconteceu às tuas poupanças?',
   'the-price-of-time.mc-real-rate.instructions': 'Escolhe a melhor resposta',
-  'the-price-of-time.mc-real-rate.explanation':
-    'Os economistas chamam 2% à taxa nominal e cerca de −1% à taxa real, e é a segunda que decide se valeu a pena poupar. Um aforrador pode receber juros todos os anos e, ainda assim, ir ficando mais pobre em silêncio — o que aconteceu em toda a Europa durante quase toda a década de 2010, e é a razão de haver mais à frente um módulo sobre o que a inflação faz às pessoas.',
-  'the-price-of-time.mc-real-rate.option.lost.label':
-    'Cresceram em euros e encolheram no que compram — cerca de 1% pior',
+  'the-price-of-time.mc-real-rate.explanation': 'Os economistas chamam 2% à taxa nominal e cerca de −1% à taxa real, e é a segunda que decide se valeu a pena poupar. Um aforrador pode receber juros todos os anos e, ainda assim, ir ficando mais pobre em silêncio — o que aconteceu em toda a Europa durante quase toda a década de 2010, e é a razão de haver mais à frente um módulo sobre o que a inflação faz às pessoas.',
+  'the-price-of-time.mc-real-rate.option.lost.label': 'Cresceram em euros e encolheram no que compram — cerca de 1% pior',
   'the-price-of-time.mc-real-rate.option.gained.label': 'Cresceram — 2% é mais do que nada',
-  'the-price-of-time.mc-real-rate.option.gained.feedback':
-    'Mais euros, sim. Mas o objetivo de poupar é comprar alguma coisa mais tarde, e tudo o que ias comprar subiu 3%. Conta em compras, não em euros.',
+  'the-price-of-time.mc-real-rate.option.gained.feedback': 'Mais euros, sim. Mas o objetivo de poupar é comprar alguma coisa mais tarde, e tudo o que ias comprar subiu 3%. Conta em compras, não em euros.',
   'the-price-of-time.mc-real-rate.option.flat.label': 'Não mudou nada',
   'the-price-of-time.mc-real-rate.option.cannot-say.label': 'Depende do banco',
   'the-price-of-time.mc-who-sets-it.prompt': 'Quem decide quais são as taxas de juro?',
   'the-price-of-time.mc-who-sets-it.instructions': 'Escolhe a melhor resposta',
-  'the-price-of-time.mc-who-sets-it.explanation':
-    'O banco central fixa uma taxa a um dia — o preço do dinheiro por uma única noite — e tudo o resto é construído para fora a partir dela: o teu crédito à habitação, um empréstimo a uma empresa, uma obrigação do Estado a trinta anos. É uma alavanca muitíssimo pequena para o tamanho do que move, e a lição seguinte é sobre como funciona.',
-  'the-price-of-time.mc-who-sets-it.option.cb-one-rate.label':
-    'Um banco central fixa uma taxa muito curta, e o mercado constrói todas as outras a partir dela',
+  'the-price-of-time.mc-who-sets-it.explanation': 'O banco central fixa uma taxa a um dia — o preço do dinheiro por uma única noite — e tudo o resto é construído para fora a partir dela: o teu crédito à habitação, um empréstimo a uma empresa, uma obrigação do Estado a trinta anos. É uma alavanca muitíssimo pequena para o tamanho do que move, e a lição seguinte é sobre como funciona.',
+  'the-price-of-time.mc-who-sets-it.option.cb-one-rate.label': 'Um banco central fixa uma taxa muito curta, e o mercado constrói todas as outras a partir dela',
   'the-price-of-time.mc-who-sets-it.option.banks.label': 'Cada banco decide a sua, livremente',
-  'the-price-of-time.mc-who-sets-it.option.banks.feedback':
-    'Decidem as suas margens, e mexem-se todos em conjunto quando o banco central se mexe — porque nenhum deles empresta muito abaixo do que podia render sem risco de um dia para o outro.',
+  'the-price-of-time.mc-who-sets-it.option.banks.feedback': 'Decidem as suas margens, e mexem-se todos em conjunto quando o banco central se mexe — porque nenhum deles empresta muito abaixo do que podia render sem risco de um dia para o outro.',
   'the-price-of-time.mc-who-sets-it.option.government.label': 'O Estado fixa-as por lei',
-  'the-price-of-time.mc-who-sets-it.option.government.feedback':
-    'Houve governos que o fizeram e quase todos deixaram de o fazer. Na zona euro o BCE é deliberadamente independente dos governos, tema de um módulo mais à frente.',
-  'the-price-of-time.mc-who-sets-it.option.market-only.label':
-    'Puramente oferta e procura, sem ninguém a mandar',
-
-  // ---- lição 4: quem manda no dinheiro ------------------------------------
+  'the-price-of-time.mc-who-sets-it.option.government.feedback': 'Houve governos que o fizeram e quase todos deixaram de o fazer. Na zona euro o BCE é deliberadamente independente dos governos, tema de um módulo mais à frente.',
+  'the-price-of-time.mc-who-sets-it.option.market-only.label': 'Puramente oferta e procura, sem ninguém a mandar',
   'who-is-in-charge-of-money.title': 'Quem Manda Realmente no Dinheiro',
-  'who-is-in-charge-of-money.subtitle':
-    'Menos do que imaginas, e não quem julgas. Ninguém decide quanto dinheiro existe.',
-  'who-is-in-charge-of-money.takeaway.0':
-    'Quase todo o dinheiro da zona euro foi criado por bancos comerciais a conceder crédito, não pelo BCE.',
-  'who-is-in-charge-of-money.takeaway.1':
-    'Um banco central fixa uma taxa a um dia e todo o resto responde indiretamente, ao longo de um ano ou mais.',
-  'who-is-in-charge-of-money.takeaway.2':
-    'Não pode obrigar ninguém a pedir emprestado — se ninguém quiser crédito, baixar as taxas faz muito pouco.',
-  'who-is-in-charge-of-money.takeaway.3':
-    'A independência existe porque criar dinheiro é o único imposto que um governo não tem de votar.',
-  'who-is-in-charge-of-money.mc-who-creates.prompt':
-    'Quase todo o dinheiro da zona euro foi criado por quem?',
+  'who-is-in-charge-of-money.subtitle': 'Menos do que imaginas, e não quem julgas. Ninguém decide quanto dinheiro existe.',
+  'who-is-in-charge-of-money.takeaway.0': 'Quase todo o dinheiro da zona euro foi criado por bancos comerciais a conceder crédito, não pelo BCE.',
+  'who-is-in-charge-of-money.takeaway.1': 'Um banco central fixa uma taxa a um dia e todo o resto responde indiretamente, ao longo de um ano ou mais.',
+  'who-is-in-charge-of-money.takeaway.2': 'Não pode obrigar ninguém a pedir emprestado — se ninguém quiser crédito, baixar as taxas faz muito pouco.',
+  'who-is-in-charge-of-money.takeaway.3': 'A independência existe porque criar dinheiro é o único imposto que um governo não tem de votar.',
+  'who-is-in-charge-of-money.mc-who-creates.prompt': 'Quase todo o dinheiro da zona euro foi criado por quem?',
   'who-is-in-charge-of-money.mc-who-creates.instructions': 'Escolhe a melhor resposta',
-  'who-is-in-charge-of-money.mc-who-creates.explanation':
-    'Quando um banco concede um crédito à habitação, não entrega as poupanças de outra pessoa. Escreve um empréstimo de um lado das contas e um depósito do outro, e o depósito é dinheiro novo que de manhã não existia. Quase todo o dinheiro da Europa foi criado exatamente assim — por bancos, um empréstimo de cada vez, à procura de lucro e não segundo o plano de ninguém.',
-  'who-is-in-charge-of-money.mc-who-creates.option.banks-lending.label':
-    'Bancos comerciais correntes, quando concederam crédito',
-  'who-is-in-charge-of-money.mc-who-creates.option.ecb.label':
-    'O Banco Central Europeu, a imprimi-lo',
-  'who-is-in-charge-of-money.mc-who-creates.option.ecb.feedback':
-    'O BCE emite as notas, e as notas são uma pequena fatia do dinheiro em circulação. Quase tudo o que gastas é um depósito bancário, e esses vêm de outro sítio.',
+  'who-is-in-charge-of-money.mc-who-creates.explanation': 'Quando um banco concede um crédito à habitação, não entrega as poupanças de outra pessoa. Escreve um empréstimo de um lado das contas e um depósito do outro, e o depósito é dinheiro novo que de manhã não existia. Quase todo o dinheiro da Europa foi criado exatamente assim — por bancos, um empréstimo de cada vez, à procura de lucro e não segundo o plano de ninguém.',
+  'who-is-in-charge-of-money.mc-who-creates.option.banks-lending.label': 'Bancos comerciais correntes, quando concederam crédito',
+  'who-is-in-charge-of-money.mc-who-creates.option.ecb.label': 'O Banco Central Europeu, a imprimi-lo',
+  'who-is-in-charge-of-money.mc-who-creates.option.ecb.feedback': 'O BCE emite as notas, e as notas são uma pequena fatia do dinheiro em circulação. Quase tudo o que gastas é um depósito bancário, e esses vêm de outro sítio.',
   'who-is-in-charge-of-money.mc-who-creates.option.government.label': 'Os governos, ao gastar',
   'who-is-in-charge-of-money.mc-who-creates.option.mint.label': 'A Casa da Moeda, ao cunhar moedas',
-  'who-is-in-charge-of-money.mc-who-creates.option.mint.feedback':
-    'As moedas são um erro de arredondamento — uma fração de um por cento do dinheiro da zona euro.',
-  'who-is-in-charge-of-money.flow-what-cb-does.prompt':
-    'Como é que um banco central influencia uma coisa que não controla?',
+  'who-is-in-charge-of-money.mc-who-creates.option.mint.feedback': 'As moedas são um erro de arredondamento — uma fração de um por cento do dinheiro da zona euro.',
+  'who-is-in-charge-of-money.flow-what-cb-does.prompt': 'Como é que um banco central influencia uma coisa que não controla?',
   'who-is-in-charge-of-money.flow-what-cb-does.instructions': 'Primeiro o que acontece antes',
-  'who-is-in-charge-of-money.flow-what-cb-does.explanation':
-    'Repara como isto é indireto. Um banco central não obriga ninguém a pedir emprestado nem impede um banco de emprestar. Fixa um preço e espera, e o efeito chega através de milhões de decisões privadas ao longo de um ano ou mais. Essa distância entre a alavanca e o resultado é quase tudo o que torna a política monetária difícil, e quase tudo aquilo de que trata o resto deste curso.',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.sets-rate.label':
-    'Fixa a taxa a um dia — o preço do dinheiro por uma noite',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.sets-rate.detail':
-    'O único número que decide diretamente',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.banks-follow.label':
-    'Os bancos voltam a fixar o preço de tudo o que emprestam',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.banks-follow.detail':
-    'Nenhum deles empresta muito abaixo do que pode render sem risco',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.borrowing-changes.label':
-    'Pedir emprestado fica mais ou menos atrativo para famílias e empresas',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.borrowing-changes.detail':
-    'Um crédito à habitação a 2% e outro a 5% são decisões diferentes',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.lending-changes.label':
-    'Concedem-se mais ou menos empréstimos',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.lending-changes.detail':
-    'E cada empréstimo é dinheiro novo, ou a falta dele',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.prices.label':
-    'A despesa e, por fim, os preços respondem — um ano ou dois depois',
-  'who-is-in-charge-of-money.flow-what-cb-does.event.prices.detail':
-    'Devagar, indiretamente, e nunca bem como se pretendia',
-  'who-is-in-charge-of-money.match-who-does-what.prompt':
-    'Liga cada instituição àquilo que realmente faz.',
-  'who-is-in-charge-of-money.match-who-does-what.instructions':
-    'Escolhe um termo e depois o significado',
-  'who-is-in-charge-of-money.match-who-does-what.explanation':
-    'Lê outra vez a última linha, porque é a que fica de fora. Se ninguém quiser pedir emprestado, um banco central pode baixar as taxas até zero e acontece muito pouco — foi mais ou menos o que a Europa passou a década de 2010 a descobrir. O sistema não tem um comando central; tem quem fixe um preço, um conjunto de criadores de dinheiro, e milhões de pessoas a decidir se participam.',
+  'who-is-in-charge-of-money.flow-what-cb-does.explanation': 'Repara como isto é indireto. Um banco central não obriga ninguém a pedir emprestado nem impede um banco de emprestar. Fixa um preço e espera, e o efeito chega através de milhões de decisões privadas ao longo de um ano ou mais. Essa distância entre a alavanca e o resultado é quase tudo o que torna a política monetária difícil, e quase tudo aquilo de que trata o resto deste curso.',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.sets-rate.label': 'Fixa a taxa a um dia — o preço do dinheiro por uma noite',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.sets-rate.detail': 'O único número que decide diretamente',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.banks-follow.label': 'Os bancos voltam a fixar o preço de tudo o que emprestam',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.banks-follow.detail': 'Nenhum deles empresta muito abaixo do que pode render sem risco',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.borrowing-changes.label': 'Pedir emprestado fica mais ou menos atrativo para famílias e empresas',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.borrowing-changes.detail': 'Um crédito à habitação a 2% e outro a 5% são decisões diferentes',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.lending-changes.label': 'Concedem-se mais ou menos empréstimos',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.lending-changes.detail': 'E cada empréstimo é dinheiro novo, ou a falta dele',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.prices.label': 'A despesa e, por fim, os preços respondem — um ano ou dois depois',
+  'who-is-in-charge-of-money.flow-what-cb-does.event.prices.detail': 'Devagar, indiretamente, e nunca bem como se pretendia',
+  'who-is-in-charge-of-money.match-who-does-what.prompt': 'Liga cada instituição àquilo que realmente faz.',
+  'who-is-in-charge-of-money.match-who-does-what.instructions': 'Escolhe um termo e depois o significado',
+  'who-is-in-charge-of-money.match-who-does-what.explanation': 'Lê outra vez a última linha, porque é a que fica de fora. Se ninguém quiser pedir emprestado, um banco central pode baixar as taxas até zero e acontece muito pouco — foi mais ou menos o que a Europa passou a década de 2010 a descobrir. O sistema não tem um comando central; tem quem fixe um preço, um conjunto de criadores de dinheiro, e milhões de pessoas a decidir se participam.',
   'who-is-in-charge-of-money.match-who-does-what.pair.ecb.term': 'O banco central',
-  'who-is-in-charge-of-money.match-who-does-what.pair.ecb.definition':
-    'Fixa a taxa a um dia, emite as notas e é o banco dos bancos',
+  'who-is-in-charge-of-money.match-who-does-what.pair.ecb.definition': 'Fixa a taxa a um dia, emite as notas e é o banco dos bancos',
   'who-is-in-charge-of-money.match-who-does-what.pair.banks.term': 'Os bancos comerciais',
-  'who-is-in-charge-of-money.match-who-does-what.pair.banks.definition':
-    'Criam quase todo o dinheiro, emprestando-o para a existência',
+  'who-is-in-charge-of-money.match-who-does-what.pair.banks.definition': 'Criam quase todo o dinheiro, emprestando-o para a existência',
   'who-is-in-charge-of-money.match-who-does-what.pair.gov.term': 'O Estado',
-  'who-is-in-charge-of-money.match-who-does-what.pair.gov.definition':
-    'Cobra impostos, gasta e endivida-se — e na zona euro não fixa a taxa de juro',
+  'who-is-in-charge-of-money.match-who-does-what.pair.gov.definition': 'Cobra impostos, gasta e endivida-se — e na zona euro não fixa a taxa de juro',
   'who-is-in-charge-of-money.match-who-does-what.pair.you.term': 'Quem pede e quem poupa',
-  'who-is-in-charge-of-money.match-who-does-what.pair.you.definition':
-    'Decidem se alguma coisa disto acontece, contraindo empréstimos ou não',
-  'who-is-in-charge-of-money.mc-independent.prompt':
-    'O BCE é deliberadamente independente dos governos. Porque é que alguém o desenharia assim?',
+  'who-is-in-charge-of-money.match-who-does-what.pair.you.definition': 'Decidem se alguma coisa disto acontece, contraindo empréstimos ou não',
+  'who-is-in-charge-of-money.mc-independent.prompt': 'O BCE é deliberadamente independente dos governos. Porque é que alguém o desenharia assim?',
   'who-is-in-charge-of-money.mc-independent.instructions': 'Escolhe a melhor resposta',
-  'who-is-in-charge-of-money.mc-independent.explanation':
-    'Um governo com falta de dinheiro pode aumentar impostos, o que exige uma votação e irrita as pessoas, ou pode criar dinheiro, o que não exige nada e aparece mais tarde como preços a subir. A segunda via é mais fácil e cada geração volta a descobri-la. A independência é um dispositivo para tirar essa opção a quem está no poder — e há mais à frente um módulo sobre as vezes em que foi retomada.',
-  'who-is-in-charge-of-money.mc-independent.option.temptation.label':
-    'Porque um governo que controla a massa monetária é tentado a usá-la, e a inflação é um imposto que ninguém tem de votar',
-  'who-is-in-charge-of-money.mc-independent.option.expertise.label':
-    'Porque os banqueiros centrais percebem mais de economia',
-  'who-is-in-charge-of-money.mc-independent.option.expertise.feedback':
-    'Os ministérios das finanças também empregam economistas. A razão da independência tem que ver com incentivos e não com conhecimento.',
-  'who-is-in-charge-of-money.mc-independent.option.eu.label':
-    'Porque o euro tem muitos governos e não se podia confiar o euro a nenhum deles em particular',
+  'who-is-in-charge-of-money.mc-independent.explanation': 'Um governo com falta de dinheiro pode aumentar impostos, o que exige uma votação e irrita as pessoas, ou pode criar dinheiro, o que não exige nada e aparece mais tarde como preços a subir. A segunda via é mais fácil e cada geração volta a descobri-la. A independência é um dispositivo para tirar essa opção a quem está no poder — e há mais à frente um módulo sobre as vezes em que foi retomada.',
+  'who-is-in-charge-of-money.mc-independent.option.temptation.label': 'Porque um governo que controla a massa monetária é tentado a usá-la, e a inflação é um imposto que ninguém tem de votar',
+  'who-is-in-charge-of-money.mc-independent.option.expertise.label': 'Porque os banqueiros centrais percebem mais de economia',
+  'who-is-in-charge-of-money.mc-independent.option.expertise.feedback': 'Os ministérios das finanças também empregam economistas. A razão da independência tem que ver com incentivos e não com conhecimento.',
+  'who-is-in-charge-of-money.mc-independent.option.eu.label': 'Porque o euro tem muitos governos e não se podia confiar o euro a nenhum deles em particular',
   'who-is-in-charge-of-money.mc-independent.option.tradition.label': 'Acidente histórico',
-
-  // ---- lição 5: o que a inflação te faz -----------------------------------
   'what-rising-prices-do-to-you.title': 'O Que a Subida de Preços Te Faz a Ti',
-  'what-rising-prices-do-to-you.subtitle':
-    'Não à «economia». Ao teu salário, às tuas poupanças e à tua renda — que se movem a velocidades diferentes, e é aí que está a história toda.',
-  'what-rising-prices-do-to-you.takeaway.0':
-    'Com a meta de 2%, dez anos custam cerca de um quinto do que as tuas poupanças compram.',
-  'what-rising-prices-do-to-you.takeaway.1':
-    'A inflação é uma transferência, não uma perda geral: aforradores e assalariados perdem, devedores e donos de ativos ganham.',
-  'what-rising-prices-do-to-you.takeaway.2':
-    'Guardar o dinheiro em segurança e guardar o poder de compra são coisas diferentes, e só a primeira está à venda.',
-  'what-rising-prices-do-to-you.takeaway.3':
-    'A meta de 2% é uma troca deliberada — margem para baixar taxas, e distância face à queda de preços.',
-  'what-rising-prices-do-to-you.sim-savings.prompt':
-    'Puseste 10 000 € de lado e deixaste-os quietos durante dez anos.',
-  'what-rising-prices-do-to-you.sim-savings.instructions':
-    'Mexe na taxa de inflação e vê o que sobra',
-  'what-rising-prices-do-to-you.sim-savings.explanation':
-    'Mesmo na meta de 2% — o número a que a política aponta de propósito, e que é considerado um êxito — dez anos custam-te cerca de um quinto. A 5% custam quase dois quintos. Isto não é um escândalo nem uma falha; é o sistema a funcionar como foi desenhado. Vale apenas a pena saber que «guardar o dinheiro em segurança» e «guardar o que o dinheiro compra» são duas coisas diferentes, e só uma delas está à venda.',
-  'what-rising-prices-do-to-you.match-who-feels-it.prompt':
-    'Os preços sobem 10% em dois anos. Liga cada pessoa ao que lhe acontece.',
-  'what-rising-prices-do-to-you.match-who-feels-it.instructions':
-    'Escolhe um termo e depois o significado',
-  'what-rising-prices-do-to-you.match-who-feels-it.explanation':
-    'A inflação não é um imposto igual para todos; é uma transferência entre eles. O que o aforrador e o assalariado perdem, o devedor e o dono de ativos ficam a ganhar. Vale a pena demorares-te nisto, porque explica muito sobre quem anda preocupado com a inflação e quem está descansado — e os dois grupos não são os que os jornais fariam supor.',
-  'what-rising-prices-do-to-you.match-who-feels-it.pair.saver.term':
-    'Alguém com poupanças no banco',
-  'what-rising-prices-do-to-you.match-who-feels-it.pair.saver.definition':
-    'Fica pior — os mesmos euros, a comprar menos',
-  'what-rising-prices-do-to-you.match-who-feels-it.pair.borrower.term':
-    'Alguém com crédito à habitação de taxa fixa',
-  'what-rising-prices-do-to-you.match-who-feels-it.pair.borrower.definition':
-    'Fica melhor — paga com euros que valem menos do que os que pediu',
-  'what-rising-prices-do-to-you.match-who-feels-it.pair.worker.term':
-    'Alguém com salário revisto uma vez por ano',
-  'what-rising-prices-do-to-you.match-who-feels-it.pair.worker.definition':
-    'Fica pior durante um tempo — o salário chega tarde, se chegar',
+  'what-rising-prices-do-to-you.subtitle': 'Não à «economia». Ao teu salário, às tuas poupanças e à tua renda — que se movem a velocidades diferentes, e é aí que está a história toda.',
+  'what-rising-prices-do-to-you.takeaway.0': 'Com a meta de 2%, dez anos custam cerca de um quinto do que as tuas poupanças compram.',
+  'what-rising-prices-do-to-you.takeaway.1': 'A inflação é uma transferência, não uma perda geral: aforradores e assalariados perdem, devedores e donos de ativos ganham.',
+  'what-rising-prices-do-to-you.takeaway.2': 'Guardar o dinheiro em segurança e guardar o poder de compra são coisas diferentes, e só a primeira está à venda.',
+  'what-rising-prices-do-to-you.takeaway.3': 'A meta de 2% é uma troca deliberada — margem para baixar taxas, e distância face à queda de preços.',
+  'what-rising-prices-do-to-you.sim-savings.prompt': 'Puseste 10 000 € de lado e deixaste-os quietos durante dez anos.',
+  'what-rising-prices-do-to-you.sim-savings.instructions': 'Mexe na taxa de inflação e vê o que sobra',
+  'what-rising-prices-do-to-you.sim-savings.explanation': 'Mesmo na meta de 2% — o número a que a política aponta de propósito, e que é considerado um êxito — dez anos custam-te cerca de um quinto. A 5% custam quase dois quintos. Isto não é um escândalo nem uma falha; é o sistema a funcionar como foi desenhado. Vale apenas a pena saber que «guardar o dinheiro em segurança» e «guardar o que o dinheiro compra» são duas coisas diferentes, e só uma delas está à venda.',
+  'what-rising-prices-do-to-you.match-who-feels-it.prompt': 'Os preços sobem 10% em dois anos. Liga cada pessoa ao que lhe acontece.',
+  'what-rising-prices-do-to-you.match-who-feels-it.instructions': 'Escolhe um termo e depois o significado',
+  'what-rising-prices-do-to-you.match-who-feels-it.explanation': 'A inflação não é um imposto igual para todos; é uma transferência entre eles. O que o aforrador e o assalariado perdem, o devedor e o dono de ativos ficam a ganhar. Vale a pena demorares-te nisto, porque explica muito sobre quem anda preocupado com a inflação e quem está descansado — e os dois grupos não são os que os jornais fariam supor.',
+  'what-rising-prices-do-to-you.match-who-feels-it.pair.saver.term': 'Alguém com poupanças no banco',
+  'what-rising-prices-do-to-you.match-who-feels-it.pair.saver.definition': 'Fica pior — os mesmos euros, a comprar menos',
+  'what-rising-prices-do-to-you.match-who-feels-it.pair.borrower.term': 'Alguém com crédito à habitação de taxa fixa',
+  'what-rising-prices-do-to-you.match-who-feels-it.pair.borrower.definition': 'Fica melhor — paga com euros que valem menos do que os que pediu',
+  'what-rising-prices-do-to-you.match-who-feels-it.pair.worker.term': 'Alguém com salário revisto uma vez por ano',
+  'what-rising-prices-do-to-you.match-who-feels-it.pair.worker.definition': 'Fica pior durante um tempo — o salário chega tarde, se chegar',
   'what-rising-prices-do-to-you.match-who-feels-it.pair.owner.term': 'Alguém que é dono de um T2',
-  'what-rising-prices-do-to-you.match-who-feels-it.pair.owner.definition':
-    'Mais ou menos protegido — a casa é reavaliada com tudo o resto',
-  'what-rising-prices-do-to-you.mc-why-not-zero.prompt':
-    'Se a inflação custa aos aforradores um quinto do dinheiro em cada década, porque é que o BCE aponta a 2% e não a zero?',
+  'what-rising-prices-do-to-you.match-who-feels-it.pair.owner.definition': 'Mais ou menos protegido — a casa é reavaliada com tudo o resto',
+  'what-rising-prices-do-to-you.mc-why-not-zero.prompt': 'Se a inflação custa aos aforradores um quinto do dinheiro em cada década, porque é que o BCE aponta a 2% e não a zero?',
   'what-rising-prices-do-to-you.mc-why-not-zero.instructions': 'Escolhe a melhor resposta',
-  'what-rising-prices-do-to-you.mc-why-not-zero.explanation':
-    'Duas razões, ambas sobre margem. Se a inflação estiver em zero, numa recessão um banco central que baixe as taxas até zero fica sem nada; uma meta positiva pequena dá-lhe espaço. E quando os preços estão a cair, as pessoas adiam compras e as empresas adiam contratações, e é um buraco difícil de sair — o Japão passou décadas nele. Podes discordar da troca, e há gente séria que discorda. Mas é uma troca, feita de propósito, e não um acidente.',
-  'what-rising-prices-do-to-you.mc-why-not-zero.option.buffer.label':
-    'Porque deixa margem para baixar taxas numa recessão, e a queda de preços traz problemas próprios',
-  'what-rising-prices-do-to-you.mc-why-not-zero.option.revenue.label':
-    'Porque a inflação dá receita aos governos',
-  'what-rising-prices-do-to-you.mc-why-not-zero.option.revenue.feedback':
-    'Transfere mesmo valor para os devedores, governos incluídos — o que é uma crítica real ao arranjo, e não a razão declarada para a meta.',
-  'what-rising-prices-do-to-you.mc-why-not-zero.option.impossible.label':
-    'Porque zero é impossível de atingir',
-  'what-rising-prices-do-to-you.mc-why-not-zero.option.growth.label':
-    'Porque a inflação gera crescimento económico',
-  'what-rising-prices-do-to-you.mc-why-not-zero.option.growth.feedback':
-    'Não gera, e a posição dominante nunca afirmou que gerasse. O argumento a favor de uma meta positiva pequena é sobre ter espaço de manobra, não sobre crescimento.',
-
-  // ---- lição 6: ler uma notícia -------------------------------------------
+  'what-rising-prices-do-to-you.mc-why-not-zero.explanation': 'Duas razões, ambas sobre margem. Se a inflação estiver em zero, numa recessão um banco central que baixe as taxas até zero fica sem nada; uma meta positiva pequena dá-lhe espaço. E quando os preços estão a cair, as pessoas adiam compras e as empresas adiam contratações, e é um buraco difícil de sair — o Japão passou décadas nele. Podes discordar da troca, e há gente séria que discorda. Mas é uma troca, feita de propósito, e não um acidente.',
+  'what-rising-prices-do-to-you.mc-why-not-zero.option.buffer.label': 'Porque deixa margem para baixar taxas numa recessão, e a queda de preços traz problemas próprios',
+  'what-rising-prices-do-to-you.mc-why-not-zero.option.revenue.label': 'Porque a inflação dá receita aos governos',
+  'what-rising-prices-do-to-you.mc-why-not-zero.option.revenue.feedback': 'Transfere mesmo valor para os devedores, governos incluídos — o que é uma crítica real ao arranjo, e não a razão declarada para a meta.',
+  'what-rising-prices-do-to-you.mc-why-not-zero.option.impossible.label': 'Porque zero é impossível de atingir',
+  'what-rising-prices-do-to-you.mc-why-not-zero.option.growth.label': 'Porque a inflação gera crescimento económico',
+  'what-rising-prices-do-to-you.mc-why-not-zero.option.growth.feedback': 'Não gera, e a posição dominante nunca afirmou que gerasse. O argumento a favor de uma meta positiva pequena é sobre ter espaço de manobra, não sobre crescimento.',
   'reading-one-headline.title': '«O BCE subiu as taxas.» E então?',
-  'reading-one-headline.subtitle':
-    'Uma frase nas notícias. Cinco lições chegam para dizer o que significa para o teu crédito, a tua renda e as tuas poupanças.',
-  'reading-one-headline.takeaway.0':
-    'Uma decisão de taxas muda um preço a um dia. Todo o resto vem atrás, ao longo de semanas e meses.',
-  'reading-one-headline.takeaway.1':
-    'As taxas de crédito sobem depressa, as de depósito devagar e menos — essa diferença é lucro do banco.',
-  'reading-one-headline.takeaway.2':
-    'Dois créditos iguais podem diferir em centenas de euros por mês só por causa das datas de revisão.',
+  'reading-one-headline.subtitle': 'Uma frase nas notícias. Cinco lições chegam para dizer o que significa para o teu crédito, a tua renda e as tuas poupanças.',
+  'reading-one-headline.takeaway.0': 'Uma decisão de taxas muda um preço a um dia. Todo o resto vem atrás, ao longo de semanas e meses.',
+  'reading-one-headline.takeaway.1': 'As taxas de crédito sobem depressa, as de depósito devagar e menos — essa diferença é lucro do banco.',
+  'reading-one-headline.takeaway.2': 'Dois créditos iguais podem diferir em centenas de euros por mês só por causa das datas de revisão.',
   'reading-one-headline.takeaway.3': 'Já tens o vocabulário para o resto do curso.',
-  'reading-one-headline.mc-what-changed.prompt':
-    'O BCE sobe a sua taxa meio ponto. O que mudou literalmente nesse dia?',
+  'reading-one-headline.mc-what-changed.prompt': 'O BCE sobe a sua taxa meio ponto. O que mudou literalmente nesse dia?',
   'reading-one-headline.mc-what-changed.instructions': 'Escolhe a melhor resposta',
-  'reading-one-headline.mc-what-changed.explanation':
-    'Mudou um preço a um dia. Todo o resto — crédito à habitação, taxas de depósito, empréstimos a empresas, dívida pública — vem atrás ao longo de semanas e meses, à medida que os bancos reajustam preços e os contratos chegam às datas de revisão. A distância entre o anúncio e o efeito em ti não é atraso da notícia; é como a máquina funciona de facto.',
-  'reading-one-headline.mc-what-changed.option.overnight-price.label':
-    'O preço do dinheiro por uma noite, entre os bancos e o BCE. Mais nada, para já',
-  'reading-one-headline.mc-what-changed.option.all-loans.label':
-    'Todos os empréstimos da Europa ficaram mais caros nessa manhã',
-  'reading-one-headline.mc-what-changed.option.all-loans.feedback':
-    'Vão ficar, mas não nessa manhã. Um crédito de taxa fixa não se mexe de todo, e um de taxa variável mexe-se na sua data de revisão, que pode estar a meses de distância.',
-  'reading-one-headline.mc-what-changed.option.money-supply.label':
-    'A quantidade de dinheiro na economia caiu',
-  'reading-one-headline.mc-what-changed.option.money-supply.feedback':
-    'Não diretamente. O dinheiro muda quando os bancos emprestam mais ou menos, e isso responde à taxa ao longo de meses, não no dia em que ela muda.',
+  'reading-one-headline.mc-what-changed.explanation': 'Mudou um preço a um dia. Todo o resto — crédito à habitação, taxas de depósito, empréstimos a empresas, dívida pública — vem atrás ao longo de semanas e meses, à medida que os bancos reajustam preços e os contratos chegam às datas de revisão. A distância entre o anúncio e o efeito em ti não é atraso da notícia; é como a máquina funciona de facto.',
+  'reading-one-headline.mc-what-changed.option.overnight-price.label': 'O preço do dinheiro por uma noite, entre os bancos e o BCE. Mais nada, para já',
+  'reading-one-headline.mc-what-changed.option.all-loans.label': 'Todos os empréstimos da Europa ficaram mais caros nessa manhã',
+  'reading-one-headline.mc-what-changed.option.all-loans.feedback': 'Vão ficar, mas não nessa manhã. Um crédito de taxa fixa não se mexe de todo, e um de taxa variável mexe-se na sua data de revisão, que pode estar a meses de distância.',
+  'reading-one-headline.mc-what-changed.option.money-supply.label': 'A quantidade de dinheiro na economia caiu',
+  'reading-one-headline.mc-what-changed.option.money-supply.feedback': 'Não diretamente. O dinheiro muda quando os bancos emprestam mais ou menos, e isso responde à taxa ao longo de meses, não no dia em que ela muda.',
   'reading-one-headline.mc-what-changed.option.inflation.label': 'A inflação desceu',
-  'reading-one-headline.flow-reaches-you.prompt':
-    'Põe pela ordem em que chega a uma família comum.',
+  'reading-one-headline.flow-reaches-you.prompt': 'Põe pela ordem em que chega a uma família comum.',
   'reading-one-headline.flow-reaches-you.instructions': 'Primeiro o que acontece antes',
-  'reading-one-headline.flow-reaches-you.explanation':
-    'O último passo é o que vale a pena guardar, porque é o que ninguém anuncia. As taxas de crédito sobem depressa e as de depósito sobem devagar e menos — a diferença entre as duas é boa parte do lucro dos bancos num ciclo de subidas. Se a tua prestação foi revista dentro do ano e a tua conta poupança não, não foi distração.',
+  'reading-one-headline.flow-reaches-you.explanation': 'O último passo é o que vale a pena guardar, porque é o que ninguém anuncia. As taxas de crédito sobem depressa e as de depósito sobem devagar e menos — a diferença entre as duas é boa parte do lucro dos bancos num ciclo de subidas. Se a tua prestação foi revista dentro do ano e a tua conta poupança não, não foi distração.',
   'reading-one-headline.flow-reaches-you.event.announcement.label': 'O BCE anuncia a subida',
-  'reading-one-headline.flow-reaches-you.event.announcement.detail':
-    'Numa quinta-feira, mais ou menos de seis em seis semanas',
-  'reading-one-headline.flow-reaches-you.event.market.label':
-    'As taxas do mercado monetário mexem-se em dias',
-  'reading-one-headline.flow-reaches-you.event.market.detail':
-    'Incluindo a Euribor, a que está indexada quase toda a habitação da zona euro',
-  'reading-one-headline.flow-reaches-you.event.new-loans.label':
-    'As novas propostas de crédito ficam mais caras',
-  'reading-one-headline.flow-reaches-you.event.new-loans.detail':
-    'Quem comprar no mês que vem paga mais',
-  'reading-one-headline.flow-reaches-you.event.reset.label':
-    'Os créditos de taxa variável mudam na próxima data de revisão',
-  'reading-one-headline.flow-reaches-you.event.reset.detail':
-    'Que tanto pode ser amanhã como daqui a onze meses',
-  'reading-one-headline.flow-reaches-you.event.savings.label':
-    'As taxas de poupança sobem por último, e menos',
-  'reading-one-headline.flow-reaches-you.event.savings.detail':
-    'Os bancos são mais rápidos a cobrar mais do que a pagar mais',
-  'reading-one-headline.mc-which-mortgage.prompt':
-    'Dois vizinhos têm créditos à habitação iguais. Um paga mais 200 € por mês do que o outro. Qual é a razão mais provável?',
+  'reading-one-headline.flow-reaches-you.event.announcement.detail': 'Numa quinta-feira, mais ou menos de seis em seis semanas',
+  'reading-one-headline.flow-reaches-you.event.market.label': 'As taxas do mercado monetário mexem-se em dias',
+  'reading-one-headline.flow-reaches-you.event.market.detail': 'Incluindo a Euribor, a que está indexada quase toda a habitação da zona euro',
+  'reading-one-headline.flow-reaches-you.event.new-loans.label': 'As novas propostas de crédito ficam mais caras',
+  'reading-one-headline.flow-reaches-you.event.new-loans.detail': 'Quem comprar no mês que vem paga mais',
+  'reading-one-headline.flow-reaches-you.event.reset.label': 'Os créditos de taxa variável mudam na próxima data de revisão',
+  'reading-one-headline.flow-reaches-you.event.reset.detail': 'Que tanto pode ser amanhã como daqui a onze meses',
+  'reading-one-headline.flow-reaches-you.event.savings.label': 'As taxas de poupança sobem por último, e menos',
+  'reading-one-headline.flow-reaches-you.event.savings.detail': 'Os bancos são mais rápidos a cobrar mais do que a pagar mais',
+  'reading-one-headline.mc-which-mortgage.prompt': 'Dois vizinhos têm créditos à habitação iguais. Um paga mais 200 € por mês do que o outro. Qual é a razão mais provável?',
   'reading-one-headline.mc-which-mortgage.instructions': 'Escolhe a melhor resposta',
-  'reading-one-headline.mc-which-mortgage.explanation':
-    'Quase todo o crédito à habitação da zona euro segue a Euribor e é revisto a três, seis ou doze meses. Duas pessoas que assinaram com seis meses de intervalo estão a pagar taxas fixadas com seis meses de intervalo, o que em 2022 e 2023 valeu centenas de euros por mês no mesmo empréstimo. Não se negociou nada e não correu nada mal — foi o calendário, e há um módulo inteiro sobre esse índice mais à frente.',
-  'reading-one-headline.mc-which-mortgage.option.reset-date.label':
-    'As taxas são revistas em datas diferentes, por isso um ainda está a pagar uma taxa mais antiga e mais baixa',
-  'reading-one-headline.mc-which-mortgage.option.negotiation.label':
-    'Um negociou melhores condições',
-  'reading-one-headline.mc-which-mortgage.option.negotiation.feedback':
-    'Um spread melhor vale alguma coisa, e costuma valer algumas décimas de ponto percentual — não 200 € por mês. As datas valem muito mais do que a negociação.',
+  'reading-one-headline.mc-which-mortgage.explanation': 'Quase todo o crédito à habitação da zona euro segue a Euribor e é revisto a três, seis ou doze meses. Duas pessoas que assinaram com seis meses de intervalo estão a pagar taxas fixadas com seis meses de intervalo, o que em 2022 e 2023 valeu centenas de euros por mês no mesmo empréstimo. Não se negociou nada e não correu nada mal — foi o calendário, e há um módulo inteiro sobre esse índice mais à frente.',
+  'reading-one-headline.mc-which-mortgage.option.reset-date.label': 'As taxas são revistas em datas diferentes, por isso um ainda está a pagar uma taxa mais antiga e mais baixa',
+  'reading-one-headline.mc-which-mortgage.option.negotiation.label': 'Um negociou melhores condições',
+  'reading-one-headline.mc-which-mortgage.option.negotiation.feedback': 'Um spread melhor vale alguma coisa, e costuma valer algumas décimas de ponto percentual — não 200 € por mês. As datas valem muito mais do que a negociação.',
   'reading-one-headline.mc-which-mortgage.option.bank.label': 'Usam bancos diferentes',
-  'reading-one-headline.mc-which-mortgage.option.credit.label':
-    'Um tem melhor historial de crédito',
-  'reading-one-headline.mc-which-mortgage.option.error.label':
-    'Um deles está a ser cobrado a mais',
-  'reading-one-headline.match-where-next.prompt':
-    'Já tens o vocabulário. Liga cada pergunta que ainda possas ter ao sítio onde o curso responde.',
+  'reading-one-headline.mc-which-mortgage.option.credit.label': 'Um tem melhor historial de crédito',
+  'reading-one-headline.mc-which-mortgage.option.error.label': 'Um deles está a ser cobrado a mais',
+  'reading-one-headline.match-where-next.prompt': 'Já tens o vocabulário. Liga cada pergunta que ainda possas ter ao sítio onde o curso responde.',
   'reading-one-headline.match-where-next.instructions': 'Escolhe um termo e depois o significado',
-  'reading-one-headline.match-where-next.explanation':
-    'É o fim da introdução. Já sabes o que é o saldo da tua conta, o que é um banco, o que é uma taxa, quem manda e quem não manda, o que a inflação faz e a quem, e como uma decisão de política chega à tua conta. Tudo o que vem a seguir são as mesmas ideias em instituições maiores, com números reais publicados — e já tens o que é preciso para acompanhar.',
-  'reading-one-headline.match-where-next.pair.creation.term':
-    '«Como é que um banco cria dinheiro, ao certo?»',
-  'reading-one-headline.match-where-next.pair.creation.definition':
-    'A interface entre banco comercial e banco central — fazes os lançamentos à mão',
-  'reading-one-headline.match-where-next.pair.levers.term':
-    '«O que mais pode um banco central fazer além de taxas?»',
-  'reading-one-headline.match-where-next.pair.levers.definition':
-    'As alavancas da Fed e do BCE, e depois os balanços que publicam de facto',
-  'reading-one-headline.match-where-next.pair.mortgage.term':
-    '«Porque é que a minha prestação disparou?»',
-  'reading-one-headline.match-where-next.pair.mortgage.definition':
-    'O módulo da Euribor, que acaba em cinco perguntas feitas para serem difíceis',
+  'reading-one-headline.match-where-next.explanation': 'É o fim da introdução. Já sabes o que é o saldo da tua conta, o que é um banco, o que é uma taxa, quem manda e quem não manda, o que a inflação faz e a quem, e como uma decisão de política chega à tua conta. Tudo o que vem a seguir são as mesmas ideias em instituições maiores, com números reais publicados — e já tens o que é preciso para acompanhar.',
+  'reading-one-headline.match-where-next.pair.creation.term': '«Como é que um banco cria dinheiro, ao certo?»',
+  'reading-one-headline.match-where-next.pair.creation.definition': 'A interface entre banco comercial e banco central — fazes os lançamentos à mão',
+  'reading-one-headline.match-where-next.pair.levers.term': '«O que mais pode um banco central fazer além de taxas?»',
+  'reading-one-headline.match-where-next.pair.levers.definition': 'As alavancas da Fed e do BCE, e depois os balanços que publicam de facto',
+  'reading-one-headline.match-where-next.pair.mortgage.term': '«Porque é que a minha prestação disparou?»',
+  'reading-one-headline.match-where-next.pair.mortgage.definition': 'O módulo da Euribor, que acaba em cinco perguntas feitas para serem difíceis',
   'reading-one-headline.match-where-next.pair.house.term': '«Devo comprar casa?»',
-  'reading-one-headline.match-where-next.pair.house.definition':
-    'As contas portuguesas — todos os impostos ao euro, e o ponto de equilíbrio',
+  'reading-one-headline.match-where-next.pair.house.definition': 'As contas portuguesas — todos os impostos ao euro, e o ponto de equilíbrio',
 };

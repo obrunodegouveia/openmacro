@@ -100,6 +100,17 @@ export function pickVariant(
   return t(`${prefix}.${index}` as UiKey);
 }
 
+/**
+ * A locale's interface catalogue, exactly as stored.
+ *
+ * Unlike `translate`, this does not fall back to English — an absent key reads
+ * as absent. The round-trip tooling needs to tell "translated as the same word"
+ * from "not translated", and `translate` deliberately cannot.
+ */
+export function uiCatalogue(locale: Locale): UiDictionary {
+  return CATALOGUES[locale] ?? {};
+}
+
 /** How complete a locale's interface catalogue is, 0 to 1. */
 export function uiCoverage(locale: Locale): number {
   const keys = Object.keys(en) as UiKey[];

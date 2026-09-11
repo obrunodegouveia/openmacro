@@ -4,17 +4,23 @@
  * Translation tooling — `npm run i18n:status`, `npm run i18n:extract`
  * ============================================================================
  *
- * Two jobs, both of which exist because translating 4,400 strings by hand is
- * a project rather than an afternoon, and a project needs to know where it is.
+ * Three commands, because translating 4,400 strings is a project rather than
+ * an afternoon, and a project needs to hand work out, take it back, and know
+ * where it is.
  *
  *   status              What fraction of the interface and of each module is
  *                       translated, per language. Prints the gap, because the
  *                       gap is the only number anyone acts on.
  *
- *   extract <moduleId>  Every translatable string in one module, as a JSON
- *                       object of key → English. Hand that to a translator
- *                       (or to a model, then to a human) and paste the result
- *                       into `packages/core/src/i18n/content/<locale>/`.
+ *   extract <locale>    Writes `translations/<locale>/*.json` — one bilingual
+ *                       file per scope, carrying the English, the current
+ *                       translation and whether it is new, translated or
+ *                       stale. Hand it to a translator or upload it to
+ *                       Crowdin, Lokalise or Weblate.
+ *
+ *   import <locale>     Reads those files back into the TypeScript
+ *                       catalogues, validating every string first. Without
+ *                       this, translating is a developer-only activity.
  *
  * `--strict` makes `status` exit non-zero on two things, and only two:
  *
@@ -34,44 +40,12 @@
  * Requires Node 22.18+, like the rest of the tooling here.
  */
 
-import { registerHooks } from 'node:module';
-import { statSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
 
-const ROOT = new URL('../', import.meta.url);
-
-function isFile(url) {
-  try {
-    return statSync(fileURLToPath(url)).isFile();
-  } catch {
-    return false;
-  }
-}
-
-function firstExisting(base) {
-  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}/index.ts`, `${base}/index.tsx`];
-  return candidates.find(isFile) ?? null;
-}
-
-registerHooks({
-  resolve(specifier, context, nextResolve) {
-    if (specifier.startsWith('@/')) {
-      const resolved = firstExisting(new URL(`src/${specifier.slice(2)}`, ROOT).href);
-      if (resolved) return { url: resolved, shortCircuit: true };
-    }
-    if (specifier.startsWith('.') && context.parentURL) {
-      const target = new URL(specifier, context.parentURL).href;
-      if (target.endsWith('.json') && isFile(target)) {
-        return { url: target, shortCircuit: true, importAttributes: { type: 'json' } };
-      }
-      const resolved = firstExisting(target);
-      if (resolved) return { url: resolved, shortCircuit: true };
-    }
-    return nextResolve(specifier, context);
-  },
-});
+import './i18n-loader.mjs';
 
 const { MODULES } = await import('@openmacro/core/content/registry');
+const { en, uiCatalogue } = await import('@openmacro/core/i18n');
 const {
   LOCALES,
   LOCALE_NAMES,
@@ -81,7 +55,17 @@ const {
   missingUiKeys,
   validateCatalogue,
 } = await import('@openmacro/core/i18n');
-const { contentCoverage } = await import('@openmacro/core/i18n/content');
+const { contentCoverage, contentDictionary, courseDictionary, courseKeys } = await import(
+  '@openmacro/core/i18n/content'
+);
+const { messageArguments } = await import('@openmacro/core/i18n/format');
+
+const { buildDocument, readState, summarise, writeDocument, TRANSLATIONS_DIR } = await import(
+  './i18n-extract.mjs'
+);
+const { collect, writeContentIndex, writeCourse, writeModule, writeState, writeUi } =
+  await import('./i18n-import.mjs');
+const { fingerprint } = await import('./i18n-files.mjs');
 
 const [command = 'status', ...rest] = process.argv.slice(2);
 
@@ -97,21 +81,144 @@ const pct = (ratio) => `${(ratio * 100).toFixed(ratio > 0 && ratio < 0.01 ? 2 : 
 // ---------------------------------------------------------------------------
 
 if (command === 'extract') {
-  const [moduleId] = rest;
-  if (!moduleId) {
-    console.error('usage: npm run i18n:extract -- <moduleId>');
-    console.error('\nModules:');
-    for (const module of MODULES) console.error(`  ${module.id}`);
+  const [locale, only] = rest;
+  if (!locale || !LOCALES.includes(locale)) {
+    console.error('usage: npm run i18n:extract -- <locale> [ui|<moduleId>]');
+    console.error(`\nLocales: ${LOCALES.join(', ')}`);
     process.exit(2);
   }
-  const module = MODULES.find((candidate) => candidate.id === moduleId);
-  if (!module) {
-    console.error(`No module with id "${moduleId}".`);
+
+  const state = readState(locale);
+  const scopes = [];
+
+  if (!only || only === 'ui') {
+    scopes.push({
+      scope: 'ui',
+      sources: { ...en },
+      targets: uiCatalogue(locale),
+    });
+  }
+
+  if (!only || only === 'course') {
+    scopes.push({ scope: 'course', sources: courseKeys(), targets: courseDictionary(locale) });
+  }
+
+  for (const module of MODULES) {
+    if (only && only !== module.id) continue;
+    if (only === 'ui' || only === 'course') break;
+    scopes.push({
+      scope: module.id,
+      sources: collectKeys(module),
+      targets: contentDictionary(locale, module.id),
+    });
+  }
+
+  if (scopes.length === 0) {
+    console.error(`Nothing matched "${only}". Try "ui" or a module id.`);
     process.exit(2);
   }
-  // Straight to stdout, so it can be piped to a file or a clipboard without
-  // the tool having an opinion about where translations live on disk.
-  process.stdout.write(`${JSON.stringify(collectKeys(module), null, 2)}\n`);
+
+  console.log('');
+  for (const { scope, sources, targets } of scopes) {
+    const document = buildDocument({ locale, scope, sources, targets, state: state[scope] ?? {} });
+    const path = writeDocument(locale, scope, document);
+    const counts = summarise(document);
+    const total = Object.keys(document.units).length;
+    const flags = [
+      counts.new ? `${counts.new} new` : null,
+      counts.stale ? `${counts.stale} STALE` : null,
+    ].filter(Boolean);
+    console.log(
+      `  ${path.padEnd(46)} ${String(total).padStart(4)} strings${flags.length ? `  · ${flags.join(', ')}` : ''}`,
+    );
+  }
+  console.log('');
+  console.log('Translate the "target" of each unit, then:');
+  console.log(`  npm run i18n:import -- ${locale}`);
+  console.log('');
+  console.log('"stale" means the English changed after that translation was made.');
+  console.log('');
+  process.exit(0);
+}
+
+if (command === 'import') {
+  const [locale] = rest;
+  if (!locale || !LOCALES.includes(locale)) {
+    console.error('usage: npm run i18n:import -- <locale>');
+    console.error(`\nLocales: ${LOCALES.join(', ')}`);
+    process.exit(2);
+  }
+  if (locale === DEFAULT_LOCALE) {
+    console.error(`"${locale}" is the source language — it is edited directly, not imported.`);
+    process.exit(2);
+  }
+
+  const result = collect(locale, messageArguments);
+  if (result.error) {
+    console.error(result.error);
+    process.exit(2);
+  }
+  const { accepted, rejected, skipped } = result;
+
+  console.log('');
+  const uiTranslations = Object.fromEntries(
+    Object.entries(accepted.ui ?? {}).map(([key, { target }]) => [key, target]),
+  );
+  const written = [];
+
+  if (Object.keys(uiTranslations).length > 0) {
+    written.push([writeUi(locale, uiTranslations), Object.keys(uiTranslations).length]);
+  }
+
+  const courseTranslations = Object.fromEntries(
+    Object.entries(accepted.course ?? {}).map(([key, { target }]) => [key, target]),
+  );
+  const hasCourse = Object.keys(courseTranslations).length > 0;
+  if (hasCourse) {
+    written.push([writeCourse(locale, courseTranslations), Object.keys(courseTranslations).length]);
+  }
+
+  const moduleIds = [];
+  for (const [scope, units] of Object.entries(accepted)) {
+    if (scope === 'ui' || scope === 'course') continue;
+    const translations = Object.fromEntries(
+      Object.entries(units).map(([key, { target }]) => [key, target]),
+    );
+    if (Object.keys(translations).length === 0) continue;
+    moduleIds.push(scope);
+    written.push([writeModule(locale, scope, translations), Object.keys(translations).length]);
+  }
+
+  if (moduleIds.length > 0 || hasCourse) {
+    written.push([writeContentIndex(locale, moduleIds.sort(), { hasCourse }), 0]);
+  }
+
+  written.push([writeState(locale, accepted), 0]);
+
+  for (const [path, count] of written) {
+    console.log(`  wrote ${path}${count ? `  (${count} strings)` : ''}`);
+  }
+
+  if (skipped.length) {
+    console.log('');
+    console.log(`  ${skipped.length} untranslated — left to fall back to English.`);
+  }
+
+  if (rejected.length) {
+    console.log('');
+    console.log(`  ${rejected.length} REJECTED and not written:`);
+    for (const { scope, key, reason } of rejected) {
+      console.log(`    ${scope}/${key} — ${reason}`);
+    }
+    console.log('');
+    console.log('  Everything else was imported. Fix these and run import again.');
+    console.log('');
+    process.exit(1);
+  }
+
+  console.log('');
+  console.log('Now run:  npm run typecheck:core && npm run i18n:status');
+  console.log('');
   process.exit(0);
 }
 
@@ -169,6 +276,33 @@ for (const locale of LOCALES) {
     if (untouched > 0) {
       console.log('');
       console.log(`    ${untouched} module${untouched === 1 ? '' : 's'} not started — falls back to English`);
+    }
+
+    // Stale beats missing for urgency: a missing string renders in English and
+    // is obviously untranslated, while a stale one is fluent, confident and
+    // describes something that is no longer true.
+    const state = readState(locale);
+    const stale = [];
+    const staleIn = (scope, sources, translated) => {
+      const recorded = state[scope] ?? {};
+      for (const [key, source] of Object.entries(sources)) {
+        if (recorded[key] && translated[key] && recorded[key] !== fingerprint(source)) {
+          stale.push(`${scope}/${key}`);
+        }
+      }
+    };
+    staleIn('ui', en, uiCatalogue(locale));
+    for (const module of MODULES) {
+      staleIn(module.id, collectKeys(module), contentDictionary(locale, module.id));
+    }
+    if (stale.length) {
+      console.log('');
+      console.log(`    ${stale.length} STALE — the English changed after these were translated:`);
+      for (const key of (verbose ? stale : stale.slice(0, 10))) console.log(`      ${key}`);
+      if (!verbose && stale.length > 10) {
+        console.log(`      … and ${stale.length - 10} more (--verbose)`);
+      }
+      console.log(`    Re-extract to see them:  npm run i18n:extract -- ${locale}`);
     }
 
     const broken = validateCatalogue(locale);
