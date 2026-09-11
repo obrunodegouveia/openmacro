@@ -76,7 +76,8 @@
     "i18n:status": "node ./scripts/i18n.mjs status",
     "i18n:extract": "node ./scripts/i18n.mjs extract",
     "lint": "eslint app src",
-    "i18n:import": "node ./scripts/i18n.mjs import"
+    "i18n:import": "node ./scripts/i18n.mjs import",
+    "i18n:fixspelling": "node ./scripts/i18n.mjs fixspelling"
   },
   "private": true,
   "description": "Duolingo-style micro-learning app teaching macroeconomics, monetary policy and fractional-reserve banking.",

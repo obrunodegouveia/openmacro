@@ -40,7 +40,8 @@
  * Requires Node 22.18+, like the rest of the tooling here.
  */
 
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import './i18n-loader.mjs';
 
@@ -66,7 +67,7 @@ const { buildDocument, readState, summarise, writeDocument, TRANSLATIONS_DIR } =
 const { collect, writeContentIndex, writeCourse, writeModule, writeState, writeUi } =
   await import('./i18n-import.mjs');
 const { fingerprint } = await import('./i18n-files.mjs');
-const { conventionWarnings } = await import('./i18n-orthography.mjs');
+const { applyConventions, conventionWarnings } = await import('./i18n-orthography.mjs');
 
 const [command = 'status', ...rest] = process.argv.slice(2);
 
@@ -138,6 +139,42 @@ if (command === 'extract') {
   console.log(`  npm run i18n:import -- ${locale}`);
   console.log('');
   console.log('"stale" means the English changed after that translation was made.');
+  console.log('');
+  process.exit(0);
+}
+
+if (command === 'fixspelling') {
+  const [locale] = rest;
+  if (!locale || !LOCALES.includes(locale)) {
+    console.error('usage: npm run i18n:fixspelling -- <locale>');
+    process.exit(2);
+  }
+  const dir = join(TRANSLATIONS_DIR, locale);
+  if (!existsSync(dir)) {
+    console.error(`No translations at ${dir}.`);
+    process.exit(2);
+  }
+  let changed = 0;
+  for (const file of readdirSync(dir).filter((name) => name.endsWith('.json'))) {
+    const path = join(dir, file);
+    const document = JSON.parse(readFileSync(path, 'utf8'));
+    let touched = 0;
+    for (const unit of Object.values(document.units ?? {})) {
+      if (!unit.target) continue;
+      const fixed = applyConventions(locale, unit.target, unit.source ?? '');
+      if (fixed !== unit.target) {
+        unit.target = fixed;
+        touched += 1;
+      }
+    }
+    if (touched) {
+      writeFileSync(path, `${JSON.stringify(document, null, 2)}\n`, 'utf8');
+      console.log(`  ${file.padEnd(44)} ${touched} corrected`);
+      changed += touched;
+    }
+  }
+  console.log('');
+  console.log(changed ? `${changed} spellings corrected. Now: npm run i18n:import -- ${locale}` : 'Nothing to correct.');
   console.log('');
   process.exit(0);
 }
