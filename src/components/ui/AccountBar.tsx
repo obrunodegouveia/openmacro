@@ -9,6 +9,7 @@ import { memo } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAuth } from '@/providers/AuthProvider';
+import { DeleteAccount } from '@/components/ui/DeleteAccount';
 import { useProgress } from '@/providers/ProgressProvider';
 import type { SyncState } from '@/services/syncedDataProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
@@ -22,6 +23,7 @@ function AccountBarComponent() {
   // ---- signed in --------------------------------------------------------
   if (identity) {
     return (
+      <View style={styles.signedInBlock}>
       <View style={styles.row}>
         {identity.avatarUrl ? (
           <Image
@@ -56,6 +58,11 @@ function AccountBarComponent() {
         >
           <Text style={styles.signOut}>Sign out</Text>
         </Pressable>
+      </View>
+
+      {/* Required by Apple 5.1.1(v), and kept in plain sight rather than
+          buried — a reviewer looks for it, and so does anyone who wants out. */}
+      <DeleteAccount />
       </View>
     );
   }
@@ -117,6 +124,9 @@ function GoogleMark() {
 }
 
 const styles = StyleSheet.create({
+  signedInBlock: {
+    gap: spacing.xs,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

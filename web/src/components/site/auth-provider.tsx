@@ -7,6 +7,8 @@ import { cloudSyncConfigured, getSupabase } from "@/lib/supabase";
 export interface Learner {
   id: string;
   name: string;
+  /** Used to confirm a deletion, which asks the learner to type it back. */
+  email: string | null;
   avatarUrl: string | null;
 }
 
@@ -34,6 +36,7 @@ function toLearner(session: Session | null): Learner | null {
   return {
     id: session.user.id,
     name: pick("full_name") ?? pick("name") ?? session.user.email ?? "Learner",
+    email: session.user.email ?? null,
     avatarUrl: pick("avatar_url") ?? pick("picture"),
   };
 }
@@ -105,10 +108,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const id = raw?.id ?? null;
   const name = raw?.name ?? null;
   const avatarUrl = raw?.avatarUrl ?? null;
+  const email = raw?.email ?? null;
 
   const learner = React.useMemo<Learner | null>(
-    () => (id ? { id, name: name ?? "Learner", avatarUrl } : null),
-    [id, name, avatarUrl],
+    () => (id ? { id, name: name ?? "Learner", email, avatarUrl } : null),
+    [id, name, email, avatarUrl],
   );
 
   const value = React.useMemo<AuthValue>(

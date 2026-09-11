@@ -3,6 +3,7 @@ import { Footer } from "@/components/site/footer";
 import { Section } from "@/components/ui/section";
 import { Dashboard } from "@/components/app/dashboard";
 import { ModuleRewards } from "@/components/app/module-rewards";
+import { DeleteAccount } from "@/components/app/delete-account";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 
@@ -36,6 +37,7 @@ export default function DashboardPage() {
             <Dashboard />
             {/* Renders nothing unless this account has a reward wallet bound. */}
             <ModuleRewards />
+            <DeleteAccount />
           </div>
         </Section>
       </main>

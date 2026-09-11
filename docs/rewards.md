@@ -214,6 +214,15 @@ is a standing risk, and no amount of code removes it. What bounds the damage is
 the balance, so keep it small and top it up deliberately. The blast radius of a
 compromised server is exactly what is in the drawer.
 
+**A deleted account can claim again.** Deletion nulls `user_id` on
+`reward_claims` rather than removing the row, so the payout record survives
+anonymised — but a learner who deletes and signs up again with the same email
+has no claims and can earn every module a second time. Closing that means
+keeping a hash of the deleted email precisely to recognise someone who asked to
+be forgotten, which is not a trade worth making for a household with a
+sixteen-euro ceiling. If this ever pays strangers, the fix is not a hash: it is
+that claims should not hang off an account you can delete at will.
+
 **Nonce serialisation is per-instance.** `payout.ts` queues sends within one
 process. Cloud Run running two containers has two queues and could collide on a
 nonce, which shows up as a dropped or replaced transaction — never as a double
