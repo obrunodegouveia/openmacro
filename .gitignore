@@ -54,3 +54,4 @@ credentials/
 credentials.json
 google-play-service-account*.json
 *.keystore
+translations/

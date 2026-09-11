@@ -52,6 +52,27 @@ const TRANSLATIONS: Record<Locale, ContentTranslation> = {
   'pt-PT': ptPTContent,
 };
 
+/** The course's own translatable strings, as key → English. */
+export function courseKeys(): Record<string, string> {
+  return { 'course.title': COURSE.title, 'course.description': COURSE.description };
+}
+
+/** The course's overlay for a locale, exactly as stored. */
+export function courseDictionary(locale: Locale): ContentDictionary {
+  return (TRANSLATIONS[locale] ?? EMPTY).course ?? {};
+}
+
+/**
+ * One module's overlay for a locale, exactly as stored.
+ *
+ * The counterpart of `uiCatalogue`: what has actually been translated, with no
+ * English filled in. Used by `i18n:extract` to show a translator their own
+ * previous work.
+ */
+export function contentDictionary(locale: Locale, moduleId: string): ContentDictionary {
+  return (TRANSLATIONS[locale] ?? EMPTY).modules[moduleId] ?? {};
+}
+
 /** Every module, with `locale`'s overlay applied where it has one. */
 export function localisedModules(locale: Locale): readonly Module[] {
   if (locale === DEFAULT_LOCALE) return MODULES;

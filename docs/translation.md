@@ -7,7 +7,8 @@ knows what languages exist.
 ```
 npm run i18n:status                      # where every language is
 npm run i18n:status -- --strict          # what CI runs
-npm run i18n:extract -- start-here       # one module's strings, as JSON
+npm run i18n:extract -- pt-PT            # hand work out to a translator
+npm run i18n:import  -- pt-PT            # take it back, validated
 ```
 
 ---
@@ -37,6 +38,21 @@ packages/core/src/i18n/
       start-here.ts     one module, in full
 ```
 
+### Matching a device language
+
+`resolveLocale` implements RFC 4647 *lookup*: take the requested tag and keep
+cutting subtags off the end until something matches. `pt-BR` asks for
+Brazilian Portuguese, does not get it, and falls back to `pt-PT`.
+
+The one rule worth knowing is that **a script subtag vetoes a fallback**.
+`zh-Hant-TW` and `zh-Hans-CN` share the base language `zh` and are mutually
+unreadable, so a base-language match would hand Traditional readers a
+Simplified catalogue and call it a success — worse than serving English, which
+is at least obviously not their language. Same trap for `sr-Cyrl` / `sr-Latn`.
+
+`lookupLocale(available, preferred, fallback)` is exported separately from
+`resolveLocale` so this can be tested against languages the app does not ship.
+
 Both apps read the course through the same three functions, and neither
 imports `MODULES` directly:
 
@@ -49,29 +65,96 @@ imports `MODULES` directly:
 
 ---
 
+## The round trip
+
+```bash
+npm run i18n:extract -- pt-PT            # everything
+npm run i18n:extract -- pt-PT euribor    # one module
+npm run i18n:extract -- pt-PT ui         # just the interface
+```
+
+Writes `translations/<locale>/<scope>.json` — one file per scope, each unit
+carrying the English, the current translation and its state:
+
+```json
+"account.signOut": {
+  "source": "Sign out",
+  "target": "Terminar sessão",
+  "state": "translated"
+}
+```
+
+| state | meaning |
+|---|---|
+| `new` | no translation yet |
+| `translated` | translated, and the English has not moved since |
+| `stale` | translated, but **the English has been edited since** |
+
+`stale` is the one worth having. A silently outdated translation is the worst
+state this system reaches: fluent, confident, wrong, and counted as done.
+`npm run i18n:status` reports stale counts; `--strict` does not fail on them,
+because the fix is a translator's judgement rather than a build error.
+
+Hand the files to a translator, or upload them — Crowdin, Lokalise and Weblate
+all ingest this shape. Then:
+
+```bash
+npm run i18n:import -- pt-PT
+```
+
+Import is where bad data enters, so it is where validation lives. Every unit
+is checked for balanced braces and for arguments the English does not provide
+(`{nome}` for `{name}`), and **a failing unit is rejected rather than
+written** — the report names it, everything else lands, and the key falls back
+to English until it is fixed. Importing a file with three bad strings costs
+three strings, not the file.
+
+`translations/` is gitignored. It is a workspace, not source.
+
 ## Adding a language
 
-1. Add the tag to `LOCALES` in `locales.ts`, with its name in `LOCALE_NAMES`.
-   Use a region-qualified tag (`pt-PT`, not `pt`) whenever a second regional
-   variant is plausible — adding `pt-BR` later should not be a rename of every
-   file.
-2. Copy `ui/en.ts` to `ui/<tag>.ts` and translate it. Type it as
-   `UiDictionary`, not `typeof en`, so a partial catalogue compiles.
-3. Register it in the `CATALOGUES` map in `index.ts` and the `TRANSLATIONS`
-   map in `content/index.ts`.
-4. `npm run i18n:status` now reports it.
+1. Add the tag to `LOCALES` in `locales.ts`, with its name in `LOCALE_NAMES`
+   and `LOCALE_TAGS`. Use a region- or script-qualified tag whenever a second
+   variant is plausible — `pt-PT` not `pt`, `zh-Hant` not `zh`.
+2. Register it in `CATALOGUES` in `index.ts` and `TRANSLATIONS` in
+   `content/index.ts`.
+3. `npm run i18n:extract -- <tag>` — every file comes out with empty targets.
+4. Translate, then `npm run i18n:import -- <tag>`. The catalogue files and the
+   content index are generated for you.
 
 The language picker, the fallback behaviour and the "still being translated"
-notice all follow from those four steps. Nothing else needs touching.
+notice all follow. Nothing else needs touching.
+
+### Generated files, and what survives
+
+`i18n:import` rewrites everything **below** this marker in a catalogue file:
+
+```
+// ─── generated below · `npm run i18n:import` rewrites from here ───────────
+```
+
+Everything above it is preserved forever. That is where translator notes
+belong — the conventions a language has settled on (`tu` not `você`, the 1990
+spelling reform, which words keep their silent consonant) are worth more to
+the next person than the strings are. `ui/pt-PT.ts` and
+`content/pt-PT/start-here.ts` carry those notes.
+
+A file that exists with **no** marker makes the import **fail**, with an
+instruction to add one. The first version of this silently replaced such a
+file's header, which cost the European Portuguese notes on its first real run:
+nothing errored, the prose was simply gone. A tool whose purpose is preserving
+work should not be able to destroy it quietly.
+
+`content/<locale>/index.ts` is the exception — fully generated, with a
+do-not-edit banner. Its import list *is* the generated part, so a preserved
+region there would freeze the one thing that has to change.
 
 ### Ordering the work
 
-Translate **every module's title and description first** — 34 strings that
-make the whole learning path read in the new language — and only then whole
-modules. The alternative ordering leaves the home screen entirely in English
-for months while one module is perfect.
-
-`content/pt-PT/headings.ts` is that file for Portuguese; copy its shape.
+Translate the **`course` scope and every module's title and description
+first** — 36 strings that make the whole learning path read in the new
+language. Only then whole modules. The alternative ordering leaves the home
+screen entirely in English for months while one module is perfect.
 
 ---
 
@@ -194,18 +277,15 @@ directly.
 nothing reads it. Adding Arabic or Hebrew means auditing every `flexDirection`
 and every `marginLeft` first.
 
-**No translation-management integration.** `i18n:extract` produces JSON, which
-is what Crowdin, Lokalise and inlang all ingest, but there is no `i18n:import`
-to bring the work back. Today a translator cannot round-trip without someone
-pasting by hand — which is the difference between "a developer translates" and
-"translators translate", and the most valuable thing to build next.
+**No direct TMS sync.** The round-trip is files: extract, hand over, import.
+Crowdin, Lokalise and Weblate all ingest and emit this shape, but nothing
+pushes or pulls automatically — somebody moves the files. That is a small,
+well-understood gap, and it is now a convenience rather than a blocker.
 
-**Locale matching is simpler than BCP-47 lookup.** `resolveLocale` matches the
-full tag, then the base language. That is correct for `en` and `pt-PT` and
-would be wrong the day a script-variant language is added: `zh-Hant-TW` would
-match a `zh-Hans` catalogue, serving Simplified to a Traditional reader —
-worse than serving English. Adding Chinese, Serbian or Azerbaijani means
-implementing RFC 4647 lookup first.
+**No message extraction from source.** Catalogues are hand-authored; nothing
+scans components to discover a new string. The lint rule below is the
+compensating control — it fails the build on a string that never became a key
+— which catches the same problem from the other end.
 
 **The lint rule covers the app, not the website.** `web/`'s marketing pages
 are deliberately English-only, so the same rule there would be hundreds of
