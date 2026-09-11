@@ -174,6 +174,51 @@ found whether or not sign-in is configured. The project ref is.
 
 ---
 
+## Shipping without a build
+
+Most changes to this app are JavaScript: a lesson rewritten, a challenge fixed,
+a colour, a copy edit. Those go out with EAS Update and reach devices on the
+next launch, with no build, no upload and — once the app is on the store — no
+review.
+
+```bash
+npm run update:preview    # to internal builds
+npm run update:store      # to what TestFlight and the App Store are running
+```
+
+Both run the content validator first, and the production one runs the quality
+audit too, because an update needs no review and therefore has nothing else
+standing between a mistake and a learner.
+
+### What can and cannot ship this way
+
+| Change | OTA | Why |
+|---|---|---|
+| Lesson content, copy, styling | ✅ | It is all JavaScript and assets |
+| Engine, grading, providers | ✅ | Same bundle |
+| A new Expo module or native dependency | ❌ | The binary does not contain it |
+| Permissions, icons, splash, bundle id | ❌ | Native project configuration |
+| An SDK upgrade | ❌ | New native code throughout |
+
+**You do not have to remember this table.** `runtimeVersion` is set to the
+`fingerprint` policy, which hashes the native project: add a native module and
+the fingerprint changes, so the installed binary and the new update no longer
+match and the update is simply not offered to it. The failure mode this
+prevents is the ugly one — a JavaScript bundle calling into native code that
+is not in the app, which crashes on launch rather than erroring politely.
+
+The cost of that safety is that a native change makes every previously
+published update unreachable for the new binary, so a build and an update have
+to go out together. That is the correct trade.
+
+### Channels
+
+`eas.json` sets `channel: preview` and `channel: production` on those build
+profiles. A build listens to its channel for life; `eas update --channel
+production` reaches every build made from the production profile, which today
+means TestFlight and tomorrow means the App Store. There is no way to update a
+build that was made before channels existed, including build 9.
+
 ## Getting onto TestFlight
 
 The first thing to do, and the only realistic way to test on an iPhone: iOS
@@ -350,12 +395,17 @@ Turn sign-in on and three things become required at once:
 Preflight warns when the production profile has Supabase configured, for
 exactly this reason.
 
-### There is no way to fix a shipped build quickly
+### A native change still costs a full cycle
 
-No `expo-updates`, no OTA channel. Every fix — including a one-character typo
-in a lesson — is a new native build and a new review on both stores. That is a
-deliberate choice, but it means the review cycle *is* the release cycle. Budget
-for it.
+JavaScript fixes now ship over the air, so a typo in a lesson is minutes rather
+than days. Native changes are not: a new dependency, a permission, an icon or
+an SDK upgrade all need a build, an upload, and — on the store — a review on
+each platform.
+
+The trap is that the two look identical in a diff. `npm install` of something
+with native code is a native change; the fingerprint policy will catch it and
+refuse to serve the update, but only after you have published one that nobody
+receives. When in doubt, build.
 
 ### Review reads more surfaces than you think
 
