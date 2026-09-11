@@ -35,7 +35,9 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "@typescript-eslint/parser": "^8",
     "babel-preset-expo": "~57.0.0",
+    "eslint": "^9",
     "typescript": "~6.0.3",
     "typescript-native": "npm:typescript@~7.0.2"
   },
@@ -72,7 +74,8 @@
     "metadata:push": "npm run preflight:store -- --metadata && npx eas-cli@24 metadata:push",
     "metadata:pull": "npx eas-cli@24 metadata:pull",
     "i18n:status": "node ./scripts/i18n.mjs status",
-    "i18n:extract": "node ./scripts/i18n.mjs extract"
+    "i18n:extract": "node ./scripts/i18n.mjs extract",
+    "lint": "eslint app src"
   },
   "private": true,
   "description": "Duolingo-style micro-learning app teaching macroeconomics, monetary policy and fractional-reserve banking.",
