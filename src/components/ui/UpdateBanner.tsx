@@ -1,0 +1,61 @@
+/**
+ * "New lessons are ready" — shown on the learning path, never in a lesson.
+ *
+ * Deliberately a quiet strip rather than a modal. Nothing is wrong, nothing is
+ * urgent, and interrupting someone to tell them their course got better is a
+ * strange way to treat them. It also disappears on its own once applied,
+ * because a restart is the only outcome.
+ */
+
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { useContentUpdate } from '@/providers/ContentUpdateProvider';
+import { palette, radius, spacing, typography } from '@/theme/tokens';
+
+export function UpdateBanner() {
+  const { ready, applying, apply } = useContentUpdate();
+  if (!ready) return null;
+
+  return (
+    <View style={styles.wrap}>
+      <Text style={styles.text}>New lessons are ready.</Text>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Restart to load the new lessons"
+        accessibilityState={{ disabled: applying, busy: applying }}
+        disabled={applying}
+        hitSlop={8}
+        onPress={() => void apply()}
+      >
+        {applying ? (
+          <ActivityIndicator color={palette.mintDark} />
+        ) : (
+          <Text style={styles.action}>Restart</Text>
+        )}
+      </Pressable>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  wrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    marginBottom: spacing.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: palette.mintSoft,
+  },
+  text: {
+    ...typography.body,
+    color: palette.ink,
+    flexShrink: 1,
+  },
+  action: {
+    ...typography.bodyStrong,
+    color: palette.mintDark,
+  },
+});

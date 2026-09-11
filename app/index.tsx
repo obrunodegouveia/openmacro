@@ -12,6 +12,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { router } from 'expo-router';
 
 import { AccountBar } from '@/components/ui/AccountBar';
+import { UpdateBanner } from '@/components/ui/UpdateBanner';
 import { StreakBadge } from '@/components/ui/StatusPills';
 import { COURSE, MODULES } from '@openmacro/core/content/registry';
 import { useProgress } from '@/providers/ProgressProvider';
@@ -52,6 +53,8 @@ export default function LearningPathScreen() {
           )}
         </View>
       </View>
+
+      <UpdateBanner />
 
       <AccountBar />
 

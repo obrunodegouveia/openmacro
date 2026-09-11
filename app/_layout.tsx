@@ -16,6 +16,7 @@ import { MODULES } from '@openmacro/core/content/registry';
 import { validateModules } from '@openmacro/core/content/validate';
 import { preloadSounds, setHapticsEnabled, setSoundEnabled } from '@/feedback';
 import { AuthProvider } from '@/providers/AuthProvider';
+import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';
 import { palette } from '@/theme/tokens';
 
@@ -55,6 +56,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <AuthProvider>
+          <ContentUpdateProvider>
           <ProgressProvider>
             <StatusBar style="dark" />
             <Stack
@@ -71,6 +73,7 @@ export default function RootLayout() {
               />
             </Stack>
           </ProgressProvider>
+          </ContentUpdateProvider>
         </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

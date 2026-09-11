@@ -190,6 +190,45 @@ Both run the content validator first, and the production one runs the quality
 audit too, because an update needs no review and therefore has nothing else
 standing between a mistake and a learner.
 
+Merging content to `main` publishes to **preview automatically** —
+`.github/workflows/content-update.yml`, roughly two minutes. Production is
+never automatic: "it was on main" is not a good enough reason to put something
+in front of people when nothing else will check it. Promote deliberately, with
+`npm run update:store` or by running that workflow with `channel: production`.
+
+The workflow refuses to publish when `app.json`, `app.config.js` or a lockfile
+changed. Such an update reaches nothing — the fingerprint has moved, so no
+installed build matches it — and it would look like a successful deploy while
+being none.
+
+### Operating it
+
+| Command | |
+|---|---|
+| `npm run update:status` | Which branch each channel points at |
+| `npm run update:list` | The last ten updates |
+| `npm run update:rollback` | Put an earlier update back |
+| `npm run update:pause` | Stop production serving updates at all |
+| `npm run update:resume` | Start again |
+
+`update:pause` is the one to remember. If an update is doing damage and you are
+not sure which, pausing the channel stops the bleeding in seconds without
+needing to decide what to roll back to.
+
+### What a learner actually experiences
+
+The app never waits on the network to start: `fallbackToCacheTimeout: 0` means
+it launches on the bundle it has and fetches in the background. It checks on
+launch and again whenever it returns to the foreground, which matters because
+a phone rarely cold-starts anything.
+
+When an update is ready a quiet strip appears on the learning path — *New
+lessons are ready · Restart* — and the learner chooses. It is never applied
+during a lesson: `ContentUpdateProvider` refuses while the runner is mounted,
+because reloading restarts the JavaScript runtime and would discard hearts, XP
+and any answer in progress. To the learner that is indistinguishable from a
+crash.
+
 ### What can and cannot ship this way
 
 | Change | OTA | Why |

@@ -32,6 +32,7 @@ import {
   progressRatio,
 } from '@openmacro/core/engine/lessonSession';
 import { emitFeedback } from '@/feedback';
+import { useContentUpdate } from '@/providers/ContentUpdateProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
@@ -51,6 +52,20 @@ export default function LessonRunnerRoute() {
 function LessonRunner({ lesson }: { lesson: Lesson }) {
   const insets = useSafeAreaInsets();
   const { profile, recordResult } = useProgress();
+  const { setSafeToReload } = useContentUpdate();
+
+  /**
+   * Hold off any over-the-air update while a run is under way.
+   *
+   * Applying one restarts the JavaScript runtime, which would discard hearts,
+   * XP, the combo and any answer in progress — and to the learner it would
+   * look like the app crashed. The flag is cleared on unmount, so finishing,
+   * failing or backing out all release it.
+   */
+  useEffect(() => {
+    setSafeToReload(false);
+    return () => setSafeToReload(true);
+  }, [setSafeToReload]);
 
   const [state, dispatch] = useReducer(lessonSessionReducer, lesson, createSession);
   const [draft, setDraft] = useState<ChallengeAnswer | null>(null);

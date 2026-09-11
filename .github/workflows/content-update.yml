@@ -1,0 +1,92 @@
+# Publishes an over-the-air update when content changes land on `main`.
+#
+# This is the point of EAS Update for this project: a lesson is data, and data
+# should not need a twenty-minute native build and an App Store review to reach
+# anyone. Merge a lesson, and internal builds have it in about two minutes.
+#
+# It publishes to `preview` only. Production is a deliberate act, because an
+# update faces no review — there is nothing between a mistake and a learner
+# except the checks below, and "it was on main" is not a good enough reason to
+# put something in front of people. Promote with `npm run update:store`, or by
+# running this workflow manually with `channel: production`.
+#
+# Skips itself when a change touches native configuration, because such an
+# update cannot reach the builds that are out there anyway — the fingerprint
+# runtime version will have changed, and the right answer is a new build.
+#
+# Only first-party actions, matching ci.yml.
+name: Publish content update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/core/src/content/**'
+      - 'src/**'
+      - 'app/**'
+      - 'assets/**'
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Which channel to publish to
+        type: choice
+        options: [preview, production]
+        default: preview
+
+permissions:
+  contents: read
+
+concurrency:
+  group: content-update
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The update message quotes the commit, so the log needs to exist.
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # A native change cannot travel over the air. Publishing one produces an
+      # update that no installed build will ever be offered, which looks like a
+      # successful deploy and is not one.
+      - name: Refuse native changes
+        run: |
+          CHANGED=$(git diff --name-only HEAD^ HEAD || true)
+          if echo "$CHANGED" | grep -qE '^(app\.json|app\.config\.js|package\.json|package-lock\.json|babel\.config\.js|metro\.config\.js)$'; then
+            echo "::error::Native or dependency configuration changed — this needs a build, not an update."
+            echo "$CHANGED" | grep -E '^(app\.json|app\.config\.js|package\.json|package-lock\.json|babel\.config\.js|metro\.config\.js)$'
+            exit 1
+          fi
+
+      # The same gates as a build, because an update skips review entirely.
+      - name: Typecheck
+        run: |
+          npm run typecheck
+          npm run typecheck:core
+
+      - name: Validate content
+        run: npm run lint:content
+
+      - name: Audit content quality
+        run: npm run audit:content
+
+      - name: Publish
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          CHANNEL: ${{ inputs.channel || 'preview' }}
+        run: |
+          npx eas-cli@24 update \
+            --channel "$CHANNEL" \
+            --message "$(git log -1 --pretty=%s)" \
+            --non-interactive
