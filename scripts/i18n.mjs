@@ -66,6 +66,7 @@ const { buildDocument, readState, summarise, writeDocument, TRANSLATIONS_DIR } =
 const { collect, writeContentIndex, writeCourse, writeModule, writeState, writeUi } =
   await import('./i18n-import.mjs');
 const { fingerprint } = await import('./i18n-files.mjs');
+const { conventionWarnings } = await import('./i18n-orthography.mjs');
 
 const [command = 'status', ...rest] = process.argv.slice(2);
 
@@ -202,6 +203,16 @@ if (command === 'import') {
   if (skipped.length) {
     console.log('');
     console.log(`  ${skipped.length} untranslated — left to fall back to English.`);
+  }
+
+  const convention = conventionWarnings(locale, accepted);
+  if (convention.length) {
+    console.log('');
+    console.log(`  ${convention.length} spelling warning${convention.length === 1 ? '' : 's'} (imported anyway):`);
+    for (const { scope, key, words } of convention.slice(0, 15)) {
+      console.log(`    ${scope}/${key} — ${words.join(', ')}`);
+    }
+    if (convention.length > 15) console.log(`    … and ${convention.length - 15} more`);
   }
 
   if (rejected.length) {
