@@ -23,6 +23,7 @@ import {
 } from '../content/schema';
 import type { ChallengeAnswer } from './answers';
 import { gradeChallenge, type GradeResult } from './grading';
+import type { Translator } from '../i18n';
 
 export type SessionStatus = 'in_progress' | 'complete' | 'failed';
 
@@ -61,7 +62,16 @@ export interface LessonSessionState {
 }
 
 export type LessonSessionAction =
-  | { kind: 'submit'; answer: ChallengeAnswer }
+  /**
+   * Grade an answer.
+   *
+   * `t` carries the learner's language to the feedback copy. It rides on the
+   * action rather than living in session state deliberately: the reducer stays
+   * a pure function of (state, action) with no captured locale, and a learner
+   * who switches language mid-lesson gets the new one on the very next answer
+   * instead of having to leave and come back.
+   */
+  | { kind: 'submit'; answer: ChallengeAnswer; t?: Translator }
   | { kind: 'continue' }
   | { kind: 'restart' }
   /**
@@ -148,7 +158,7 @@ export function lessonSessionReducer(
       const challenge = currentChallenge(state);
       if (!challenge) return state;
 
-      const result = gradeChallenge(challenge, action.answer);
+      const result = gradeChallenge(challenge, action.answer, action.t);
       const firstAttempt = !state.missed.includes(challenge.id);
 
       if (result.correct) {

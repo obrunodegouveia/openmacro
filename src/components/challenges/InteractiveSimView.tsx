@@ -21,6 +21,7 @@ import {
   initialSliderValues,
   observationKey,
 } from '@openmacro/core/engine/simulation';
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import { formatValue, snapToStep } from '@openmacro/core/format';
 
@@ -29,6 +30,7 @@ export function InteractiveSimView({
   onAnswerChange,
   locked,
 }: ChallengeComponentProps<'interactive_sim'>) {
+  const { t } = useLocale();
   const currency = challenge.currency ?? 'USD';
   const [values, setValues] = useState<Record<string, number>>(() => ({
     ...initialSliderValues(challenge),
@@ -171,7 +173,7 @@ export function InteractiveSimView({
 
       {/* ---- objective checklist --------------------------------------- */}
       <View style={styles.objective}>
-        <Text style={styles.objectiveHeading}>Your goal</Text>
+        <Text style={styles.objectiveHeading}>{t('challenge.sim.goal')}</Text>
         {objectiveSteps.map((step) => (
           <View key={step.id} style={styles.objectiveRow}>
             <View style={[styles.checkbox, step.done && styles.checkboxDone]}>

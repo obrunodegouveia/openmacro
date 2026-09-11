@@ -10,18 +10,20 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useContentUpdate } from '@/providers/ContentUpdateProvider';
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 export function UpdateBanner() {
   const { ready, applying, apply } = useContentUpdate();
+  const { t } = useLocale();
   if (!ready) return null;
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.text}>New lessons are ready.</Text>
+      <Text style={styles.text}>{t('update.ready')}</Text>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Restart to load the new lessons"
+        accessibilityLabel={t('update.restartA11y')}
         accessibilityState={{ disabled: applying, busy: applying }}
         disabled={applying}
         hitSlop={8}
@@ -30,7 +32,7 @@ export function UpdateBanner() {
         {applying ? (
           <ActivityIndicator color={palette.mintDark} />
         ) : (
-          <Text style={styles.action}>Restart</Text>
+          <Text style={styles.action}>{t('update.restart')}</Text>
         )}
       </Pressable>
     </View>

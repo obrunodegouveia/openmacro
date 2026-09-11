@@ -21,7 +21,6 @@ import { ActionButton } from '@/components/ui/ActionButton';
 import { FeedbackSheet } from '@/components/ui/FeedbackSheet';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { ComboPill, HeartsIndicator, StreakBadge } from '@/components/ui/StatusPills';
-import { getLessonById, getNextLesson } from '@openmacro/core/content/registry';
 import type { Lesson } from '@openmacro/core/content/schema';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
 import {
@@ -32,18 +31,28 @@ import {
 } from '@openmacro/core/engine/lessonSession';
 import { emitFeedback } from '@/feedback';
 import { useContentUpdate } from '@/providers/ContentUpdateProvider';
+import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 export default function LessonRunnerRoute() {
   const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
-  const lesson = lessonId ? getLessonById(lessonId) : undefined;
+  const { locale, lessonById } = useLocale();
+  const lesson = lessonId ? lessonById(lessonId) : undefined;
 
   if (!lesson) {
     return <LessonNotFound lessonId={lessonId} />;
   }
-  // Keyed on the lesson so navigating between lessons starts a fresh session.
-  return <LessonRunner key={lesson.id} lesson={lesson} />;
+  /**
+   * Keyed on the lesson *and the language*.
+   *
+   * The session reducer copies the lesson into its own state at
+   * `createSession`, so switching language mid-run would otherwise leave the
+   * old language's questions on screen until the learner left and came back.
+   * Remounting restarts the run, which is the honest outcome: the answers
+   * given were to different words.
+   */
+  return <LessonRunner key={`${lesson.id}#${locale}`} lesson={lesson} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -52,6 +61,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
   const insets = useSafeAreaInsets();
   const { profile, recordResult } = useProgress();
   const { setSafeToReload } = useContentUpdate();
+  const { t } = useLocale();
 
   /**
    * Hold off any over-the-air update while a run is under way.
@@ -120,8 +130,10 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
 
   const handleCheck = useCallback(() => {
     if (!draft) return;
-    dispatch({ kind: 'submit', answer: draft });
-  }, [draft]);
+    // `t` rides along so the feedback sheet's generated copy — "Not quite",
+    // "You matched 3 of 4 pairs" — is in the learner's language too.
+    dispatch({ kind: 'submit', answer: draft, t });
+  }, [draft, t]);
 
   const handleContinue = useCallback(() => {
     emitFeedback('advance');
@@ -171,7 +183,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
       <View style={styles.header}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Exit lesson"
+          accessibilityLabel={t('lesson.exit')}
           hitSlop={12}
           onPress={handleExit}
         >
@@ -237,7 +249,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
           style={[styles.footer, { paddingBottom: Math.max(insets.bottom, spacing.lg) }]}
         >
           <ActionButton
-            label="Check"
+            label={t('lesson.check')}
             onPress={handleCheck}
             disabled={!draft}
             tone={draft ? 'primary' : 'ghost'}
@@ -253,7 +265,11 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
           explanation={state.feedback.explanation}
           detail={state.feedback.detail}
           continueLabel={
-            state.feedback.correct ? 'Continue' : state.hearts > 0 ? 'Got it' : 'Out of hearts'
+            state.feedback.correct
+              ? t('lesson.continue')
+              : state.hearts > 0
+                ? t('lesson.gotIt')
+                : t('lesson.outOfHearts')
           }
           onContinue={handleContinue}
           onHeightChange={setSheetHeight}
@@ -285,7 +301,8 @@ function LessonComplete({
   onRestart,
 }: LessonCompleteProps) {
   const insets = useSafeAreaInsets();
-  const nextLesson = getNextLesson(lesson.id);
+  const { t, nextLesson: findNext } = useLocale();
+  const nextLesson = findNext(lesson.id);
 
   return (
     <ScrollView
@@ -297,18 +314,20 @@ function LessonComplete({
     >
       <Animated.View entering={FadeIn.duration(300)} style={styles.endHeader}>
         <Text style={styles.endEmoji}>{perfect ? '🏆' : '🎉'}</Text>
-        <Text style={styles.endTitle}>{perfect ? 'Flawless run!' : 'Lesson complete'}</Text>
+        <Text style={styles.endTitle}>
+          {perfect ? t('complete.flawless') : t('complete.title')}
+        </Text>
         <Text style={styles.endSubtitle}>{lesson.title}</Text>
       </Animated.View>
 
       <View style={styles.statRow}>
-        <Stat label="XP earned" value={`+${xpEarned}`} tone={palette.mintDark} />
-        <Stat label="Best combo" value={`${bestCombo}`} tone={palette.goldDark} />
+        <Stat label={t('complete.xpEarned')} value={`+${xpEarned}`} tone={palette.mintDark} />
+        <Stat label={t('complete.bestCombo')} value={`${bestCombo}`} tone={palette.goldDark} />
       </View>
 
       {lesson.keyTakeaways?.length ? (
         <View style={styles.takeaways}>
-          <Text style={styles.takeawaysHeading}>What you just learned</Text>
+          <Text style={styles.takeawaysHeading}>{t('complete.takeaways')}</Text>
           {lesson.keyTakeaways.map((takeaway) => (
             <View key={takeaway} style={styles.takeawayRow}>
               <Text style={styles.takeawayBullet}>•</Text>
@@ -320,11 +339,11 @@ function LessonComplete({
 
       <View style={styles.endActions}>
         <ActionButton
-          label={nextLesson ? 'Back to path' : 'Finish'}
+          label={nextLesson ? t('complete.backToPath') : t('complete.finish')}
           onPress={onExit}
           tone="primary"
         />
-        <ActionButton label="Practise again" onPress={onRestart} tone="ghost" />
+        <ActionButton label={t('complete.again')} onPress={onRestart} tone="ghost" />
       </View>
     </ScrollView>
   );
@@ -340,6 +359,7 @@ function LessonFailed({
   onRestart: () => void;
 }) {
   const insets = useSafeAreaInsets();
+  const { t } = useLocale();
 
   return (
     <View
@@ -351,15 +371,15 @@ function LessonFailed({
     >
       <Animated.View entering={FadeIn.duration(300)} style={styles.endHeader}>
         <Text style={styles.endEmoji}>💔</Text>
-        <Text style={styles.endTitle}>Out of hearts</Text>
+        <Text style={styles.endTitle}>{t('failed.title')}</Text>
         <Text style={styles.endSubtitle}>
-          No shame in it — {lesson.title.toLowerCase()} trips up most people the first time.
+          {t('failed.body', { lesson: lesson.title.toLowerCase() })}
         </Text>
       </Animated.View>
 
       <View style={styles.endActions}>
-        <ActionButton label="Try again" onPress={onRestart} tone="danger" />
-        <ActionButton label="Back to path" onPress={onExit} tone="ghost" />
+        <ActionButton label={t('failed.retry')} onPress={onRestart} tone="danger" />
+        <ActionButton label={t('complete.backToPath')} onPress={onExit} tone="ghost" />
       </View>
     </View>
   );
@@ -367,15 +387,17 @@ function LessonFailed({
 
 function LessonNotFound({ lessonId }: { lessonId?: string }) {
   const insets = useSafeAreaInsets();
+  const { t } = useLocale();
   return (
     <View style={[styles.screen, styles.endContent, { paddingTop: insets.top + spacing.xxxl }]}>
       <Text style={styles.endEmoji}>🤔</Text>
-      <Text style={styles.endTitle}>Lesson not found</Text>
-      <Text style={styles.endSubtitle}>
-        No lesson is registered with the id “{lessonId ?? 'unknown'}”. Check
-        src/content/registry.ts.
-      </Text>
-      <ActionButton label="Back to path" onPress={() => router.replace('/')} tone="ghost" />
+      <Text style={styles.endTitle}>{t('notFound.title')}</Text>
+      <Text style={styles.endSubtitle}>{t('notFound.body', { id: lessonId ?? '—' })}</Text>
+      <ActionButton
+        label={t('complete.backToPath')}
+        onPress={() => router.replace('/')}
+        tone="ghost"
+      />
     </View>
   );
 }

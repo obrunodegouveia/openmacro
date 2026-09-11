@@ -13,6 +13,7 @@ import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 
 import type { ChallengeComponentProps } from '@/components/challenges/types';
 import { emitFeedback } from '@/feedback';
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import { seededShuffle } from '@openmacro/core/format';
 
@@ -24,6 +25,7 @@ export function ConceptMatchView({
   onAnswerChange,
   locked,
 }: ChallengeComponentProps<'concept_match'>) {
+  const { t } = useLocale();
   /** term pair id -> definition pair id */
   const [pairings, setPairings] = useState<Record<string, string>>({});
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
@@ -104,7 +106,7 @@ export function ConceptMatchView({
     <View style={styles.columns}>
       {/* ---------------------------------------------------------------- */}
       <View style={styles.column}>
-        <Text style={styles.columnHeading}>Term</Text>
+        <Text style={styles.columnHeading}>{t('challenge.match.term')}</Text>
         {terms.map((pair) => {
           const linked = pairings[pair.id];
           const isActive = activeTerm === pair.id;
@@ -117,7 +119,7 @@ export function ConceptMatchView({
               <Pressable
                 accessibilityRole="button"
                 accessibilityState={{ selected: isActive || Boolean(linked), disabled: locked }}
-                accessibilityHint="Tap, then tap a definition to link them"
+                accessibilityHint={t('challenge.match.hint')}
                 onPress={() => handleTermPress(pair.id)}
                 disabled={locked}
                 style={[
@@ -138,7 +140,7 @@ export function ConceptMatchView({
 
       {/* ---------------------------------------------------------------- */}
       <View style={styles.column}>
-        <Text style={styles.columnHeading}>Means</Text>
+        <Text style={styles.columnHeading}>{t('challenge.match.means')}</Text>
         {definitions.map((pair) => {
           const linkedTerm = reverse[pair.id];
           const isRight = locked && linkedTerm === pair.id;

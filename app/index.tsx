@@ -12,9 +12,11 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { router } from 'expo-router';
 
 import { AccountBar } from '@/components/ui/AccountBar';
+import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { UpdateBanner } from '@/components/ui/UpdateBanner';
 import { StreakBadge } from '@/components/ui/StatusPills';
-import { COURSE, MODULES } from '@openmacro/core/content/registry';
+import { interpolate } from '@/i18n/interpolate';
+import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import type { Lesson } from '@openmacro/core/content/schema';
@@ -22,6 +24,9 @@ import type { Lesson } from '@openmacro/core/content/schema';
 export default function LearningPathScreen() {
   const insets = useSafeAreaInsets();
   const { profile, progress, loading, error, isLessonComplete } = useProgress();
+  // The course arrives already translated; nothing below knows which language
+  // it is in, which is what keeps the screen free of `locale ===` branches.
+  const { t, course, modules } = useLocale();
 
   return (
     <ScrollView
@@ -35,7 +40,7 @@ export default function LearningPathScreen() {
       <View style={styles.header}>
         <View style={styles.headerText}>
           <Text style={styles.brand}>OpenMacro</Text>
-          <Text style={styles.tagline}>{COURSE.description}</Text>
+          <Text style={styles.tagline}>{course.description}</Text>
         </View>
         <View style={styles.headerStats}>
           {loading ? (
@@ -47,7 +52,7 @@ export default function LearningPathScreen() {
                 active={profile?.streakActiveToday ?? false}
               />
               <View style={styles.xpPill}>
-                <Text style={styles.xpText}>{profile?.totalXp ?? 0} XP</Text>
+                <Text style={styles.xpText}>{t('path.xp', { count: profile?.totalXp ?? 0 })}</Text>
               </View>
             </Fragment>
           )}
@@ -65,14 +70,16 @@ export default function LearningPathScreen() {
       ) : null}
 
       {/* ---- modules --------------------------------------------------- */}
-      {MODULES.map((module, moduleIndex) => (
+      {modules.map((module, moduleIndex) => (
         <Animated.View
           key={module.id}
           entering={FadeInDown.delay(moduleIndex * 80).duration(280)}
           style={styles.module}
         >
           <View style={styles.moduleHeader}>
-            <Text style={styles.moduleEyebrow}>Module {moduleIndex + 1}</Text>
+            <Text style={styles.moduleEyebrow}>
+              {t('path.module', { number: moduleIndex + 1 })}
+            </Text>
             <Text style={styles.moduleTitle}>{module.title}</Text>
             <Text style={styles.moduleDescription}>{module.description}</Text>
           </View>
@@ -90,13 +97,16 @@ export default function LearningPathScreen() {
 
       {/* ---- contributor call to action -------------------------------- */}
       <View style={styles.contributeCard}>
-        <Text style={styles.contributeTitle}>More lessons coming</Text>
+        <Text style={styles.contributeTitle}>{t('path.contribute.title')}</Text>
         <Text style={styles.contributeBody}>
-          OpenMacro is open source. A lesson is a single TypeScript file — drop yours into{' '}
-          <Text style={styles.code}>src/content/lessons/</Text>, register it in{' '}
-          <Text style={styles.code}>src/content/registry.ts</Text> and it appears right here.
+          {interpolate(t('path.contribute.body'), {
+            lessons: <Text style={styles.code}>src/content/lessons/</Text>,
+            registry: <Text style={styles.code}>src/content/registry.ts</Text>,
+          })}
         </Text>
       </View>
+
+      <LanguagePicker />
 
       <ResetProgressButton />
     </ScrollView>
@@ -116,6 +126,7 @@ export default function LearningPathScreen() {
  */
 function ResetProgressButton() {
   const { reset } = useProgress();
+  const { t } = useLocale();
   const [armed, setArmed] = useState(false);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -137,13 +148,13 @@ function ResetProgressButton() {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={armed ? 'Tap again to confirm resetting progress' : 'Reset progress'}
+      accessibilityLabel={armed ? t('path.reset.armedA11y') : t('path.reset')}
       hitSlop={8}
       onPress={handlePress}
       style={styles.reset}
     >
       <Text style={[styles.resetText, armed && styles.resetTextArmed]}>
-        {armed ? 'Tap again to erase all progress' : 'Reset progress'}
+        {armed ? t('path.reset.armed') : t('path.reset')}
       </Text>
     </Pressable>
   );
@@ -158,6 +169,7 @@ interface LessonCardProps {
 }
 
 function LessonCard({ lesson, complete, bestXp }: LessonCardProps) {
+  const { t } = useLocale();
   // Navigating imperatively rather than with <Link asChild>: the `asChild`
   // clone does not forward a function-form `style` to the child on web, which
   // silently strips the card's styling there.
@@ -167,7 +179,7 @@ function LessonCard({ lesson, complete, bestXp }: LessonCardProps) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Start lesson: ${lesson.title}`}
+      accessibilityLabel={t('path.lesson.open', { title: lesson.title })}
       onPress={open}
       style={({ pressed }) => [styles.lessonCard, pressed && styles.lessonCardPressed]}
     >
@@ -181,13 +193,19 @@ function LessonCard({ lesson, complete, bestXp }: LessonCardProps) {
           {lesson.subtitle}
         </Text>
         <View style={styles.lessonMetaRow}>
-          <Text style={styles.lessonMeta}>{lesson.estimatedMinutes} min</Text>
+          <Text style={styles.lessonMeta}>
+            {t('path.lesson.minutes', { count: lesson.estimatedMinutes })}
+          </Text>
           <Text style={styles.lessonMetaDot}>·</Text>
-          <Text style={styles.lessonMeta}>{lesson.challenges.length} steps</Text>
+          <Text style={styles.lessonMeta}>
+            {t('path.lesson.steps', { count: lesson.challenges.length })}
+          </Text>
           {complete ? (
             <Fragment>
               <Text style={styles.lessonMetaDot}>·</Text>
-              <Text style={[styles.lessonMeta, styles.lessonMetaDone]}>{bestXp} XP best</Text>
+              <Text style={[styles.lessonMeta, styles.lessonMetaDone]}>
+                {t('path.lesson.best', { count: bestXp })}
+              </Text>
             </Fragment>
           ) : null}
         </View>

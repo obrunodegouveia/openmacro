@@ -3,6 +3,7 @@ import { GithubIcon } from "@/components/ui/icons";
 import Link from "next/link";
 import { AccountPanel } from "@/components/site/account-button";
 import { Badge } from "@/components/ui/badge";
+import { LanguagePicker } from "@/components/site/language-picker";
 import {
   GITHUB_CONTRIBUTING_URL,
   GITHUB_ISSUES_URL,
@@ -120,7 +121,8 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <LanguagePicker />
             <Badge tone="mint">
               <Scale className="size-3" aria-hidden />
               MIT

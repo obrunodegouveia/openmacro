@@ -18,6 +18,7 @@ import {
   isObjectiveComplete,
 } from './simulation';
 import { describeVerdict, evaluateTAccount } from './tAccounts';
+import { englishTranslator, pickVariant, type Translator } from '../i18n';
 
 export interface GradeResult {
   correct: boolean;
@@ -32,21 +33,19 @@ export interface GradeResult {
   detail?: string;
 }
 
-const CORRECT_TITLES = ['Spot on!', 'Exactly right', 'Nailed it', 'That’s it'] as const;
-const INCORRECT_TITLES = ['Not quite', 'Close, but no', 'Let’s look again'] as const;
+/** How many phrasings English offers for each verdict. See `pickVariant`. */
+const CORRECT_VARIANTS = 4;
+const INCORRECT_VARIANTS = 3;
 
 /**
  * Deterministic title picker — varies the copy so a long lesson does not read
  * like a broken record, without introducing randomness that would make the UI
  * impossible to snapshot-test.
  */
-function pickTitle(correct: boolean, seed: string): string {
-  const pool = correct ? CORRECT_TITLES : INCORRECT_TITLES;
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 997;
-  }
-  return pool[hash % pool.length] as string;
+function pickTitle(t: Translator, correct: boolean, seed: string): string {
+  return correct
+    ? pickVariant(t, 'grade.correct', CORRECT_VARIANTS, seed)
+    : pickVariant(t, 'grade.incorrect', INCORRECT_VARIANTS, seed);
 }
 
 /** Exhaustiveness guard: adding a challenge type without a case fails to compile. */
@@ -54,7 +53,25 @@ function assertNever(value: never, context: string): never {
   throw new Error(`[OpenMacro] Unhandled ${context}: ${JSON.stringify(value)}`);
 }
 
-export function gradeChallenge(challenge: Challenge, answer: ChallengeAnswer): GradeResult {
+/**
+ * Grade an answer and produce the copy the feedback sheet shows.
+ *
+ * The `t` argument is what makes the sheet speak the learner's language. It
+ * defaults to English so every existing caller — and every test — keeps
+ * working unchanged, but the app always passes its own, because the alternative
+ * is a Portuguese lesson whose corrections arrive in English.
+ *
+ * Note what is *not* translated here: `challenge.explanation`, and the option
+ * feedback, come from the content overlay rather than the UI catalogue. Those
+ * are the lesson, not the interface, and they are translated in
+ * `packages/core/src/i18n/content` — by the time grading sees a challenge it
+ * has already been localised.
+ */
+export function gradeChallenge(
+  challenge: Challenge,
+  answer: ChallengeAnswer,
+  t: Translator = englishTranslator,
+): GradeResult {
   if (challenge.type !== answer.type) {
     throw new Error(
       `[OpenMacro] Answer type "${answer.type}" does not match challenge type "${challenge.type}".`,
@@ -69,7 +86,7 @@ export function gradeChallenge(challenge: Challenge, answer: ChallengeAnswer): G
       const chosen = challenge.options.find((option) => option.id === optionId);
       return {
         correct,
-        title: pickTitle(correct, challenge.id),
+        title: pickTitle(t, correct, challenge.id),
         explanation: challenge.explanation,
         detail: correct ? undefined : chosen?.feedback,
       };
@@ -85,9 +102,9 @@ export function gradeChallenge(challenge: Challenge, answer: ChallengeAnswer): G
       const correct = matched === total;
       return {
         correct,
-        title: pickTitle(correct, challenge.id),
+        title: pickTitle(t, correct, challenge.id),
         explanation: challenge.explanation,
-        detail: correct ? undefined : `You matched ${matched} of ${total} pairs.`,
+        detail: correct ? undefined : t('grade.match.partial', { matched, total }),
       };
     }
 
@@ -105,13 +122,13 @@ export function gradeChallenge(challenge: Challenge, answer: ChallengeAnswer): G
         if (firstWrong >= 0) {
           const expectedEvent = challenge.events.find((event) => event.id === expected[firstWrong]);
           detail = expectedEvent
-            ? `Step ${firstWrong + 1} should be "${expectedEvent.label}".`
+            ? t('grade.order.step', { number: firstWrong + 1, label: expectedEvent.label })
             : undefined;
         }
       }
       return {
         correct,
-        title: pickTitle(correct, challenge.id),
+        title: pickTitle(t, correct, challenge.id),
         explanation: challenge.explanation,
         detail,
       };
@@ -134,11 +151,9 @@ export function gradeChallenge(challenge: Challenge, answer: ChallengeAnswer): G
       const remaining = steps.filter((step) => !step.done).length;
       return {
         correct,
-        title: pickTitle(correct, challenge.id),
+        title: pickTitle(t, correct, challenge.id),
         explanation: challenge.explanation,
-        detail: correct
-          ? undefined
-          : `${remaining} objective${remaining === 1 ? '' : 's'} still open.`,
+        detail: correct ? undefined : t('grade.sim.open', { count: remaining }),
       };
     }
 
@@ -148,9 +163,9 @@ export function gradeChallenge(challenge: Challenge, answer: ChallengeAnswer): G
       const verdict = evaluateTAccount(challenge, shifts);
       return {
         correct: verdict.correct,
-        title: pickTitle(verdict.correct, challenge.id),
+        title: pickTitle(t, verdict.correct, challenge.id),
         explanation: challenge.explanation,
-        detail: describeVerdict(challenge, verdict),
+        detail: describeVerdict(challenge, verdict, t),
       };
     }
 

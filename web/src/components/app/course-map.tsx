@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { ArrowRight, Check, Clock, Coins, Play, RotateCcw, Trophy } from "lucide-react";
-import { DEFAULT_CHALLENGE_XP, MODULES } from "@openmacro/core/content";
+import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content";
+import { useLocale } from "@/components/site/locale-provider";
 import type { Lesson } from "@openmacro/core/content/schema";
 import type { LessonProgress } from "@openmacro/core/progress/types";
 import { useProgressSnapshot } from "@/lib/use-progress";
@@ -25,7 +26,8 @@ import { cn } from "@/lib/utils";
  */
 export function CourseMap() {
   const { snapshot, state } = useProgressSnapshot();
-  const all = MODULES.flatMap((module) => module.lessons);
+  const { t, modules } = useLocale();
+  const all = modules.flatMap((module) => module.lessons);
   const done = snapshot
     ? all.filter((lesson) => snapshot.progress[lesson.id]).length
     : 0;
@@ -36,10 +38,12 @@ export function CourseMap() {
     <div>
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="font-display text-2xl font-extrabold tracking-tight">
-          Play a lesson
+          {t("map.title")}
         </h2>
         <p className="text-xs font-bold text-ink-faint">
-          {ready ? `${done} of ${all.length} finished` : `${all.length} live · more shipping`}
+          {ready
+            ? t("map.finished", { done, total: all.length })
+            : t("map.live", { count: all.length })}
         </p>
       </div>
 
@@ -54,7 +58,7 @@ export function CourseMap() {
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-xs font-extrabold uppercase tracking-wider text-mint-bright">
-              Pick up where you left off
+              {t("map.resume")}
             </span>
             <span className="mt-0.5 block truncate font-display font-extrabold text-ink">
               {resume.title}
@@ -68,7 +72,7 @@ export function CourseMap() {
       ) : null}
 
       <div className="mt-6 flex flex-col gap-8">
-        {MODULES.map((module) => {
+        {modules.map((module) => {
           const moduleDone = module.lessons.filter(
             (lesson) => snapshot?.progress[lesson.id],
           ).length;
@@ -132,6 +136,7 @@ function LessonCard({
   lesson: Lesson;
   record?: LessonProgress;
 }) {
+  const { t } = useLocale();
   const xp = lesson.challenges.reduce(
     (sum, challenge) => sum + (challenge.xp ?? DEFAULT_CHALLENGE_XP),
     0,
@@ -180,21 +185,23 @@ function LessonCard({
                 ) : (
                   <RotateCcw className="size-3" aria-hidden />
                 )}
-                Best {record.bestXp} / {xp} XP
+                {t("map.best", { best: record.bestXp, total: xp })}
               </span>
-              {record.completions > 1 ? <span>{record.completions} runs</span> : null}
+              {record.completions > 1 ? (
+                <span>{t("map.runs", { count: record.completions })}</span>
+              ) : null}
             </>
           ) : (
             <>
               <span className="inline-flex items-center gap-1">
                 <Clock className="size-3" aria-hidden />
-                {lesson.estimatedMinutes} min
+                {t("path.lesson.minutes", { count: lesson.estimatedMinutes })}
               </span>
               <span className="inline-flex items-center gap-1">
                 <Coins className="size-3" aria-hidden />
-                {xp} XP
+                {t("path.xp", { count: xp })}
               </span>
-              <span className="capitalize">{lesson.difficulty}</span>
+              <span>{t(`difficulty.${lesson.difficulty}`)}</span>
             </>
           )}
           <span className="ml-auto inline-flex items-center gap-1 text-mint-bright opacity-0 transition-opacity group-hover:opacity-100">
