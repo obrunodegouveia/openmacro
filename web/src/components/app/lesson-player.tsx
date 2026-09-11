@@ -25,6 +25,7 @@ import {
 } from "@openmacro/core/engine/lessonSession";
 import { Button } from "@/components/ui/button";
 import { ChallengeView } from "@/components/challenges/challenge-view";
+import { ModuleVideo } from "@/components/app/module-video";
 import { useAuth } from "@/components/site/auth-provider";
 import { getSupabase } from "@/lib/supabase";
 import { recordCompletion } from "@/lib/progress";
@@ -173,6 +174,18 @@ export function LessonPlayer({
               </span>
             </p>
           </header>
+        ) : null}
+
+        {/*
+          Lessons built around somebody else's video show it before the
+          questions, and only before they start — once answering is under way
+          it would be the largest thing on screen and the least useful.
+          Reuses ModuleVideo, so nothing reaches Google until play is pressed.
+        */}
+        {!started && lesson.video ? (
+          <div className="mb-6">
+            <ModuleVideo video={lesson.video} moduleTitle={lesson.title} />
+          </div>
         ) : null}
 
         <AnimatePresence mode="wait">

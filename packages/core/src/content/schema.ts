@@ -357,6 +357,16 @@ export type ChallengeOf<T extends ChallengeType> = Extract<Challenge, { type: T 
 export interface Lesson {
   /** Globally unique, kebab-case. Used in the URL: /lesson/[lessonId]. */
   id: string;
+  /**
+   * A video to watch before the challenges, when the lesson is built around
+   * one. Same shape as a module's overview video, and rendered the same way:
+   * nothing loads from Google until the learner presses play.
+   *
+   * Absent on the great majority of lessons, which teach through the
+   * challenges themselves. Present where the lesson exists to frame somebody
+   * else's video — see the Khan Academy banking module.
+   */
+  video?: ModuleVideo;
   title: string;
   /** One-line promise of what the learner will understand afterwards. */
   subtitle: string;
@@ -391,6 +401,13 @@ export interface Module {
 }
 
 /** A watch-first overview for a module. */
+/**
+ * A video attached to a module or a lesson.
+ *
+ * Named for its first use — a module overview — and kept that way rather than
+ * renamed, because the shape is identical and a rename would touch every
+ * module file for no gain.
+ */
 export interface ModuleVideo {
   /** Full https URL. YouTube is what the player understands today. */
   url: string;

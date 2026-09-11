@@ -68,7 +68,7 @@ export function ModuleVideo({
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 text-xs font-bold text-ink-faint">
         <span className="text-ink">Watch this first</span>
         {video.minutes ? <span>{video.minutes} min</span> : null}
-        {video.source ? <span>Narration generated with {video.source}</span> : null}
+        {video.source ? <span>{video.source}</span> : null}
         {!playing ? <span className="text-ink-faint">Nothing loads until you press play</span> : null}
       </p>
     </div>
