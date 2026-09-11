@@ -86,7 +86,10 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           CHANNEL: ${{ inputs.channel || 'preview' }}
         run: |
+          # --environment resolves EXPO_PUBLIC_* for the bundle. Without it an
+          # update can ship with no Supabase configuration and no error.
           npx eas-cli@24 update \
             --channel "$CHANNEL" \
+            --environment "$CHANNEL" \
             --message "$(git log -1 --pretty=%s)" \
             --non-interactive

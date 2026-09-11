@@ -15,6 +15,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 // ---------------------------------------------------------------------------
@@ -27,6 +28,7 @@ export interface HeartsIndicatorProps {
 }
 
 function HeartsIndicatorComponent({ hearts, maxHearts }: HeartsIndicatorProps) {
+  const { t } = useLocale();
   const scale = useSharedValue(1);
   const previous = useSharedValue(hearts);
 
@@ -45,7 +47,7 @@ function HeartsIndicatorComponent({ hearts, maxHearts }: HeartsIndicatorProps) {
 
   return (
     <Animated.View
-      accessibilityLabel={`${hearts} of ${maxHearts} hearts remaining`}
+      accessibilityLabel={t('lesson.hearts', { count: hearts, max: maxHearts })}
       style={[styles.pill, animatedStyle]}
     >
       <Text style={styles.icon}>{hearts > 0 ? '❤️' : '💔'}</Text>
@@ -67,8 +69,9 @@ export interface StreakBadgeProps {
 }
 
 function StreakBadgeComponent({ streak, active = true }: StreakBadgeProps) {
+  const { t } = useLocale();
   return (
-    <View accessibilityLabel={`${streak} day streak`} style={styles.pill}>
+    <View accessibilityLabel={t('path.streak', { count: streak })} style={styles.pill}>
       <Text style={[styles.icon, !active && styles.inactiveIcon]}>🔥</Text>
       <Text style={[styles.value, { color: active ? palette.goldDark : palette.inkFaint }]}>
         {streak}
@@ -88,6 +91,7 @@ export interface ComboPillProps {
 }
 
 function ComboPillComponent({ combo }: ComboPillProps) {
+  const { t } = useLocale();
   const scale = useSharedValue(0);
 
   useEffect(() => {
@@ -110,7 +114,7 @@ function ComboPillComponent({ combo }: ComboPillProps) {
       accessibilityElementsHidden={!visible}
       importantForAccessibility={visible ? 'yes' : 'no-hide-descendants'}
     >
-      <Text style={styles.comboText}>{combo} in a row</Text>
+      <Text style={styles.comboText}>{t('lesson.combo', { count: combo })}</Text>
     </Animated.View>
   );
 }

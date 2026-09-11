@@ -14,7 +14,6 @@ import {
   RotateCcw,
   X,
 } from "lucide-react";
-import { MODULES } from "@openmacro/core/content";
 import type { Lesson } from "@openmacro/core/content/schema";
 import type { ChallengeAnswer } from "@openmacro/core/engine/answers";
 import {
@@ -27,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { ChallengeView } from "@/components/challenges/challenge-view";
 import { ModuleVideo } from "@/components/app/module-video";
 import { useAuth } from "@/components/site/auth-provider";
+import { useLocale } from "@/components/site/locale-provider";
 import { getSupabase } from "@/lib/supabase";
 import { recordCompletion } from "@/lib/progress";
 import { GoogleSignIn } from "@/components/site/google-sign-in";
@@ -50,7 +50,7 @@ import { cn } from "@/lib/utils";
  * top and bottom — and everything else moves between them.
  */
 export function LessonPlayer({
-  lesson,
+  lesson: englishLesson,
   moduleTitle,
   xpAvailable,
 }: {
@@ -58,6 +58,18 @@ export function LessonPlayer({
   moduleTitle?: string;
   xpAvailable: number;
 }) {
+  const { t, lessonById } = useLocale();
+
+  /**
+   * The lesson in the reader's language.
+   *
+   * The prop is the English lesson the page prerendered with, which is what
+   * the first paint and every crawler sees. Once the locale is known this
+   * resolves the same id through the overlay; for an English reader, or an
+   * untranslated module, it is the very same object.
+   */
+  const lesson = lessonById(englishLesson.id) ?? englishLesson;
+
   const [state, dispatch] = React.useReducer(
     lessonSessionReducer,
     lesson,
@@ -114,7 +126,7 @@ export function LessonPlayer({
 
   function submit() {
     if (!answer) return;
-    dispatch({ kind: "submit", answer });
+    dispatch({ kind: "submit", answer, t });
   }
 
   /**
@@ -208,7 +220,7 @@ export function LessonPlayer({
               <section className="glass rounded-card p-5 sm:p-7">
                 <header className="mb-5">
                   <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
-                    {CHALLENGE_LABELS[challenge.type]}
+                    {t(`challenge.kind.${challenge.type}`)}
                   </p>
                   <h2 className="mt-2 font-display text-xl font-extrabold leading-snug tracking-tight sm:text-2xl">
                     {challenge.prompt}
@@ -216,7 +228,7 @@ export function LessonPlayer({
                         lands on it, and still answers the rest afterwards. */}
                     <Permalink
                       href={`/learn/${lesson.id}#q=${encodeURIComponent(challenge.id)}`}
-                      label="this question"
+                      label={t("lesson.permalink")}
                       size="sm"
                       className="ml-2 translate-y-[-0.1em]"
                     />
@@ -242,9 +254,11 @@ export function LessonPlayer({
       */}
       <p role="status" aria-live="polite" className="sr-only">
         {state.feedback
-          ? `${state.feedback.correct ? "Correct." : "Not quite."} ${
-              state.feedback.detail ?? state.feedback.explanation ?? ""
-            }`
+          ? `${
+              state.feedback.correct
+                ? t("lesson.announceCorrect")
+                : t("lesson.announceIncorrect")
+            } ${state.feedback.detail ?? state.feedback.explanation ?? ""}`
           : ""}
       </p>
 
@@ -253,21 +267,21 @@ export function LessonPlayer({
           hint={
             state.feedback
               ? state.feedback.correct
-                ? "Nice — keep going."
-                : "We'll come back to this one."
+                ? t("lesson.hint.correct")
+                : t("lesson.hint.incorrect")
               : answer
-                ? "Ready when you are."
-                : "Answer to continue."
+                ? t("lesson.hint.ready")
+                : t("lesson.hint.answer")
           }
         >
           {state.feedback ? (
             <Button size="lg" onClick={() => dispatch({ kind: "continue" })}>
-              Continue
+              {t("lesson.continue")}
               <ArrowRight className="size-4" aria-hidden />
             </Button>
           ) : (
             <Button size="lg" onClick={submit} disabled={!answer}>
-              Check
+              {t("lesson.check")}
             </Button>
           )}
         </ActionBar>
@@ -275,14 +289,6 @@ export function LessonPlayer({
     </div>
   );
 }
-
-const CHALLENGE_LABELS: Record<string, string> = {
-  multiple_choice: "Pick the best answer",
-  concept_match: "Match each pair",
-  order_flow: "Put these in order",
-  interactive_sim: "Run the model",
-  t_account_flow: "Post the entries",
-};
 
 /**
  * The state of the run, pinned to the top.
@@ -304,12 +310,13 @@ function SessionBar({
   lessonTitle: string;
   showTitle: boolean;
 }) {
+  const { t } = useLocale();
   return (
     <div className="sticky top-0 z-40 border-b border-hairline bg-canvas/85 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-5 py-3 sm:gap-4 sm:px-8">
         <Link
           href="/learn"
-          aria-label="Leave this lesson"
+          aria-label={t("lesson.leave")}
           className="grid size-9 shrink-0 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-white/5 hover:text-ink"
         >
           <X className="size-5" aria-hidden />
@@ -321,7 +328,7 @@ function SessionBar({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(progress * 100)}
-          aria-label="Lesson progress"
+          aria-label={t("lesson.progress")}
         >
           {/* Hidden below a hair's width: a rounded fill at 0% still paints a
               visible stub, which reads as progress that has not happened. */}
@@ -337,7 +344,10 @@ function SessionBar({
 
         <p
           className="flex shrink-0 items-center gap-0.5"
-          aria-label={`${state.hearts} of ${state.maxHearts} hearts remaining`}
+          aria-label={t("lesson.hearts", {
+            count: state.hearts,
+            max: state.maxHearts,
+          })}
         >
           {Array.from({ length: state.maxHearts }, (_, index) => (
             <Heart
@@ -354,7 +364,7 @@ function SessionBar({
         {state.combo >= 2 ? (
           <span
             className="hidden shrink-0 items-center gap-1 text-xs font-extrabold text-gold sm:inline-flex"
-            aria-label={`${state.combo} in a row`}
+            aria-label={t("lesson.combo", { count: state.combo })}
           >
             <Flame className="size-3.5" aria-hidden />
             {state.combo}
@@ -363,7 +373,7 @@ function SessionBar({
 
         <span
           className="inline-flex shrink-0 items-center gap-1.5 text-xs font-extrabold text-gold"
-          aria-label={`${state.xpEarned} XP earned`}
+          aria-label={t("lesson.xpEarnedA11y", { count: state.xpEarned })}
         >
           <Coins className="size-3.5" aria-hidden />
           <span aria-hidden>{state.xpEarned} XP</span>
@@ -409,26 +419,25 @@ function ActionBar({
 
 /** Ran out of hearts. Not a punishment screen — a retry screen. */
 function OutOfHearts({ lesson, onRestart }: { lesson: Lesson; onRestart: () => void }) {
+  const { t } = useLocale();
   return (
     <div className="glass rounded-card p-7 text-center sm:p-10">
       <span className="mx-auto grid size-14 place-items-center rounded-2xl border border-coral/30 bg-coral/10">
         <Heart className="size-7 text-coral" aria-hidden />
       </span>
       <h2 className="mt-5 font-display text-2xl font-extrabold tracking-tight">
-        Out of hearts
+        {t("failed.title")}
       </h2>
       <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink-muted">
-        Nothing is lost — hearts exist to make you slow down on the mechanism,
-        not to lock you out. Run {lesson.title} again and the parts you already
-        had will go quickly.
+        {t("failed.webBody", { lesson: lesson.title })}
       </p>
       <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
         <Button onClick={onRestart}>
           <RotateCcw className="size-4" aria-hidden />
-          Try again
+          {t("failed.retry")}
         </Button>
         <Button asChild variant="outline">
-          <Link href="/learn">Back to lessons</Link>
+          <Link href="/learn">{t("complete.backToLessons")}</Link>
         </Button>
       </div>
     </div>
@@ -452,6 +461,7 @@ function LessonComplete({
   onRestart: () => void;
 }) {
   const { enabled, learner } = useAuth();
+  const { t, nextLesson: findNext } = useLocale();
   /** `local` means kept on this device — the signed-out case, not a failure. */
   const [saveState, setSaveState] = React.useState<
     "idle" | "local" | "saving" | "saved" | "failed"
@@ -496,7 +506,7 @@ function LessonComplete({
   }, []);
 
   const perfect = state.missed.length === 0 && state.xpEarned > 0;
-  const next = nextLessonAfter(lesson.id);
+  const next = findNext(lesson.id);
 
   return (
     <div className="glass rounded-card p-7 text-center shadow-2xl shadow-black/50 sm:p-10">
@@ -504,7 +514,7 @@ function LessonComplete({
         <PartyPopper className="size-7 text-mint-bright" aria-hidden />
       </span>
       <h2 className="mt-5 font-display text-2xl font-extrabold tracking-tight">
-        Lesson complete
+        {t("complete.title")}
       </h2>
       <p className="mt-1 text-sm font-semibold text-ink-muted">{lesson.title}</p>
 
@@ -515,7 +525,7 @@ function LessonComplete({
         {perfect ? (
           <span className="inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/10 px-4 py-1.5 text-sm font-extrabold text-mint-bright">
             <Flame className="size-4" aria-hidden />
-            No mistakes
+            {t("complete.noMistakes")}
           </span>
         ) : null}
       </div>
@@ -537,12 +547,12 @@ function LessonComplete({
               offer the next thing — sending someone back to a list of thirty is
               where a session ends. */}
           <Link href={next ? `/learn/${next.id}` : "/learn"}>
-            {next ? "Next lesson" : "Back to lessons"}
+            {next ? t("complete.next") : t("complete.backToLessons")}
           </Link>
         </Button>
         <Button variant="outline" onClick={onRestart}>
           <RotateCcw className="size-4" aria-hidden />
-          Practise again
+          {t("complete.again")}
         </Button>
       </div>
 
@@ -551,18 +561,17 @@ function LessonComplete({
           {learner ? (
             <p className="text-xs font-semibold text-ink-faint">
               {saveState === "saving"
-                ? "Saving to your account…"
+                ? t("complete.saving")
                 : saveState === "saved"
-                  ? `Saved to ${learner.name}'s account.`
+                  ? t("complete.saved", { name: learner.name })
                   : saveState === "failed"
-                    ? "Could not reach your account — this run is safe on this device and will sync next time."
-                    : "Signed in."}
+                    ? t("complete.saveFailed")
+                    : t("complete.signedIn")}
             </p>
           ) : (
             <>
               <p className="text-sm font-semibold text-ink-muted">
-                Saved on this device. Sign in to keep it across devices and
-                start a streak.
+                {t("complete.savedLocally")}
               </p>
               {/*
                 No `redirectTo`: signing in here happens in place, so the run
@@ -573,20 +582,11 @@ function LessonComplete({
               <div className="mt-3 flex justify-center">
                 <GoogleSignIn />
               </div>
-              <p className="mt-3 text-xs text-ink-faint">
-                Optional. The lessons are free either way.
-              </p>
+              <p className="mt-3 text-xs text-ink-faint">{t("complete.optional")}</p>
             </>
           )}
         </div>
       ) : null}
     </div>
   );
-}
-
-/** The lesson that follows this one in course order, if there is one. */
-function nextLessonAfter(lessonId: string): Lesson | null {
-  const all = MODULES.flatMap((module) => module.lessons);
-  const index = all.findIndex((lesson) => lesson.id === lessonId);
-  return index >= 0 ? (all[index + 1] ?? null) : null;
 }

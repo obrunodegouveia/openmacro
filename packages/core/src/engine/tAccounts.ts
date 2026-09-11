@@ -19,6 +19,7 @@ import type {
   TAccountFlowChallenge,
   TAccountLine,
 } from '../content/schema';
+import { englishTranslator, type Translator } from '../i18n';
 
 /**
  * Currency amounts are integers of the minor unit in practice, but lesson
@@ -191,6 +192,7 @@ export function evaluateTAccount(
 export function describeVerdict(
   challenge: TAccountFlowChallenge,
   verdict: TAccountVerdict,
+  t: Translator = englishTranslator,
 ): string | undefined {
   if (verdict.correct) return undefined;
 
@@ -199,22 +201,33 @@ export function describeVerdict(
 
   const unbalanced = verdict.balances.find((balance) => !balance.balanced);
   if (unbalanced) {
-    return `${labelOf(unbalanced.entityId)}'s sheet does not balance — assets and liabilities have to move together.`;
+    return t('grade.taccount.unbalanced', { entity: labelOf(unbalanced.entityId) });
   }
 
   const [firstUnexpected] = verdict.unexpected;
   if (firstUnexpected) {
-    return `${labelOf(firstUnexpected.entityId)} should not have a "${firstUnexpected.account}" entry in this operation.`;
+    return t('grade.taccount.unexpected', {
+      entity: labelOf(firstUnexpected.entityId),
+      account: firstUnexpected.account,
+    });
   }
 
   const [firstWrongAmount] = verdict.wrongAmount;
   if (firstWrongAmount) {
-    return `The amount on ${labelOf(firstWrongAmount.expected.entityId)}'s "${firstWrongAmount.expected.account}" is off.`;
+    return t('grade.taccount.wrongAmount', {
+      entity: labelOf(firstWrongAmount.expected.entityId),
+      account: firstWrongAmount.expected.account,
+    });
   }
 
+  // Two keys rather than one with a `{side}` placeholder: "on the asset side"
+  // and "no activo de X" do not have the same shape, and a language where the
+  // word changes the rest of the sentence cannot be served by substitution.
   const [firstMissing] = verdict.missing;
   if (firstMissing) {
-    return `${labelOf(firstMissing.entityId)} is still missing a posting on the ${firstMissing.side} side.`;
+    return firstMissing.side === 'asset'
+      ? t('grade.taccount.missingAsset', { entity: labelOf(firstMissing.entityId) })
+      : t('grade.taccount.missingLiability', { entity: labelOf(firstMissing.entityId) });
   }
 
   return undefined;

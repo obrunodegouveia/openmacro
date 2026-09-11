@@ -26,6 +26,7 @@ import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useAuth } from '@/providers/AuthProvider';
+import { useLocale } from '@/providers/LocaleProvider';
 import { supabase } from '@/services/supabaseClient';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
@@ -34,6 +35,7 @@ const ENDPOINT = 'https://openmacro.org/api/account/delete';
 
 export function DeleteAccount() {
   const { session, identity, signOut } = useAuth();
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
@@ -55,7 +57,7 @@ export function DeleteAccount() {
       });
       const result = (await response.json()) as { error?: string };
       if (!response.ok) {
-        setError(result.error ?? 'That did not work.');
+        setError(result.error ?? t('account.delete.failed'));
         return;
       }
       /**
@@ -65,7 +67,7 @@ export function DeleteAccount() {
        */
       await signOut();
     } catch {
-      setError('Could not reach the server.');
+      setError(t('account.delete.unreachable'));
     } finally {
       setBusy(false);
     }
@@ -75,33 +77,34 @@ export function DeleteAccount() {
     return (
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Delete your account"
+        accessibilityLabel={t('account.delete.open')}
         hitSlop={8}
         onPress={() => setOpen(true)}
         style={styles.trigger}
       >
-        <Text style={styles.triggerText}>Delete account</Text>
+        <Text style={styles.triggerText}>{t('account.delete')}</Text>
       </Pressable>
     );
   }
 
   return (
     <View style={styles.panel}>
-      <Text style={styles.title}>Delete this account</Text>
-      <Text style={styles.body}>
-        Your XP, streak and lesson history are erased and cannot be recovered. The course keeps
-        working on this device, signed out.
-      </Text>
+      <Text style={styles.title}>{t('account.delete.title')}</Text>
+      <Text style={styles.body}>{t('account.delete.body')}</Text>
 
       <TextInput
         value={email}
         onChangeText={setEmail}
-        placeholder={identity.displayName.includes('@') ? identity.displayName : 'your email'}
+        placeholder={
+          identity.displayName.includes('@')
+            ? identity.displayName
+            : t('account.delete.placeholder')
+        }
         placeholderTextColor={palette.inkFaint}
         autoCapitalize="none"
         autoCorrect={false}
         keyboardType="email-address"
-        accessibilityLabel="Type your email address to confirm deletion"
+        accessibilityLabel={t('account.delete.confirmLabelGeneric')}
         style={styles.input}
       />
 
@@ -117,12 +120,12 @@ export function DeleteAccount() {
           }}
           style={styles.cancel}
         >
-          <Text style={styles.cancelText}>Keep it</Text>
+          <Text style={styles.cancelText}>{t('account.delete.keep')}</Text>
         </Pressable>
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Permanently delete this account"
+          accessibilityLabel={t('account.delete.confirmA11y')}
           accessibilityState={{ disabled: busy, busy }}
           disabled={busy}
           onPress={() => void remove()}
@@ -131,7 +134,7 @@ export function DeleteAccount() {
           {busy ? (
             <ActivityIndicator color={palette.surface} />
           ) : (
-            <Text style={styles.confirmText}>Delete for good</Text>
+            <Text style={styles.confirmText}>{t('account.delete.confirm')}</Text>
           )}
         </Pressable>
       </View>

@@ -12,6 +12,7 @@ import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanim
 
 import type { ChallengeComponentProps } from '@/components/challenges/types';
 import { emitFeedback } from '@/feedback';
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import { seededShuffle } from '@openmacro/core/format';
 
@@ -55,6 +56,8 @@ export function OrderFlowView({
     [locked],
   );
 
+  const { t } = useLocale();
+
   const eventById = useCallback(
     (eventId: string) => challenge.events.find((event) => event.id === eventId),
     [challenge],
@@ -66,7 +69,7 @@ export function OrderFlowView({
       <View style={styles.sequence}>
         {order.length === 0 ? (
           <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>Tap events below to build the chain</Text>
+            <Text style={styles.placeholderText}>{t('challenge.order.empty')}</Text>
           </View>
         ) : null}
 
@@ -87,7 +90,10 @@ export function OrderFlowView({
               {index > 0 ? <View style={styles.connector} /> : null}
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`Step ${index + 1}: ${event.label}. Tap to remove.`}
+                accessibilityLabel={t('challenge.order.remove', {
+                  number: index + 1,
+                  label: event.label,
+                })}
                 onPress={() => remove(eventId)}
                 disabled={locked}
                 style={[
@@ -119,7 +125,7 @@ export function OrderFlowView({
       {/* ---- the pool of unused events --------------------------------- */}
       {remaining.length > 0 ? (
         <View style={styles.pool}>
-          <Text style={styles.poolHeading}>Remaining</Text>
+          <Text style={styles.poolHeading}>{t('challenge.order.remaining')}</Text>
           {remaining.map((event) => (
             <Animated.View
               key={event.id}
@@ -129,7 +135,7 @@ export function OrderFlowView({
             >
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`${event.label}. Tap to add to the sequence.`}
+                accessibilityLabel={t('challenge.order.add', { label: event.label })}
                 onPress={() => append(event.id)}
                 disabled={locked}
                 style={[styles.card, styles.cardPool]}

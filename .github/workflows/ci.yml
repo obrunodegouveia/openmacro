@@ -58,6 +58,14 @@ jobs:
       - name: Audit content quality
         run: npm run audit:content
 
+      # Messages, not content. Catches a translation that invented a
+      # placeholder name or dropped a brace — both render as visible nonsense
+      # and neither is a type error. Untranslated content never fails this;
+      # a rule that blocks a new lesson until every language has caught up is
+      # a rule that stops lessons being written.
+      - name: Validate translations
+        run: npm run i18n:status -- --strict
+
       # The website, which is what learners actually play.
       - run: npm run typecheck --workspace web
       - run: npm run lint --workspace web

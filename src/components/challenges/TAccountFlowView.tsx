@@ -27,15 +27,23 @@ import type {
 } from '@openmacro/core/content/schema';
 import { entityBalance, openingTotal } from '@openmacro/core/engine/tAccounts';
 import { emitFeedback } from '@/feedback';
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
+import type { Translator } from '@openmacro/core/i18n';
 import { formatCompactCurrency, formatSignedCompactCurrency, seededShuffle } from '@openmacro/core/format';
 
-const TIER_LABELS: Readonly<Record<MonetaryTier, string>> = {
-  central_bank: 'Central bank',
-  commercial_bank: 'Commercial bank',
-  shadow_bank: 'Shadow bank',
-  fiduciary_core: 'Fiduciary core',
-};
+/**
+ * The tier badge on each sheet.
+ *
+ * A `MonetaryTier` is one of four fixed values from the schema, and the
+ * catalogue has a key per value — `entity.central_bank` and so on. Deriving
+ * the key from the tier rather than keeping a second lookup table means
+ * adding a tier to the schema fails to compile until its key exists, instead
+ * of quietly rendering the raw identifier.
+ */
+function tierLabel(t: Translator, tier: MonetaryTier): string {
+  return t(`entity.${tier}`);
+}
 
 const TIER_COLORS: Readonly<Record<MonetaryTier, string>> = {
   central_bank: palette.blueDark,
@@ -55,6 +63,7 @@ export function TAccountFlowView({
   locked,
   result,
 }: ChallengeComponentProps<'t_account_flow'>) {
+  const { t } = useLocale();
   /** Option ids the learner has posted, in placement order. */
   const [placed, setPlaced] = useState<string[]>([]);
 
@@ -142,7 +151,7 @@ export function TAccountFlowView({
       {/* ---- the entries still to post --------------------------------- */}
       {unplaced.length > 0 ? (
         <View style={styles.pool}>
-          <Text style={styles.poolHeading}>Entries to post</Text>
+          <Text style={styles.poolHeading}>{t('challenge.taccount.entries')}</Text>
           {unplaced.map((option) => (
             <Animated.View
               key={option.id}
@@ -154,7 +163,16 @@ export function TAccountFlowView({
                 // Two chips can share an account name on different sheets, so
                 // the entity has to be in the label or they are indistinguishable
                 // to a screen reader.
-                accessibilityLabel={`Post ${formatSignedCompactCurrency(option.shift.delta, currency)} to ${option.shift.account} on ${entityLabel(challenge.entities, option.shift.entityId)}'s ${option.shift.side === 'asset' ? 'assets' : 'liabilities'}`}
+                accessibilityLabel={t('challenge.taccount.post', {
+                  amount: formatSignedCompactCurrency(option.shift.delta, currency),
+                  account: option.shift.account,
+                  entity: entityLabel(challenge.entities, option.shift.entityId),
+                  side: t(
+                    option.shift.side === 'asset'
+                      ? 'challenge.taccount.assets'
+                      : 'challenge.taccount.liabilities',
+                  ),
+                })}
                 onPress={() => place(option.id)}
                 disabled={locked}
                 style={styles.poolChip}
@@ -163,7 +181,11 @@ export function TAccountFlowView({
                   <Text style={styles.poolChipAccount}>{option.shift.account}</Text>
                   <Text style={styles.poolChipMeta}>
                     {entityLabel(challenge.entities, option.shift.entityId)} ·{' '}
-                    {option.shift.side === 'asset' ? 'Assets' : 'Liabilities'}
+                    {t(
+                      option.shift.side === 'asset'
+                        ? 'challenge.taccount.assetsTitle'
+                        : 'challenge.taccount.liabilitiesTitle',
+                    )}
                   </Text>
                 </View>
                 <Text
@@ -183,7 +205,7 @@ export function TAccountFlowView({
       {/* ---- the payoff: what actually moved --------------------------- */}
       {locked && result?.correct && challenge.aggregateEffects?.length ? (
         <Animated.View entering={FadeIn.duration(240)} style={styles.aggregates}>
-          <Text style={styles.aggregatesHeading}>What moved</Text>
+          <Text style={styles.aggregatesHeading}>{t('challenge.taccount.moved')}</Text>
           {challenge.aggregateEffects.map((effect) => (
             <View key={effect.aggregate} style={styles.aggregateRow}>
               <View style={[styles.aggregateBadge, aggregateStyle(effect.direction)]}>
@@ -192,10 +214,10 @@ export function TAccountFlowView({
               <View style={styles.aggregateBody}>
                 <Text style={styles.aggregateDirection}>
                   {effect.direction === 'expand'
-                    ? 'Expands'
+                    ? t('challenge.taccount.expands')
                     : effect.direction === 'contract'
-                      ? 'Contracts'
-                      : 'Unchanged'}
+                      ? t('challenge.taccount.contracts')
+                      : t('challenge.taccount.unchanged')}
                 </Text>
                 <Text style={styles.aggregateNote}>{effect.note}</Text>
               </View>
@@ -232,6 +254,7 @@ function EntityCard({
   isShiftCorrect,
   onRemove,
 }: EntityCardProps) {
+  const { t } = useLocale();
   const balance = entityBalance(entity.id, shifts);
   const touched = placedOptions.length > 0;
 
@@ -241,7 +264,13 @@ function EntityCard({
 
     return (
       <View style={styles.column}>
-        <Text style={styles.columnHeading}>{side === 'asset' ? 'Assets' : 'Liabilities'}</Text>
+        <Text style={styles.columnHeading}>
+          {t(
+            side === 'asset'
+              ? 'challenge.taccount.assetsTitle'
+              : 'challenge.taccount.liabilitiesTitle',
+          )}
+        </Text>
 
         {opening.map((line) => (
           <View key={`${line.account}-${line.amount}`} style={styles.openingLine}>
@@ -269,7 +298,9 @@ function EntityCard({
             >
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`Remove ${option.shift.account} posting`}
+                accessibilityLabel={t('challenge.taccount.remove', {
+                  account: option.shift.account,
+                })}
                 onPress={() => onRemove(option.id)}
                 disabled={locked}
                 style={[
@@ -316,7 +347,7 @@ function EntityCard({
         </View>
         <View style={[styles.tierBadge, { borderColor: TIER_COLORS[entity.tier] }]}>
           <Text style={[styles.tierText, { color: TIER_COLORS[entity.tier] }]}>
-            {TIER_LABELS[entity.tier]}
+            {tierLabel(t, entity.tier)}
           </Text>
         </View>
       </View>
@@ -332,8 +363,13 @@ function EntityCard({
         <View style={[styles.balanceBar, balance.balanced ? styles.balanceOk : styles.balanceOff]}>
           <Text style={[styles.balanceText, balance.balanced ? styles.balanceTextOk : styles.balanceTextOff]}>
             {balance.balanced
-              ? 'Balanced'
-              : `Off by ${formatCompactCurrency(Math.abs(balance.assetDelta - balance.liabilityDelta), currency)}`}
+              ? t('challenge.taccount.balanced')
+              : t('challenge.taccount.offBy', {
+                  amount: formatCompactCurrency(
+                    Math.abs(balance.assetDelta - balance.liabilityDelta),
+                    currency,
+                  ),
+                })}
           </Text>
         </View>
       ) : null}

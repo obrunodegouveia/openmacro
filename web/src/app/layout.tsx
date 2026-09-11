@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 import { AuthProvider } from "@/components/site/auth-provider";
+import { LocaleProvider } from "@/components/site/locale-provider";
 import { SmoothAnchors } from "@/components/site/smooth-anchors";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -90,8 +91,12 @@ export default function RootLayout({
           Skip to content
         </a>
         <SmoothAnchors />
-        {/* Inert when no Supabase project is configured — see lib/supabase.ts. */}
-        <AuthProvider>{children}</AuthProvider>
+        {/* `lang` above is the prerendered default; LocaleProvider corrects it
+            on the client once the reader's language is known. */}
+        <LocaleProvider>
+          {/* Inert when no Supabase project is configured — see lib/supabase.ts. */}
+          <AuthProvider>{children}</AuthProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

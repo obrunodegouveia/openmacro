@@ -10,13 +10,16 @@ import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'rea
 
 import { useAuth } from '@/providers/AuthProvider';
 import { DeleteAccount } from '@/components/ui/DeleteAccount';
+import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import type { SyncState } from '@/services/syncedDataProvider';
+import type { Translator } from '@openmacro/core/i18n';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 function AccountBarComponent() {
   const { enabled, loading, identity, signingIn, error, signInWithGoogle, signOut } = useAuth();
   const { merging, sync } = useProgress();
+  const { t } = useLocale();
 
   if (!enabled || loading) return null;
 
@@ -44,7 +47,7 @@ function AccountBarComponent() {
             {identity.displayName}
           </Text>
           <Text style={[styles.status, sync?.pending && styles.statusPending]}>
-            {statusLine(merging, sync)}
+            {statusLine(t, merging, sync)}
           </Text>
         </View>
 
@@ -52,11 +55,11 @@ function AccountBarComponent() {
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Sign out of ${identity.displayName}'s account`}
+          accessibilityLabel={t('account.signOutOf', { name: identity.displayName })}
           hitSlop={8}
           onPress={() => void signOut()}
         >
-          <Text style={styles.signOut}>Sign out</Text>
+          <Text style={styles.signOut}>{t('account.signOut')}</Text>
         </Pressable>
       </View>
 
@@ -72,7 +75,7 @@ function AccountBarComponent() {
     <View style={styles.signedOut}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Continue with Google"
+        accessibilityLabel={t('account.signIn')}
         accessibilityState={{ disabled: signingIn, busy: signingIn }}
         disabled={signingIn}
         onPress={() => void signInWithGoogle()}
@@ -83,14 +86,11 @@ function AccountBarComponent() {
         ) : (
           <>
             <GoogleMark />
-            <Text style={styles.googleLabel}>Continue with Google</Text>
+            <Text style={styles.googleLabel}>{t('account.signIn')}</Text>
           </>
         )}
       </Pressable>
-      <Text style={styles.signedOutHint}>
-        Optional — you can learn without an account. Signing in keeps your streak and XP across
-        devices, and brings the progress on this one with you.
-      </Text>
+      <Text style={styles.signedOutHint}>{t('account.optional')}</Text>
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   );
@@ -104,11 +104,11 @@ function AccountBarComponent() {
  * away. Telling someone their progress did not save, when it did, is the
  * worse error.
  */
-function statusLine(merging: boolean, sync: SyncState | null): string {
-  if (merging) return 'Merging your offline progress…';
-  if (sync?.pushing) return 'Syncing…';
-  if (sync?.pending) return 'Saved on this device · syncs when you’re back online';
-  return 'Progress synced to your account';
+function statusLine(t: Translator, merging: boolean, sync: SyncState | null): string {
+  if (merging) return t('account.sync.merging');
+  if (sync?.pushing) return t('account.sync.pushing');
+  if (sync?.pending) return t('account.sync.pending');
+  return t('account.sync.synced');
 }
 
 /**

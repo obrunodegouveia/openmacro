@@ -29,6 +29,7 @@ import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 export interface LessonVideoProps {
@@ -43,6 +44,7 @@ export interface LessonVideoProps {
 
 export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
   const [playing, setPlaying] = useState(false);
+  const { t } = useLocale();
   const id = youTubeId(url);
   if (!id) return null;
 
@@ -69,7 +71,7 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
         ) : (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`Play ${title}`}
+            accessibilityLabel={t('lesson.video.play', { title })}
             style={styles.placeholder}
             onPress={() => setPlaying(true)}
           >
@@ -85,11 +87,11 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
 
       <View style={styles.meta}>
         <Text style={styles.metaText}>
-          {minutes ? `${minutes} min` : 'Watch first'}
+          {minutes ? t('lesson.video.minutes', { count: minutes }) : t('lesson.video.watchFirst')}
           {source ? ` · ${source}` : ''}
         </Text>
         {!playing ? (
-          <Text style={styles.metaQuiet}>Nothing loads until you press play</Text>
+          <Text style={styles.metaQuiet}>{t('lesson.video.privacy')}</Text>
         ) : null}
       </View>
     </View>

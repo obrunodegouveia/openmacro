@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { useAuth } from "@/components/site/auth-provider";
+import { useLocale } from "@/components/site/locale-provider";
 import { getSupabase } from "@/lib/supabase";
 
 /**
@@ -19,6 +20,7 @@ import { getSupabase } from "@/lib/supabase";
  */
 export function DeleteAccount() {
   const { learner, signOut } = useAuth();
+  const { t } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [busy, setBusy] = React.useState(false);
@@ -35,7 +37,7 @@ export function DeleteAccount() {
       const { data } = (await supabase?.auth.getSession()) ?? { data: { session: null } };
       const token = data.session?.access_token;
       if (!token) {
-        setError("Your session expired. Sign in again.");
+        setError(t("account.delete.expired"));
         return;
       }
 
@@ -46,12 +48,12 @@ export function DeleteAccount() {
       });
       const result = (await response.json()) as { error?: string };
       if (!response.ok) {
-        setError(result.error ?? "That did not work.");
+        setError(result.error ?? t("account.delete.failed"));
         return;
       }
       await signOut();
     } catch {
-      setError("Could not reach the server.");
+      setError(t("account.delete.unreachable"));
     } finally {
       setBusy(false);
     }
@@ -64,22 +66,21 @@ export function DeleteAccount() {
         onClick={() => setOpen(true)}
         className="mt-8 text-xs font-bold text-ink-faint underline underline-offset-4"
       >
-        Delete account
+        {t("account.delete")}
       </button>
     );
   }
 
   return (
     <section className="mt-8 rounded-card border border-hairline p-5">
-      <h2 className="font-display text-lg font-extrabold">Delete this account</h2>
-      <p className="mt-2 text-sm text-ink-muted">
-        Your XP, streak and lesson history are erased and cannot be recovered. The course keeps
-        working without an account.
-      </p>
+      <h2 className="font-display text-lg font-extrabold">{t("account.delete.title")}</h2>
+      <p className="mt-2 text-sm text-ink-muted">{t("account.delete.body")}</p>
 
       <label className="mt-4 block">
         <span className="text-xs font-bold text-ink-faint">
-          Type {learner.email ?? "your email"} to confirm
+          {learner.email
+            ? t("account.delete.confirmLabel", { email: learner.email })
+            : t("account.delete.confirmLabelGeneric")}
         </span>
         <input
           value={email}
@@ -101,7 +102,7 @@ export function DeleteAccount() {
           }}
           className="rounded-lg border border-hairline px-4 py-2 text-sm font-bold"
         >
-          Keep it
+          {t("account.delete.keep")}
         </button>
         <button
           type="button"
@@ -109,7 +110,7 @@ export function DeleteAccount() {
           onClick={() => void remove()}
           className="rounded-lg bg-coral px-4 py-2 text-sm font-bold text-abyss disabled:opacity-60"
         >
-          {busy ? "Deleting…" : "Delete for good"}
+          {busy ? t("account.delete.busy") : t("account.delete.confirm")}
         </button>
       </div>
     </section>
