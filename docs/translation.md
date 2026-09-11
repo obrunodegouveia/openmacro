@@ -146,6 +146,25 @@ English the day somebody edits one of them.
 Both render as visible nonsense and neither is a type error, which is why they
 are checked rather than typed.
 
+`npm run lint` fails on a **user-visible string written into JSX** instead of
+coming from `t()` — the other half of the guarantee. `i18n:status` proves the
+catalogue is complete; the lint rule proves the app actually reads it. Without
+it the interface can rot back to English while coverage still reports 100%,
+because a hard-coded string never became a key to be counted.
+
+The rule is `tools/eslint/no-untranslated-text.js`, and it is narrow on
+purpose. It reports JSX text children and strings in props a human reads
+(`accessibilityLabel`, `accessibilityHint`, `label`, `placeholder`, `title`,
+`alt`, …), and only when the string contains two consecutive letters — so
+`·`, `✕`, `↻` and emoji need no exemption. It tells `t('lesson.check')` from
+`"Check"` structurally rather than by naming `t`: a string that is an argument
+to any call is skipped, as is one being compared (`direction === 'expand'`).
+
+`react/jsx-no-literals` is the obvious alternative and does not survive
+contact with React Native — it flags `accessibilityRole="button"`,
+`keyboardType="email-address"` and `tone="primary"`, and a rule that is wrong
+that often gets switched off.
+
 Untranslated content never fails the build. A rule that blocks a new lesson
 until every language has caught up is a rule that stops lessons being written.
 
@@ -176,4 +195,20 @@ nothing reads it. Adding Arabic or Hebrew means auditing every `flexDirection`
 and every `marginLeft` first.
 
 **No translation-management integration.** `i18n:extract` produces JSON, which
-is what Crowdin, Lokalise and inlang all ingest, but nothing is wired up.
+is what Crowdin, Lokalise and inlang all ingest, but there is no `i18n:import`
+to bring the work back. Today a translator cannot round-trip without someone
+pasting by hand — which is the difference between "a developer translates" and
+"translators translate", and the most valuable thing to build next.
+
+**Locale matching is simpler than BCP-47 lookup.** `resolveLocale` matches the
+full tag, then the base language. That is correct for `en` and `pt-PT` and
+would be wrong the day a script-variant language is added: `zh-Hant-TW` would
+match a `zh-Hans` catalogue, serving Simplified to a Traditional reader —
+worse than serving English. Adding Chinese, Serbian or Azerbaijani means
+implementing RFC 4647 lookup first.
+
+**The lint rule covers the app, not the website.** `web/`'s marketing pages
+are deliberately English-only, so the same rule there would be hundreds of
+findings describing the intended state of the world. Extending it to
+`web/src/components/app/` and `web/src/components/challenges/`, which *are*
+fully translated, is a worthwhile follow-up.

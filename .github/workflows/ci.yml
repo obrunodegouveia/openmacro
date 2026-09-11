@@ -58,6 +58,15 @@ jobs:
       - name: Audit content quality
         run: npm run audit:content
 
+      # The other half of the translation guarantee. `i18n:status` proves the
+      # catalogue is complete; this proves the app actually *reads* it. A
+      # string typed straight into JSX is invisible to typecheck (a string is
+      # a string) and invisible to i18n:status (it never became a key), so
+      # without this the interface can rot back to English at 100% reported
+      # coverage. One rule, tools/eslint/no-untranslated-text.js.
+      - name: Lint the app for untranslated strings
+        run: npm run lint
+
       # Messages, not content. Catches a translation that invented a
       # placeholder name or dropped a brace — both render as visible nonsense
       # and neither is a type error. Untranslated content never fails this;
