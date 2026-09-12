@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useSiteText } from "@/lib/use-site-text";
 import {
   GitPullRequest,
   Landmark,
@@ -20,18 +21,20 @@ import { Section, SectionHeading } from "@/components/ui/section";
 const viewport = { once: true, margin: "-80px" } as const;
 
 export function Features() {
+  const s = useSiteText();
+
   return (
     <Section id="philosophy">
       <SectionHeading
-        overline="Features & philosophy"
+        overline={s("features.overline")}
         title={
           <>
-            Personal finance teaches you to budget.
-            <br className="hidden sm:block" /> We teach you{" "}
-            <span className="text-gradient">the machine</span>.
+            {s("features.title.lead")}
+            <br className="hidden sm:block" /> {s("features.title.mid")}{" "}
+            <span className="text-gradient">{s("features.title.emphasis")}</span>.
           </>
         }
-        lede="Three convictions shape every lesson we ship."
+        lede={s("features.lede")}
       />
 
       <div className="mt-14 grid gap-6 lg:grid-cols-3">
@@ -46,32 +49,29 @@ export function Features() {
             <Header
               icon={<Wallet className="size-5" aria-hidden />}
               tone="coral"
-              title="Not Another Budgeting App"
+              title={s("features.budgeting.title")}
             />
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-ink-muted">
-              Knowing to skip the daily coffee will not tell you why rent
-              outran your raise. And &ldquo;money basics&rdquo; courses stop
-              exactly where it gets interesting — at the point where you would
-              have to open a central bank&rsquo;s balance sheet.
+              {s("features.budgeting.body")}
             </p>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <Compare
                 tone="muted"
-                heading="Budgeting apps ask"
+                heading={s("features.budgeting.theirsHeading")}
                 items={[
-                  "Where did my money go?",
-                  "Can I afford this?",
-                  "How much should I save?",
+                  s("features.budgeting.theirs.0"),
+                  s("features.budgeting.theirs.1"),
+                  s("features.budgeting.theirs.2"),
                 ]}
               />
               <Compare
                 tone="mint"
-                heading="OpenMacro asks"
+                heading={s("features.budgeting.oursHeading")}
                 items={[
-                  "Whose liability is this money?",
-                  "What settles when a payment clears?",
-                  "Which line on the Fed\u2019s sheet just moved?",
+                  s("features.budgeting.ours.0"),
+                  s("features.budgeting.ours.1"),
+                  s("features.budgeting.ours.2"),
                 ]}
               />
             </div>
@@ -88,19 +88,17 @@ export function Features() {
             <Header
               icon={<GitPullRequest className="size-5" aria-hidden />}
               tone="mint"
-              title="100% Open Source"
+              title={s("features.openSource.title")}
             />
             <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-              Lessons are plain JSON — no React, no build step. An economist
-              can write a T-account scenario in a text editor and open a pull
-              request from the GitHub web UI.
+              {s("features.openSource.body")}
             </p>
             <ol className="mt-6 flex flex-col gap-3">
               {[
-                "Fork the repo",
-                "Drop a lesson file into src/content/lessons",
-                "CI checks every sheet actually balances",
-                "A maintainer reviews the economics",
+                s("features.openSource.step.0"),
+                s("features.openSource.step.1"),
+                s("features.openSource.step.2"),
+                s("features.openSource.step.3"),
               ].map((step, index) => (
                 <li key={step} className="flex gap-3 text-sm">
                   <span className="grid size-6 shrink-0 place-items-center rounded-full border border-mint/30 bg-mint/10 font-mono text-xs font-bold text-mint-bright">
@@ -124,26 +122,24 @@ export function Features() {
             <Header
               icon={<Landmark className="size-5" aria-hidden />}
               tone="gold"
-              title="Parent & Educator Led"
+              title={s("features.educator.title")}
             />
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-muted">
-              Built with the people who will actually sit next to the learner.
-              Classroom and kitchen-table tools are first-class features, not an
-              enterprise upsell.
+              {s("features.educator.body")}
             </p>
             <div className="mt-6 grid gap-5 sm:grid-cols-3">
               {[
                 {
-                  title: "Custom tracks",
-                  body: "Reorder modules, hide what you have not covered yet, and pin a lesson as this week's homework.",
+                  title: s("features.educator.tracks.title"),
+                  body: s("features.educator.tracks.body"),
                 },
                 {
-                  title: "Sponsored prize pools",
-                  body: "Fund a bounty for your class or your kid — books, hardware, or privileges. You set the goal and award it directly.",
+                  title: s("features.educator.prizes.title"),
+                  body: s("features.educator.prizes.body"),
                 },
                 {
-                  title: "Non-custodial ledger",
-                  body: "The reward ledger lives on the learner\u2019s device. No wallet, no real money, nothing to cash out.",
+                  title: s("features.educator.ledger.title"),
+                  body: s("features.educator.ledger.body"),
                   icon: <ShieldCheck className="size-4 text-mint-bright" aria-hidden />,
                 },
               ].map((feature) => (

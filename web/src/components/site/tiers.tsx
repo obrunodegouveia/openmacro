@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { TIERS, type Tier } from "@/lib/curriculum";
 import { cn } from "@/lib/utils";
+import { useSiteText } from "@/lib/use-site-text";
 
 /**
  * The four balance-sheet tiers — the conceptual spine of the platform.
@@ -23,21 +24,22 @@ const ACCENT: Record<Tier["accent"], { ring: string; text: string; glow: string 
 };
 
 export function Tiers() {
+  const s = useSiteText();
   const [activeId, setActiveId] = React.useState<Tier["id"]>(TIERS[0]!.id);
   const active = TIERS.find((tier) => tier.id === activeId) ?? TIERS[0]!;
 
   return (
     <Section id="tiers">
       <SectionHeading
-        overline="The model"
+        overline={s("tiers.overline")}
         title={
           <>
-            Four balance sheets,
-            <br className="hidden sm:block" /> one{" "}
-            <span className="text-gradient">machine</span>.
+            {s("tiers.title.lead")}
+            <br className="hidden sm:block" /> {s("tiers.title.mid")}{" "}
+            <span className="text-gradient">{s("tiers.title.emphasis")}</span>.
           </>
         }
-        lede="Money is somebody's liability at every level. OpenMacro teaches the whole hierarchy, not a cartoon of the top of it."
+        lede={s("tiers.lede")}
       />
 
       <div className="mt-14 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -81,7 +83,7 @@ export function Tiers() {
                         accent.text,
                       )}
                     >
-                      Tier {tier.index}
+                      {s("tiers.tier", { n: tier.index })}
                     </span>
                     <span className="block font-display text-sm font-extrabold text-ink">
                       {tier.name}
@@ -110,7 +112,7 @@ export function Tiers() {
               ACCENT[active.accent].text,
             )}
           >
-            Tier {active.index} · {active.subject}
+            {s("tiers.tierOf", { n: active.index, subject: active.subject })}
           </p>
           <h3 className="mt-1 font-display text-2xl font-extrabold tracking-tight">
             {active.name}
@@ -120,13 +122,21 @@ export function Tiers() {
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <Column title="Assets" hint="What it owns" items={active.assets} />
-            <Column title="Liabilities" hint="What it owes" items={active.liabilities} />
+            <Column
+              title={s("tiers.assets")}
+              hint={s("tiers.assetsHint")}
+              items={active.assets}
+            />
+            <Column
+              title={s("tiers.liabilities")}
+              hint={s("tiers.liabilitiesHint")}
+              items={active.liabilities}
+            />
           </div>
 
           <div className="mt-5 border-t border-hairline pt-5">
             <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
-              What you learn to operate
+              {s("tiers.levers")}
             </p>
             <ul className="mt-3 flex flex-wrap gap-2">
               {active.levers.map((lever) => (

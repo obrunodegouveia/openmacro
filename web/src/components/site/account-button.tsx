@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/site/auth-provider";
 import { GoogleSignIn } from "@/components/site/google-sign-in";
 import { cn } from "@/lib/utils";
+import { useSiteText } from "@/lib/use-site-text";
 
 /**
  * ============================================================================
@@ -25,6 +26,7 @@ import { cn } from "@/lib/utils";
 
 /** Compact control for the header. */
 export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
+  const s = useSiteText();
   const { enabled, loading, learner, signingIn, signIn, signOut } = useAuth();
 
   if (!enabled) return null;
@@ -50,7 +52,7 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
         }}
       >
         <GoogleIcon className="size-4" aria-hidden />
-        {signingIn ? "Opening Google" : "Sign in"}
+        {signingIn ? s("account.opening") : s("account.signIn")}
       </Button>
     );
   }
@@ -65,7 +67,7 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
       <Link
         href="/dashboard"
         onClick={onNavigate}
-        aria-label={`${learner.name} — open your progress`}
+        aria-label={s("account.openProgressA11y", { name: learner.name })}
         className="flex items-center gap-2 rounded-xl border border-hairline bg-white/5 py-1.5 pl-3 pr-2 transition-colors hover:border-mint/50 hover:bg-white/10"
       >
         <Avatar learner={learner} />
@@ -81,10 +83,10 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
           onNavigate?.();
           void signOut();
         }}
-        aria-label={`Sign out of ${learner.name}'s account`}
+        aria-label={s("account.signOutOfA11y", { name: learner.name })}
       >
         <LogOut className="size-4" aria-hidden />
-        <span className="sr-only sm:not-sr-only">Sign out</span>
+        <span className="sr-only sm:not-sr-only">{s("account.signOut")}</span>
       </Button>
     </div>
   );
@@ -106,13 +108,14 @@ export function AccountPanel({
   redirectTo?: string;
 }) {
   const { enabled, learner, error, signOut } = useAuth();
+  const s = useSiteText();
 
   if (!enabled) return null;
 
   return (
     <div className={cn("glass rounded-card p-6 sm:p-8", className)}>
       <h3 className="font-display text-2xl font-extrabold tracking-tight">
-        {learner ? "You're signed in" : "Keep your progress"}
+        {learner ? s("account.signedIn") : s("account.keepProgress")}
       </h3>
 
       {learner ? (
@@ -122,28 +125,25 @@ export function AccountPanel({
             {learner.name}
           </p>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-muted">
-            XP and your day streak are saved to your account as you finish
-            lessons, so they follow you to any device you sign in on.
+            {s("account.syncedBody")}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild>
               <Link href="/dashboard">
-                Your progress
+                {s("account.yourProgress")}
                 <ArrowRight className="size-4" aria-hidden />
               </Link>
             </Button>
             <Button variant="outline" onClick={() => void signOut()}>
               <LogOut className="size-4" aria-hidden />
-              Sign out
+              {s("account.signOut")}
             </Button>
           </div>
         </>
       ) : (
         <>
           <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-muted">
-            An account saves your XP and day streak so they survive closing the
-            tab, and carries them to your phone. Signing in with Google creates
-            it — there is no separate sign-up, and no password to remember.
+            {s("account.signedOutBody")}
           </p>
           <GoogleSignIn className="mt-6" redirectTo={redirectTo} />
 
@@ -154,14 +154,12 @@ export function AccountPanel({
           ) : null}
 
           <p className="mt-4 text-xs leading-relaxed text-ink-faint">
-            Every lesson is free to play without an account — signing in only
-            adds memory. We receive your name, email address and profile picture
-            from Google, and nothing else. See our{" "}
+            {s("account.freeNotice")}{" "}
             <a
               href="/privacy"
               className="text-ink-muted underline underline-offset-4 hover:text-mint-bright"
             >
-              privacy notice
+              {s("account.privacyLink")}
             </a>
             .
           </p>
