@@ -3,7 +3,9 @@
 import * as React from "react";
 import { motion } from "motion/react";
 import { Section, SectionHeading } from "@/components/ui/section";
-import { TIERS, type Tier } from "@/lib/curriculum";
+import { type Tier } from "@/lib/curriculum";
+import { localisedTiers } from "@/lib/curriculum-locale";
+import { useLocale } from "@/components/site/locale-provider";
 import { cn } from "@/lib/utils";
 import { useSiteText } from "@/lib/use-site-text";
 
@@ -25,6 +27,8 @@ const ACCENT: Record<Tier["accent"], { ring: string; text: string; glow: string 
 
 export function Tiers() {
   const s = useSiteText();
+  const { locale } = useLocale();
+  const TIERS = localisedTiers(locale);
   const [activeId, setActiveId] = React.useState<Tier["id"]>(TIERS[0]!.id);
   const active = TIERS.find((tier) => tier.id === activeId) ?? TIERS[0]!;
 

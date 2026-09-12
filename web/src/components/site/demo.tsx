@@ -2,7 +2,9 @@
 
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
-import { getLessonById } from "@openmacro/core/content";
+import { useLocale } from "@/components/site/locale-provider";
+import { localisedLessonById } from "@openmacro/core/i18n/content";
+import type { Locale } from "@openmacro/core/i18n/locales";
 import type { TAccountFlowChallenge } from "@openmacro/core/content/schema";
 import { gradeChallenge, type GradeResult } from "@openmacro/core/engine/grading";
 import type { ChallengeAnswer } from "@openmacro/core/engine/answers";
@@ -18,16 +20,23 @@ import { TAccountFlowView } from "@/components/challenges/t-account-flow";
  * the previous version was a hand-maintained duplicate that could quietly
  * drift away from the thing it was advertising.
  */
-const DEMO_CHALLENGE = (() => {
-  const lesson = getLessonById("qe-primary-dealer");
+/**
+ * The teaser is a real lesson step, so it has to be the *translated* one —
+ * a Portuguese landing page that grades you in English is worse than no
+ * teaser at all.
+ */
+function demoChallenge(locale: Locale): TAccountFlowChallenge | undefined {
+  const lesson = localisedLessonById(locale, "qe-primary-dealer");
   return lesson?.challenges.find(
     (challenge): challenge is TAccountFlowChallenge =>
       challenge.type === "t_account_flow",
   );
-})();
+}
 
 export function Demo() {
   const s = useSiteText();
+  const { locale } = useLocale();
+  const DEMO_CHALLENGE = React.useMemo(() => demoChallenge(locale), [locale]);
   const [answer, setAnswer] = React.useState<ChallengeAnswer | null>(null);
   const [result, setResult] = React.useState<GradeResult | null>(null);
 

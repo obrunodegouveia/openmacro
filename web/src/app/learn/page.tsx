@@ -7,7 +7,8 @@ import { Section, SectionHeading } from "@/components/ui/section";
 import { AnswerList } from "@/components/site/answer-list";
 import { Badge } from "@/components/ui/badge";
 import { LEARN_ANSWERS, faqPageLd } from "@/lib/answers";
-import { SYLLABUS, TRACK_COUNT_LABEL } from "@/lib/curriculum";
+import { TRACK_COUNT_LABEL } from "@/lib/curriculum";
+import { localisedSyllabus } from "@/lib/curriculum-locale";
 import { CourseMap } from "@/components/app/course-map";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { localisedCopy } from "@/lib/seo-copy";
@@ -43,6 +44,7 @@ export async function generateMetadata() {
  */
 export default async function LearnPage() {
   const s = await getSiteText();
+  const SYLLABUS = localisedSyllabus(await serverLocale());
   return (
     <>
       <JsonLd data={faqPageLd(LEARN_ANSWERS)} />

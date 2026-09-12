@@ -7,7 +7,9 @@ import { motion } from "motion/react";
 import { ChevronRight, Lock } from "lucide-react";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
-import { SYLLABUS, TIERS, type Track, TRACK_COUNT_LABEL } from "@/lib/curriculum";
+import { type Track, TRACK_COUNT_LABEL } from "@/lib/curriculum";
+import { localisedSyllabus, localisedTiers } from "@/lib/curriculum-locale";
+import { useLocale } from "@/components/site/locale-provider";
 import { cn } from "@/lib/utils";
 
 /**
@@ -41,6 +43,9 @@ const ACCENT_RING: Record<Track["accent"], string> = {
 
 export function Roadmap() {
   const s = useSiteText();
+  const { locale } = useLocale();
+  const SYLLABUS = localisedSyllabus(locale);
+  const TIERS = localisedTiers(locale);
   const [activeId, setActiveId] = React.useState(SYLLABUS[2]?.id ?? SYLLABUS[0]!.id);
   const active = SYLLABUS.find((track) => track.id === activeId) ?? SYLLABUS[0]!;
 
