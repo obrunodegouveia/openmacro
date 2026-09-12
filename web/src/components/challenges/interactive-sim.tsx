@@ -181,7 +181,7 @@ export function InteractiveSimView({
               <span className={step.done ? "text-mint-bright" : "text-ink-muted"}>
                 {step.label}
               </span>
-              <span className="sr-only">{step.done ? " — done" : " — not yet"}</span>
+              <span className="sr-only">{step.done ? ` ${s("sim.done")}` : ` ${s("sim.notYet")}`}</span>
             </li>
           ))}
         </ul>

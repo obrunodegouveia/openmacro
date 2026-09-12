@@ -5,14 +5,21 @@ import { Footer } from "@/components/site/footer";
 import { Section } from "@/components/ui/section";
 import { AccountPanel } from "@/components/site/account-button";
 import { JsonLd, breadcrumbs, pageMetadata } from "@/lib/seo";
+import { localisedCopy } from "@/lib/seo-copy";
+import { serverLocale } from "@/lib/locale-server";
 
-export const metadata = pageMetadata({
-  title: "Sign in",
+export async function generateMetadata() {
+  const locale = await serverLocale();
+  return pageMetadata({
+    locale,
+    title: "Sign in",
   description:
     "Sign in to OpenMacro with Google to save your XP and day streak across devices. Every lesson stays free to play without an account.",
-  path: "/login",
-  keywords: ["openmacro sign in", "openmacro login", "openmacro account"],
-});
+    path: "/login",
+    keywords: ["openmacro sign in", "openmacro login", "openmacro account"],
+    ...localisedCopy("/login", locale),
+  });
+}
 
 /**
  * The account page.
@@ -30,8 +37,8 @@ export default async function LoginPage() {
     <>
       <JsonLd
         data={breadcrumbs([
-          { name: "Home", path: "/" },
-          { name: "Sign in", path: "/login" },
+          { name: s("nav.home"), path: "/" },
+          { name: s("nav.signIn"), path: "/login" },
         ])}
       />
       <Nav />
@@ -49,14 +56,14 @@ export default async function LoginPage() {
             <AccountPanel className="mt-8" redirectTo="/dashboard" />
 
             <p className="mt-6 text-sm leading-relaxed text-ink-faint">
-              No account? Signing in with Google creates one. You can also just{" "}
+              {s("login.noAccount.lead")}{" "}
               <Link
                 href="/learn"
                 className="text-ink-muted underline underline-offset-4 hover:text-mint-bright"
               >
-                start learning
+                {s("login.noAccount.link")}
               </Link>{" "}
-              — every lesson is free to play, signed in or not.
+              {s("login.noAccount.tail")}
             </p>
           </div>
         </Section>

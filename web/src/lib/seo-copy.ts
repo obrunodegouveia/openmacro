@@ -79,6 +79,12 @@ const PT: Record<string, PageCopy> = {
       'literacia financeira nas escolas',
     ],
   },
+  '/login': {
+    title: 'Iniciar sessão',
+    description:
+      'Inicia sessão no OpenMacro com a Google para guardares os teus XP e a tua sequência de dias entre dispositivos. Todas as lições continuam gratuitas sem conta.',
+    keywords: ['iniciar sessão openmacro', 'login openmacro', 'conta openmacro'],
+  },
   '/privacy': {
     title: 'Privacidade e aviso COPPA',
     description:

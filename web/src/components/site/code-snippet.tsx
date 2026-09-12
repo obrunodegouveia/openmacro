@@ -47,12 +47,12 @@ export function CodeSnippet({
           {copied ? (
             <>
               <Check className="size-3.5 text-mint" aria-hidden />
-              Copied
+              {s("snippet.copied")}
             </>
           ) : (
             <>
               <Copy className="size-3.5" aria-hidden />
-              Copy
+              {s("snippet.copy")}
             </>
           )}
         </button>

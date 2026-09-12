@@ -106,7 +106,7 @@ export function Roadmap() {
                     {track.icon}
                   </span>
                   <span className="text-[0.7rem] font-extrabold uppercase tracking-wider text-ink-faint">
-                    Track {track.index}
+                    {s("roadmap.track", { n: track.index })}
                   </span>
                   <span className="font-display text-sm font-extrabold leading-snug text-ink">
                     {track.title}
@@ -133,10 +133,10 @@ export function Roadmap() {
               {s(STATUS_LABEL[active.status])}
             </Badge>
             <span className="text-xs font-semibold text-ink-faint">
-              {active.lessonCount} lessons
+              {s("roadmap.lessons", { count: active.lessonCount })}
             </span>
             <span className="text-xs font-semibold text-ink-faint">
-              Operates on{" "}
+              {s("roadmap.operatesOn")}{" "}
               {active.tiers
                 .map((tierId) => {
                   const tier = TIERS.find((candidate) => candidate.id === tierId);

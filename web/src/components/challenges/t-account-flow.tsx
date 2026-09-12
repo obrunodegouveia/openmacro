@@ -192,7 +192,9 @@ export function TAccountFlowView({
                             : "text-ink-faint"
                       }
                     >
-                      {effect.aggregate} {effect.direction}ed
+                      {s(`tflow.effect.${effect.direction}`, {
+                        aggregate: effect.aggregate,
+                      })}
                     </span>
                   </p>
                   <p className="mt-1 text-xs leading-relaxed text-ink-faint">

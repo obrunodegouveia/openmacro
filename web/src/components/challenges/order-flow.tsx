@@ -52,7 +52,7 @@ export function OrderFlowView({
   return (
     <div className="flex flex-col gap-3">
       <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
-        Earliest cause at the top
+        {s("order.earliestTop")}
       </p>
 
       <ol className="flex flex-col gap-2">

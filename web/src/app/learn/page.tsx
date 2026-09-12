@@ -89,9 +89,9 @@ export default async function LearnPage() {
           </div>
 
           <div className="mt-14 flex flex-wrap gap-3">
-            <Badge tone="mint">Free forever</Badge>
-            <Badge tone="neutral">No account needed</Badge>
-            <Badge tone="gold">MIT licensed</Badge>
+            <Badge tone="mint">{s("learn.badge.free")}</Badge>
+            <Badge tone="neutral">{s("learn.badge.noAccount")}</Badge>
+            <Badge tone="gold">{s("learn.badge.mit")}</Badge>
           </div>
 
           {/* The path -------------------------------------------------- */}

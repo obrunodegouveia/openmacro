@@ -8,6 +8,8 @@
  */
 export const ptPT = {
   // ---- navigation ---------------------------------------------------------
+  'nav.signIn': 'Iniciar sessão',
+  'nav.home': 'Início',
   'nav.aria': 'Principal',
   'nav.demo': 'Demonstração',
   'nav.learn': 'Aprender',
@@ -562,16 +564,20 @@ export const ptPT = {
   'glossary.title.lead': 'A',
   'glossary.title.emphasis': 'máquina monetária',
   'glossary.title.tail': ', termo a termo.',
-  'glossary.tier': 'Nível {n, number}',
+  'glossary.tier': 'Nível {n, number} · {name}',
   'glossary.terms': '{count, plural, one {# termo} other {# termos}}',
   'glossary.alsoCalled': 'Também conhecido por:',
   'learn.badge.free': 'Gratuito para sempre',
   'learn.badge.noAccount': 'Sem necessidade de conta',
   'learn.badge.mit': 'Licenciado sob MIT',
-  'login.noAccount.lead': 'Sem conta? Iniciar sessão com a Google cria uma. Ou',
+  'login.noAccount.lead': 'Sem conta? Iniciar sessão com a Google cria uma. Também podes simplesmente',
   'login.noAccount.link': 'começa a aprender',
   'login.noAccount.tail': '— todas as lições são gratuitas, com ou sem sessão iniciada.',
   'roadmap.track': 'Percurso {n, number}',
   'roadmap.lessons': '{count, plural, one {# lição} other {# lições}}',
   'roadmap.operatesOn': 'Opera sobre',
+  'tflow.effect.expand': '{aggregate} expandiu',
+  'tflow.effect.contract': '{aggregate} contraiu',
+  'tflow.effect.unchanged': '{aggregate} inalterado',
+  'player.xpEarned': '+{count, number} XP',
 } as const;

@@ -11,6 +11,8 @@
  */
 export const en = {
   // ---- navigation ---------------------------------------------------------
+  'nav.signIn': 'Sign in',
+  'nav.home': 'Home',
   'nav.aria': 'Main',
   'nav.demo': 'Live demo',
   'nav.learn': 'Learn',
@@ -564,16 +566,20 @@ export const en = {
   'glossary.title.lead': 'The',
   'glossary.title.emphasis': 'monetary machine',
   'glossary.title.tail': ', term by term.',
-  'glossary.tier': 'Tier {n, number}',
+  'glossary.tier': 'Tier {n, number} · {name}',
   'glossary.terms': '{count, plural, one {# term} other {# terms}}',
   'glossary.alsoCalled': 'Also called:',
   'learn.badge.free': 'Free forever',
   'learn.badge.noAccount': 'No account needed',
   'learn.badge.mit': 'MIT licensed',
-  'login.noAccount.lead': 'No account? Signing in with Google creates one. Or',
+  'login.noAccount.lead': 'No account? Signing in with Google creates one. You can also just',
   'login.noAccount.link': 'start learning',
   'login.noAccount.tail': '— every lesson is free to play, signed in or not.',
   'roadmap.track': 'Track {n, number}',
   'roadmap.lessons': '{count, plural, one {# lesson} other {# lessons}}',
   'roadmap.operatesOn': 'Operates on',
+  'tflow.effect.expand': '{aggregate} expanded',
+  'tflow.effect.contract': '{aggregate} contracted',
+  'tflow.effect.unchanged': '{aggregate} unchanged',
+  'player.xpEarned': '+{count, number} XP',
 } as const;

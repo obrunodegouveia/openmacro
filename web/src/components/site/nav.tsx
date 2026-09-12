@@ -72,7 +72,7 @@ export function Nav() {
               className="mr-1 inline-flex items-center gap-1.5 rounded-lg border border-mint/30 bg-mint/10 px-3 py-2 text-sm font-bold text-mint-bright transition-colors hover:border-mint/60 hover:bg-mint/15"
             >
               <LayoutDashboard className="size-4" aria-hidden />
-              Dashboard
+              {s("nav.dashboard")}
             </Link>
           ) : null}
           {LINKS.map((link) => (
@@ -127,7 +127,7 @@ export function Nav() {
                 className="mb-1 inline-flex items-center gap-2 rounded-lg border border-mint/30 bg-mint/10 px-3 py-3 text-sm font-bold text-mint-bright"
               >
                 <LayoutDashboard className="size-4" aria-hidden />
-                Dashboard
+                {s("nav.dashboard")}
               </Link>
             ) : null}
             {LINKS.map((link) => (

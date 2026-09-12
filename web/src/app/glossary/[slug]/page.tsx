@@ -117,7 +117,7 @@ export default async function GlossaryTermPage({
               ) : null}
               {tier ? (
                 <Badge tone="neutral">
-                  Tier {tier.index} · {tier.name}
+                  {s("glossary.tier", { n: tier.index, name: tier.name })}
                 </Badge>
               ) : null}
             </div>
@@ -134,7 +134,7 @@ export default async function GlossaryTermPage({
 
             {entry.aliases?.length ? (
               <p className="mt-3 text-sm text-ink-faint">
-                Also called: {entry.aliases.join(", ")}.
+                {s("glossary.alsoCalled")} {entry.aliases.join(", ")}.
               </p>
             ) : null}
 

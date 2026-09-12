@@ -72,8 +72,8 @@ export default async function GlossaryIndexPage() {
       />
       <JsonLd
         data={breadcrumbs([
-          { name: "Home", path: "/" },
-          { name: "Glossary", path: "/glossary" },
+          { name: s("nav.home"), path: "/" },
+          { name: s("nav.glossary"), path: "/glossary" },
         ])}
       />
 
@@ -93,8 +93,9 @@ export default async function GlossaryIndexPage() {
             overline={s("glossary.overline")}
             title={
               <>
-                The <span className="text-gradient">monetary machine</span>,
-                term by term.
+                {s("glossary.title.lead")}{" "}
+                <span className="text-gradient">{s("glossary.title.emphasis")}</span>
+                {s("glossary.title.tail")}
               </>
             }
             lede={s("glossary.lede")}
@@ -111,10 +112,10 @@ export default async function GlossaryIndexPage() {
                     id={`tier-${tier.id}`}
                     className="font-display text-xl font-extrabold tracking-tight"
                   >
-                    Tier {tier.index} · {tier.name}
+                    {s("glossary.tier", { n: tier.index, name: tier.name })}
                   </h2>
                   <span className="text-xs font-semibold text-ink-faint">
-                    {entries.length} {entries.length === 1 ? "term" : "terms"}
+                    {s("glossary.terms", { count: entries.length })}
                   </span>
                 </div>
 

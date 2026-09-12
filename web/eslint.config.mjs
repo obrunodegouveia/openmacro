@@ -16,23 +16,58 @@ const eslintConfig = defineConfig([
   ]),
   {
     /**
-     * The same rule the app runs, at `warn` rather than `error`.
+     * The same rule the app runs, and now at the same severity.
      *
-     * The app is at zero and gates on it. The site is not: the marketing copy,
-     * the privacy notice and the glossary are still English, and turning this
-     * red today would just mean turning it off. A warning keeps the real
-     * number in front of whoever runs lint and lets it be driven down — flip
-     * it to `error` when it reaches zero, the way `app` and `src` already are.
+     * Everything a reader can see is in the catalogue. What is listed below is
+     * the residue the rule cannot tell apart from prose:
+     *
+     * • Code identifiers rendered in monospace — a file path, an npm script,
+     *   a GitHub label, a field name. Translating one would break the
+     *   instruction it belongs to. The sentence around them *is* translated.
+     * • The network name "Base" and the domain, which are proper nouns.
+     * • `aria-label={props["aria-label"]}` in the slider, which is a prop
+     *   being forwarded rather than a string being written.
+     *
+     * The Open Graph images are the one real gap and are deliberately left:
+     * they are social cards baked at build time by one route per page, with
+     * no locale in scope. A Portuguese card needs a second image route, which
+     * is a feature rather than a translation.
      */
     files: ["src/**/*.{ts,tsx}"],
     plugins: { openmacro: { rules: { "no-untranslated-text": noUntranslatedText } } },
     rules: {
       "openmacro/no-untranslated-text": [
-        "warn",
+        "error",
         {
-          // The brand is split across elements for two-tone styling. It is a
-          // presentation detail, and the same word in every language.
-          allow: ["OpenMacro", "Open", "Macro", "MacroXP", "MintBucks", "GitHub", "MIT"],
+          allow: [
+            // The brand, split across elements for two-tone styling.
+            "OpenMacro",
+            "Open",
+            "Macro",
+            "MacroXP",
+            "MintBucks",
+            "GitHub",
+            "MIT",
+            // Proper nouns.
+            "Base",
+            "openmacro.org",
+            // Code identifiers, rendered as code.
+            "packages/core",
+            "packages/core/src/content/schema.ts",
+            "npm run lint:content",
+            "good-first-lesson",
+            "/modules/",
+            "video:",
+            "url, minutes, source",
+            "aria-label",
+            // Open Graph cards: build-time images, English by design.
+            "Understand the Machine",
+            "Behind",
+            "Money.",
+            "MIT licensed",
+            "/ glossary",
+            "Tier",
+          ],
         },
       ],
     },

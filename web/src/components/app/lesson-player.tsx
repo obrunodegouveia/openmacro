@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -59,6 +60,7 @@ export function LessonPlayer({
   xpAvailable: number;
 }) {
   const { t, lessonById } = useLocale();
+  const s = useSiteText();
 
   /**
    * The lesson in the reader's language.
@@ -174,15 +176,14 @@ export function LessonPlayer({
             <p className="mt-3 flex flex-wrap items-center gap-4 text-xs font-bold text-ink-faint">
               <span className="inline-flex items-center gap-1.5">
                 <Clock className="size-3.5" aria-hidden />
-                {lesson.estimatedMinutes} min
+                {s("player.min", { count: lesson.estimatedMinutes })}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <Coins className="size-3.5" aria-hidden />
-                {xpAvailable} XP available
+                {s("player.xpAvailable", { count: xpAvailable })}
               </span>
               <span>
-                {lesson.challenges.length} challenge
-                {lesson.challenges.length === 1 ? "" : "s"}
+                {s("player.challenges", { count: lesson.challenges.length })}
               </span>
             </p>
           </header>
@@ -311,6 +312,7 @@ function SessionBar({
   showTitle: boolean;
 }) {
   const { t } = useLocale();
+  const s = useSiteText();
   return (
     <div className="sticky top-0 z-40 border-b border-hairline bg-canvas/85 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-5 py-3 sm:gap-4 sm:px-8">
@@ -376,7 +378,7 @@ function SessionBar({
           aria-label={t("lesson.xpEarnedA11y", { count: state.xpEarned })}
         >
           <Coins className="size-3.5" aria-hidden />
-          <span aria-hidden>{state.xpEarned} XP</span>
+          <span aria-hidden>{s("player.xp", { count: state.xpEarned })}</span>
         </span>
       </div>
 
@@ -460,6 +462,7 @@ function LessonComplete({
   state: ReturnType<typeof createSession>;
   onRestart: () => void;
 }) {
+  const s = useSiteText();
   const { enabled, learner } = useAuth();
   const { t, nextLesson: findNext } = useLocale();
   /** `local` means kept on this device — the signed-out case, not a failure. */
@@ -520,7 +523,8 @@ function LessonComplete({
 
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-extrabold text-gold">
-          <Coins className="size-4" aria-hidden />+{xpEarned} XP
+          <Coins className="size-4" aria-hidden />
+          {s("player.xpEarned", { count: xpEarned })}
         </span>
         {perfect ? (
           <span className="inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/10 px-4 py-1.5 text-sm font-extrabold text-mint-bright">
