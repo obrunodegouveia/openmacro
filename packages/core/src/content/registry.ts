@@ -38,8 +38,21 @@ import { moduleBuyingPropertyPortugal } from './lessons/module-14-buying-propert
 import { moduleScrutinisingCbdcs } from './lessons/module-15-scrutinising-cbdcs';
 import { moduleBankingAndMoney } from './lessons/module-16-banking-and-money';
 
-/** Ordered list of every module shipped with the app. Add yours here. */
+/**
+ * Ordered list of every module shipped with the app. Add yours here.
+ *
+ * Order is the curriculum. The array is what the learning path, the course
+ * map, the module numbering and `ALL_LESSONS` all read, so moving an entry
+ * here moves it everywhere — mobile and web both — and nothing else has to
+ * be touched.
+ *
+ * Banking and Money leads because it is the only module with a video on
+ * every lesson. A complete beginner does better watching somebody explain a
+ * balance sheet before being asked to post one, and Khan Academy's series
+ * does that better than any text we would write.
+ */
 export const MODULES: readonly Module[] = [
+  moduleBankingAndMoney,
   moduleStartHere,
   moduleFoundationsFiduciaryCurrency,
   moduleCommercialCentralInterface,
@@ -56,7 +69,6 @@ export const MODULES: readonly Module[] = [
   moduleEuribor,
   moduleBuyingPropertyPortugal,
   moduleScrutinisingCbdcs,
-  moduleBankingAndMoney,
 ];
 
 export const COURSE: Course = {
