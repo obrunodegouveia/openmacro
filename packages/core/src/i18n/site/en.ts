@@ -125,4 +125,49 @@ export const en = {
   'account.freeNotice':
     'Every lesson is free to play without an account — signing in only adds memory. We receive your name, email address and profile picture from Google, and nothing else. See our',
   'account.privacyLink': 'privacy notice',
+
+  // ---- animated balance sheet (home) --------------------------------------
+  'sheet.eyebrow': 'Central bank balance sheet',
+  'sheet.easing': 'Easing: buying bonds',
+  'sheet.tightening': 'Tightening: holding steady',
+  'sheet.qeOn': 'QE on',
+  'sheet.qeOff': 'QE off',
+  'sheet.total': 'Total',
+  'sheet.note':
+    'Both sides move together. The reserves the bank pays with are created on the spot — the sheet always balances.',
+  'sheet.assets.bonds': 'Government bonds',
+  'sheet.assets.loans': 'Loans to banks',
+  'sheet.assets.fx': 'FX & gold',
+  'sheet.liabilities.reserves': 'Bank reserves',
+  'sheet.liabilities.currency': 'Currency in circulation',
+  'sheet.liabilities.capital': 'Capital & other',
+
+  // ---- contributor hub ----------------------------------------------------
+  'contribute.overline': 'Contributor hub',
+  'contribute.title.lead': 'A lesson is a',
+  'contribute.title.emphasis': 'JSON file',
+  'contribute.title.tail': 'That is the whole barrier.',
+  'contribute.lede':
+    'Economists, teachers and developers all contribute the same way: one file, one pull request. Encode a central bank operation as postings, and the app plays it.',
+  'contribute.validated': 'Validated in CI against',
+  'contribute.validatedBy': 'by',
+  'contribute.validatedTail':
+    'which rejects any scenario whose expected postings leave a balance sheet unbalanced — the mistake every first-time contributor makes.',
+  'contribute.live': 'Live from GitHub',
+  'contribute.awaiting': 'Awaiting first release',
+  'contribute.stars': 'GitHub stars',
+  'contribute.prs': 'Open PRs',
+  'contribute.contributors': 'Contributors',
+  'contribute.forks': 'Forks',
+  'contribute.countersNote':
+    'Counters go live the moment the repository is public. Until then we would rather show a dash than a number we made up.',
+  'contribute.startHere': 'Start here',
+  'contribute.goodFirst': 'Good first issues are labelled',
+  'contribute.goodFirstTail':
+    'Bring the economics; we will help with the tooling. Reviews are about the mechanism, not the syntax.',
+  'contribute.viewRepo': 'View the repo',
+  'contribute.joinDiscord': 'Join Discord',
+  'contribute.guide': 'Contributing guide',
+  'contribute.browseLessons': 'Browse lessons',
+  'contribute.openIssues': 'Open issues',
 } as const;

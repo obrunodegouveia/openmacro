@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import type { SiteKey } from "@openmacro/core/i18n/site";
+import { useSiteText } from "@/lib/use-site-text";
 import { motion, useReducedMotion } from "motion/react";
 import { formatCurrency } from "@/lib/format";
 
@@ -17,7 +19,8 @@ import { formatCurrency } from "@/lib/format";
  */
 
 interface Position {
-  label: string;
+  /** A site-catalogue key, resolved at render. */
+  label: SiteKey;
   /** Balance in the tightening state, in billions. */
   base: number;
   /** Balance after the easing programme, in billions. */
@@ -26,20 +29,21 @@ interface Position {
 }
 
 const ASSETS: Position[] = [
-  { label: "Government bonds", base: 2100, eased: 3400, color: "var(--color-azure)" },
-  { label: "Loans to banks", base: 480, eased: 760, color: "#5b8dff" },
-  { label: "FX & gold", base: 320, eased: 320, color: "var(--color-gold)" },
+  { label: "sheet.assets.bonds", base: 2100, eased: 3400, color: "var(--color-azure)" },
+  { label: "sheet.assets.loans", base: 480, eased: 760, color: "#5b8dff" },
+  { label: "sheet.assets.fx", base: 320, eased: 320, color: "var(--color-gold)" },
 ];
 
 const LIABILITIES: Position[] = [
-  { label: "Bank reserves", base: 1650, eased: 3110, color: "var(--color-mint)" },
-  { label: "Currency in circulation", base: 980, eased: 1090, color: "var(--color-mint-bright)" },
-  { label: "Capital & other", base: 270, eased: 280, color: "var(--color-violet)" },
+  { label: "sheet.liabilities.reserves", base: 1650, eased: 3110, color: "var(--color-mint)" },
+  { label: "sheet.liabilities.currency", base: 980, eased: 1090, color: "var(--color-mint-bright)" },
+  { label: "sheet.liabilities.capital", base: 270, eased: 280, color: "var(--color-violet)" },
 ];
 
 const CYCLE_MS = 3800;
 
 export function CentralBankBalanceSheet() {
+  const s = useSiteText();
   const reduceMotion = useReducedMotion();
   const [easing, setEasing] = React.useState(false);
 
@@ -68,10 +72,10 @@ export function CentralBankBalanceSheet() {
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <p className="text-[0.7rem] font-extrabold uppercase tracking-[0.16em] text-ink-faint">
-            Central bank balance sheet
+            {s("sheet.eyebrow")}
           </p>
           <p className="font-display text-lg font-extrabold">
-            {easing ? "Easing: buying bonds" : "Tightening: holding steady"}
+            {easing ? s("sheet.easing") : s("sheet.tightening")}
           </p>
         </div>
         <motion.span
@@ -84,22 +88,22 @@ export function CentralBankBalanceSheet() {
               : "border-hairline bg-white/5 text-ink-muted"
           }`}
         >
-          {easing ? "QE on" : "QE off"}
+          {easing ? s("sheet.qeOn") : s("sheet.qeOff")}
         </motion.span>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Column
-          title="Assets"
-          hint="What it owns"
+          title={s("tiers.assets")}
+          hint={s("tiers.assetsHint")}
           positions={ASSETS}
           valueOf={value}
           scale={scale}
           total={assetTotal}
         />
         <Column
-          title="Liabilities"
-          hint="What it owes"
+          title={s("tiers.liabilities")}
+          hint={s("tiers.liabilitiesHint")}
           positions={LIABILITIES}
           valueOf={value}
           scale={scale}
@@ -108,8 +112,7 @@ export function CentralBankBalanceSheet() {
       </div>
 
       <p className="mt-5 border-t border-hairline pt-4 text-xs leading-relaxed text-ink-faint">
-        Both sides move together. The reserves the bank pays with are created on
-        the spot — the sheet always balances.
+        {s("sheet.note")}
       </p>
     </motion.div>
   );
@@ -130,6 +133,7 @@ function Column({
   scale: number;
   total: number;
 }) {
+  const s = useSiteText();
   return (
     <div className="rounded-2xl border border-hairline bg-abyss/50 p-4">
       <div className="mb-3 flex items-baseline justify-between">
@@ -148,7 +152,7 @@ function Column({
             <li key={position.label}>
               <div className="mb-1.5 flex items-baseline justify-between gap-2">
                 <span className="text-xs font-semibold text-ink-muted">
-                  {position.label}
+                  {s(position.label)}
                 </span>
                 <span className="tabular font-mono text-xs font-bold text-ink">
                   {formatCurrency(amount)}B
@@ -169,7 +173,7 @@ function Column({
 
       <div className="mt-4 flex items-baseline justify-between border-t border-hairline pt-3">
         <span className="text-[0.7rem] font-extrabold uppercase tracking-wider text-ink-faint">
-          Total
+          {s("sheet.total")}
         </span>
         <span className="tabular font-mono text-sm font-extrabold text-ink">
           {formatCurrency(total)}B

@@ -122,4 +122,49 @@ export const ptPT = {
   'account.freeNotice':
     'Todas as lições são gratuitas sem conta — iniciar sessão só acrescenta memória. Recebemos da Google o teu nome, endereço de email e fotografia de perfil, e mais nada. Vê o nosso',
   'account.privacyLink': 'aviso de privacidade',
+
+  // ---- animated balance sheet (home) --------------------------------------
+  'sheet.eyebrow': 'Balanço do banco central',
+  'sheet.easing': 'Expansão: a comprar obrigações',
+  'sheet.tightening': 'Aperto: sem mexer',
+  'sheet.qeOn': 'QE ligado',
+  'sheet.qeOff': 'QE desligado',
+  'sheet.total': 'Total',
+  'sheet.note':
+    'Os dois lados mexem-se juntos. As reservas com que o banco paga são criadas na hora — o balanço fecha sempre.',
+  'sheet.assets.bonds': 'Obrigações do Estado',
+  'sheet.assets.loans': 'Empréstimos a bancos',
+  'sheet.assets.fx': 'Divisas e ouro',
+  'sheet.liabilities.reserves': 'Reservas bancárias',
+  'sheet.liabilities.currency': 'Moeda em circulação',
+  'sheet.liabilities.capital': 'Capital e outros',
+
+  // ---- contributor hub ----------------------------------------------------
+  'contribute.overline': 'Centro de contribuição',
+  'contribute.title.lead': 'Uma lição é um',
+  'contribute.title.emphasis': 'ficheiro JSON',
+  'contribute.title.tail': 'É essa a barreira toda.',
+  'contribute.lede':
+    'Economistas, professores e programadores contribuem todos da mesma maneira: um ficheiro, um pull request. Codifica uma operação de banco central como lançamentos, e a app joga-a.',
+  'contribute.validated': 'Validado na CI contra',
+  'contribute.validatedBy': 'por',
+  'contribute.validatedTail':
+    'que rejeita qualquer cenário cujos lançamentos esperados deixem um balanço por fechar — o erro que todos os contribuidores cometem à primeira.',
+  'contribute.live': 'Em directo do GitHub',
+  'contribute.awaiting': 'À espera da primeira versão',
+  'contribute.stars': 'Estrelas no GitHub',
+  'contribute.prs': 'PR abertos',
+  'contribute.contributors': 'Contribuidores',
+  'contribute.forks': 'Bifurcações',
+  'contribute.countersNote':
+    'Os contadores entram em funcionamento assim que o repositório for público. Até lá preferimos mostrar um traço a um número inventado.',
+  'contribute.startHere': 'Começa por aqui',
+  'contribute.goodFirst': 'As boas primeiras tarefas estão marcadas com',
+  'contribute.goodFirstTail':
+    'Traz a economia; nós ajudamos com as ferramentas. As revisões são sobre o mecanismo, não sobre a sintaxe.',
+  'contribute.viewRepo': 'Ver o repositório',
+  'contribute.joinDiscord': 'Entrar no Discord',
+  'contribute.guide': 'Guia de contribuição',
+  'contribute.browseLessons': 'Ver as lições',
+  'contribute.openIssues': 'Questões abertas',
 } as const;
