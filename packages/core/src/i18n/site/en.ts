@@ -350,6 +350,7 @@ export const en = {
   'briefs.privacyLink': 'the privacy notice',
 
   // ---- a glossary entry ---------------------------------------------------
+  'term.metaTitle': '{name}: what it is and how it works',
   'term.allTerms': 'All terms',
   'term.mechanics': 'The mechanics',
   'term.misreading': 'The common misreading',

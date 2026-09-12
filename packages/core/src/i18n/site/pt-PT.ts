@@ -347,6 +347,7 @@ export const ptPT = {
   'briefs.privacyLink': 'o aviso de privacidade',
 
   // ---- a glossary entry ---------------------------------------------------
+  'term.metaTitle': '{name}: o que é e como funciona',
   'term.allTerms': 'Todos os termos',
   'term.mechanics': 'A mecânica',
   'term.misreading': 'O equívoco habitual',

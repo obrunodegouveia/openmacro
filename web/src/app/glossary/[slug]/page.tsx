@@ -34,9 +34,11 @@ export async function generateMetadata({
   const name = entry.abbreviation
     ? `${entry.term} (${entry.abbreviation})`
     : entry.term;
+  const site = await getSiteText();
 
   return pageMetadata({
-    title: `${name}: what it is and how it works`,
+    locale: await serverLocale(),
+    title: site("term.metaTitle", { name }),
     description: entry.definition,
     path: `/glossary/${entry.slug}`,
     keywords: [
