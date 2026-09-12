@@ -196,10 +196,23 @@ never automatic: "it was on main" is not a good enough reason to put something
 in front of people when nothing else will check it. Promote deliberately, with
 `npm run update:store` or by running that workflow with `channel: production`.
 
-The workflow refuses to publish when `app.json`, `app.config.js` or a lockfile
-changed. Such an update reaches nothing — the fingerprint has moved, so no
-installed build matches it — and it would look like a successful deploy while
-being none.
+The workflow refuses to publish when `app.json`, `app.config.js`,
+`package.json`, a lockfile, `babel.config.js` or `metro.config.js` changed.
+Such an update reaches nothing — the fingerprint has moved, so no installed
+build matches it — and it would look like a successful deploy while being none.
+
+**`npm run update:store` has no such guard**, which is the hole to know about:
+run by hand, it will happily publish at a fingerprint nothing in the field
+matches. That is how build 15 was orphaned — `i18n:fixspelling` was added to
+`package.json`, the fingerprint moved from f010afee to b19b4646, and every
+update after it would have been unreachable. `fingerprint.config.js` now skips
+the `scripts` block for exactly that reason, so a tooling script no longer
+counts as a native change. Before publishing by hand, check you match what is
+out there:
+
+```bash
+npx expo-updates fingerprint:generate --platform ios   # must equal the build's
+```
 
 ### Operating it
 
