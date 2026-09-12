@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -34,16 +35,16 @@ import { cn } from "@/lib/utils";
  * so this component can only ever see the signed-in learner's own rows.
  */
 export function Dashboard() {
+  const s = useSiteText();
   const { signOut, learner } = useAuth();
   const { snapshot, state, signedIn, enabled, restoring } = useProgressSnapshot();
 
   if (!enabled) {
     return (
       <p className="text-sm leading-relaxed text-ink-muted">
-        This build has no account backend configured, so there is no progress to
-        show. Every lesson still plays — see{" "}
+        {s("dash.noBackend.lead")}{" "}
         <Link href="/learn" className="text-mint-bright underline underline-offset-4">
-          the course
+          {s("dash.noBackend.link")}
         </Link>
         .
       </p>
@@ -89,6 +90,7 @@ export function DashboardView({
   signedIn?: boolean;
   onSignOut: () => void;
 }) {
+  const s = useSiteText();
   const progress = summarise(snapshot);
 
   return (
@@ -103,37 +105,36 @@ export function DashboardView({
             </h1>
             <p className="text-xs font-semibold text-ink-faint">
               {progress.completed === 0
-                ? "Nothing finished yet — pick anything below."
-                : `${progress.completed} of ${progress.total} lessons finished`}
+                ? s("dash.nothingYet")
+                : s("dash.finished", { done: progress.completed, total: progress.total })}
             </p>
           </div>
         </div>
         {signedIn ? (
           <Button variant="ghost" size="sm" onClick={onSignOut}>
             <LogOut className="size-4" aria-hidden />
-            Sign out
+            {s("dash.signOut")}
           </Button>
         ) : null}
       </header>
 
       {state === "failed" ? (
         <p role="alert" className="rounded-xl border border-coral/30 bg-coral/[0.07] px-4 py-3 text-sm text-ink-muted">
-          Could not load your progress just now. Your lessons still play — try
-          reloading the page.
+          {s("dash.loadFailed")}
         </p>
       ) : null}
 
       {/* How far --------------------------------------------------------- */}
-      <section aria-label="Your progress" className="grid gap-4 sm:grid-cols-3">
+      <section aria-label={s("dash.progressAria")} className="grid gap-4 sm:grid-cols-3">
         <Stat
           icon={<Coins className="size-4" aria-hidden />}
-          label="Total XP"
+          label={s("dash.totalXp")}
           value={state === "loading" ? "—" : String(progress.totalXp)}
           tone="gold"
         />
         <Stat
           icon={<Flame className="size-4" aria-hidden />}
-          label="Day streak"
+          label={s("dash.dayStreak")}
           value={state === "loading" ? "—" : String(progress.dayStreak)}
           tone={progress.streakActiveToday ? "mint" : "muted"}
           note={
@@ -146,16 +147,16 @@ export function DashboardView({
         />
         <Stat
           icon={<Trophy className="size-4" aria-hidden />}
-          label="Course complete"
+          label={s("dash.courseComplete")}
           value={state === "loading" ? "—" : `${progress.percent}%`}
           tone="mint"
-          note={`${progress.completed} of ${progress.total} lessons`}
+          note={s("dash.lessonsOf", { done: progress.completed, total: progress.total })}
         />
       </section>
 
       {/* What next ------------------------------------------------------- */}
       {progress.next ? (
-        <section aria-label="Continue">
+        <section aria-label={s("dash.continueAria")}>
           <Link
             href={`/learn/${progress.next.lesson.id}`}
             className="group flex items-center gap-4 rounded-card border border-mint/30 bg-mint/[0.06] p-5 transition-colors hover:border-mint/60 hover:bg-mint/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
@@ -165,7 +166,7 @@ export function DashboardView({
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-xs font-extrabold uppercase tracking-wider text-mint-bright">
-                {progress.completed === 0 ? "Start here" : "Pick up where you left off"}
+                {progress.completed === 0 ? s("dash.startHere") : s("dash.pickUp")}
               </span>
               <span className="mt-1 block font-display text-lg font-extrabold tracking-tight text-ink">
                 {progress.next.lesson.title}
@@ -184,11 +185,10 @@ export function DashboardView({
         <section className="rounded-card border border-gold/30 bg-gold/[0.06] p-5 text-center">
           <Trophy className="mx-auto size-6 text-gold" aria-hidden />
           <p className="mt-2 font-display text-lg font-extrabold">
-            Every lesson finished.
+            {s("dash.allDone")}
           </p>
           <p className="mt-1 text-sm text-ink-muted">
-            Replay any of them to raise a best score — or write one, since the
-            content is open source.
+            {s("dash.allDoneBody")}
           </p>
         </section>
       ) : null}
@@ -196,19 +196,17 @@ export function DashboardView({
       {!signedIn ? (
         <section className="rounded-card border border-hairline bg-white/[0.03] p-5">
           <h2 className="font-display text-lg font-extrabold tracking-tight">
-            This is kept on this device
+            {s("dash.onDevice")}
           </h2>
           <p className="mt-1 max-w-md text-sm leading-relaxed text-ink-muted">
-            Everything above is saved in this browser. Signing in keeps it if
-            you clear your browser, and carries it to your phone — what you have
-            already done is folded in, not replaced.
+            {s("dash.onDeviceBody")}
           </p>
           <AccountPanel className="mt-5" redirectTo="/dashboard" />
         </section>
       ) : null}
 
       {/* What is done ----------------------------------------------------- */}
-      <section aria-label="All modules" className="flex flex-col gap-8">
+      <section aria-label={s("dash.allModulesAria")} className="flex flex-col gap-8">
         {MODULES.map((module) => (
           <ModuleRow key={module.id} module={module} snapshot={snapshot} />
         ))}
@@ -225,6 +223,7 @@ function ModuleRow({
   module: Module;
   snapshot: ProgressSnapshot | null;
 }) {
+  const s = useSiteText();
   const done = module.lessons.filter((lesson) => snapshot?.progress[lesson.id]).length;
   const ratio = module.lessons.length ? done / module.lessons.length : 0;
 
@@ -245,7 +244,7 @@ function ModuleRow({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(ratio * 100)}
-        aria-label={`${module.title} progress`}
+        aria-label={s("dash.moduleProgressAria", { title: module.title })}
       >
         {ratio > 0 ? (
           <div className="h-full rounded-full bg-mint" style={{ width: `${ratio * 100}%` }} />
@@ -270,6 +269,7 @@ function LessonRow({
   lesson: Lesson;
   record?: { bestXp: number; completions: number };
 }) {
+  const s = useSiteText();
   const maxXp = lesson.challenges.reduce(
     (sum, challenge) => sum + (challenge.xp ?? DEFAULT_CHALLENGE_XP),
     0,
@@ -301,15 +301,17 @@ function LessonRow({
         <span className="block truncate text-sm font-bold text-ink">{lesson.title}</span>
         <span className="block text-xs text-ink-faint">
           {record
-            ? `Best ${record.bestXp} / ${maxXp} XP${record.completions > 1 ? ` · ${record.completions} runs` : ""}`
-            : `${maxXp} XP available`}
+            ? `${s("dash.best", { best: record.bestXp, max: maxXp })}${
+                record.completions > 1 ? ` ${s("dash.runs", { count: record.completions })}` : ""
+              }`
+            : s("dash.xpAvailable", { max: maxXp })}
         </span>
       </span>
 
       {perfect ? (
-        <Trophy className="size-4 shrink-0 text-gold" aria-label="Full marks" />
+        <Trophy className="size-4 shrink-0 text-gold" aria-label={s("dash.fullMarks")} />
       ) : record ? (
-        <RotateCcw className="size-3.5 shrink-0 text-ink-faint" aria-label="Replay" />
+        <RotateCcw className="size-3.5 shrink-0 text-ink-faint" aria-label={s("dash.replay")} />
       ) : null}
     </Link>
   );

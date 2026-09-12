@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 
 import { getSupabase } from "@/lib/supabase";
 
@@ -73,6 +74,7 @@ function short(address: string): string {
 }
 
 export function Treasury() {
+  const s = useSiteText();
   const [data, setData] = React.useState<Overview | null>(null);
   const [state, setState] = React.useState<"loading" | "ready" | "denied" | "error">("loading");
   const [busy, setBusy] = React.useState<string | null>(null);
@@ -153,19 +155,19 @@ export function Treasury() {
     }
   }
 
-  if (state === "loading") return <p className="text-sm text-neutral-500">Loading…</p>;
+  if (state === "loading") return <p className="text-sm text-neutral-500">{s("treasury.loading")}</p>;
   if (state === "denied") {
     return (
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Not found</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{s("treasury.notFound")}</h1>
         <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
-          There is nothing here for this account.
+          {s("treasury.denied")}
         </p>
       </div>
     );
   }
   if (state === "error" || !data) {
-    return <p className="text-sm text-red-600">Could not load the treasury.</p>;
+    return <p className="text-sm text-red-600">{s("treasury.loadError")}</p>;
   }
 
   const stuck = data.claims.filter((c) => c.status === "CLAIM_PENDING");
@@ -173,9 +175,9 @@ export function Treasury() {
   return (
     <div className="space-y-10">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Treasury</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{s("treasury.title")}</h1>
         <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
-          Signed in as {data.admin.email}
+          {s("treasury.signedInAs", { email: data.admin.email })}
         </p>
       </header>
 
@@ -194,7 +196,7 @@ export function Treasury() {
 
       {/* ---- funds ------------------------------------------------------ */}
       <section>
-        <h2 className="text-lg font-medium">Funds</h2>
+        <h2 className="text-lg font-medium">{s("treasury.funds")}</h2>
         {"error" in data.treasury ? (
           <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
             {data.treasury.error}
@@ -202,13 +204,13 @@ export function Treasury() {
         ) : (
           <div className="mt-3 space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <Stat label="EURC" value={`€${data.treasury.eurc}`} />
-              <Stat label="ETH (gas)" value={data.treasury.eth} />
+              <Stat label={s("treasury.eurc")} value={`€${data.treasury.eurc}`} />
+              <Stat label={s("treasury.eth")} value={data.treasury.eth} />
             </div>
 
             <div className="rounded-xl border border-black/10 p-4 dark:border-white/15">
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-                Top up this address
+                {s("treasury.topUp")}
               </p>
               <p className="mt-1 font-mono text-sm break-all">{data.treasury.address}</p>
               <button
@@ -218,15 +220,15 @@ export function Treasury() {
                 )}
                 className="mt-2 text-xs underline underline-offset-4"
               >
-                Copy
+                {s("treasury.copy")}
               </button>
               {/*
                 The single most expensive mistake available on this page, so it
                 is stated where the address is copied rather than in a doc.
               */}
               <p className="mt-3 text-xs text-amber-700 dark:text-amber-400">
-                Send EURC and ETH on <strong>Base</strong> only. The same address on another
-                network will not arrive and cannot be recovered.
+                {s("treasury.networkWarning.lead")} <strong>Base</strong>
+                {s("treasury.networkWarning.tail")}
               </p>
             </div>
           </div>
@@ -237,12 +239,10 @@ export function Treasury() {
       {stuck.length > 0 ? (
         <section>
           <h2 className="text-lg font-medium text-amber-700 dark:text-amber-400">
-            Needs attention
+            {s("treasury.attention")}
           </h2>
           <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
-            These stopped between broadcasting and recording. Look up the nonce on the treasury
-            address in BaseScan: if a transaction exists the money moved, if not it did not.
-            Do not retry the payment — a pending transaction can still be mined.
+            {s("treasury.attentionBody")}
           </p>
           <ul className="mt-3 space-y-3">
             {stuck.map((claim) => (
@@ -251,7 +251,7 @@ export function Treasury() {
                 className="rounded-xl border border-amber-300 p-4 text-sm dark:border-amber-800"
               >
                 <p>
-                  <strong>{claim.recipient_key}</strong> · €{euros(claim.amount_base_units)} · nonce{" "}
+                  <strong>{claim.recipient_key}</strong> · €{euros(claim.amount_base_units)} · {s("treasury.nonce")}{" "}
                   <span className="font-mono">{claim.broadcast_nonce ?? "—"}</span>
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -264,7 +264,7 @@ export function Treasury() {
                     }}
                     className="rounded-lg border border-black/15 px-3 py-1.5 text-xs dark:border-white/20"
                   >
-                    It was paid
+                    {s("treasury.wasPaid")}
                   </button>
                   <button
                     type="button"
@@ -272,7 +272,7 @@ export function Treasury() {
                     onClick={() => void act("resolve-claim", { id: claim.id, outcome: "failed" }, claim.id)}
                     className="rounded-lg border border-black/15 px-3 py-1.5 text-xs dark:border-white/20"
                   >
-                    It never sent
+                    {s("treasury.neverSent")}
                   </button>
                 </div>
               </li>
@@ -283,10 +283,10 @@ export function Treasury() {
 
       {/* ---- recipients -------------------------------------------------- */}
       <section>
-        <h2 className="text-lg font-medium">Who can be paid</h2>
+        <h2 className="text-lg font-medium">{s("treasury.recipients")}</h2>
         <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
-          A new address starts <em>pending</em> and cannot receive a game reward. Send a test,
-          confirm it arrived in their Coinbase account, then activate it.
+          {s("treasury.recipientsBody.lead")} <em>{s("treasury.recipientsBody.pending")}</em>{" "}
+          {s("treasury.recipientsBody.tail")}
         </p>
 
         <ul className="mt-4 space-y-3">
@@ -303,13 +303,15 @@ export function Treasury() {
                 {short(r.address)}
               </p>
               <p className="mt-1 text-xs text-neutral-500">
-                {r.amountEuros ? `€${r.amountEuros} per module` : "default amount"}
+                {r.amountEuros
+                  ? s("treasury.perModule", { amount: r.amountEuros })
+                  : s("treasury.defaultAmount")}
                 {r.note ? ` · ${r.note}` : ""}
               </p>
               <p className="mt-1 text-xs text-neutral-500">
                 {r.claimantEmail
-                  ? `claimed by ${r.claimantEmail}`
-                  : "no account bound — nobody can earn into this wallet"}
+                  ? s("treasury.claimedBy", { email: r.claimantEmail })
+                  : s("treasury.unbound")}
               </p>
 
               <div className="mt-3 flex flex-wrap gap-2">
@@ -319,7 +321,7 @@ export function Treasury() {
                   onClick={() => void act("test-send", { id: r.id, amountEuros: "1.00" }, r.id)}
                   className="rounded-lg border border-black/15 px-3 py-1.5 text-xs disabled:opacity-50 dark:border-white/20"
                 >
-                  {busy === r.id ? "Sending…" : "Send €1 test"}
+                  {busy === r.id ? s("treasury.sending") : s("treasury.testSend")}
                 </button>
                 {r.status !== "active" ? (
                   <button
@@ -332,7 +334,7 @@ export function Treasury() {
                     }}
                     className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
                   >
-                    Activate
+                    {s("treasury.activate")}
                   </button>
                 ) : (
                   <button
@@ -341,14 +343,14 @@ export function Treasury() {
                     onClick={() => void act("set-status", { id: r.id, status: "disabled" }, r.id)}
                     className="rounded-lg border border-black/15 px-3 py-1.5 text-xs disabled:opacity-50 dark:border-white/20"
                   >
-                    Disable
+                    {s("treasury.disable")}
                   </button>
                 )}
               </div>
             </li>
           ))}
           {data.recipients.length === 0 ? (
-            <li className="text-sm text-neutral-500">Nobody yet.</li>
+            <li className="text-sm text-neutral-500">{s("treasury.nobody")}</li>
           ) : null}
         </ul>
 
@@ -360,7 +362,7 @@ export function Treasury() {
 
       {/* ---- claims ------------------------------------------------------ */}
       <section>
-        <h2 className="text-lg font-medium">Recent payouts</h2>
+        <h2 className="text-lg font-medium">{s("treasury.payouts")}</h2>
         <ul className="mt-3 divide-y divide-black/5 text-sm dark:divide-white/10">
           {data.claims.map((claim) => (
             <li key={claim.id} className="flex flex-wrap items-baseline justify-between gap-2 py-2">
@@ -377,21 +379,21 @@ export function Treasury() {
                     rel="noopener noreferrer"
                     className="text-xs underline underline-offset-4"
                   >
-                    BaseScan ↗
+                    {s("treasury.baseScan")}
                   </a>
                 ) : null}
               </span>
             </li>
           ))}
           {data.claims.length === 0 ? (
-            <li className="py-2 text-neutral-500">No payouts yet.</li>
+            <li className="py-2 text-neutral-500">{s("treasury.noPayouts")}</li>
           ) : null}
         </ul>
       </section>
 
       {/* ---- audit ------------------------------------------------------- */}
       <section>
-        <h2 className="text-lg font-medium">Admin log</h2>
+        <h2 className="text-lg font-medium">{s("treasury.adminLog")}</h2>
         <ul className="mt-3 space-y-1 font-mono text-xs text-neutral-500">
           {data.events.map((event, i) => (
             <li key={i}>
@@ -399,7 +401,7 @@ export function Treasury() {
               {event.actor_email}
             </li>
           ))}
-          {data.events.length === 0 ? <li>Nothing recorded yet.</li> : null}
+          {data.events.length === 0 ? <li>{s("treasury.noLog")}</li> : null}
         </ul>
       </section>
     </div>
@@ -432,6 +434,7 @@ function AddRecipient({
   busy: boolean;
   onAdd: (payload: Record<string, unknown>) => void;
 }) {
+  const s = useSiteText();
   const [open, setOpen] = React.useState(false);
   const [form, setForm] = React.useState({
     key: "", label: "", address: "", amountEuros: "", claimantEmail: "", note: "",
@@ -444,7 +447,7 @@ function AddRecipient({
         onClick={() => setOpen(true)}
         className="mt-4 rounded-lg border border-black/15 px-3 py-2 text-sm dark:border-white/20"
       >
-        Add a recipient
+        {s("treasury.addRecipient")}
       </button>
     );
   }
@@ -459,21 +462,21 @@ function AddRecipient({
         setForm({ key: "", label: "", address: "", amountEuros: "", claimantEmail: "", note: "" });
       }}
     >
-      <Field label="Key (used by the game)" value={form.key} placeholder="daughter"
+      <Field label={s("treasury.field.key")} value={form.key} placeholder={s("treasury.field.keyPlaceholder")}
         onChange={(v) => setForm((f) => ({ ...f, key: v }))} />
-      <Field label="Name" value={form.label} placeholder="Sofia"
+      <Field label={s("treasury.field.name")} value={form.label} placeholder={s("treasury.field.namePlaceholder")}
         onChange={(v) => setForm((f) => ({ ...f, label: v }))} />
-      <Field label="Coinbase deposit address on Base" value={form.address} placeholder="0x…" mono
+      <Field label={s("treasury.field.address")} value={form.address} placeholder="0x…" mono
         onChange={(v) => setForm((f) => ({ ...f, address: v }))} />
-      <Field label="Reward per module in euros (optional)" value={form.amountEuros} placeholder="1.00"
+      <Field label={s("treasury.field.amount")} value={form.amountEuros} placeholder="1.00"
         onChange={(v) => setForm((f) => ({ ...f, amountEuros: v }))} />
-      <Field label="Account that claims into it" value={form.claimantEmail} placeholder="her@email.com"
+      <Field label={s("treasury.field.claimant")} value={form.claimantEmail} placeholder={s("treasury.field.claimantPlaceholder")}
         onChange={(v) => setForm((f) => ({ ...f, claimantEmail: v }))} />
-      <Field label="Note (optional)" value={form.note} placeholder=""
+      <Field label={s("treasury.field.note")} value={form.note} placeholder=""
         onChange={(v) => setForm((f) => ({ ...f, note: v }))} />
 
       <p className="text-xs text-neutral-500">
-        Added as pending. It cannot receive a reward until you send a test and activate it.
+        {s("treasury.addedPending")}
       </p>
 
       <div className="flex gap-2">
@@ -482,14 +485,14 @@ function AddRecipient({
           disabled={busy}
           className="rounded-lg bg-neutral-900 px-3 py-2 text-sm text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
         >
-          Add
+          {s("treasury.add")}
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
           className="rounded-lg border border-black/15 px-3 py-2 text-sm dark:border-white/20"
         >
-          Cancel
+          {s("treasury.cancel")}
         </button>
       </div>
     </form>

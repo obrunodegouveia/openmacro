@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 
 import { getSupabase } from "@/lib/supabase";
 
@@ -35,6 +36,7 @@ interface Rewards {
 }
 
 export function ModuleRewards() {
+  const s = useSiteText();
   const [data, setData] = React.useState<Rewards | null>(null);
   const [claiming, setClaiming] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -105,15 +107,14 @@ export function ModuleRewards() {
   return (
     <section className="mt-10 rounded-2xl border border-black/10 p-5 dark:border-white/15">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-lg font-medium">Rewards</h2>
+        <h2 className="text-lg font-medium">{s("moduleRewards.title")}</h2>
         <p className="text-sm text-neutral-500">
-          €{reward.amountEuros} a module · €{earned * Number(reward.amountEuros)} earned
+          {s("moduleRewards.rate", { amount: `€${reward.amountEuros}`, earned: earned * Number(reward.amountEuros) })}
         </p>
       </div>
 
       <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
-        Finish every lesson in a module and the reward is yours, paid in EURC straight to your
-        Coinbase account.
+        {s("moduleRewards.body")}
       </p>
 
       {error ? (
@@ -127,7 +128,7 @@ export function ModuleRewards() {
 
       {unclaimed.length > 0 ? (
         <p className="mt-3 text-sm font-medium text-emerald-700 dark:text-emerald-400">
-          {unclaimed.length} ready to claim
+          {s("moduleRewards.ready", { count: unclaimed.length })}
         </p>
       ) : null}
 
@@ -137,7 +138,7 @@ export function ModuleRewards() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{row.title}</p>
               <p className="text-xs text-neutral-500">
-                {row.completedCount} of {row.lessonCount} lessons
+                {s("moduleRewards.lessons", { done: row.completedCount, total: row.lessonCount })}
               </p>
             </div>
 
@@ -149,10 +150,10 @@ export function ModuleRewards() {
                   rel="noopener noreferrer"
                   className="text-xs underline underline-offset-4"
                 >
-                  Paid ↗
+                  {s("moduleRewards.paidLink")}
                 </a>
               ) : (
-                <span className="text-xs text-neutral-500">Paid</span>
+                <span className="text-xs text-neutral-500">{s("moduleRewards.paid")}</span>
               )
             ) : row.complete ? (
               <button
@@ -162,8 +163,8 @@ export function ModuleRewards() {
                 className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
               >
                 {claiming === row.moduleId || row.claimStatus === "CLAIM_PENDING"
-                  ? "Sending…"
-                  : `Claim €${reward.amountEuros}`}
+                  ? s("moduleRewards.sending")
+                  : s("moduleRewards.claim", { amount: reward.amountEuros })}
               </button>
             ) : (
               <span className="text-xs text-neutral-400" aria-hidden="true">
