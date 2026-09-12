@@ -7,6 +7,7 @@ import { LayoutDashboard, Menu, X } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { AccountButton } from "@/components/site/account-button";
+import { LanguagePicker } from "@/components/site/language-picker";
 import { useAuth } from "@/components/site/auth-provider";
 import { GITHUB_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -84,6 +85,10 @@ export function Nav() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
+          {/* In the header rather than only the footer: a reader who wants the
+              course in Portuguese should not have to reach the bottom of the
+              page to find out they can have it. */}
+          <LanguagePicker />
           <Button asChild variant="outline" size="sm">
             <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">
               <GithubIcon className="size-4" aria-hidden />
@@ -141,6 +146,7 @@ export function Nav() {
                 </a>
               </Button>
               <AccountButton onNavigate={() => setOpen(false)} />
+              <LanguagePicker className="mt-1 self-start" />
             </div>
           </div>
         </motion.div>

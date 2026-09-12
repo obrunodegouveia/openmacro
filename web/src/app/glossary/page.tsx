@@ -7,9 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { GLOSSARY_SORTED } from "@/lib/glossary";
 import { TIERS } from "@/lib/curriculum";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
+import { localisedCopy } from "@/lib/seo-copy";
+import { serverLocale } from "@/lib/locale-server";
 import { SITE } from "@/lib/site";
 
-export const metadata = pageMetadata({
+export async function generateMetadata() {
+  const locale = await serverLocale();
+  return pageMetadata({
+    locale,
   title: "Money & Central Banking Glossary",
   description:
     "Plain-English definitions of how money works: reserves, repo, QE, IORB, eurodollars and more, each explained as balance sheet moves with primary sources.",
@@ -23,7 +28,9 @@ export const metadata = pageMetadata({
     "what are bank reserves",
     "eurodollar definition",
   ],
-});
+    ...localisedCopy("/glossary", locale),
+  });
+}
 
 /**
  * The glossary index.

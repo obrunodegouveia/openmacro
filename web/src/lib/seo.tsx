@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import type { Locale } from "@openmacro/core/i18n/locales";
 import { SITE } from "@/lib/site";
+import { alternates as localeAlternates, localeUrl } from "@/lib/locale-server";
 
 /**
  * Shared metadata helpers.
@@ -8,6 +10,12 @@ import { SITE } from "@/lib/site";
  * canonical URL, the OG/Twitter pair and the title format can never drift
  * apart page by page — the most common way a technically clean site ends up
  * with duplicate or missing canonicals.
+ *
+ * `locale` drives three things at once: the canonical URL gains its `/pt`
+ * prefix, the `hreflang` pair is emitted so a crawler knows the two URLs are
+ * translations rather than duplicates, and Open Graph is told which language
+ * it is looking at. Omitting it renders an English page, which is what every
+ * caller did before Portuguese had URLs.
  */
 export function pageMetadata({
   title,
@@ -16,6 +24,7 @@ export function pageMetadata({
   keywords,
   type = "website",
   publishedTime,
+  locale = "en",
 }: {
   title: string;
   description: string;
@@ -24,21 +33,22 @@ export function pageMetadata({
   keywords?: string[];
   type?: "website" | "article";
   publishedTime?: string;
+  locale?: Locale;
 }): Metadata {
-  const url = `${SITE.url}${path === "/" ? "" : path}`;
+  const url = localeUrl(locale, path);
 
   return {
     title,
     description,
     keywords,
-    alternates: { canonical: url },
+    alternates: localeAlternates(locale, path),
     openGraph: {
       type,
       url,
       siteName: SITE.name,
       title,
       description,
-      locale: "en_US",
+      locale: locale === "pt-PT" ? "pt_PT" : "en_US",
       ...(publishedTime ? { publishedTime } : {}),
     },
     twitter: {

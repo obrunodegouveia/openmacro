@@ -7,9 +7,14 @@ import { AnswerList } from "@/components/site/answer-list";
 import { Badge } from "@/components/ui/badge";
 import { TEACH_ANSWERS, faqPageLd } from "@/lib/answers";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
+import { localisedCopy } from "@/lib/seo-copy";
+import { serverLocale } from "@/lib/locale-server";
 import { SITE } from "@/lib/site";
 
-export const metadata = pageMetadata({
+export async function generateMetadata() {
+  const locale = await serverLocale();
+  return pageMetadata({
+    locale,
   title: "How to Teach Kids About Money",
   description:
     "What to teach at what age, how to explain inflation and where bank money comes from, plus free lessons kids can play with no account and no tracking.",
@@ -22,7 +27,9 @@ export const metadata = pageMetadata({
     "teaching economics to teenagers",
     "classroom economics resources",
   ],
-});
+    ...localisedCopy("/teach", locale),
+  });
+}
 
 /** What to introduce, and roughly when. Ages are guidance, not gates. */
 const STAGES = [

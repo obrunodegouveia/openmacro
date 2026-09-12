@@ -2,13 +2,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SITE, GITHUB_URL } from "@/lib/site";
+import { localisedCopy } from "@/lib/seo-copy";
+import { alternates, serverLocale } from "@/lib/locale-server";
 
-export const metadata: Metadata = {
-  title: "Privacy & COPPA notice",
-  description:
-    "What OpenMacro collects, what it does not, and how children's privacy is handled.",
-  alternates: { canonical: `${SITE.url}/privacy` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await serverLocale();
+  return {
+    title: "Privacy & COPPA notice",
+    description:
+      "What OpenMacro collects, what it does not, and how children's privacy is handled.",
+    ...localisedCopy("/privacy", locale),
+    alternates: alternates(locale, "/privacy"),
+  };
+}
 
 /**
  * Plain-language privacy notice covering the website and the app.

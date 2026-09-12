@@ -132,8 +132,22 @@ function publish(next: Locale): void {
   for (const listener of listeners) listener();
 }
 
-export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const locale = React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+export function LocaleProvider({
+  children,
+  initialLocale,
+}: {
+  children: React.ReactNode;
+  /** From the URL, via middleware. Authoritative when present. */
+  initialLocale?: Locale;
+}) {
+  const stored = React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  // The URL wins whenever it says something. /pt/learn is Portuguese for
+  // everyone who opens it — a crawler, a shared link, someone whose stored
+  // preference says otherwise — which is the property that makes the page
+  // indexable as Portuguese at all. The stored preference is the fallback for
+  // any tree mounted outside the routed layout.
+  const locale = initialLocale ?? stored;
 
   // `<html lang>` is server-rendered as "en" and corrected here. Screen
   // readers pick their pronunciation from it, so leaving Portuguese prose

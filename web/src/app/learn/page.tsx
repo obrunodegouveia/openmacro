@@ -9,9 +9,14 @@ import { LEARN_ANSWERS, faqPageLd } from "@/lib/answers";
 import { SYLLABUS, TRACK_COUNT_LABEL } from "@/lib/curriculum";
 import { CourseMap } from "@/components/app/course-map";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
+import { localisedCopy } from "@/lib/seo-copy";
+import { serverLocale } from "@/lib/locale-server";
 import { SITE } from "@/lib/site";
 
-export const metadata = pageMetadata({
+export async function generateMetadata() {
+  const locale = await serverLocale();
+  return pageMetadata({
+    locale,
   title: "How to Learn About Money",
   description:
     "Where to start if you want to understand how money really works: who creates it, what central banks do, why prices rise. Free, open source, no account.",
@@ -24,7 +29,9 @@ export const metadata = pageMetadata({
     "free economics course",
     "understand central banking",
   ],
-});
+    ...localisedCopy("/learn", locale),
+  });
+}
 
 /**
  * The self-learner entry point.
