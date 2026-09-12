@@ -13,7 +13,8 @@
     "./format": "./src/format.ts",
     "./i18n": "./src/i18n/index.ts",
     "./i18n/*": "./src/i18n/*.ts",
-    "./i18n/content": "./src/i18n/content/index.ts"
+    "./i18n/content": "./src/i18n/content/index.ts",
+    "./i18n/site": "./src/i18n/site/index.ts"
   },
   "sideEffects": false
 }

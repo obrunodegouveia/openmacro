@@ -1,6 +1,7 @@
 import { MessageCircle, Scale, ShieldCheck } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import Link from "next/link";
+import { getSiteText } from "@/lib/site-text";
 import { AccountPanel } from "@/components/site/account-button";
 import { Badge } from "@/components/ui/badge";
 import { LanguagePicker } from "@/components/site/language-picker";
@@ -41,7 +42,8 @@ const COLUMNS = [
   },
 ] as const;
 
-export function Footer() {
+export async function Footer() {
+  const s = await getSiteText();
   const year = new Date().getFullYear();
 
   return (
@@ -95,18 +97,18 @@ export function Footer() {
         <div className="mt-12 grid gap-4 border-t border-hairline pt-8 sm:grid-cols-3">
           <Disclosure
             icon={<Scale className="size-4 text-mint" aria-hidden />}
-            title="MIT licensed"
-            body="Code and lessons are free to use, fork, translate and teach from — commercially included."
+            title={s("footer.mitLicensed")}
+            body={s("footer.mitBody")}
           />
           <Disclosure
             icon={<ShieldCheck className="size-4 text-mint" aria-hidden />}
-            title="COPPA-conscious by design"
-            body="No account is required to learn, no behavioural ads, and no personal data collected from children under 13."
+            title={s("footer.coppa")}
+            body={s("footer.coppaBody")}
           />
           <Disclosure
             icon={<ShieldCheck className="size-4 text-mint" aria-hidden />}
-            title="Non-custodial rewards"
-            body="MacroXP and MintBucks are a learning score, kept on-device unless you sign in to sync it. Prize pools are funded and awarded by their sponsor — we never hold the money."
+            title={s("footer.rewards")}
+            body={s("footer.rewardsBody")}
           />
         </div>
 
@@ -116,8 +118,8 @@ export function Footer() {
               Open<span className="text-mint-bright">Macro</span>
             </p>
             <p className="mt-1 text-xs text-ink-faint">
-              © {year} {SITE.name} contributors. Educational content only — nothing
-              here is financial advice.
+              © {year} {SITE.name} {s("footer.contributors")}{" "}
+              {s("footer.disclaimer")}
             </p>
           </div>
 
@@ -125,13 +127,13 @@ export function Footer() {
             <LanguagePicker />
             <Badge tone="mint">
               <Scale className="size-3" aria-hidden />
-              MIT
+              {s("footer.mit")}
             </Badge>
             <a
               href={GITHUB_URL}
               target="_blank"
               rel="noreferrer noopener"
-              aria-label="OpenMacro on GitHub"
+              aria-label={s("footer.githubA11y")}
               className="rounded-lg border border-hairline p-2 text-ink-muted transition-colors hover:border-mint/40 hover:text-ink"
             >
               <GithubIcon className="size-4" aria-hidden />
@@ -140,7 +142,7 @@ export function Footer() {
               href={SITE.discordUrl}
               target="_blank"
               rel="noreferrer noopener"
-              aria-label="OpenMacro community chat"
+              aria-label={s("footer.chatA11y")}
               className="rounded-lg border border-hairline p-2 text-ink-muted transition-colors hover:border-mint/40 hover:text-ink"
             >
               <MessageCircle className="size-4" aria-hidden />
@@ -179,7 +181,8 @@ function Disclosure({
  * not an account pitch, a sitemap and three compliance cards. The full
  * <Footer /> is for the pages people arrive on, not the one they work in.
  */
-export function FooterMinimal() {
+export async function FooterMinimal() {
+  const s = await getSiteText();
   const year = new Date().getFullYear();
 
   return (
@@ -192,18 +195,17 @@ export function FooterMinimal() {
           >
             Open<span className="text-mint-bright">Macro</span>
           </Link>{" "}
-          · © {year} contributors. Educational content only — nothing here is
-          financial advice.
+          · © {year} {s("footer.contributors")} {s("footer.disclaimer")}
         </p>
-        <nav aria-label="Footer" className="flex items-center gap-4 font-semibold">
+        <nav aria-label={s("footer.aria")} className="flex items-center gap-4 font-semibold">
           <Link href="/learn" className="transition-colors hover:text-ink">
-            All lessons
+            {s("footer.allLessons")}
           </Link>
           <Link href="/glossary" className="transition-colors hover:text-ink">
-            Glossary
+            {s("footer.glossary")}
           </Link>
           <Link href="/privacy" className="transition-colors hover:text-ink">
-            Privacy
+            {s("footer.privacy")}
           </Link>
         </nav>
       </div>

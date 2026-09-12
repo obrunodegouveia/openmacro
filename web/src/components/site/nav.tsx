@@ -11,6 +11,7 @@ import { LanguagePicker } from "@/components/site/language-picker";
 import { useAuth } from "@/components/site/auth-provider";
 import { GITHUB_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { useSiteText } from "@/lib/use-site-text";
 
 /**
  * Hash targets are written root-relative (`/#demo`, not `#demo`) so the nav
@@ -18,13 +19,13 @@ import { cn } from "@/lib/utils";
  * would resolve against the current path and go nowhere.
  */
 const LINKS = [
-  { href: "/#demo", label: "Live demo" },
-  { href: "/learn", label: "Learn" },
-  { href: "/teach", label: "For parents" },
-  { href: "/glossary", label: "Glossary" },
-  { href: "/#curriculum", label: "Syllabus" },
-  { href: "/#contribute", label: "Contribute" },
-];
+  { href: "/#demo", key: "nav.demo" },
+  { href: "/learn", key: "nav.learn" },
+  { href: "/teach", key: "nav.teach" },
+  { href: "/glossary", key: "nav.glossary" },
+  { href: "/#curriculum", key: "nav.syllabus" },
+  { href: "/#contribute", key: "nav.contribute" },
+] as const;
 
 /** Sticky header that condenses into a glass bar once the hero scrolls away. */
 export function Nav() {
@@ -32,6 +33,7 @@ export function Nav() {
   const [open, setOpen] = React.useState(false);
   const { scrollY } = useScroll();
   const { learner } = useAuth();
+  const s = useSiteText();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 24);
@@ -47,7 +49,7 @@ export function Nav() {
       )}
     >
       <nav
-        aria-label="Main"
+        aria-label={s("nav.aria")}
         className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8"
       >
         <Link href="/#top" className="flex items-center gap-2.5 font-display">
@@ -79,7 +81,7 @@ export function Nav() {
               href={link.href}
               className="rounded-lg px-3 py-2 text-sm font-bold text-ink-muted transition-colors hover:bg-white/5 hover:text-ink"
             >
-              {link.label}
+              {s(link.key)}
             </Link>
           ))}
         </div>
@@ -92,7 +94,7 @@ export function Nav() {
           <Button asChild variant="outline" size="sm">
             <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">
               <GithubIcon className="size-4" aria-hidden />
-              GitHub
+              {s("nav.github")}
             </a>
           </Button>
           <AccountButton />
@@ -103,7 +105,7 @@ export function Nav() {
           className="rounded-lg p-2 text-ink-muted hover:bg-white/5 hover:text-ink md:hidden"
           aria-expanded={open}
           aria-controls="mobile-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
+          aria-label={open ? s("nav.closeMenu") : s("nav.openMenu")}
           onClick={() => setOpen((value) => !value)}
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -135,14 +137,14 @@ export function Nav() {
                 onClick={() => setOpen(false)}
                 className="rounded-lg px-3 py-3 text-sm font-bold text-ink-muted hover:bg-white/5 hover:text-ink"
               >
-                {link.label}
+                {s(link.key)}
               </Link>
             ))}
             <div className="mt-2 flex gap-3">
               <Button asChild variant="outline" size="sm" className="flex-1">
                 <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">
                   <GithubIcon className="size-4" aria-hidden />
-                  GitHub
+                  {s("nav.github")}
                 </a>
               </Button>
               <AccountButton onNavigate={() => setOpen(false)} />

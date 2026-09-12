@@ -60,6 +60,7 @@ const { contentCoverage, contentDictionary, courseDictionary, courseKeys } = awa
   '@openmacro/core/i18n/content'
 );
 const { messageArguments } = await import('@openmacro/core/i18n/format');
+const { siteCoverage, missingSiteKeys } = await import('@openmacro/core/i18n/site');
 
 const { buildDocument, readState, summarise, writeDocument, TRANSLATIONS_DIR } = await import(
   './i18n-extract.mjs'
@@ -305,6 +306,12 @@ for (const locale of LOCALES) {
   const ui = uiCoverage(locale);
   console.log(`  interface   ${bar(ui)}  ${pct(ui).padStart(4)}`);
 
+  // The website's own copy. Counted separately because it is a separate
+  // catalogue and a separate job — the app is finished while this is not,
+  // and one number covering both would hide that.
+  const site = siteCoverage(locale);
+  console.log(`  website     ${bar(site)}  ${pct(site).padStart(4)}`);
+
   const modules = contentCoverage(locale);
   const done = modules.reduce((sum, entry) => sum + entry.translated, 0);
   const all = modules.reduce((sum, entry) => sum + entry.total, 0);
@@ -369,6 +376,18 @@ for (const locale of LOCALES) {
       for (const key of show) console.log(`      ${key}`);
       if (show.length < missing.length) {
         console.log(`      … and ${missing.length - show.length} more (--verbose)`);
+      }
+      if (strict) failed = true;
+    }
+
+    const missingSite = missingSiteKeys(locale);
+    if (missingSite.length) {
+      console.log('');
+      console.log(`    ${missingSite.length} website key${missingSite.length === 1 ? '' : 's'} missing:`);
+      const show = verbose ? missingSite : missingSite.slice(0, 10);
+      for (const key of show) console.log(`      ${key}`);
+      if (show.length < missingSite.length) {
+        console.log(`      … and ${missingSite.length - show.length} more (--verbose)`);
       }
       if (strict) failed = true;
     }

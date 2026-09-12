@@ -8,6 +8,7 @@ import { GoogleSignIn } from "@/components/site/google-sign-in";
 import { Button } from "@/components/ui/button";
 import { CentralBankBalanceSheet } from "@/components/site/balance-sheet";
 import { useAuth } from "@/components/site/auth-provider";
+import { useSiteText } from "@/lib/use-site-text";
 
 /**
  * Hero.
@@ -36,17 +37,18 @@ const LESSON_COUNT = MODULES.reduce((sum, module) => sum + module.lessons.length
  */
 function StartCta() {
   const { enabled, learner } = useAuth();
+  const s = useSiteText();
 
   const browse = (
     <p className="mt-4 text-sm text-ink-faint">
-      Or{" "}
+      {s("hero.or")}{" "}
       <Link
         href="/learn"
         className="text-ink-muted underline underline-offset-4 hover:text-mint-bright"
       >
-        browse all {LESSON_COUNT} lessons
+        {s("hero.browse", { count: LESSON_COUNT })}
       </Link>{" "}
-      — no account needed.
+      {s("hero.noAccount")}
     </p>
   );
 
@@ -55,7 +57,7 @@ function StartCta() {
       <div>
         <Button asChild size="lg">
           <Link href="/learn">
-            Start learning
+            {s("hero.start")}
             <ArrowRight className="size-4" aria-hidden />
           </Link>
         </Button>
@@ -68,7 +70,7 @@ function StartCta() {
       <div>
         <Button asChild size="lg">
           <Link href="/dashboard">
-            Continue learning
+            {s("hero.continue")}
             <ArrowRight className="size-4" aria-hidden />
           </Link>
         </Button>
@@ -81,7 +83,7 @@ function StartCta() {
     <div>
       <GoogleSignIn
         redirectTo="/dashboard"
-        label="Sign in to start learning"
+        label={s("hero.signInA11y")}
       />
       {browse}
     </div>
@@ -89,6 +91,7 @@ function StartCta() {
 }
 
 export function Hero() {
+  const s = useSiteText();
   return (
     <section
       id="top"
@@ -99,19 +102,19 @@ export function Hero() {
           <div className="rise">
             <span className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-mint/10 px-3.5 py-1.5 text-xs font-bold text-mint-bright">
               <Sparkles className="size-3.5" aria-hidden />
-              Open source · MIT licensed · Built with educators
+              {s("hero.openSource")}
             </span>
           </div>
 
           {/* LCP element — no animation, painted immediately. */}
           <h1 className="mt-6 text-balance font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-            Understand the <span className="text-gradient">Machine</span> Behind
-            Money.
+            {s("hero.title.lead")}{" "}
+            <span className="text-gradient">{s("hero.title.emphasis")}</span>{" "}
+            {s("hero.title.tail")}
           </h1>
 
           <p className="rise rise-1 mt-6 max-w-xl text-pretty text-lg leading-relaxed text-ink-muted">
-            The open-source, gamified platform teaching macroeconomics, central
-            banking, and credit creation — one balance sheet entry at a time.
+            {s("hero.subtitle")}
           </p>
 
           <div className="rise rise-2 mt-9">
