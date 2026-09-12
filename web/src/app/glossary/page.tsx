@@ -5,7 +5,7 @@ import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { Badge } from "@/components/ui/badge";
-import { GLOSSARY_SORTED } from "@/lib/glossary";
+import { localisedGlossary } from "@/lib/glossary-locale";
 import { TIERS } from "@/lib/curriculum";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { localisedCopy } from "@/lib/seo-copy";
@@ -43,9 +43,14 @@ export async function generateMetadata() {
  */
 export default async function GlossaryIndexPage() {
   const s = await getSiteText();
+  // Sorted after localisation: "Reservas bancárias" does not sit where "Bank
+  // reserves" sat, and a glossary out of alphabetical order is a broken one.
+  const entriesSorted = [...localisedGlossary(await serverLocale())].sort((a, b) =>
+    a.term.localeCompare(b.term),
+  );
   const byTier = TIERS.map((tier) => ({
     tier,
-    entries: GLOSSARY_SORTED.filter((entry) => entry.tier === tier.id),
+    entries: entriesSorted.filter((entry) => entry.tier === tier.id),
   })).filter((group) => group.entries.length > 0);
 
   return (
@@ -61,7 +66,7 @@ export default async function GlossaryIndexPage() {
           url: `${SITE.url}/glossary`,
           inDefinedTermSet: `${SITE.url}/glossary`,
           publisher: ORGANIZATION,
-          hasDefinedTerm: GLOSSARY_SORTED.map((entry) => ({
+          hasDefinedTerm: entriesSorted.map((entry) => ({
             "@type": "DefinedTerm",
             "@id": `${SITE.url}/glossary/${entry.slug}`,
             name: entry.term,

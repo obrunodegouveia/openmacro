@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getSiteText } from "@/lib/site-text";
+import { serverLocale } from "@/lib/locale-server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, TriangleAlert } from "lucide-react";
@@ -7,7 +8,8 @@ import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Section } from "@/components/ui/section";
 import { Badge } from "@/components/ui/badge";
-import { GLOSSARY, findTerm } from "@/lib/glossary";
+import { GLOSSARY } from "@/lib/glossary";
+import { localisedTerm } from "@/lib/glossary-locale";
 import { TIERS } from "@/lib/curriculum";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
@@ -26,7 +28,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const entry = findTerm(slug);
+  const entry = localisedTerm(await serverLocale(), slug);
   if (!entry) return {};
 
   const name = entry.abbreviation
@@ -55,12 +57,13 @@ export default async function GlossaryTermPage({
 }) {
   const s = await getSiteText();
   const { slug } = await params;
-  const entry = findTerm(slug);
+  const locale = await serverLocale();
+  const entry = localisedTerm(locale, slug);
   if (!entry) notFound();
 
   const tier = TIERS.find((candidate) => candidate.id === entry.tier);
   const related = entry.related
-    .map((relatedSlug) => findTerm(relatedSlug))
+    .map((relatedSlug) => localisedTerm(locale, relatedSlug))
     .filter((candidate) => candidate !== undefined);
 
   return (
