@@ -9,7 +9,6 @@ import { memo } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAuth } from '@/providers/AuthProvider';
-import { DeleteAccount } from '@/components/ui/DeleteAccount';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import type { SyncState } from '@/services/syncedDataProvider';
@@ -62,10 +61,6 @@ function AccountBarComponent() {
           <Text style={styles.signOut}>{t('account.signOut')}</Text>
         </Pressable>
       </View>
-
-      {/* Required by Apple 5.1.1(v), and kept in plain sight rather than
-          buried — a reviewer looks for it, and so does anyone who wants out. */}
-      <DeleteAccount />
       </View>
     );
   }

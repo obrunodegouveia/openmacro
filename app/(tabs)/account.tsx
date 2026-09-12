@@ -67,6 +67,13 @@ export default function AccountScreen() {
  * delete button waiting for them the next time they come to change language.
  * Compare the video collapse, which is remembered precisely because getting
  * it wrong costs nothing.
+ *
+ * This is the only route to account deletion, which Apple requires under
+ * guideline 5.1.1(v) for any app that lets you create an account. It used to
+ * sit twice: once loose under the account bar and once here. One tap behind a
+ * labelled section on the Account tab still satisfies "discoverable" — but if
+ * a review is ever rejected for it, this comment is where to look, and the
+ * fix is to surface it rather than to argue.
  */
 function DangerZone() {
   const { t } = useLocale();
