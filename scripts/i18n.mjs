@@ -60,7 +60,9 @@ const { contentCoverage, contentDictionary, courseDictionary, courseKeys } = awa
   '@openmacro/core/i18n/content'
 );
 const { messageArguments } = await import('@openmacro/core/i18n/format');
-const { siteCoverage, missingSiteKeys } = await import('@openmacro/core/i18n/site');
+const { siteCoverage, missingSiteKeys, siteCatalogue, siteEn } = await import(
+  '@openmacro/core/i18n/site'
+);
 
 const { buildDocument, readState, summarise, writeDocument, TRANSLATIONS_DIR } = await import(
   './i18n-extract.mjs'
@@ -68,7 +70,24 @@ const { buildDocument, readState, summarise, writeDocument, TRANSLATIONS_DIR } =
 const { collect, writeContentIndex, writeCourse, writeModule, writeState, writeUi } =
   await import('./i18n-import.mjs');
 const { fingerprint } = await import('./i18n-files.mjs');
-const { applyConventions, conventionWarnings } = await import('./i18n-orthography.mjs');
+const { applyConventions, conventionWarnings, CONVENTIONS } = await import(
+  './i18n-orthography.mjs'
+);
+
+/**
+ * Shapes a pair of catalogues into what `conventionWarnings` reads.
+ *
+ * The English is passed as each unit's `source` so a term carried across
+ * untranslated — a proper noun, an acronym — is not flagged as a spelling
+ * decision somebody made.
+ */
+function catalogueUnits(source, target) {
+  const units = {};
+  for (const [key, value] of Object.entries(target)) {
+    if (typeof value === 'string') units[key] = { target: value, source: source[key] ?? '' };
+  }
+  return units;
+}
 
 const [command = 'status', ...rest] = process.argv.slice(2);
 
@@ -388,6 +407,37 @@ for (const locale of LOCALES) {
       for (const key of show) console.log(`      ${key}`);
       if (show.length < missingSite.length) {
         console.log(`      … and ${missingSite.length - show.length} more (--verbose)`);
+      }
+      if (strict) failed = true;
+    }
+
+    /**
+     * Spelling conventions across the two hand-written catalogues.
+     *
+     * `import` already checks every translated *content* string as it comes in,
+     * which is why the modules are clean. The interface and website catalogues
+     * are written straight into TypeScript and never pass through that gate, so
+     * nothing was checking them — and the website had nineteen pre-1990
+     * spellings sitting in shipped copy, including `Activo` on a balance sheet
+     * and `Desactivar` on a button.
+     */
+    const catalogueWarnings = conventionWarnings(locale, {
+      interface: catalogueUnits(en, uiCatalogue(locale)),
+      website: catalogueUnits(siteEn, siteCatalogue(locale)),
+    });
+    if (catalogueWarnings.length) {
+      console.log('');
+      console.log(
+        `    ${catalogueWarnings.length} spelling convention warning${
+          catalogueWarnings.length === 1 ? '' : 's'
+        } (${CONVENTIONS[locale]?.name ?? 'convention'}):`,
+      );
+      const show = verbose ? catalogueWarnings : catalogueWarnings.slice(0, 10);
+      for (const { scope, key, words } of show) {
+        console.log(`      ${scope}/${key} — ${words.join(', ')}`);
+      }
+      if (show.length < catalogueWarnings.length) {
+        console.log(`      … and ${catalogueWarnings.length - show.length} more (--verbose)`);
       }
       if (strict) failed = true;
     }

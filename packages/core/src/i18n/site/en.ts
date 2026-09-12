@@ -368,11 +368,11 @@ export const en = {
   'privacy.authoritative': '',
   'privacy.short.title': 'The short version',
   'privacy.short.body':
-    'You can read every page, play every simulation and finish every lesson on this site without an account, and we do not run analytics, advertising or third-party tracking scripts. If you choose to sign in with Google, we save your XP and day streak so they follow you between devices — that is the only reason an account exists, and the only personal data we hold.',
+    'You can read every page, play every simulation and finish every lesson on this site without an account, and we do not run analytics, advertising or third-party tracking scripts. If you choose to sign in — with Apple or with Google — we save your XP and day streak so they follow you between devices; that is the only reason an account exists, and the only personal data we hold.',
   'privacy.collect.title': 'What we collect',
-  'privacy.collect.google.label': 'If you sign in with Google.',
-  'privacy.collect.google.body':
-    'Google sends us your name, email address, profile picture and your Google account identifier. We store your name against your progress, and the email address is held by our authentication provider so you can sign back in.',
+  'privacy.collect.signin.label': 'If you sign in.',
+  'privacy.collect.signin.body':
+    'We ask Apple or Google for a name and an email address, and nothing else. Google also sends a profile picture, which appears on your own account row and nowhere else. Sign in with Apple lets you hide your real address, and if you do we only ever see the relay one — nothing here needs to reach you by email. We store the name against your progress, and the address is held by our authentication provider so you can sign back in.',
   'privacy.collect.progress.label': 'Your progress, once signed in.',
   'privacy.collect.progress.body':
     'Total XP, your day streak, the date of your last completed lesson, and for each lesson your best score, how many times you have finished it and when. No answers, no timings, nothing about how you played.',
@@ -386,7 +386,7 @@ export const en = {
   'privacy.notCollect.1': 'No cookies for advertising, profiling or cross-site tracking.',
   'privacy.notCollect.2': 'No analytics or session-recording services.',
   'privacy.notCollect.3':
-    'No addresses, phone numbers or payment details. We never ask for a password: Google handles sign-in, so there is none for us to hold.',
+    'No addresses, phone numbers or payment details. We never ask for a password: Apple and Google handle sign-in, so there is none for us to hold.',
   'privacy.notCollect.4': 'No selling, renting or trading of any data, ever.',
   'privacy.coppa.title': 'Children under 13 (COPPA)',
   'privacy.coppa.intro':
@@ -394,7 +394,7 @@ export const en = {
   'privacy.coppa.1':
     'No account is needed to learn. Every lesson, on the site and in the app, plays in full without signing in, and while you are signed out progress stays on the device and is never uploaded.',
   'privacy.coppa.2':
-    'Signing in is optional and requires a Google Account, which Google does not issue to children under 13 — and under 16 in some countries. A child using a Family Link account signs in only with their parent’s approval.',
+    'Signing in is optional, and we ask the provider for a name and an email address and nothing else. Neither Apple nor Google tells us how old anyone is, so sign-in is not an age check and we do not treat it as one. What protects a child here is that there is nothing to collect: no advertising, no profiling, no free-text field, and no way to reach another person from inside the product. Where a child does sign in, a family-managed Apple ID or a Google Family Link account exists only with a parent’s approval.',
   'privacy.coppa.3.lead':
     'We do not knowingly collect personal information from children under 13. If you believe a child has signed in, write to',
   'privacy.coppa.3.tail': 'and we will delete the account and everything attached to it.',
@@ -410,7 +410,7 @@ export const en = {
     'No proof of identity is required to ask for a deletion, and we never ask a child to prove anything before honouring one.',
   'privacy.where.title': 'Where the data lives',
   'privacy.where.1':
-    'The website runs on Google Cloud Run. Accounts and progress are stored with Supabase, in their West EU (Ireland) region — learner data does not leave the EU. Sign-in itself is handled by Google.',
+    'The website runs on Google Cloud Run. Accounts and progress are stored with Supabase, in their West EU (Ireland) region — learner data does not leave the EU. Sign-in itself is handled by Apple and by Google, whichever you chose.',
   'privacy.where.2':
     'Every row is protected by database row-level security keyed to your account, so one learner cannot read another’s progress, and the key shipped in the website can only ever reach your own rows. We keep your progress until you ask us to delete it.',
   'privacy.choices.title': 'Your choices',
@@ -420,6 +420,8 @@ export const en = {
     'to see, correct or delete what we hold, including your whole account. We answer within 30 days.',
   'privacy.choices.3.lead': 'You can also revoke OpenMacro’s access from your',
   'privacy.choices.3.link': 'Google account permissions',
+  'privacy.choices.3.tail':
+    ', or, if you signed in with Apple, under Sign in with Apple in your Apple Account settings.',
   'privacy.choices.4':
     'Delete the app to erase on-device progress. If you never signed in, nothing survives on our side.',
   'privacy.changes.title': 'Changes and questions',

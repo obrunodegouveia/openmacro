@@ -105,17 +105,32 @@ const PT_PT_PATTERN = new RegExp(
   'gi',
 );
 
-/** `activo` → `ativo`, `Directamente` → `Diretamente`. */
+/**
+ * `activo` → `ativo`, `Directamente` → `Diretamente`.
+ *
+ * `matchCase` exists because the stems are written in lower case and the words
+ * are not. Without it `Activar` became `ativar`, and since `applyConventions`
+ * rewrites the files in place, running the fixer would have quietly lower-cased
+ * the first word of every sentence that happened to start with a reformed
+ * spelling — turning a spelling warning into a punctuation bug.
+ */
+function matchCase(replacement, original) {
+  if (!original || original[0] !== original[0].toUpperCase()) return replacement;
+  return replacement[0].toUpperCase() + replacement.slice(1);
+}
+
 function suggest(word) {
   const lower = word.toLowerCase();
   for (const [from, to] of PT_PT_REFORMED) {
     if (from.startsWith('^')) {
       const stem = from.slice(1);
-      if (lower.startsWith(stem)) return to + word.slice(stem.length);
+      if (lower.startsWith(stem)) return matchCase(to, word) + word.slice(stem.length);
       continue;
     }
     const at = lower.indexOf(from);
-    if (at !== -1) return word.slice(0, at) + to + word.slice(at + from.length);
+    if (at !== -1) {
+      return word.slice(0, at) + matchCase(to, word.slice(at)) + word.slice(at + from.length);
+    }
   }
   return word;
 }

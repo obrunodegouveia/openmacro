@@ -62,8 +62,8 @@ export default async function PrivacyPage() {
         <Article title={s("privacy.collect.title")}>
           <ul className="ml-5 list-disc space-y-2">
             <li>
-              <strong className="text-ink">{s("privacy.collect.google.label")}</strong>{" "}
-              {s("privacy.collect.google.body")}
+              <strong className="text-ink">{s("privacy.collect.signin.label")}</strong>{" "}
+              {s("privacy.collect.signin.body")}
             </li>
             <li>
               <strong className="text-ink">{s("privacy.collect.progress.label")}</strong>{" "}
@@ -151,7 +151,7 @@ export default async function PrivacyPage() {
               >
                 {s("privacy.choices.3.link")}
               </a>
-              .
+              {s("privacy.choices.3.tail")}
             </li>
             <li>
               {s("privacy.choices.4")}

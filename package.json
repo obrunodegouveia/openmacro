@@ -56,6 +56,8 @@
     "doctor": "npx expo-doctor@latest",
     "native:prebuild": "expo prebuild --clean --no-install",
     "preflight:store": "node ./scripts/preflight-store.mjs",
+    "asc:appinfo": "node ./scripts/asc-appinfo.mjs",
+    "shots:ios": "node ./scripts/screenshots-ios.mjs",
     "update:preview": "npm run lint:content && npm run update:check -- --channel preview && npx eas-cli@24 update --channel preview --environment preview --message \"$(git log -1 --pretty=%s)\" --non-interactive",
     "update:store": "npm run lint:content && npm run audit:content && npm run update:check && npx eas-cli@24 update --channel production --environment production --message \"$(git log -1 --pretty=%s)\" --non-interactive",
     "update:status": "npx eas-cli@24 channel:list",
