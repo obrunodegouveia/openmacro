@@ -58,6 +58,7 @@ export const en = {
   'progress.module.count': '{done, number} / {total, number}',
 
   'account.title': 'Account',
+  'account.danger': 'Danger zone',
 
   'path.xp': '{count, number} XP',
   'path.module': 'Module {number, number}',

@@ -69,6 +69,7 @@ export const ptPT: UiDictionary = {
   'progress.module.count': '{done, number} / {total, number}',
 
   'account.title': 'Conta',
+  'account.danger': 'Zona de perigo',
 
   'path.xp': '{count, number} XP',
   'path.module': 'Módulo {number, number}',

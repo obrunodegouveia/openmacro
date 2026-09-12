@@ -47,11 +47,51 @@ export default function AccountScreen() {
         <LanguagePicker />
       </View>
 
-      <View style={styles.danger}>
-        <ResetProgressButton />
-        <DeleteAccount />
-      </View>
+      <DangerZone />
     </ScrollView>
+  );
+}
+
+// ---------------------------------------------------------------------------
+
+/**
+ * The two controls that destroy something, behind one closed door.
+ *
+ * Both were previously loose at the foot of the screen, which put "delete my
+ * account" one stray tap from the language picker — the control people
+ * actually come to this screen for. Collapsing them costs a deliberate tap
+ * and removes an accidental one.
+ *
+ * It reopens closed on every visit. This is state, not a preference: a
+ * learner who opened it once to reset their progress should not find the
+ * delete button waiting for them the next time they come to change language.
+ * Compare the video collapse, which is remembered precisely because getting
+ * it wrong costs nothing.
+ */
+function DangerZone() {
+  const { t } = useLocale();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <View style={styles.danger}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        accessibilityLabel={t('account.danger')}
+        onPress={() => setOpen((was) => !was)}
+        style={styles.dangerHead}
+      >
+        <Text style={styles.dangerTitle}>{t('account.danger')}</Text>
+        <Text style={styles.dangerChevron}>{open ? '⌃' : '⌄'}</Text>
+      </Pressable>
+
+      {open ? (
+        <View style={styles.dangerBody}>
+          <ResetProgressButton />
+          <DeleteAccount />
+        </View>
+      ) : null}
+    </View>
   );
 }
 
@@ -113,7 +153,27 @@ const styles = StyleSheet.create({
     backgroundColor: palette.surface,
     padding: spacing.md,
   },
-  danger: { gap: spacing.md, marginTop: spacing.xl },
+  danger: {
+    marginTop: spacing.xl,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: palette.coralSoft,
+    overflow: 'hidden',
+  },
+  dangerHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+  },
+  dangerTitle: { ...typography.bodyStrong, color: palette.coralDark },
+  dangerChevron: { ...typography.body, color: palette.coralDark },
+  dangerBody: {
+    gap: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+  },
   reset: { alignSelf: 'flex-start', paddingVertical: spacing.sm },
   resetText: { ...typography.caption, color: palette.inkFaint },
   resetTextArmed: { color: palette.coralDark },
