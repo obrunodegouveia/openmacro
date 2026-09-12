@@ -81,6 +81,8 @@ export const ptPT: UiDictionary = {
   'lesson.video.minutes': '{count, number} min',
   'lesson.video.watchFirst': 'Vê primeiro',
   'lesson.video.privacy': 'Não carrega nada até carregares em reproduzir',
+  'lesson.video.hide': 'Esconder',
+  'lesson.video.show': 'Mostrar',
   'challenge.order.empty': 'Toca nos acontecimentos abaixo para construir a cadeia',
   'challenge.order.remaining': 'Em falta',
   'challenge.order.remove': 'Passo {number, number}: {label}. Toca para remover.',

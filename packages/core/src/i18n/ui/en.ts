@@ -73,6 +73,8 @@ export const en = {
   'lesson.video.minutes': '{count, number} min',
   'lesson.video.watchFirst': 'Watch first',
   'lesson.video.privacy': 'Nothing loads until you press play',
+  'lesson.video.hide': 'Hide',
+  'lesson.video.show': 'Show',
 
   // ---- the challenge types -----------------------------------------------
   'challenge.order.empty': 'Tap events below to build the chain',

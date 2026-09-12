@@ -23,6 +23,11 @@
  *
  * The module this exists for is somebody else's teaching, used with the
  * player they provide.
+ *
+ * COLLAPSING IS A PREFERENCE, NOT CARD STATE. A 16:9 frame is the tallest
+ * thing on the screen, and a learner who has already watched a module's
+ * videos elsewhere — or who simply reads faster than anyone talks — should be
+ * able to put them away and have them stay away. See `videoPreference`.
  */
 
 import { useState } from 'react';
@@ -30,6 +35,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { WebView } from 'react-native-webview';
 
 import { useLocale } from '@/providers/LocaleProvider';
+import { useVideosCollapsed } from '@/services/videoPreference';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 export interface LessonVideoProps {
@@ -44,56 +50,85 @@ export interface LessonVideoProps {
 
 export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
   const [playing, setPlaying] = useState(false);
+  const [collapsed, setCollapsed] = useVideosCollapsed();
   const { t } = useLocale();
   const id = youTubeId(url);
   if (!id) return null;
 
+  const toggle = () => {
+    // Collapsing unmounts the player, which stops it. Re-expanding therefore
+    // comes back to the placeholder rather than resuming — the same press is
+    // still required to contact Google, which is the promise this card makes.
+    if (!collapsed) setPlaying(false);
+    setCollapsed(!collapsed);
+  };
+
   return (
     <View style={styles.card}>
-      <View style={styles.frame}>
-        {playing ? (
-          <WebView
-            source={{ uri: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1` }}
-            style={styles.web}
-            // The player needs its own JS, and on iOS inline playback has to be
-            // allowed or tapping play throws it into the fullscreen overlay.
-            javaScriptEnabled
-            allowsInlineMediaPlayback
-            mediaPlaybackRequiresUserAction={false}
-            allowsFullscreenVideo
-            startInLoadingState
-            renderLoading={() => (
-              <View style={styles.loading}>
-                <ActivityIndicator color={palette.inkFaint} />
+      {collapsed ? null : (
+        <View style={styles.frame}>
+          {playing ? (
+            <WebView
+              source={{ uri: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1` }}
+              style={styles.web}
+              // The player needs its own JS, and on iOS inline playback has to be
+              // allowed or tapping play throws it into the fullscreen overlay.
+              javaScriptEnabled
+              allowsInlineMediaPlayback
+              mediaPlaybackRequiresUserAction={false}
+              allowsFullscreenVideo
+              startInLoadingState
+              renderLoading={() => (
+                <View style={styles.loading}>
+                  <ActivityIndicator color={palette.inkFaint} />
+                </View>
+              )}
+            />
+          ) : (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('lesson.video.play', { title })}
+              style={styles.placeholder}
+              onPress={() => setPlaying(true)}
+            >
+              <View style={styles.playButton}>
+                <Text style={styles.playGlyph}>▶︎</Text>
               </View>
-            )}
-          />
-        ) : (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('lesson.video.play', { title })}
-            style={styles.placeholder}
-            onPress={() => setPlaying(true)}
-          >
-            <View style={styles.playButton}>
-              <Text style={styles.playGlyph}>▶︎</Text>
-            </View>
-            <Text style={styles.placeholderTitle} numberOfLines={2}>
+              <Text style={styles.placeholderTitle} numberOfLines={2}>
+                {title}
+              </Text>
+            </Pressable>
+          )}
+        </View>
+      )}
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ expanded: !collapsed }}
+        accessibilityLabel={collapsed ? t('lesson.video.show') : t('lesson.video.hide')}
+        style={styles.meta}
+        onPress={toggle}
+      >
+        <View style={styles.metaLines}>
+          {/* Collapsed, this row is all that is left of the card, so it has to
+              carry the title the frame was showing. */}
+          {collapsed ? (
+            <Text style={styles.metaTitle} numberOfLines={1}>
               {title}
             </Text>
-          </Pressable>
-        )}
-      </View>
-
-      <View style={styles.meta}>
-        <Text style={styles.metaText}>
-          {minutes ? t('lesson.video.minutes', { count: minutes }) : t('lesson.video.watchFirst')}
-          {source ? ` · ${source}` : ''}
+          ) : null}
+          <Text style={styles.metaText}>
+            {minutes ? t('lesson.video.minutes', { count: minutes }) : t('lesson.video.watchFirst')}
+            {source ? ` · ${source}` : ''}
+          </Text>
+          {!playing && !collapsed ? (
+            <Text style={styles.metaQuiet}>{t('lesson.video.privacy')}</Text>
+          ) : null}
+        </View>
+        <Text style={styles.toggle}>
+          {collapsed ? t('lesson.video.show') : t('lesson.video.hide')}
         </Text>
-        {!playing ? (
-          <Text style={styles.metaQuiet}>{t('lesson.video.privacy')}</Text>
-        ) : null}
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -175,9 +210,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   meta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+  },
+  metaLines: {
+    flex: 1,
     gap: 2,
+  },
+  metaTitle: {
+    ...typography.bodyStrong,
+    color: palette.ink,
+  },
+  toggle: {
+    ...typography.caption,
+    color: palette.mint,
   },
   metaText: {
     ...typography.caption,
