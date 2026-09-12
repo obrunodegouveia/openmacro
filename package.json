@@ -55,8 +55,8 @@
     "doctor": "npx expo-doctor@latest",
     "native:prebuild": "expo prebuild --clean --no-install",
     "preflight:store": "node ./scripts/preflight-store.mjs",
-    "update:preview": "npm run lint:content && npx eas-cli@24 update --channel preview --environment preview --message \"$(git log -1 --pretty=%s)\" --non-interactive",
-    "update:store": "npm run lint:content && npm run audit:content && npx eas-cli@24 update --channel production --environment production --message \"$(git log -1 --pretty=%s)\" --non-interactive",
+    "update:preview": "npm run lint:content && npm run update:check -- --channel preview && npx eas-cli@24 update --channel preview --environment preview --message \"$(git log -1 --pretty=%s)\" --non-interactive",
+    "update:store": "npm run lint:content && npm run audit:content && npm run update:check && npx eas-cli@24 update --channel production --environment production --message \"$(git log -1 --pretty=%s)\" --non-interactive",
     "update:status": "npx eas-cli@24 channel:list",
     "update:list": "npx eas-cli@24 update:list --limit 10",
     "update:rollback": "npx eas-cli@24 update:rollback",
@@ -77,7 +77,9 @@
     "i18n:extract": "node ./scripts/i18n.mjs extract",
     "lint": "eslint app src",
     "i18n:import": "node ./scripts/i18n.mjs import",
-    "i18n:fixspelling": "node ./scripts/i18n.mjs fixspelling"
+    "i18n:fixspelling": "node ./scripts/i18n.mjs fixspelling",
+    "update:check": "node ./scripts/update-reachability.mjs",
+    "release:record": "node ./scripts/update-reachability.mjs --record"
   },
   "private": true,
   "description": "Duolingo-style micro-learning app teaching macroeconomics, monetary policy and fractional-reserve banking.",

@@ -69,6 +69,13 @@ jobs:
             exit 1
           fi
 
+      # The filename guard above is a proxy; this is the real question. An
+      # update is only offered to a binary whose fingerprint matches it, so
+      # publishing at one nothing in the field carries ships to nobody while
+      # reporting success.
+      - name: Check the update can reach anything
+        run: node ./scripts/update-reachability.mjs --channel "${{ inputs.channel || 'preview' }}"
+
       # The same gates as a build, because an update skips review entirely.
       - name: Typecheck
         run: |

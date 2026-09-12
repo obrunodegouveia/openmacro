@@ -201,23 +201,51 @@ The workflow refuses to publish when `app.json`, `app.config.js`,
 Such an update reaches nothing — the fingerprint has moved, so no installed
 build matches it — and it would look like a successful deploy while being none.
 
-**`npm run update:store` has no such guard**, which is the hole to know about:
-run by hand, it will happily publish at a fingerprint nothing in the field
-matches. That is how build 15 was orphaned — `i18n:fixspelling` was added to
-`package.json`, the fingerprint moved from f010afee to b19b4646, and every
-update after it would have been unreachable. `fingerprint.config.js` now skips
-the `scripts` block for exactly that reason, so a tooling script no longer
-counts as a native change. Before publishing by hand, check you match what is
-out there:
+That guard is a proxy — a list of filenames that usually move the fingerprint.
+The real question is asked directly by `npm run update:check`, which both
+`update:store` and `update:preview` run before publishing, and which CI runs
+too:
+
+```
+  Update reachability — channel "production"
+
+  ✓ ios      b60ec638f25796ea2747a35135da04bfc23ace5f  (build 16)
+  · android  nothing released — not checked
+
+  Reachable.
+```
+
+It compares the fingerprint this tree would publish at against the one the
+build in the field actually carries, and exits non-zero when they differ.
+
+**It cannot ask EAS what is out there.** These builds are made with `eas build
+--local` and uploaded with `altool`, so EAS has no record of them — `eas
+build:list` returns zero rows for a project with sixteen builds on TestFlight.
+The runtime version is knowable at build time and nowhere afterwards, so it is
+written down then, in `release/shipped-runtimes.json`:
 
 ```bash
-npx expo-updates fingerprint:generate --platform ios   # must equal the build's
+npm run release:record -- --channel production --platform ios --build 16
 ```
+
+Run that from the commit the build was made at, for each platform you actually
+released. A platform with nothing in the field stays unrecorded and is not
+checked — asserting a runtime version for an app nobody has would be a lie the
+guard then enforces.
+
+This is what would have caught build 15. Adding `i18n:fixspelling` to
+`package.json` moved the iOS fingerprint from f010afee to b19b4646; a hand-run
+`npm run update:store` would have published cleanly and reached nobody.
+`fingerprint.config.js` removed that particular cause — a tooling script is no
+longer a native change — and this check covers the ones nobody has thought of
+yet.
 
 ### Operating it
 
 | Command | |
 |---|---|
+| `npm run update:check` | Whether an update would reach anything at all |
+| `npm run release:record` | Write down what a new build is running, after shipping it |
 | `npm run update:status` | Which branch each channel points at |
 | `npm run update:list` | The last ten updates |
 | `npm run update:rollback` | Put an earlier update back |
