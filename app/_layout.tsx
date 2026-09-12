@@ -67,7 +67,9 @@ export default function RootLayout() {
                 contentStyle: { backgroundColor: palette.canvas },
               }}
             >
-              <Stack.Screen name="index" />
+              {/* The tab bar owns the top level; the runner sits outside it
+                  so a lesson is not interruptible by a tab. */}
+              <Stack.Screen name="(tabs)" />
               {/* The runner is a full-screen, focused context — present it modally. */}
               <Stack.Screen
                 name="lesson/[lessonId]"

@@ -1,9 +1,11 @@
 /**
  * Choose the language the course is in.
  *
- * Lives at the foot of the learning path rather than behind a settings screen,
- * because there is no settings screen and building one to hold a single
- * two-item control would be building the wrong thing.
+ * Lives in the Account tab. It spent its first life at the foot of the
+ * learning path, on the reasoning that a settings screen built to hold one
+ * two-item control would be the wrong thing to build — which was true until
+ * there was a tab bar, and then it meant a learner had to scroll the entire
+ * course to discover the course was available in their language.
  *
  * Two deliberate details:
  *

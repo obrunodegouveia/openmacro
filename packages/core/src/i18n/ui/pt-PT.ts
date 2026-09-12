@@ -58,6 +58,18 @@ export const ptPT: UiDictionary = {
   'account.delete.failed': 'Não resultou.',
   'account.delete.unreachable': 'Não foi possível contactar o servidor.',
   'account.delete.expired': 'A tua sessão expirou. Inicia sessão outra vez.',
+  'tabs.home': 'Início',
+  'tabs.progress': 'Progresso',
+  'tabs.account': 'Conta',
+
+  'progress.title': 'Progresso',
+  'progress.stat.xp': 'XP ganho',
+  'progress.stat.lessons': 'de {total, plural, one {# lição} other {# lições}}',
+  'progress.stat.streak': 'Dias seguidos',
+  'progress.module.count': '{done, number} / {total, number}',
+
+  'account.title': 'Conta',
+
   'path.xp': '{count, number} XP',
   'path.module': 'Módulo {number, number}',
   'path.streak': '{count, plural, one {sequência de # dia} other {sequência de # dias}}',

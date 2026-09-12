@@ -1,18 +1,21 @@
 /**
- * The learning path — the app's home screen.
+ * The learning path — the Home tab.
  *
  * Renders straight from `src/content/registry.ts`, so a contributor who adds a
  * module sees it appear here with zero changes to this file.
+ *
+ * Account, language and the progress summary used to sit at the head and foot
+ * of this scroll because there was nowhere else to put them. There is now, and
+ * this screen is only the course.
  */
 
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { router } from 'expo-router';
 
-import { AccountBar } from '@/components/ui/AccountBar';
-import { LanguagePicker } from '@/components/ui/LanguagePicker';
+import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { UpdateBanner } from '@/components/ui/UpdateBanner';
 import { StreakBadge } from '@/components/ui/StatusPills';
 import { interpolate } from '@/i18n/interpolate';
@@ -33,7 +36,7 @@ export default function LearningPathScreen() {
       style={styles.screen}
       contentContainerStyle={[
         styles.content,
-        { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + spacing.xxxl },
+        { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + TAB_BAR_SPACE },
       ]}
     >
       {/* ---- header ---------------------------------------------------- */}
@@ -60,8 +63,6 @@ export default function LearningPathScreen() {
       </View>
 
       <UpdateBanner />
-
-      <AccountBar />
 
       {error ? (
         <View style={styles.errorBanner}>
@@ -106,57 +107,7 @@ export default function LearningPathScreen() {
         </Text>
       </View>
 
-      <LanguagePicker />
-
-      <ResetProgressButton />
     </ScrollView>
-  );
-}
-
-// ---------------------------------------------------------------------------
-
-/**
- * Clears XP, streak and completion records.
- *
- * Progress now persists on the device, so there has to be a way back to zero —
- * for a learner who wants a clean run, and for contributors testing the first
- * session. Confirmation is a second tap rather than a dialog: `Alert.alert` is
- * a no-op on react-native-web, which would leave this destructive control
- * silently unconfirmed on one of our three platforms.
- */
-function ResetProgressButton() {
-  const { reset } = useProgress();
-  const { t } = useLocale();
-  const [armed, setArmed] = useState(false);
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => {
-    if (timeout.current) clearTimeout(timeout.current);
-  }, []);
-
-  const handlePress = useCallback(() => {
-    if (!armed) {
-      setArmed(true);
-      timeout.current = setTimeout(() => setArmed(false), 4000);
-      return;
-    }
-    if (timeout.current) clearTimeout(timeout.current);
-    setArmed(false);
-    void reset();
-  }, [armed, reset]);
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={armed ? t('path.reset.armedA11y') : t('path.reset')}
-      hitSlop={8}
-      onPress={handlePress}
-      style={styles.reset}
-    >
-      <Text style={[styles.resetText, armed && styles.resetTextArmed]}>
-        {armed ? t('path.reset.armed') : t('path.reset')}
-      </Text>
-    </Pressable>
   );
 }
 

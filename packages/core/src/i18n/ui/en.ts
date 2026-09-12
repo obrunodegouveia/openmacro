@@ -47,6 +47,18 @@ export const en = {
   'account.delete.expired': 'Your session expired. Sign in again.',
 
   // ---- the learning path -------------------------------------------------
+  'tabs.home': 'Home',
+  'tabs.progress': 'Progress',
+  'tabs.account': 'Account',
+
+  'progress.title': 'Progress',
+  'progress.stat.xp': 'XP earned',
+  'progress.stat.lessons': 'of {total, plural, one {# lesson} other {# lessons}}',
+  'progress.stat.streak': 'Day streak',
+  'progress.module.count': '{done, number} / {total, number}',
+
+  'account.title': 'Account',
+
   'path.xp': '{count, number} XP',
   'path.module': 'Module {number, number}',
   'path.streak': '{count, number} day streak',
