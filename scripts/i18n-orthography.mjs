@@ -67,6 +67,14 @@ const PT_PT_REFORMED = [
   ['except', 'excet'],
   ['factor', 'fator'], // `facto` itself keeps its c — it is pronounced
   ['inspecç', 'inspeç'],
+  // `ject` covers projecto, objecto, trajecto, injectar in one stem. No
+  // Portuguese word keeps a pronounced c there.
+  ['ject', 'jet'],
+  // `cç` after a or e always drops the c; after i or u it is pronounced and
+  // stays, which is why convicção, ficção, fricção and sucção survive the
+  // reform and acção, fracção, objecção and injecção do not.
+  ['acç', 'aç'],
+  ['ecç', 'eç'],
   ['objectiv', 'objetiv'],
   ['optim', 'otim'],
   ['percepç', 'perceç'],
