@@ -324,4 +324,103 @@ export const en = {
     'The URL you followed does not exist. It may have moved, or it may never have been here.',
   'notFound.home': 'Back to the home page',
   'notFound.glossary': 'Browse the glossary',
+
+  // ---- module briefs (working material) -----------------------------------
+  'briefs.overline': 'Working material',
+  'briefs.title.lead': 'One brief per module, ready to',
+  'briefs.title.emphasis': 'turn into a video',
+  'briefs.lede':
+    'Each link below returns that module as plain text: the questions it answers, the mechanism behind each one, the misconceptions with their rebuttals, and the takeaways. Paste a link into NotebookLM as a website source and ask it for a Video Overview.',
+  'briefs.lessons': '{count, plural, one {# lesson} other {# lessons}}',
+  'briefs.videoLive': 'video live',
+  'briefs.videoNone': 'no video yet',
+  'briefs.howTitle': 'How to make one',
+  'briefs.step.1': '1. Open NotebookLM and add the module link above as a website source.',
+  'briefs.step.2': '2. Ask for a Video Overview. The headings in the brief become the slides.',
+  'briefs.step.3': '3. Publish the result somewhere with a stable URL.',
+  'briefs.step.4': '4. Add it to the module in',
+  'briefs.step.4.as': 'as',
+  'briefs.step.4.tail': ', and it appears above that module’s lessons.',
+  'briefs.noApi':
+    'There is no API for this yet — Google’s notebook API is enterprise-only and does not expose video generation — so step two is done by hand, once per module. The briefs are the part worth automating and they are generated from the course itself, so they cannot describe a lesson that no longer exists.',
+  'briefs.privacy':
+    'Videos are embedded without contacting YouTube until a learner presses play, so the privacy notice stays true for anyone who does not watch. See',
+  'briefs.privacyLink': 'the privacy notice',
+
+  // ---- a glossary entry ---------------------------------------------------
+  'term.allTerms': 'All terms',
+  'term.mechanics': 'The mechanics',
+  'term.misreading': 'The common misreading',
+  'term.related': 'Related terms',
+  'term.sources': 'Primary sources',
+  'term.postIt': 'Post it yourself',
+  'term.postItBody':
+    'Reading a definition is not the same as being able to work the mechanism. The demo gives you a real operation and asks you to place the entries.',
+  'term.tryDemo': 'Try the T-account demo',
+
+  // ---- privacy & COPPA notice ---------------------------------------------
+  'privacy.back': 'Back to openmacro.org',
+  'privacy.title': 'Privacy & children’s privacy notice',
+  'privacy.updated': 'Last updated 5 September 2026. Covers {domain} and the OpenMacro mobile app.',
+  'privacy.authoritative': '',
+  'privacy.short.title': 'The short version',
+  'privacy.short.body':
+    'You can read every page, play every simulation and finish every lesson on this site without an account, and we do not run analytics, advertising or third-party tracking scripts. If you choose to sign in with Google, we save your XP and day streak so they follow you between devices — that is the only reason an account exists, and the only personal data we hold.',
+  'privacy.collect.title': 'What we collect',
+  'privacy.collect.google.label': 'If you sign in with Google.',
+  'privacy.collect.google.body':
+    'Google sends us your name, email address, profile picture and your Google account identifier. We store your name against your progress, and the email address is held by our authentication provider so you can sign back in.',
+  'privacy.collect.progress.label': 'Your progress, once signed in.',
+  'privacy.collect.progress.body':
+    'Total XP, your day streak, the date of your last completed lesson, and for each lesson your best score, how many times you have finished it and when. No answers, no timings, nothing about how you played.',
+  'privacy.collect.logs.label': 'Server logs.',
+  'privacy.collect.logs.body':
+    'Our host records standard request logs — IP address, timestamp, requested path, user agent — to keep the service running and to block abuse. These are retained for 30 days and then deleted.',
+  'privacy.collect.sim.label': 'Nothing from the simulator.',
+  'privacy.collect.sim.body':
+    'The slider, the readouts and the lending chain all run in your browser. Your inputs are never sent to us.',
+  'privacy.notCollect.title': 'What we do not collect',
+  'privacy.notCollect.1': 'No cookies for advertising, profiling or cross-site tracking.',
+  'privacy.notCollect.2': 'No analytics or session-recording services.',
+  'privacy.notCollect.3':
+    'No addresses, phone numbers or payment details. We never ask for a password: Google handles sign-in, so there is none for us to hold.',
+  'privacy.notCollect.4': 'No selling, renting or trading of any data, ever.',
+  'privacy.coppa.title': 'Children under 13 (COPPA)',
+  'privacy.coppa.intro':
+    'OpenMacro is written for young adults and kids, so we treat children’s privacy as a design constraint rather than a policy page.',
+  'privacy.coppa.1':
+    'No account is needed to learn. Every lesson, on the site and in the app, plays in full without signing in, and while you are signed out progress stays on the device and is never uploaded.',
+  'privacy.coppa.2':
+    'Signing in is optional and requires a Google Account, which Google does not issue to children under 13 — and under 16 in some countries. A child using a Family Link account signs in only with their parent’s approval.',
+  'privacy.coppa.3.lead':
+    'We do not knowingly collect personal information from children under 13. If you believe a child has signed in, write to',
+  'privacy.coppa.3.tail': 'and we will delete the account and everything attached to it.',
+  'privacy.coppa.4':
+    'MacroXP and MintBucks are a learning score. They are not currency, not a wallet, and cannot be exchanged, transferred or cashed out. There is no purchase path anywhere in the product.',
+  'privacy.coppa.5':
+    'Skill credentials are issued only when a learner asks for one, and for anyone under 13 only with a parent or guardian. We do not publish a child’s attainment, name or identifier to any public ledger or third-party registry.',
+  'privacy.coppa.6':
+    'Prize pools are created, funded and awarded by the sponsor — a parent, a school or a community group. OpenMacro never takes custody of the money and never handles a payout. Entry is always free, and nothing in the product is a wager.',
+  'privacy.coppa.7':
+    'There is no advertising, no in-app purchasing, and no chat or other child-to-stranger communication anywhere in the product.',
+  'privacy.coppa.8':
+    'No proof of identity is required to ask for a deletion, and we never ask a child to prove anything before honouring one.',
+  'privacy.where.title': 'Where the data lives',
+  'privacy.where.1':
+    'The website runs on Google Cloud Run. Accounts and progress are stored with Supabase, in their West EU (Ireland) region — learner data does not leave the EU. Sign-in itself is handled by Google.',
+  'privacy.where.2':
+    'Every row is protected by database row-level security keyed to your account, so one learner cannot read another’s progress, and the key shipped in the website can only ever reach your own rows. We keep your progress until you ask us to delete it.',
+  'privacy.choices.title': 'Your choices',
+  'privacy.choices.1': 'Sign out at any time. You can keep using every lesson signed out.',
+  'privacy.choices.2.lead': 'Email',
+  'privacy.choices.2.tail':
+    'to see, correct or delete what we hold, including your whole account. We answer within 30 days.',
+  'privacy.choices.3.lead': 'You can also revoke OpenMacro’s access from your',
+  'privacy.choices.3.link': 'Google account permissions',
+  'privacy.choices.4':
+    'Delete the app to erase on-device progress. If you never signed in, nothing survives on our side.',
+  'privacy.changes.title': 'Changes and questions',
+  'privacy.changes.lead':
+    'Material changes will be posted here with a new date. This notice lives in the same open-source repository as the site, so its full history is public — read it on',
+  'privacy.changes.tail': '. Questions go to',
 } as const;

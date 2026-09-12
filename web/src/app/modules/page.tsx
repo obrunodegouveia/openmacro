@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getSiteText } from "@/lib/site-text";
 import { FileText, Video } from "lucide-react";
 import { MODULES } from "@openmacro/core/content";
 import { Nav } from "@/components/site/nav";
@@ -25,7 +26,8 @@ export const metadata = {
  * destination. Its whole job is to be the page you open once per module when
  * you are generating overviews.
  */
-export default function ModuleBriefsPage() {
+export default async function ModuleBriefsPage() {
+  const s = await getSiteText();
   return (
     <>
       <Nav />
@@ -33,14 +35,14 @@ export default function ModuleBriefsPage() {
         <Section>
           <SectionHeading
             align="left"
-            overline="Working material"
+            overline={s("briefs.overline")}
             title={
               <>
-                One brief per module, ready to{" "}
-                <span className="text-gradient">turn into a video</span>.
+                {s("briefs.title.lead")}{" "}
+                <span className="text-gradient">{s("briefs.title.emphasis")}</span>.
               </>
             }
-            lede="Each link below returns that module as plain text: the questions it answers, the mechanism behind each one, the misconceptions with their rebuttals, and the takeaways. Paste a link into NotebookLM as a website source and ask it for a Video Overview."
+            lede={s("briefs.lede")}
           />
 
           <ol className="mt-10 flex flex-col gap-3">
@@ -66,7 +68,7 @@ export default function ModuleBriefsPage() {
                 <span className="flex shrink-0 items-center gap-3 text-xs font-bold text-ink-faint">
                   <span className="inline-flex items-center gap-1.5">
                     <FileText className="size-3.5" aria-hidden />
-                    {module.lessons.length} lessons
+                    {s("briefs.lessons", { count: module.lessons.length })}
                   </span>
                   <span
                     className={
@@ -76,7 +78,7 @@ export default function ModuleBriefsPage() {
                     }
                   >
                     <Video className="size-3.5" aria-hidden />
-                    {module.video ? "video live" : "no video yet"}
+                    {module.video ? s("briefs.videoLive") : s("briefs.videoNone")}
                   </span>
                 </span>
               </li>
@@ -84,31 +86,27 @@ export default function ModuleBriefsPage() {
           </ol>
 
           <div className="mt-10 rounded-card border border-hairline bg-white/[0.02] p-6">
-            <h2 className="font-display text-lg font-extrabold">How to make one</h2>
+            <h2 className="font-display text-lg font-extrabold">{s("briefs.howTitle")}</h2>
             <ol className="mt-3 flex flex-col gap-2 text-sm leading-relaxed text-ink-muted">
-              <li>1. Open NotebookLM and add the module link above as a website source.</li>
-              <li>2. Ask for a Video Overview. The headings in the brief become the slides.</li>
-              <li>3. Publish the result somewhere with a stable URL.</li>
+              <li>{s("briefs.step.1")}</li>
+              <li>{s("briefs.step.2")}</li>
+              <li>{s("briefs.step.3")}</li>
               <li>
-                4. Add it to the module in{" "}
-                <code className="font-mono text-xs text-ink">packages/core</code> as{" "}
+                {s("briefs.step.4")}{" "}
+                <code className="font-mono text-xs text-ink">packages/core</code> {s("briefs.step.4.as")}{" "}
                 <code className="font-mono text-xs text-ink">
                   video: {"{"} url, minutes, source {"}"}
                 </code>
-                , and it appears above that module&rsquo;s lessons.
+                {s("briefs.step.4.tail")}
               </li>
             </ol>
             <p className="mt-4 text-xs leading-relaxed text-ink-faint">
-              There is no API for this yet — Google&rsquo;s notebook API is enterprise-only and does
-              not expose video generation — so step two is done by hand, once per module. The briefs
-              are the part worth automating and they are generated from the course itself, so they
-              cannot describe a lesson that no longer exists.
+              {s("briefs.noApi")}
             </p>
             <p className="mt-3 text-xs leading-relaxed text-ink-faint">
-              Videos are embedded without contacting YouTube until a learner presses play, so the
-              privacy notice stays true for anyone who does not watch. See{" "}
+              {s("briefs.privacy")}{" "}
               <Link href="/privacy" className="text-ink-muted underline underline-offset-4">
-                the privacy notice
+                {s("briefs.privacyLink")}
               </Link>
               .
             </p>

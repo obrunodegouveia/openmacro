@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getSiteText } from "@/lib/site-text";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, TriangleAlert } from "lucide-react";
@@ -52,6 +53,7 @@ export default async function GlossaryTermPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const s = await getSiteText();
   const { slug } = await params;
   const entry = findTerm(slug);
   if (!entry) notFound();
@@ -106,7 +108,7 @@ export default async function GlossaryTermPage({
               className="inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-mint-bright"
             >
               <ArrowLeft className="size-4" aria-hidden />
-              All terms
+              {s("term.allTerms")}
             </Link>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -153,7 +155,7 @@ export default async function GlossaryTermPage({
                 id="mechanics"
                 className="font-display text-xl font-extrabold tracking-tight"
               >
-                The mechanics
+                {s("term.mechanics")}
               </h2>
               <dl className="mt-4 flex flex-col gap-3">
                 {entry.mechanics.map((item) => (
@@ -182,7 +184,7 @@ export default async function GlossaryTermPage({
                   className="flex items-center gap-2 font-display text-base font-extrabold text-gold"
                 >
                   <TriangleAlert className="size-4" aria-hidden />
-                  The common misreading
+                  {s("term.misreading")}
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                   {entry.misreading}
@@ -196,7 +198,7 @@ export default async function GlossaryTermPage({
                   id="related"
                   className="font-display text-xl font-extrabold tracking-tight"
                 >
-                  Related terms
+                  {s("term.related")}
                 </h2>
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {related.map((item) => (
@@ -224,7 +226,7 @@ export default async function GlossaryTermPage({
                 id="sources"
                 className="font-display text-xl font-extrabold tracking-tight"
               >
-                Primary sources
+                {s("term.sources")}
               </h2>
               <ul className="mt-4 flex flex-col gap-2">
                 {entry.sources.map((source) => (
@@ -245,18 +247,16 @@ export default async function GlossaryTermPage({
 
             <div className="mt-12 rounded-card border border-mint/25 bg-mint/[0.06] p-6">
               <h2 className="font-display text-lg font-extrabold">
-                Post it yourself
+                {s("term.postIt")}
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-                Reading a definition is not the same as being able to work the
-                mechanism. The playable teaser walks you through a real central
-                bank operation, entry by entry.
+                {s("term.postItBody")}
               </p>
               <Link
                 href="/#demo"
                 className="mt-4 inline-flex h-11 items-center justify-center rounded-xl border-b-4 border-mint-deep bg-mint px-5 font-extrabold text-abyss transition-all hover:bg-mint-bright active:translate-y-[3px] active:border-b-0"
               >
-                Try the T-account demo
+                {s("term.tryDemo")}
               </Link>
             </div>
           </div>

@@ -321,4 +321,104 @@ export const ptPT = {
     'O endereço que seguiste não existe. Pode ter mudado, ou pode nunca ter estado aqui.',
   'notFound.home': 'Voltar à página inicial',
   'notFound.glossary': 'Ver o glossário',
+
+  // ---- module briefs (working material) -----------------------------------
+  'briefs.overline': 'Material de trabalho',
+  'briefs.title.lead': 'Um resumo por módulo, pronto a',
+  'briefs.title.emphasis': 'transformar em vídeo',
+  'briefs.lede':
+    'Cada ligação abaixo devolve esse módulo em texto simples: as perguntas a que responde, o mecanismo por trás de cada uma, os equívocos com as respectivas refutações, e as conclusões. Cola uma ligação no NotebookLM como fonte web e pede-lhe um Video Overview.',
+  'briefs.lessons': '{count, plural, one {# lição} other {# lições}}',
+  'briefs.videoLive': 'vídeo publicado',
+  'briefs.videoNone': 'ainda sem vídeo',
+  'briefs.howTitle': 'Como fazer um',
+  'briefs.step.1': '1. Abre o NotebookLM e acrescenta a ligação do módulo como fonte web.',
+  'briefs.step.2': '2. Pede um Video Overview. Os títulos do resumo tornam-se os diapositivos.',
+  'briefs.step.3': '3. Publica o resultado num sítio com um endereço estável.',
+  'briefs.step.4': '4. Acrescenta-o ao módulo em',
+  'briefs.step.4.as': 'como',
+  'briefs.step.4.tail': ', e aparece por cima das lições desse módulo.',
+  'briefs.noApi':
+    'Ainda não há API para isto — a API de notebooks da Google é só para empresas e não expõe a geração de vídeo — por isso o passo dois faz-se à mão, uma vez por módulo. Os resumos são a parte que vale a pena automatizar e são gerados a partir do próprio curso, por isso não conseguem descrever uma lição que já não existe.',
+  'briefs.privacy':
+    'Os vídeos são incorporados sem contactar o YouTube até alguém carregar em reproduzir, por isso o aviso de privacidade mantém-se verdadeiro para quem não vê. Vê',
+  'briefs.privacyLink': 'o aviso de privacidade',
+
+  // ---- a glossary entry ---------------------------------------------------
+  'term.allTerms': 'Todos os termos',
+  'term.mechanics': 'A mecânica',
+  'term.misreading': 'O equívoco habitual',
+  'term.related': 'Termos relacionados',
+  'term.sources': 'Fontes primárias',
+  'term.postIt': 'Lança tu',
+  'term.postItBody':
+    'Ler uma definição não é o mesmo que conseguir trabalhar o mecanismo. A demonstração dá-te uma operação a sério e pede-te que coloques os lançamentos.',
+  'term.tryDemo': 'Experimenta a demonstração de contas-T',
+
+  // ---- privacy & COPPA notice ---------------------------------------------
+  'privacy.back': 'Voltar a openmacro.org',
+  'privacy.title': 'Aviso de privacidade e de privacidade infantil',
+  'privacy.updated': 'Última actualização: 5 de Setembro de 2026. Abrange {domain} e a aplicação móvel OpenMacro.',
+  'privacy.authoritative':
+    'Esta é uma tradução de cortesia. Em caso de divergência, prevalece a versão inglesa.',
+  'privacy.short.title': 'A versão curta',
+  'privacy.short.body':
+    'Podes ler todas as páginas, jogar todas as simulações e acabar todas as lições deste sítio sem conta, e não usamos analítica, publicidade nem scripts de rastreio de terceiros. Se escolheres iniciar sessão com a Google, guardamos os teus XP e a tua sequência de dias para que te sigam entre dispositivos — é essa a única razão para existir uma conta, e os únicos dados pessoais que detemos.',
+  'privacy.collect.title': 'O que recolhemos',
+  'privacy.collect.google.label': 'Se iniciares sessão com a Google.',
+  'privacy.collect.google.body':
+    'A Google envia-nos o teu nome, endereço de email, fotografia de perfil e o identificador da tua conta Google. Guardamos o teu nome associado ao teu progresso, e o endereço de email fica com o nosso fornecedor de autenticação para que possas voltar a entrar.',
+  'privacy.collect.progress.label': 'O teu progresso, depois de iniciares sessão.',
+  'privacy.collect.progress.body':
+    'O total de XP, a tua sequência de dias, a data da última lição concluída e, para cada lição, a tua melhor pontuação, quantas vezes a acabaste e quando. Sem respostas, sem tempos, nada sobre como jogaste.',
+  'privacy.collect.logs.label': 'Registos do servidor.',
+  'privacy.collect.logs.body':
+    'O nosso alojamento regista pedidos padrão — endereço IP, data e hora, caminho pedido, agente do navegador — para manter o serviço a funcionar e bloquear abusos. São conservados 30 dias e depois apagados.',
+  'privacy.collect.sim.label': 'Nada do simulador.',
+  'privacy.collect.sim.body':
+    'O cursor, os valores apresentados e a cadeia de crédito correm todos no teu navegador. O que introduzes nunca nos é enviado.',
+  'privacy.notCollect.title': 'O que não recolhemos',
+  'privacy.notCollect.1': 'Sem cookies para publicidade, perfis ou rastreio entre sítios.',
+  'privacy.notCollect.2': 'Sem serviços de analítica ou de gravação de sessões.',
+  'privacy.notCollect.3':
+    'Sem moradas, números de telefone ou dados de pagamento. Nunca pedimos uma palavra-passe: é a Google que trata do início de sessão, por isso não há nenhuma para guardarmos.',
+  'privacy.notCollect.4': 'Sem venda, aluguer ou troca de quaisquer dados, nunca.',
+  'privacy.coppa.title': 'Crianças com menos de 13 anos (COPPA)',
+  'privacy.coppa.intro':
+    'O OpenMacro é escrito para jovens adultos e crianças, por isso tratamos a privacidade infantil como uma restrição de desenho e não como uma página de política.',
+  'privacy.coppa.1':
+    'Não é preciso conta para aprender. Todas as lições, no sítio e na aplicação, se jogam por inteiro sem iniciar sessão, e enquanto estiveres com a sessão fechada o progresso fica no dispositivo e nunca é enviado.',
+  'privacy.coppa.2':
+    'Iniciar sessão é opcional e exige uma Conta Google, que a Google não emite a crianças com menos de 13 anos — e menos de 16 nalguns países. Uma criança com uma conta Family Link só inicia sessão com aprovação de quem tem responsabilidade parental.',
+  'privacy.coppa.3.lead':
+    'Não recolhemos conscientemente informação pessoal de crianças com menos de 13 anos. Se achares que uma criança iniciou sessão, escreve para',
+  'privacy.coppa.3.tail': 'e apagamos a conta e tudo o que lhe está associado.',
+  'privacy.coppa.4':
+    'Os MacroXP e os MintBucks são uma pontuação de aprendizagem. Não são moeda nem carteira, e não podem ser trocados, transferidos ou levantados. Não há forma de comprar seja o que for no produto.',
+  'privacy.coppa.5':
+    'As credenciais de competência só são emitidas quando quem aprende as pede e, para menores de 13 anos, apenas com autorização de quem tem responsabilidade parental. Não publicamos o desempenho, o nome ou o identificador de uma criança em nenhum registo público ou de terceiros.',
+  'privacy.coppa.6':
+    'Os prémios são criados, financiados e atribuídos pelo patrocinador — um pai, uma escola ou um grupo comunitário. O OpenMacro nunca fica com a custódia do dinheiro nem trata de pagamentos. A participação é sempre gratuita, e nada no produto é uma aposta.',
+  'privacy.coppa.7':
+    'Não há publicidade, não há compras dentro da aplicação, e não há chat nem qualquer outra comunicação entre crianças e desconhecidos em parte alguma do produto.',
+  'privacy.coppa.8':
+    'Não é exigida prova de identidade para pedir uma eliminação, e nunca pedimos a uma criança que prove seja o que for antes de a cumprirmos.',
+  'privacy.where.title': 'Onde ficam os dados',
+  'privacy.where.1':
+    'O sítio corre no Google Cloud Run. As contas e o progresso são guardados na Supabase, na região Oeste da UE (Irlanda) — os dados de quem aprende não saem da UE. O início de sessão em si é tratado pela Google.',
+  'privacy.where.2':
+    'Cada linha está protegida por segurança ao nível da linha na base de dados, associada à tua conta, para que ninguém consiga ler o progresso de outra pessoa, e a chave incluída no sítio só consegue alcançar as tuas próprias linhas. Guardamos o teu progresso até nos pedires que o apaguemos.',
+  'privacy.choices.title': 'As tuas opções',
+  'privacy.choices.1': 'Termina a sessão quando quiseres. Podes continuar a usar todas as lições com a sessão fechada.',
+  'privacy.choices.2.lead': 'Escreve para',
+  'privacy.choices.2.tail':
+    'para veres, corrigires ou apagares o que temos, incluindo a tua conta inteira. Respondemos no prazo de 30 dias.',
+  'privacy.choices.3.lead': 'Também podes revogar o acesso do OpenMacro nas tuas',
+  'privacy.choices.3.link': 'permissões da conta Google',
+  'privacy.choices.4':
+    'Apaga a aplicação para eliminar o progresso guardado no dispositivo. Se nunca iniciaste sessão, não sobra nada do nosso lado.',
+  'privacy.changes.title': 'Alterações e questões',
+  'privacy.changes.lead':
+    'As alterações materiais serão publicadas aqui com uma data nova. Este aviso vive no mesmo repositório de código aberto que o sítio, por isso o seu histórico completo é público — lê-o no',
+  'privacy.changes.tail': '. As questões vão para',
 } as const;

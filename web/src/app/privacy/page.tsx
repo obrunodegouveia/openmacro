@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getSiteText } from "@/lib/site-text";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SITE, GITHUB_URL } from "@/lib/site";
@@ -24,7 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
  * row-level security. It is not legal advice: have counsel review it before
  * launch, and update it the moment the data flows change.
  */
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const s = await getSiteText();
   return (
     <main id="main" className="mx-auto w-full max-w-3xl px-5 py-20 sm:px-8">
       <Link
@@ -32,171 +34,134 @@ export default function PrivacyPage() {
         className="inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-mint-bright"
       >
         <ArrowLeft className="size-4" aria-hidden />
-        Back to openmacro.org
+        {s("privacy.back")}
       </Link>
 
       <h1 className="mt-8 font-display text-4xl font-extrabold tracking-tight">
-        Privacy & children&apos;s privacy notice
+        {s("privacy.title")}
       </h1>
       <p className="mt-3 text-sm text-ink-faint">
-        Last updated 5 September 2026. Covers {SITE.domain} and the OpenMacro
-        mobile app.
+        {s("privacy.updated", { domain: SITE.domain })}
       </p>
+      {/* A translated notice is a courtesy, not a second legal instrument.
+          Saying which version governs is the honest thing to do and costs a
+          sentence; the key is empty in English, so nothing renders there. */}
+      {s("privacy.authoritative") ? (
+        <p className="mt-2 text-sm font-semibold text-ink-muted">
+          {s("privacy.authoritative")}
+        </p>
+      ) : null}
 
       <div className="mt-10 flex flex-col gap-10">
-        <Article title="The short version">
+        <Article title={s("privacy.short.title")}>
           <p>
-            You can read every page, play every simulation and finish every
-            lesson on this site without an account, and we do not run
-            analytics, advertising or third-party tracking scripts. If you
-            choose to sign in with Google, we save your XP and day streak so
-            they follow you between devices — that is the only reason an
-            account exists, and the only personal data we hold.
+            {s("privacy.short.body")}
           </p>
         </Article>
 
-        <Article title="What we collect">
+        <Article title={s("privacy.collect.title")}>
           <ul className="ml-5 list-disc space-y-2">
             <li>
-              <strong className="text-ink">If you sign in with Google.</strong>{" "}
-              Google sends us your name, email address, profile picture and your
-              Google account identifier. We store your name against your
-              progress, and the email address is held by our authentication
-              provider so you can sign back in.
+              <strong className="text-ink">{s("privacy.collect.google.label")}</strong>{" "}
+              {s("privacy.collect.google.body")}
             </li>
             <li>
-              <strong className="text-ink">Your progress, once signed in.</strong>{" "}
-              Total XP, your day streak, the date of your last completed lesson,
-              and for each lesson your best score, how many times you have
-              finished it and when. No answers, no timings, nothing about how
-              you played.
+              <strong className="text-ink">{s("privacy.collect.progress.label")}</strong>{" "}
+              {s("privacy.collect.progress.body")}
             </li>
             <li>
-              <strong className="text-ink">Server logs.</strong> Our host
-              records standard request logs — IP address, timestamp, requested
-              path, user agent — to keep the service running and to block
-              abuse. These are retained for 30 days and then deleted.
+              <strong className="text-ink">{s("privacy.collect.logs.label")}</strong>{" "}
+              {s("privacy.collect.logs.body")}
             </li>
             <li>
-              <strong className="text-ink">Nothing from the simulator.</strong>{" "}
-              The slider, the readouts and the lending chain all run in your
-              browser. Your inputs are never sent to us.
+              <strong className="text-ink">{s("privacy.collect.sim.label")}</strong>{" "}
+              {s("privacy.collect.sim.body")}
             </li>
           </ul>
         </Article>
 
-        <Article title="What we do not collect">
+        <Article title={s("privacy.notCollect.title")}>
           <ul className="ml-5 list-disc space-y-2">
-            <li>No cookies for advertising, profiling or cross-site tracking.</li>
-            <li>No analytics or session-recording services.</li>
+            <li>{s("privacy.notCollect.1")}</li>
+            <li>{s("privacy.notCollect.2")}</li>
             <li>
-              No addresses, phone numbers or payment details. We never ask for a
-              password: Google handles sign-in, so there is none for us to hold.
+              {s("privacy.notCollect.3")}
             </li>
-            <li>No selling, renting or trading of any data, ever.</li>
+            <li>{s("privacy.notCollect.4")}</li>
           </ul>
         </Article>
 
-        <Article title="Children under 13 (COPPA)">
+        <Article title={s("privacy.coppa.title")}>
           <p>
-            OpenMacro is written for young adults and kids, so we treat
-            children&apos;s privacy as a design constraint rather than a policy
-            page.
+            {s("privacy.coppa.intro")}
           </p>
           <ul className="ml-5 mt-3 list-disc space-y-2">
             <li>
-              No account is needed to learn. Every lesson, on the site and in
-              the app, plays in full without signing in, and while you are
-              signed out progress stays on the device and is never uploaded.
+              {s("privacy.coppa.1")}
             </li>
             <li>
-              Signing in is optional and requires a Google Account, which Google
-              does not issue to children under 13 — and under 16 in some
-              countries. A child using a Family Link account signs in only with
-              their parent&apos;s approval.
+              {s("privacy.coppa.2")}
             </li>
             <li>
-              We do not knowingly collect personal information from children
-              under 13. If you believe a child has signed in, write to{" "}
-              <MailLink /> and we will delete the account and everything
-              attached to it.
+              {s("privacy.coppa.3.lead")}{" "}
+              <MailLink /> {s("privacy.coppa.3.tail")}
             </li>
             <li>
-              MacroXP and MintBucks are a learning score. They are not
-              currency, not a wallet, and cannot be exchanged, transferred or
-              cashed out. There is no purchase path anywhere in the product.
+              {s("privacy.coppa.4")}
             </li>
             <li>
-              Skill credentials are issued only when a learner asks for one,
-              and for anyone under 13 only with a parent or guardian. We do not
-              publish a child&apos;s attainment, name or identifier to any
-              public ledger or third-party registry.
+              {s("privacy.coppa.5")}
             </li>
             <li>
-              Prize pools are created, funded and awarded by the sponsor — a
-              parent, a school or a community group. OpenMacro never takes
-              custody of the money and never handles a payout. Entry is always
-              free, and nothing in the product is a wager.
+              {s("privacy.coppa.6")}
             </li>
             <li>
-              There is no advertising, no in-app purchasing, and no chat or
-              other child-to-stranger communication anywhere in the product.
+              {s("privacy.coppa.7")}
             </li>
             <li>
-              No proof of identity is required to ask for a deletion, and we
-              never ask a child to prove anything before honouring one.
+              {s("privacy.coppa.8")}
             </li>
           </ul>
         </Article>
 
-        <Article title="Where the data lives">
+        <Article title={s("privacy.where.title")}>
           <p>
-            The website runs on Google Cloud Run. Accounts and progress are
-            stored with Supabase, in their West EU (Ireland) region — learner
-            data does not leave the EU. Sign-in itself is handled by Google.
+            {s("privacy.where.1")}
           </p>
           <p className="mt-3">
-            Every row is protected by database row-level security keyed to your
-            account, so one learner cannot read another&apos;s progress, and the
-            key shipped in the website can only ever reach your own rows. We
-            keep your progress until you ask us to delete it.
+            {s("privacy.where.2")}
           </p>
         </Article>
 
-        <Article title="Your choices">
+        <Article title={s("privacy.choices.title")}>
           <ul className="ml-5 list-disc space-y-2">
             <li>
-              Sign out at any time. You can keep using every lesson signed out.
+              {s("privacy.choices.1")}
             </li>
             <li>
-              Email <MailLink /> to see, correct or delete what we hold,
-              including your whole account. We answer within 30 days.
+              {s("privacy.choices.2.lead")} <MailLink /> {s("privacy.choices.2.tail")}
             </li>
             <li>
-              You can also revoke OpenMacro&apos;s access from your{" "}
+              {s("privacy.choices.3.lead")}{" "}
               <a
                 href="https://myaccount.google.com/permissions"
                 target="_blank"
                 rel="noreferrer noopener"
                 className="text-mint-bright underline underline-offset-4"
               >
-                Google account permissions
+                {s("privacy.choices.3.link")}
               </a>
               .
             </li>
             <li>
-              Delete the app to erase on-device progress. If you never signed
-              in, nothing survives on our side.
+              {s("privacy.choices.4")}
             </li>
           </ul>
         </Article>
 
-        <Article title="Changes and questions">
+        <Article title={s("privacy.changes.title")}>
           <p>
-            Material changes will be posted here with a new date. This notice
-            lives in the same
-            open-source repository as the site, so its full history is public —
-            read it on{" "}
+            {s("privacy.changes.lead")}{" "}
             <a
               href={GITHUB_URL}
               target="_blank"
@@ -205,7 +170,7 @@ export default function PrivacyPage() {
             >
               GitHub
             </a>
-            . Questions go to <MailLink />.
+            {s("privacy.changes.tail")} <MailLink />.
           </p>
         </Article>
       </div>
