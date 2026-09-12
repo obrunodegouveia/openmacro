@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { getLessonById } from "@openmacro/core/content";
 import type { TAccountFlowChallenge } from "@openmacro/core/content/schema";
 import { gradeChallenge, type GradeResult } from "@openmacro/core/engine/grading";
@@ -26,6 +27,7 @@ const DEMO_CHALLENGE = (() => {
 })();
 
 export function Demo() {
+  const s = useSiteText();
   const [answer, setAnswer] = React.useState<ChallengeAnswer | null>(null);
   const [result, setResult] = React.useState<GradeResult | null>(null);
 
@@ -34,15 +36,15 @@ export function Demo() {
   return (
     <Section id="demo" className="scroll-mt-20">
       <SectionHeading
-        overline="Playable teaser"
+        overline={s("demo.overline")}
         title={
           <>
-            Don&rsquo;t read about QE.
+            {s("demo.title.lead")}
             <br className="hidden sm:block" />{" "}
-            <span className="text-gradient">Post the entries.</span>
+            <span className="text-gradient">{s("demo.title.emphasis")}</span>
           </>
         }
-        lede="This is a real lesson step, graded by the same engine the app uses: place each entry on the right sheet and the right side, then find out what actually moved. No sign-up, no download."
+        lede={s("demo.lede")}
       />
 
       <div className="mt-12 glass rounded-card p-5 sm:p-7">
@@ -61,30 +63,27 @@ export function Demo() {
           <p className="text-xs font-semibold text-ink-faint">
             {result
               ? result.correct
-                ? "That is the operation."
-                : "Not quite — try the full lesson."
-              : "Place every entry, then check."}
+                ? s("demo.correct")
+                : s("demo.wrong")
+              : s("demo.prompt")}
           </p>
           {result ? (
             <Button variant="outline" onClick={() => { setResult(null); setAnswer(null); }}>
-              Reset
+              {s("demo.reset")}
             </Button>
           ) : (
             <Button
               disabled={!answer}
               onClick={() => answer && setResult(gradeChallenge(DEMO_CHALLENGE, answer))}
             >
-              Check entries
+              {s("demo.check")}
             </Button>
           )}
         </div>
       </div>
 
       <p className="mx-auto mt-6 max-w-2xl text-center text-xs leading-relaxed text-ink-faint">
-        Simplified in one respect: the dealer&rsquo;s own sheet is left off screen to
-        keep two T-accounts on a phone. In the app the dealer appears as a third
-        entity, and the same operation is replayed with randomised counterparties
-        and amounts so the answer cannot be memorised.
+        {s("demo.note")}
       </p>
     </Section>
   );

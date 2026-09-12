@@ -14,30 +14,30 @@ import {
 
 const COLUMNS = [
   {
-    heading: "Learn",
+    heading: "footer.group.learn",
     links: [
-      { label: "Web demo", href: "/#demo" },
-      { label: "Learn about money", href: "/learn" },
-      { label: "Teach kids about money", href: "/teach" },
-      { label: "Syllabus", href: "/#curriculum" },
-      { label: "The model", href: "/#tiers" },
-      { label: "Glossary", href: "/glossary" },
+      { label: "footer.link.demo", href: "/#demo" },
+      { label: "footer.link.learn", href: "/learn" },
+      { label: "footer.link.teach", href: "/teach" },
+      { label: "footer.link.syllabus", href: "/#curriculum" },
+      { label: "footer.link.model", href: "/#tiers" },
+      { label: "footer.link.glossary", href: "/glossary" },
     ],
   },
   {
-    heading: "Build",
+    heading: "footer.group.build",
     links: [
-      { label: "GitHub repository", href: GITHUB_URL, external: true },
-      { label: "Contributing guide", href: GITHUB_CONTRIBUTING_URL, external: true },
-      { label: "Open issues", href: GITHUB_ISSUES_URL, external: true },
+      { label: "footer.link.repo", href: GITHUB_URL, external: true },
+      { label: "footer.link.contributing", href: GITHUB_CONTRIBUTING_URL, external: true },
+      { label: "footer.link.issues", href: GITHUB_ISSUES_URL, external: true },
     ],
   },
   {
-    heading: "Legal",
+    heading: "footer.group.legal",
     links: [
-      { label: "Privacy & COPPA notice", href: "/privacy" },
-      { label: "MIT licence", href: `${GITHUB_URL}/blob/main/LICENSE`, external: true },
-      { label: SITE.contactEmail, href: `mailto:${SITE.contactEmail}` },
+      { label: "footer.link.privacy", href: "/privacy" },
+      { label: "footer.link.licence", href: `${GITHUB_URL}/blob/main/LICENSE`, external: true },
+      { literal: SITE.contactEmail, href: `mailto:${SITE.contactEmail}` },
     ],
   },
 ] as const;
@@ -60,7 +60,7 @@ export async function Footer() {
                 </h4>
                 <ul className="mt-4 flex flex-col gap-2.5">
                   {column.links.map((link) => (
-                    <li key={link.label}>
+                    <li key={link.href}>
                       {"external" in link && link.external ? (
                         <a
                           href={link.href}
@@ -68,21 +68,21 @@ export async function Footer() {
                           rel="noreferrer noopener"
                           className="text-sm font-semibold text-ink-muted underline-offset-4 transition-colors hover:text-mint-bright hover:underline"
                         >
-                          {link.label}
+                          {s(link.label)}
                         </a>
-                      ) : link.href.startsWith("mailto:") ? (
+                      ) : "literal" in link ? (
                         <a
                           href={link.href}
                           className="text-sm font-semibold text-ink-muted underline-offset-4 transition-colors hover:text-mint-bright hover:underline"
                         >
-                          {link.label}
+                          {link.literal}
                         </a>
                       ) : (
                         <Link
                           href={link.href}
                           className="text-sm font-semibold text-ink-muted underline-offset-4 transition-colors hover:text-mint-bright hover:underline"
                         >
-                          {link.label}
+                          {s(link.label)}
                         </Link>
                       )}
                     </li>

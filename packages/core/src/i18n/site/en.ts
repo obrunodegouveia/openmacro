@@ -170,4 +170,71 @@ export const en = {
   'contribute.guide': 'Contributing guide',
   'contribute.browseLessons': 'Browse lessons',
   'contribute.openIssues': 'Open issues',
+
+  // ---- playable teaser ----------------------------------------------------
+  'demo.overline': 'Playable teaser',
+  'demo.title.lead': 'Don’t read about QE.',
+  'demo.title.emphasis': 'Post the entries.',
+  'demo.lede':
+    'This is a real lesson step, graded by the same engine the app uses: place each entry on the right sheet and the right side, then find out what actually moved. No sign-up, no download.',
+  'demo.correct': 'That is the operation.',
+  'demo.wrong': 'Not quite — try the full lesson.',
+  'demo.prompt': 'Place every entry, then check.',
+  'demo.reset': 'Reset',
+  'demo.check': 'Check entries',
+  'demo.note':
+    'Simplified in one respect: the dealer’s own sheet is left off screen to keep two T-accounts on a phone. In the app the dealer appears as a third entity, and the same operation is replayed with randomised counterparties and amounts so the answer cannot be memorised.',
+
+  // ---- syllabus -----------------------------------------------------------
+  'roadmap.overline': 'Syllabus',
+  'roadmap.title': '{count} tracks, from',
+  'roadmap.title.first': 'tax liabilities',
+  'roadmap.title.to': 'to',
+  'roadmap.title.second': 'swap lines',
+  'roadmap.lede':
+    'Each track builds the mechanism the next one depends on, and every one of them ends in a balance sheet you post yourself.',
+  'roadmap.live': 'Live in beta',
+  'roadmap.beta': 'In testing',
+  'roadmap.drafting': 'Being written',
+  'roadmap.planned': 'Planned',
+
+  // ---- rewards ------------------------------------------------------------
+  'rewards.overline': 'The incentive loop',
+  'rewards.title.lead': 'The knowledge is free.',
+  'rewards.title.mid': 'The',
+  'rewards.title.emphasis': 'retention',
+  'rewards.title.tail': 'is the product.',
+  'rewards.lede':
+    'Every central bank publishes its balance sheet. Almost nobody reads one twice. Rewards exist to fix that, and they are earned by demonstrating the mechanism — never by showing up.',
+  'rewards.competency.title': 'Proof of Competency',
+  'rewards.competency.body':
+    'Adaptive micro-tests and T-account scenarios with randomised parameters. The same operation comes back with different counterparties and amounts, so memorising an answer key gets you nowhere.',
+  'rewards.points.title': 'MacroXP & MintBucks',
+  'rewards.points.body':
+    'Points earned only through verified mastery, daily analysis streaks and module completions. Non-inflationary by design: there is no way to buy them, farm them, or trade them.',
+  'rewards.credentials.title': 'Tiered Credentials',
+  'rewards.credentials.body':
+    'Cryptographic attestations for a demonstrated skill — “Open-Market Operations Specialist”, “Balance Sheet Mechanic: ECB Architecture”. Verifiable by anyone, issued only against a passed assessment.',
+  'rewards.prizes.title': 'Prize Pools & Bounties',
+  'rewards.prizes.body':
+    'Sponsored by parents, educators and the community: books (Mehrling, Bagehot, Stigum), hardware, or family-set privileges. Sponsors fund and award them directly — never the platform.',
+  'rewards.notTitle': 'What points are not',
+  'rewards.notBody':
+    'MacroXP and MintBucks are a learning score. They are not currency, not a token you can buy or sell, and there is no exchange, wallet or cash-out path anywhere in the product. Prize pools are funded and awarded by the sponsor who created them — a parent, a school, a community — and OpenMacro never takes custody of the money. Nothing here is a wager, and nothing costs a learner anything to enter.',
+
+  // ---- footer link groups -------------------------------------------------
+  'footer.group.learn': 'Learn',
+  'footer.group.build': 'Build',
+  'footer.group.legal': 'Legal',
+  'footer.link.demo': 'Web demo',
+  'footer.link.learn': 'Learn about money',
+  'footer.link.teach': 'Teach kids about money',
+  'footer.link.syllabus': 'Syllabus',
+  'footer.link.model': 'The model',
+  'footer.link.glossary': 'Glossary',
+  'footer.link.repo': 'GitHub repository',
+  'footer.link.contributing': 'Contributing guide',
+  'footer.link.issues': 'Open issues',
+  'footer.link.privacy': 'Privacy & COPPA notice',
+  'footer.link.licence': 'MIT licence',
 } as const;

@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import type { SiteKey } from "@openmacro/core/i18n/site";
+import { useSiteText } from "@/lib/use-site-text";
 import { motion } from "motion/react";
 import { ChevronRight, Lock } from "lucide-react";
 import { Section, SectionHeading } from "@/components/ui/section";
@@ -14,11 +16,11 @@ import { cn } from "@/lib/utils";
  * whole curriculum fits on one screen without a wall of text.
  */
 
-const STATUS_LABEL: Record<Track["status"], string> = {
-  live: "Live in beta",
-  beta: "In testing",
-  drafting: "Being written",
-  planned: "Planned",
+const STATUS_LABEL: Record<string, SiteKey> = {
+  live: "roadmap.live",
+  beta: "roadmap.beta",
+  drafting: "roadmap.drafting",
+  planned: "roadmap.planned",
 };
 
 const STATUS_TONE: Record<Track["status"], BadgeTone> = {
@@ -38,20 +40,23 @@ const ACCENT_RING: Record<Track["accent"], string> = {
 };
 
 export function Roadmap() {
+  const s = useSiteText();
   const [activeId, setActiveId] = React.useState(SYLLABUS[2]?.id ?? SYLLABUS[0]!.id);
   const active = SYLLABUS.find((track) => track.id === activeId) ?? SYLLABUS[0]!;
 
   return (
     <Section id="curriculum">
       <SectionHeading
-        overline="Syllabus"
+        overline={s("roadmap.overline")}
         title={
           <>
-            {TRACK_COUNT_LABEL} tracks, from <span className="text-gradient">tax liabilities</span>{" "}
-            to <span className="text-gradient">swap lines</span>.
+            {s("roadmap.title", { count: TRACK_COUNT_LABEL })}{" "}
+            <span className="text-gradient">{s("roadmap.title.first")}</span>{" "}
+            {s("roadmap.title.to")}{" "}
+            <span className="text-gradient">{s("roadmap.title.second")}</span>.
           </>
         }
-        lede="Each track builds the mechanism the next one depends on, and every one of them ends in a balance sheet you post yourself."
+        lede={s("roadmap.lede")}
       />
 
       {/* Track ---------------------------------------------------------- */}
@@ -125,7 +130,7 @@ export function Roadmap() {
               {active.status === "planned" ? (
                 <Lock className="size-3" aria-hidden />
               ) : null}
-              {STATUS_LABEL[active.status]}
+              {s(STATUS_LABEL[active.status])}
             </Badge>
             <span className="text-xs font-semibold text-ink-faint">
               {active.lessonCount} lessons

@@ -167,4 +167,71 @@ export const ptPT = {
   'contribute.guide': 'Guia de contribuição',
   'contribute.browseLessons': 'Ver as lições',
   'contribute.openIssues': 'Questões abertas',
+
+  // ---- playable teaser ----------------------------------------------------
+  'demo.overline': 'Amostra jogável',
+  'demo.title.lead': 'Não leias sobre QE.',
+  'demo.title.emphasis': 'Faz os lançamentos.',
+  'demo.lede':
+    'Isto é um passo de lição a sério, avaliado pelo mesmo motor que a app usa: põe cada lançamento no balanço certo e do lado certo, e descobre o que se mexeu de facto. Sem registo, sem descarregar nada.',
+  'demo.correct': 'É essa a operação.',
+  'demo.wrong': 'Não é bem — experimenta a lição completa.',
+  'demo.prompt': 'Coloca todos os lançamentos e depois verifica.',
+  'demo.reset': 'Recomeçar',
+  'demo.check': 'Verificar lançamentos',
+  'demo.note':
+    'Simplificado num aspecto: o balanço do próprio dealer fica fora do ecrã para caberem duas contas-T num telemóvel. Na app o dealer aparece como terceira entidade, e a mesma operação é repetida com contrapartes e montantes aleatórios para que a resposta não possa ser decorada.',
+
+  // ---- syllabus -----------------------------------------------------------
+  'roadmap.overline': 'Programa',
+  'roadmap.title': '{count} percursos, das',
+  'roadmap.title.first': 'obrigações fiscais',
+  'roadmap.title.to': 'às',
+  'roadmap.title.second': 'linhas de swap',
+  'roadmap.lede':
+    'Cada percurso constrói o mecanismo de que o seguinte depende, e todos eles acabam num balanço que lanças tu.',
+  'roadmap.live': 'Em beta',
+  'roadmap.beta': 'Em testes',
+  'roadmap.drafting': 'Em escrita',
+  'roadmap.planned': 'Planeado',
+
+  // ---- rewards ------------------------------------------------------------
+  'rewards.overline': 'O ciclo de incentivos',
+  'rewards.title.lead': 'O conhecimento é gratuito.',
+  'rewards.title.mid': 'A',
+  'rewards.title.emphasis': 'retenção',
+  'rewards.title.tail': 'é que é o produto.',
+  'rewards.lede':
+    'Todos os bancos centrais publicam o seu balanço. Quase ninguém lê um segunda vez. As recompensas existem para corrigir isso, e ganham-se demonstrando o mecanismo — nunca por aparecer.',
+  'rewards.competency.title': 'Prova de Competência',
+  'rewards.competency.body':
+    'Micro-testes adaptativos e cenários de conta-T com parâmetros aleatórios. A mesma operação volta com contrapartes e montantes diferentes, por isso decorar uma chave de respostas não leva a lado nenhum.',
+  'rewards.points.title': 'MacroXP e MintBucks',
+  'rewards.points.body':
+    'Pontos ganhos apenas através de domínio verificado, sequências diárias de análise e módulos concluídos. Não inflacionários por desenho: não há forma de os comprar, cultivar ou trocar.',
+  'rewards.credentials.title': 'Credenciais por Níveis',
+  'rewards.credentials.body':
+    'Atestados criptográficos de uma competência demonstrada — «Especialista em Operações de Mercado Aberto», «Mecânico de Balanço: Arquitectura do BCE». Verificáveis por qualquer pessoa, emitidos só contra uma avaliação passada.',
+  'rewards.prizes.title': 'Prémios e Recompensas',
+  'rewards.prizes.body':
+    'Patrocinados por pais, educadores e pela comunidade: livros (Mehrling, Bagehot, Stigum), equipamento ou privilégios definidos pela família. Os patrocinadores financiam e atribuem directamente — nunca a plataforma.',
+  'rewards.notTitle': 'O que os pontos não são',
+  'rewards.notBody':
+    'Os MacroXP e os MintBucks são uma pontuação de aprendizagem. Não são moeda, não são um token que se compre ou venda, e não há bolsa, carteira nem forma de levantar dinheiro em lado nenhum do produto. Os prémios são financiados e atribuídos por quem os criou — um pai, uma escola, uma comunidade — e o OpenMacro nunca fica com a custódia do dinheiro. Nada aqui é uma aposta, e nada custa seja o que for a quem aprende.',
+
+  // ---- footer link groups -------------------------------------------------
+  'footer.group.learn': 'Aprender',
+  'footer.group.build': 'Construir',
+  'footer.group.legal': 'Legal',
+  'footer.link.demo': 'Demonstração web',
+  'footer.link.learn': 'Aprender sobre dinheiro',
+  'footer.link.teach': 'Ensinar dinheiro às crianças',
+  'footer.link.syllabus': 'Programa',
+  'footer.link.model': 'O modelo',
+  'footer.link.glossary': 'Glossário',
+  'footer.link.repo': 'Repositório no GitHub',
+  'footer.link.contributing': 'Guia de contribuição',
+  'footer.link.issues': 'Questões abertas',
+  'footer.link.privacy': 'Privacidade e aviso COPPA',
+  'footer.link.licence': 'Licença MIT',
 } as const;

@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
+import type { SiteKey } from "@openmacro/core/i18n/site";
+import { useSiteText } from "@/lib/use-site-text";
 import { Award, Coins, Gift, ShieldCheck, Target } from "lucide-react";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { Card } from "@/components/ui/card";
@@ -14,30 +16,35 @@ import { Card } from "@/components/ui/card";
  * of competency*, not on time spent in the app.
  */
 
-const MECHANISMS = [
+const MECHANISMS: {
+  icon: React.ReactNode;
+  tone: "azure" | "mint" | "gold" | "violet";
+  title: SiteKey;
+  body: SiteKey;
+}[] = [
   {
     icon: <Target className="size-5" aria-hidden />,
     tone: "azure" as const,
-    title: "Proof of Competency",
-    body: "Adaptive micro-tests and T-account scenarios with randomised parameters. The same operation comes back with different counterparties and amounts, so memorising an answer key gets you nowhere.",
+    title: "rewards.competency.title",
+    body: "rewards.competency.body",
   },
   {
     icon: <Coins className="size-5" aria-hidden />,
     tone: "gold" as const,
-    title: "MacroXP & MintBucks",
-    body: "Points earned only through verified mastery, daily analysis streaks and module completions. Non-inflationary by design: there is no way to buy them, farm them, or trade them.",
+    title: "rewards.points.title",
+    body: "rewards.points.body",
   },
   {
     icon: <Award className="size-5" aria-hidden />,
     tone: "mint" as const,
-    title: "Tiered Credentials",
-    body: "Cryptographic attestations for a demonstrated skill — “Open-Market Operations Specialist”, “Balance Sheet Mechanic: ECB Architecture”. Verifiable by anyone, issued only against a passed assessment.",
+    title: "rewards.credentials.title",
+    body: "rewards.credentials.body",
   },
   {
     icon: <Gift className="size-5" aria-hidden />,
     tone: "violet" as const,
-    title: "Prize Pools & Bounties",
-    body: "Sponsored by parents, educators and the community: books (Mehrling, Bagehot, Stigum), hardware, or family-set privileges. Sponsors fund and award them directly — never the platform.",
+    title: "rewards.prizes.title",
+    body: "rewards.prizes.body",
   },
 ];
 
@@ -49,18 +56,20 @@ const TONES = {
 } as const;
 
 export function Rewards() {
+  const s = useSiteText();
   return (
     <Section id="rewards">
       <SectionHeading
-        overline="The incentive loop"
+        overline={s("rewards.overline")}
         title={
           <>
-            The knowledge is free.
-            <br className="hidden sm:block" /> The{" "}
-            <span className="text-gradient">retention</span> is the product.
+            {s("rewards.title.lead")}
+            <br className="hidden sm:block" /> {s("rewards.title.mid")}{" "}
+            <span className="text-gradient">{s("rewards.title.emphasis")}</span>{" "}
+            {s("rewards.title.tail")}
           </>
         }
-        lede="Every central bank publishes its balance sheet. Almost nobody reads one twice. Rewards exist to fix that, and they are earned by demonstrating the mechanism — never by showing up."
+        lede={s("rewards.lede")}
       />
 
       <div className="mt-14 grid gap-5 sm:grid-cols-2">
@@ -80,11 +89,11 @@ export function Rewards() {
                   {mechanism.icon}
                 </span>
                 <h3 className="font-display text-lg font-extrabold tracking-tight">
-                  {mechanism.title}
+                  {s(mechanism.title)}
                 </h3>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                {mechanism.body}
+                {s(mechanism.body)}
               </p>
             </Card>
           </motion.div>
@@ -95,15 +104,10 @@ export function Rewards() {
       <div className="mt-6 rounded-card border border-mint/25 bg-mint/[0.06] p-6">
         <h3 className="flex items-center gap-2 font-display text-base font-extrabold">
           <ShieldCheck className="size-5 text-mint-bright" aria-hidden />
-          What points are not
+          {s("rewards.notTitle")}
         </h3>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">
-          MacroXP and MintBucks are a learning score. They are not currency, not
-          a token you can buy or sell, and there is no exchange, wallet or
-          cash-out path anywhere in the product. Prize pools are funded and
-          awarded by the sponsor who created them — a parent, a school, a
-          community — and OpenMacro never takes custody of the money. Nothing
-          here is a wager, and nothing costs a learner anything to enter.
+          {s("rewards.notBody")}
         </p>
       </div>
     </Section>
