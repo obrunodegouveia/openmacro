@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getSiteText } from "@/lib/site-text";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -40,7 +41,8 @@ export async function generateMetadata() {
  * lands here from a search for one term should be able to see where it sits.
  * The alphabetical list is still available inside each group.
  */
-export default function GlossaryIndexPage() {
+export default async function GlossaryIndexPage() {
+  const s = await getSiteText();
   const byTier = TIERS.map((tier) => ({
     tier,
     entries: GLOSSARY_SORTED.filter((entry) => entry.tier === tier.id),
@@ -83,19 +85,19 @@ export default function GlossaryIndexPage() {
             className="mb-8 inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-mint-bright"
           >
             <ArrowLeft className="size-4" aria-hidden />
-            Back to openmacro.org
+            {s("glossary.back")}
           </Link>
 
           <SectionHeading
             align="left"
-            overline="Reference"
+            overline={s("glossary.overline")}
             title={
               <>
                 The <span className="text-gradient">monetary machine</span>,
                 term by term.
               </>
             }
-            lede="Every definition here describes a mechanism as balance sheet movements, names the misconception it usually carries, and links the primary source. Precision is the product."
+            lede={s("glossary.lede")}
           />
 
           <div className="mt-14 flex flex-col gap-12">
@@ -135,7 +137,7 @@ export default function GlossaryIndexPage() {
                           {entry.definition}
                         </span>
                         <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-mint-bright opacity-0 transition-opacity group-hover:opacity-100">
-                          Read the mechanism
+                          {s("glossary.read")}
                           <ArrowRight className="size-3" aria-hidden />
                         </span>
                       </Link>

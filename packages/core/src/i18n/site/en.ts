@@ -237,4 +237,91 @@ export const en = {
   'footer.link.issues': 'Open issues',
   'footer.link.privacy': 'Privacy & COPPA notice',
   'footer.link.licence': 'MIT licence',
+
+  // ---- for parents & educators --------------------------------------------
+  'teach.overline': 'For parents & educators',
+  'teach.title.lead': 'How to teach kids what money',
+  'teach.title.emphasis': 'really is',
+  'teach.lede':
+    'Pocket money teaches discipline. It does not explain why prices rise or where a bank loan comes from — and children ask those questions long before they earn anything. This is what to teach, roughly when, and how to say it.',
+  'teach.badge.free': 'Free, no licence to buy',
+  'teach.badge.noAccounts': 'No child accounts',
+  'teach.badge.noAds': 'No ads, no tracking',
+  'teach.stagesTitle': 'What to introduce, and when',
+  'teach.stagesLede':
+    'Ages are guidance, not gates. A curious nine-year-old who asks where money comes from is ready for the answer.',
+  'teach.stage.1.age': 'Ages 7–9',
+  'teach.stage.1.idea': 'Money is a promise, not a thing',
+  'teach.stage.1.body':
+    'A coin is not valuable because of the metal. It works because everyone accepts it and the state stands behind it. Ask what would happen if a shop stopped accepting it — that question does most of the teaching.',
+  'teach.stage.2.age': 'Ages 10–12',
+  'teach.stage.2.idea': 'Banks write money when they lend',
+  'teach.stage.2.body':
+    'Ask where a bank gets the money for a loan. When they answer “from savers”, show them that no saver\u2019s balance falls. The number in the borrower\u2019s account is new, and it was typed.',
+  'teach.stage.3.age': 'Ages 13–16',
+  'teach.stage.3.idea': 'Someone sets the price of money',
+  'teach.stage.3.body':
+    'Interest rates are decided by a committee, and that decision reaches their family\u2019s rent or mortgage. Teenagers who have noticed prices rising find this more compelling than budgeting advice.',
+  'teach.stage.4.age': 'Ages 16+',
+  'teach.stage.4.idea': 'The whole machine',
+  'teach.stage.4.body':
+    'Central bank balance sheets, quantitative easing, the offshore dollar system. At this point they can post the entries themselves and check a claim against a Federal Reserve source.',
+  'teach.questionsTitle': 'Questions parents and teachers ask',
+  'teach.safetyTitle': 'What we collect from your child',
+  'teach.safety.1':
+    'Nothing, unless they sign in. Every lesson plays in full without an account, and signed out, progress and streaks stay on the device and are never uploaded.',
+  'teach.safety.2': 'No analytics, advertising or third-party tracking scripts.',
+  'teach.safety.3':
+    'Signing in is optional and needs a Google Account, which Google does not issue to under-13s. It saves one thing: their XP and day streak, so those follow them to another device.',
+  'teach.safety.4':
+    'Reward points are a learning score — not money, not a wallet, with no way to buy or cash them out.',
+  'teach.safety.5':
+    'Accounts and progress are stored in the EU (Ireland), and one learner can never read another\u2019s.',
+  'teach.readPrivacy': 'Read the full privacy and COPPA notice',
+  'teach.tryLesson': 'Try a lesson yourself first',
+  'teach.learnYourself': 'Learn it yourself',
+
+  // ---- learn page ---------------------------------------------------------
+  'learn.overline': 'Start here',
+  'learn.title.lead': 'How to learn what money',
+  'learn.title.emphasis': 'actually is',
+  'learn.lede':
+    'Most money is not printed by a government. It is created by commercial banks when they lend, and by central banks when they buy assets. Everything else follows from that, and this is the shortest honest path to understanding it.',
+  'learn.pathTitle': 'The path, in order',
+  'learn.step.1.title': 'Play one real operation, before reading anything',
+  'learn.step.1.body':
+    'The demo gives you a $10B central bank purchase and asks you to post the entries on both balance sheets. Ten minutes here makes every article about the Fed readable.',
+  'learn.step.1.cta': 'Open the demo',
+  'learn.step.2.title': 'Learn the vocabulary as mechanisms, not definitions',
+  'learn.step.2.body':
+    'Reserves, repo, the monetary base, quantitative easing. Each glossary entry explains what moves on whose balance sheet, names the usual misconception, and links the primary source.',
+  'learn.step.2.cta': 'Read the glossary',
+  'learn.step.3.title': 'Work through the {count} tracks in order',
+  'learn.step.3.body':
+    "From what makes an unbacked token acceptable, through commercial banking and the Fed and ECB levers, to how a dollar crisis is contained — and finally the Fed's own balance sheet, as published this week. Each track builds the mechanism the next one needs.",
+  'learn.step.3.cta': 'See the syllabus',
+  'learn.questionsTitle': 'Common questions',
+  'learn.teachingTitle': 'Teaching someone else?',
+  'learn.teachingBody':
+    'There is a separate guide for parents, guardians and teachers, covering what to introduce at what age and how to explain inflation and bank money to a child.',
+  'learn.teachingCta': 'How to teach kids about money',
+
+  // ---- glossary -----------------------------------------------------------
+  'glossary.back': 'Back to openmacro.org',
+  'glossary.overline': 'Reference',
+  'glossary.lede':
+    'Every definition here describes a mechanism as balance sheet movements, names the misconception it usually carries, and links the primary source. Precision is the product.',
+  'glossary.read': 'Read the mechanism',
+
+  // ---- login --------------------------------------------------------------
+  'login.title': 'Sign in to OpenMacro',
+  'login.body':
+    'Your account does one thing: it remembers. XP and your day streak follow you to any device you sign in on.',
+
+  // ---- not found ----------------------------------------------------------
+  'notFound.title': 'This page does not balance.',
+  'notFound.body':
+    'The URL you followed does not exist. It may have moved, or it may never have been here.',
+  'notFound.home': 'Back to the home page',
+  'notFound.glossary': 'Browse the glossary',
 } as const;

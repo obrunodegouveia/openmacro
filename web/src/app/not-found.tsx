@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getSiteText } from "@/lib/site-text";
 import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Section } from "@/components/ui/section";
@@ -21,7 +22,8 @@ export const metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function NotFound() {
+export default async function NotFound() {
+  const s = await getSiteText();
   return (
     <>
       <Nav />
@@ -32,25 +34,23 @@ export default function NotFound() {
               404
             </p>
             <h1 className="mt-4 font-display text-3xl font-extrabold tracking-tight">
-              This page does not balance.
+              {s("notFound.title")}
             </h1>
             <p className="mt-3 leading-relaxed text-ink-muted">
-              The URL you followed does not exist. It may have moved, or it may
-              never have existed — either way, both sides of the sheet are
-              empty.
+              {s("notFound.body")}
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
                 href="/"
                 className="inline-flex h-12 items-center justify-center rounded-xl border-b-4 border-mint-deep bg-mint px-6 font-extrabold text-abyss transition-all hover:bg-mint-bright active:translate-y-[3px] active:border-b-0"
               >
-                Back to the home page
+                {s("notFound.home")}
               </Link>
               <Link
                 href="/glossary"
                 className="inline-flex h-12 items-center justify-center rounded-xl border border-hairline bg-white/5 px-6 font-extrabold text-ink transition-colors hover:border-mint/60 hover:bg-white/10"
               >
-                Browse the glossary
+                {s("notFound.glossary")}
               </Link>
             </div>
           </div>

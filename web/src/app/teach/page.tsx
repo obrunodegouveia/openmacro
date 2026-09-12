@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { SiteKey } from "@openmacro/core/i18n/site";
 import { ArrowRight, Baby, ShieldCheck, Users } from "lucide-react";
 import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -9,6 +10,7 @@ import { TEACH_ANSWERS, faqPageLd } from "@/lib/answers";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { localisedCopy } from "@/lib/seo-copy";
 import { serverLocale } from "@/lib/locale-server";
+import { getSiteText } from "@/lib/site-text";
 import { SITE } from "@/lib/site";
 
 export async function generateMetadata() {
@@ -32,30 +34,30 @@ export async function generateMetadata() {
 }
 
 /** What to introduce, and roughly when. Ages are guidance, not gates. */
-const STAGES = [
+const STAGES: { icon: React.ReactNode; age: SiteKey; idea: SiteKey; body: SiteKey }[] = [
   {
     icon: <Baby className="size-5" aria-hidden />,
-    age: "Ages 7–9",
-    idea: "Money is a promise, not a thing",
-    body: "A coin is not valuable because of the metal. It works because everyone accepts it and the state stands behind it. Ask what would happen if a shop stopped accepting it — that question does most of the teaching.",
+    age: "teach.stage.1.age",
+    idea: "teach.stage.1.idea",
+    body: "teach.stage.1.body",
   },
   {
     icon: <Users className="size-5" aria-hidden />,
-    age: "Ages 10–12",
-    idea: "Banks write money when they lend",
-    body: "Ask where a bank gets the money for a loan. When they answer “from savers”, show them that no saver's balance falls. The number in the borrower's account is new, and it was typed.",
+    age: "teach.stage.2.age",
+    idea: "teach.stage.2.idea",
+    body: "teach.stage.2.body",
   },
   {
     icon: <Users className="size-5" aria-hidden />,
-    age: "Ages 13–16",
-    idea: "Someone sets the price of money",
-    body: "Interest rates are decided by a committee, and that decision reaches their family's rent or mortgage. Teenagers who have noticed prices rising find this more compelling than budgeting advice.",
+    age: "teach.stage.3.age",
+    idea: "teach.stage.3.idea",
+    body: "teach.stage.3.body",
   },
   {
     icon: <ShieldCheck className="size-5" aria-hidden />,
-    age: "Ages 16+",
-    idea: "The whole machine",
-    body: "Central bank balance sheets, quantitative easing, the offshore dollar system. At this point they can post the entries themselves and check a claim against a Federal Reserve source.",
+    age: "teach.stage.4.age",
+    idea: "teach.stage.4.idea",
+    body: "teach.stage.4.body",
   },
 ];
 
@@ -66,7 +68,8 @@ const STAGES = [
  * whether to put a child in front of a product needs the privacy answer
  * plainly, not buried in a policy page. It is stated on the page and linked.
  */
-export default function TeachPage() {
+export default async function TeachPage() {
+  const s = await getSiteText();
   return (
     <>
       <JsonLd data={faqPageLd(TEACH_ANSWERS)} />
@@ -100,20 +103,20 @@ export default function TeachPage() {
         <Section>
           <SectionHeading
             align="left"
-            overline="For parents & educators"
+            overline={s("teach.overline")}
             title={
               <>
-                How to teach kids what money{" "}
-                <span className="text-gradient">really is</span>.
+                {s("teach.title.lead")}{" "}
+                <span className="text-gradient">{s("teach.title.emphasis")}</span>.
               </>
             }
-            lede="Pocket money teaches discipline. It does not explain why prices rise or where a bank loan comes from — and children ask those questions long before they earn anything. This is what to teach, roughly when, and how to say it."
+            lede={s("teach.lede")}
           />
 
           <div className="mt-10 flex flex-wrap gap-3">
-            <Badge tone="mint">Free, no licence to buy</Badge>
-            <Badge tone="neutral">No child accounts</Badge>
-            <Badge tone="gold">No ads, no tracking</Badge>
+            <Badge tone="mint">{s("teach.badge.free")}</Badge>
+            <Badge tone="neutral">{s("teach.badge.noAccounts")}</Badge>
+            <Badge tone="gold">{s("teach.badge.noAds")}</Badge>
           </div>
 
           {/* Stages ----------------------------------------------------- */}
@@ -122,17 +125,16 @@ export default function TeachPage() {
               id="stages"
               className="font-display text-2xl font-extrabold tracking-tight"
             >
-              What to introduce, and when
+              {s("teach.stagesTitle")}
             </h2>
             <p className="mt-2 max-w-2xl leading-relaxed text-ink-muted">
-              Ages are guidance, not gates. A curious nine-year-old who asks
-              where money comes from is ready for the answer.
+              {s("teach.stagesLede")}
             </p>
 
             <ol className="mt-6 grid gap-4 sm:grid-cols-2">
               {STAGES.map((stage) => (
                 <li
-                  key={stage.age}
+                  key={s(stage.age)}
                   className="rounded-card border border-hairline bg-white/[0.02] p-6"
                 >
                   <div className="flex items-center gap-3">
@@ -140,14 +142,14 @@ export default function TeachPage() {
                       {stage.icon}
                     </span>
                     <span className="text-xs font-extrabold uppercase tracking-wider text-mint-bright">
-                      {stage.age}
+                      {s(stage.age)}
                     </span>
                   </div>
                   <h3 className="mt-3 font-display text-lg font-extrabold">
-                    {stage.idea}
+                    {s(stage.idea)}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-                    {stage.body}
+                    {s(stage.body)}
                   </p>
                 </li>
               ))}
@@ -160,7 +162,7 @@ export default function TeachPage() {
               id="questions"
               className="font-display text-2xl font-extrabold tracking-tight"
             >
-              Questions parents and teachers ask
+              {s("teach.questionsTitle")}
             </h2>
             <div className="mt-6">
               <AnswerList answers={TEACH_ANSWERS} />
@@ -177,34 +179,28 @@ export default function TeachPage() {
               className="flex items-center gap-2 font-display text-xl font-extrabold"
             >
               <ShieldCheck className="size-5 text-mint-bright" aria-hidden />
-              What we collect from your child
+              {s("teach.safetyTitle")}
             </h2>
             <ul className="mt-3 flex max-w-2xl list-disc flex-col gap-2 pl-5 leading-relaxed text-ink-muted">
               <li>
-                Nothing, unless they sign in. Every lesson plays in full without
-                an account, and signed out, progress and streaks stay on the
-                device and are never uploaded.
+                {s("teach.safety.1")}
               </li>
-              <li>No analytics, advertising or third-party tracking scripts.</li>
+              <li>{s("teach.safety.2")}</li>
               <li>
-                Signing in is optional and needs a Google Account, which Google
-                does not issue to under-13s. It saves one thing: their XP and
-                day streak, so those follow them to another device.
+                {s("teach.safety.3")}
               </li>
               <li>
-                Reward points are a learning score — not money, not a wallet,
-                with no way to buy or cash them out.
+                {s("teach.safety.4")}
               </li>
               <li>
-                Accounts and progress are stored in the EU (Ireland), and one
-                learner can never read another&apos;s.
+                {s("teach.safety.5")}
               </li>
             </ul>
             <Link
               href="/privacy"
               className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-mint-bright underline-offset-4 hover:underline"
             >
-              Read the full privacy and COPPA notice
+              {s("teach.readPrivacy")}
               <ArrowRight className="size-3.5" aria-hidden />
             </Link>
           </section>
@@ -214,13 +210,13 @@ export default function TeachPage() {
               href="/#demo"
               className="inline-flex h-12 items-center justify-center rounded-xl border-b-4 border-mint-deep bg-mint px-6 font-extrabold text-abyss transition-all hover:bg-mint-bright active:translate-y-[3px] active:border-b-0"
             >
-              Try a lesson yourself first
+              {s("teach.tryLesson")}
             </Link>
             <Link
               href="/learn"
               className="inline-flex h-12 items-center justify-center rounded-xl border border-hairline bg-white/5 px-6 font-extrabold text-ink transition-colors hover:border-mint/60 hover:bg-white/10"
             >
-              Learn it yourself
+              {s("teach.learnYourself")}
             </Link>
           </div>
         </Section>

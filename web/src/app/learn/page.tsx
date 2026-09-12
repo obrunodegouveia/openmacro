@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getSiteText } from "@/lib/site-text";
 import { ArrowRight, BookOpen, Coins, GraduationCap } from "lucide-react";
 import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -40,7 +41,8 @@ export async function generateMetadata() {
  * first and explaining later: someone who arrives here from "how does money
  * work" should get the answer whether or not they ever click anything.
  */
-export default function LearnPage() {
+export default async function LearnPage() {
+  const s = await getSiteText();
   return (
     <>
       <JsonLd data={faqPageLd(LEARN_ANSWERS)} />
@@ -72,14 +74,14 @@ export default function LearnPage() {
         <Section>
           <SectionHeading
             align="left"
-            overline="Start here"
+            overline={s("learn.overline")}
             title={
               <>
-                How to learn what money{" "}
-                <span className="text-gradient">actually is</span>.
+                {s("learn.title.lead")}{" "}
+                <span className="text-gradient">{s("learn.title.emphasis")}</span>.
               </>
             }
-            lede="Most money is not printed by a government. It is created by commercial banks when they lend, and by central banks when they buy assets. Everything else follows from that, and this is the shortest honest path to understanding it."
+            lede={s("learn.lede")}
           />
 
           <div className="mt-14">
@@ -98,30 +100,30 @@ export default function LearnPage() {
               id="path"
               className="font-display text-2xl font-extrabold tracking-tight"
             >
-              The path, in order
+              {s("learn.pathTitle")}
             </h2>
             <ol className="mt-6 flex flex-col gap-4">
               {[
                 {
                   icon: <Coins className="size-5" aria-hidden />,
-                  title: "Play one real operation, before reading anything",
-                  body: "The demo gives you a $10B central bank purchase and asks you to post the entries on both balance sheets. Ten minutes here makes every article about the Fed readable.",
+                  title: s("learn.step.1.title"),
+                  body: s("learn.step.1.body"),
                   href: "/#demo",
-                  cta: "Open the demo",
+                  cta: s("learn.step.1.cta"),
                 },
                 {
                   icon: <BookOpen className="size-5" aria-hidden />,
-                  title: "Learn the vocabulary as mechanisms, not definitions",
-                  body: "Reserves, repo, the monetary base, quantitative easing. Each glossary entry explains what moves on whose balance sheet, names the usual misconception, and links the primary source.",
+                  title: s("learn.step.2.title"),
+                  body: s("learn.step.2.body"),
                   href: "/glossary",
-                  cta: "Read the glossary",
+                  cta: s("learn.step.2.cta"),
                 },
                 {
                   icon: <GraduationCap className="size-5" aria-hidden />,
-                  title: `Work through the ${TRACK_COUNT_LABEL.toLowerCase()} tracks in order`,
-                  body: "From what makes an unbacked token acceptable, through commercial banking and the Fed and ECB levers, to how a dollar crisis is contained — and finally the Fed's own balance sheet, as published this week. Each track builds the mechanism the next one needs.",
+                  title: s("learn.step.3.title", { count: TRACK_COUNT_LABEL.toLowerCase() }),
+                  body: s("learn.step.3.body"),
                   href: "/#curriculum",
-                  cta: "See the syllabus",
+                  cta: s("learn.step.3.cta"),
                 },
               ].map((step, index) => (
                 <li
@@ -158,7 +160,7 @@ export default function LearnPage() {
               id="questions"
               className="font-display text-2xl font-extrabold tracking-tight"
             >
-              Common questions
+              {s("learn.questionsTitle")}
             </h2>
             <div className="mt-6">
               <AnswerList answers={LEARN_ANSWERS} />
@@ -167,18 +169,16 @@ export default function LearnPage() {
 
           <div className="mt-14 rounded-card border border-mint/25 bg-mint/[0.06] p-7">
             <h2 className="font-display text-xl font-extrabold">
-              Teaching someone else?
+              {s("learn.teachingTitle")}
             </h2>
             <p className="mt-2 max-w-2xl leading-relaxed text-ink-muted">
-              There is a separate guide for parents, guardians and teachers,
-              covering what to introduce at what age and how to explain
-              inflation and bank money to a child.
+              {s("learn.teachingBody")}
             </p>
             <Link
               href="/teach"
               className="mt-4 inline-flex h-11 items-center justify-center rounded-xl border-b-4 border-mint-deep bg-mint px-5 font-extrabold text-abyss transition-all hover:bg-mint-bright active:translate-y-[3px] active:border-b-0"
             >
-              How to teach kids about money
+              {s("learn.teachingCta")}
             </Link>
           </div>
         </Section>

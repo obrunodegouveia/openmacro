@@ -234,4 +234,91 @@ export const ptPT = {
   'footer.link.issues': 'Questões abertas',
   'footer.link.privacy': 'Privacidade e aviso COPPA',
   'footer.link.licence': 'Licença MIT',
+
+  // ---- for parents & educators --------------------------------------------
+  'teach.overline': 'Para pais e educadores',
+  'teach.title.lead': 'Como ensinar às crianças o que o dinheiro',
+  'teach.title.emphasis': 'realmente é',
+  'teach.lede':
+    'A semanada ensina disciplina. Não explica porque sobem os preços nem de onde vem um empréstimo bancário — e as crianças fazem essas perguntas muito antes de ganharem seja o que for. Isto é o que ensinar, mais ou menos quando, e como dizê-lo.',
+  'teach.badge.free': 'Gratuito, sem licença para comprar',
+  'teach.badge.noAccounts': 'Sem contas para crianças',
+  'teach.badge.noAds': 'Sem anúncios, sem rastreio',
+  'teach.stagesTitle': 'O que introduzir, e quando',
+  'teach.stagesLede':
+    'As idades são orientação, não barreiras. Uma criança curiosa de nove anos que pergunte de onde vem o dinheiro está pronta para a resposta.',
+  'teach.stage.1.age': '7 a 9 anos',
+  'teach.stage.1.idea': 'O dinheiro é uma promessa, não uma coisa',
+  'teach.stage.1.body':
+    'Uma moeda não vale pelo metal. Funciona porque toda a gente a aceita e o Estado responde por ela. Pergunta o que aconteceria se uma loja deixasse de a aceitar — essa pergunta faz quase todo o ensino.',
+  'teach.stage.2.age': '10 a 12 anos',
+  'teach.stage.2.idea': 'Os bancos escrevem dinheiro quando emprestam',
+  'teach.stage.2.body':
+    'Pergunta de onde vem o dinheiro de um empréstimo. Quando responderem «dos aforradores», mostra-lhes que o saldo de nenhum aforrador desce. O número na conta de quem pediu é novo, e foi escrito.',
+  'teach.stage.3.age': '13 a 16 anos',
+  'teach.stage.3.idea': 'Alguém fixa o preço do dinheiro',
+  'teach.stage.3.body':
+    'As taxas de juro são decididas por um comité, e essa decisão chega à renda ou ao crédito à habitação da família. Os adolescentes que repararam nos preços a subir acham isto mais interessante do que conselhos de orçamento.',
+  'teach.stage.4.age': '16+ anos',
+  'teach.stage.4.idea': 'A máquina inteira',
+  'teach.stage.4.body':
+    'Balanços de bancos centrais, flexibilização quantitativa, o sistema do dólar offshore. A esta altura conseguem fazer os lançamentos sozinhos e verificar uma afirmação contra uma fonte da Reserva Federal.',
+  'teach.questionsTitle': 'Perguntas que pais e professores fazem',
+  'teach.safetyTitle': 'O que recolhemos da tua criança',
+  'teach.safety.1':
+    'Nada, a não ser que inicie sessão. Todas as lições se jogam por inteiro sem conta e, com a sessão fechada, o progresso e as sequências ficam no dispositivo e nunca são enviados.',
+  'teach.safety.2': 'Sem analítica, sem publicidade e sem scripts de rastreio de terceiros.',
+  'teach.safety.3':
+    'Iniciar sessão é opcional e exige uma Conta Google, que a Google não emite a menores de 13 anos. Guarda uma coisa: os XP e a sequência de dias, para que a sigam noutro dispositivo.',
+  'teach.safety.4':
+    'Os pontos de recompensa são uma pontuação de aprendizagem — não são dinheiro nem carteira, e não há forma de os comprar ou levantar.',
+  'teach.safety.5':
+    'As contas e o progresso são guardados na UE (Irlanda), e quem aprende nunca consegue ler o de outra pessoa.',
+  'teach.readPrivacy': 'Ler o aviso completo de privacidade e COPPA',
+  'teach.tryLesson': 'Experimenta tu primeiro uma lição',
+  'teach.learnYourself': 'Aprende tu',
+
+  // ---- learn page ---------------------------------------------------------
+  'learn.overline': 'Começa por aqui',
+  'learn.title.lead': 'Como aprender o que o dinheiro',
+  'learn.title.emphasis': 'realmente é',
+  'learn.lede':
+    'A maior parte do dinheiro não é impressa por um governo. É criada pelos bancos comerciais quando emprestam, e pelos bancos centrais quando compram activos. Tudo o resto decorre daí, e este é o caminho honesto mais curto para o perceber.',
+  'learn.pathTitle': 'O percurso, por ordem',
+  'learn.step.1.title': 'Faz uma operação a sério, antes de leres seja o que for',
+  'learn.step.1.body':
+    'A demonstração dá-te uma compra de 10 mil milhões de dólares por um banco central e pede-te que lances as entradas nos dois balanços. Dez minutos aqui tornam legível qualquer artigo sobre a Fed.',
+  'learn.step.1.cta': 'Abrir a demonstração',
+  'learn.step.2.title': 'Aprende o vocabulário como mecanismos, não como definições',
+  'learn.step.2.body':
+    'Reservas, repo, base monetária, flexibilização quantitativa. Cada entrada do glossário explica o que se move no balanço de quem, nomeia o equívoco habitual, e liga à fonte primária.',
+  'learn.step.2.cta': 'Ler o glossário',
+  'learn.step.3.title': 'Percorre os {count} percursos por ordem',
+  'learn.step.3.body':
+    'Do que torna aceitável um token sem cobertura, passando pela banca comercial e pelas alavancas da Fed e do BCE, até como se contém uma crise do dólar — e por fim o próprio balanço da Fed, tal como publicado esta semana. Cada percurso constrói o mecanismo de que o seguinte precisa.',
+  'learn.step.3.cta': 'Ver o programa',
+  'learn.questionsTitle': 'Perguntas frequentes',
+  'learn.teachingTitle': 'Estás a ensinar alguém?',
+  'learn.teachingBody':
+    'Há um guia separado para pais, encarregados de educação e professores, sobre o que introduzir em que idade e como explicar a inflação e o dinheiro bancário a uma criança.',
+  'learn.teachingCta': 'Como ensinar dinheiro às crianças',
+
+  // ---- glossary -----------------------------------------------------------
+  'glossary.back': 'Voltar a openmacro.org',
+  'glossary.overline': 'Referência',
+  'glossary.lede':
+    'Todas as definições aqui descrevem um mecanismo como movimentos de balanço, nomeiam o equívoco que costuma trazer, e ligam à fonte primária. A precisão é que é o produto.',
+  'glossary.read': 'Ler o mecanismo',
+
+  // ---- login --------------------------------------------------------------
+  'login.title': 'Iniciar sessão no OpenMacro',
+  'login.body':
+    'A tua conta faz uma coisa: lembra-se. Os XP e a tua sequência de dias seguem-te para qualquer dispositivo onde inicies sessão.',
+
+  // ---- not found ----------------------------------------------------------
+  'notFound.title': 'Esta página não fecha.',
+  'notFound.body':
+    'O endereço que seguiste não existe. Pode ter mudado, ou pode nunca ter estado aqui.',
+  'notFound.home': 'Voltar à página inicial',
+  'notFound.glossary': 'Ver o glossário',
 } as const;

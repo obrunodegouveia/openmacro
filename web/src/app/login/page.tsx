@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getSiteText } from "@/lib/site-text";
 import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Section } from "@/components/ui/section";
@@ -23,7 +24,8 @@ export const metadata = pageMetadata({
  * Deliberately does not gate anything. Nothing on this site requires an
  * account, so this page explains what one is for and gets out of the way.
  */
-export default function LoginPage() {
+export default async function LoginPage() {
+  const s = await getSiteText();
   return (
     <>
       <JsonLd
@@ -37,12 +39,10 @@ export default function LoginPage() {
         <Section className="pt-28 sm:pt-32">
           <div className="mx-auto max-w-xl">
             <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Sign in to OpenMacro
+              {s("login.title")}
             </h1>
             <p className="mt-3 text-base leading-relaxed text-ink-muted">
-              Your account does one thing: it remembers. XP and your day streak
-              are saved as you finish lessons, so they survive closing the tab
-              and follow you to your phone.
+              {s("login.body")}
             </p>
 
             {/* Signing in from here means you want the dashboard. */}
