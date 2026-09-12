@@ -61,16 +61,13 @@ export const ptPT: UiDictionary = {
   'tabs.home': 'Início',
   'tabs.progress': 'Progresso',
   'tabs.account': 'Conta',
-
   'progress.title': 'Progresso',
   'progress.stat.xp': 'XP ganho',
   'progress.stat.lessons': 'de {total, plural, one {# lição} other {# lições}}',
   'progress.stat.streak': 'Dias seguidos',
   'progress.module.count': '{done, number} / {total, number}',
-
   'account.title': 'Conta',
   'account.danger': 'Zona de perigo',
-
   'path.xp': '{count, number} XP',
   'path.module': 'Módulo {number, number}',
   'path.streak': '{count, plural, one {sequência de # dia} other {sequência de # dias}}',

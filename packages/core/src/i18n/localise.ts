@@ -47,6 +47,24 @@ import type { Challenge, Lesson, Module } from '../content/schema';
 export type ContentDictionary = Readonly<Record<string, string>>;
 
 /** Every translatable string in a module, as key → English source. */
+
+/**
+ * A stable key fragment for an account name.
+ *
+ * Derived from the English text rather than from a position, because the same
+ * account appears in three places — the opening sheet, the chips offered, and
+ * the expected postings — and grading matches them by `account` string. Keying
+ * off the text guarantees all three resolve to the same translation; keying
+ * off an index would let them drift apart and silently break grading.
+ */
+function accountKey(account: string): string {
+  return account
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export function collectKeys(module: Module): Record<string, string> {
   const out: Record<string, string> = {};
   const put = (key: string, value: string | undefined) => {
@@ -85,6 +103,38 @@ export function collectKeys(module: Module): Record<string, string> {
         for (const event of challenge.events) {
           put(`${base}.event.${event.id}.label`, event.label);
           put(`${base}.event.${event.id}.detail`, event.detail);
+        }
+      }
+      if (challenge.type === 't_account_flow') {
+        put(`${base}.scenario`, challenge.scenario);
+        for (const entity of challenge.entities) {
+          put(`${base}.entity.${entity.id}.label`, entity.label);
+          put(`${base}.entity.${entity.id}.role`, entity.role);
+          for (const line of entity.openingLines ?? []) {
+            put(`${base}.account.${accountKey(line.account)}`, line.account);
+          }
+        }
+        for (const option of challenge.options) {
+          put(`${base}.account.${accountKey(option.shift.account)}`, option.shift.account);
+          put(`${base}.option.${option.id}.feedback`, option.feedback);
+        }
+        for (const shift of challenge.expectedShifts) {
+          put(`${base}.account.${accountKey(shift.account)}`, shift.account);
+        }
+        challenge.aggregateEffects?.forEach((effect, index) =>
+          put(`${base}.effect.${index}.note`, effect.note),
+        );
+      }
+      if (challenge.type === 'interactive_sim') {
+        put(`${base}.narrative`, challenge.narrative);
+        put(`${base}.objective`, challenge.objective.description);
+        for (const slider of challenge.sliders) {
+          put(`${base}.slider.${slider.key}.label`, slider.label);
+          put(`${base}.slider.${slider.key}.hint`, slider.hint);
+        }
+        for (const readout of challenge.readouts) {
+          put(`${base}.readout.${readout.key}.label`, readout.label);
+          put(`${base}.readout.${readout.key}.caption`, readout.caption);
         }
       }
     }
@@ -182,11 +232,60 @@ function localiseChallenge(
           detail: maybe(`${base}.event.${event.id}.detail`, event.detail),
         })),
       };
-    default:
-      // interactive_sim and t_account_flow carry their own nested shapes; the
-      // common fields above are translated and the rest stays English until
-      // there is a reason to key into them.
-      return { ...challenge, ...common };
+    case 't_account_flow': {
+      // One lookup, used everywhere an account name appears. Grading matches
+      // postings by `account`, so the opening sheet, the chips and the
+      // expected shifts must all resolve to the identical string — which is
+      // why they share a key derived from the English text.
+      const account = (name: string) => pick(`${base}.account.${accountKey(name)}`, name);
+      return {
+        ...challenge,
+        ...common,
+        scenario: maybe(`${base}.scenario`, challenge.scenario),
+        entities: challenge.entities.map((entity) => ({
+          ...entity,
+          label: pick(`${base}.entity.${entity.id}.label`, entity.label),
+          role: maybe(`${base}.entity.${entity.id}.role`, entity.role),
+          openingLines: entity.openingLines?.map((line) => ({
+            ...line,
+            account: account(line.account),
+          })),
+        })),
+        options: challenge.options.map((option) => ({
+          ...option,
+          shift: { ...option.shift, account: account(option.shift.account) },
+          feedback: maybe(`${base}.option.${option.id}.feedback`, option.feedback),
+        })),
+        expectedShifts: challenge.expectedShifts.map((shift) => ({
+          ...shift,
+          account: account(shift.account),
+        })),
+        aggregateEffects: challenge.aggregateEffects?.map((effect, index) => ({
+          ...effect,
+          note: pick(`${base}.effect.${index}.note`, effect.note),
+        })),
+      };
+    }
+    case 'interactive_sim':
+      return {
+        ...challenge,
+        ...common,
+        narrative: maybe(`${base}.narrative`, challenge.narrative),
+        objective: {
+          ...challenge.objective,
+          description: pick(`${base}.objective`, challenge.objective.description),
+        },
+        sliders: challenge.sliders.map((slider) => ({
+          ...slider,
+          label: pick(`${base}.slider.${slider.key}.label`, slider.label),
+          hint: maybe(`${base}.slider.${slider.key}.hint`, slider.hint),
+        })),
+        readouts: challenge.readouts.map((readout) => ({
+          ...readout,
+          label: pick(`${base}.readout.${readout.key}.label`, readout.label),
+          caption: maybe(`${base}.readout.${readout.key}.caption`, readout.caption),
+        })),
+      };
   }
 }
 
