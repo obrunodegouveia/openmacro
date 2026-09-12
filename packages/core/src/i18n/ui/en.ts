@@ -35,6 +35,7 @@ export const en = {
   'account.delete.title': 'Delete this account',
   'account.delete.body':
     'Your XP, streak and lesson history are erased and cannot be recovered. The course keeps working on this device, signed out.',
+  'account.delete.accountIs': 'This account signs in as',
   'account.delete.confirmLabel': 'Type {email} to confirm',
   'account.delete.confirmLabelGeneric': 'Type your email address to confirm',
   'account.delete.placeholder': 'your email',

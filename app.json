@@ -11,13 +11,15 @@
     "primaryColor": "#2FBF71",
     "ios": {
       "supportsTablet": true,
+      "usesAppleSignIn": true,
       "bundleIdentifier": "org.openmacro.app",
       "config": {
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
         "CFBundleLocalizations": [
-          "en"
+          "en",
+          "pt-PT"
         ]
       }
     },
@@ -45,6 +47,7 @@
       "expo-router",
       "expo-status-bar",
       "expo-web-browser",
+      "expo-apple-authentication",
       "expo-localization",
       [
         "expo-splash-screen",

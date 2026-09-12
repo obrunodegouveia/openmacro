@@ -3,7 +3,10 @@
   "apple": {
     "version": "1.0.0",
     "copyright": "2026 OpenMacro contributors",
-    "categories": ["EDUCATION", "FINANCE"],
+    "categories": [
+      "EDUCATION",
+      "FINANCE"
+    ],
     "release": {
       "automaticRelease": false
     },
@@ -11,7 +14,7 @@
       "en-US": {
         "title": "OpenMacro Economics",
         "subtitle": "How money actually works",
-        "description": "OpenMacro teaches macroeconomics the way a language app teaches vocabulary: five minutes a day, one idea at a time, with something to do on every screen.\n\nMost people leave school without ever being told where money comes from. Not the metaphor — the mechanism. OpenMacro starts there and builds up: what a fiduciary currency actually is, how a commercial bank creates a deposit out of a loan, what a central bank is really doing when it changes a rate, and why a bank run is a coordination problem rather than a morality tale.\n\nSixteen modules, 83 lessons, 334 challenges. Among them:\n\n• Start Here — the on-ramp, if none of this is familiar yet\n• Foundations of Fiduciary Currency\n• The Commercial–Central Bank Interface\n• The Fed & ECB Levers\n• Crisis Architecture & The Global Dollar\n• Reading the Fed's and the ECB's balance sheets\n• The Treasury Yield Curve\n• Breaking a Peg: September 1992\n• African Central Banks and the CFA Franc\n• Euribor, and what actually moves a mortgage\n• Scrutinising CBDCs: Project Mariana\n\nYou do not read about a balance sheet — you balance one, and it has to balance. You do not read that raising rates cools an economy — you move the rate and watch the readouts respond. Every simulation is the real arithmetic, not a cartoon of it, and where a model is a simplification the lesson says so out loud.\n\nNo account is required. The whole course works offline, from the first lesson to the last, and nothing is behind a paywall or a sign-up wall. Signing in is optional and syncs exactly two things across your devices: your XP and your day streak.\n\nNo ads. No tracking. No in-app purchases. OpenMacro is free and open source under the MIT licence, and the lessons themselves are public — anyone can read them, correct them, or translate them.\n\nBuilt for teenagers, students, and any adult who has nodded along to a news bulletin about interest rates and quietly wished someone would start from the beginning.",
+        "description": "OpenMacro teaches macroeconomics the way a language app teaches vocabulary: five minutes a day, one idea at a time, with something to do on every screen.\n\nMost people leave school without ever being told where money comes from. Not the metaphor — the mechanism. OpenMacro starts there and builds up: what a fiduciary currency actually is, how a commercial bank creates a deposit out of a loan, what a central bank is really doing when it changes a rate, and why a bank run is a coordination problem rather than a morality tale.\n\nSeventeen modules, 108 lessons, 384 challenges. Among them:\n\n• Banking and Money — the beginner lessons, with Khan Academy's videos\n• Start Here — the on-ramp, if none of this is familiar yet\n• Foundations of Fiduciary Currency\n• The Commercial–Central Bank Interface\n• The Fed & ECB Levers\n• Crisis Architecture & The Global Dollar\n• Reading the Fed's and the ECB's balance sheets\n• The Treasury Yield Curve\n• Breaking a Peg: September 1992\n• African Central Banks and the CFA Franc\n• Euribor, and what actually moves a mortgage\n• Scrutinising CBDCs: Project Mariana\n\nYou do not read about a balance sheet — you balance one, and it has to balance. You do not read that raising rates cools an economy — you move the rate and watch the readouts respond. Every simulation is the real arithmetic, not a cartoon of it, and where a model is a simplification the lesson says so out loud.\n\nIn English and European Portuguese, course and interface alike.\n\nNo account is required. The whole course works offline, from the first lesson to the last, and nothing is behind a paywall or a sign-up wall. Signing in — with Apple or with Google — is optional and syncs exactly two things across your devices: your XP and your day streak.\n\nNo ads. No tracking. No in-app purchases. OpenMacro is free and open source under the MIT licence, and the lessons themselves are public — anyone can read them, correct them, or translate them.\n\nBuilt for teenagers, students, and any adult who has nodded along to a news bulletin about interest rates and quietly wished someone would start from the beginning.",
         "keywords": [
           "economics",
           "macroeconomics",
@@ -24,11 +27,33 @@
           "study",
           "education"
         ],
-        "releaseNotes": "First release. Sixteen modules and 83 lessons, from what money is through to reading a central bank's balance sheet and diagnosing a crisis while it happens.",
+        "releaseNotes": "First release. Seventeen modules and 108 lessons, from what money is through to reading a central bank's balance sheet and diagnosing a crisis while it happens. In English and European Portuguese.",
         "promoText": "Five minutes a day on how money is created, what central banks actually do, and why prices rise. Free, offline, no account.",
         "marketingUrl": "https://openmacro.org",
         "supportUrl": "https://openmacro.org/teach",
         "privacyPolicyUrl": "https://openmacro.org/privacy"
+      },
+      "pt-PT": {
+        "title": "OpenMacro: Economia",
+        "subtitle": "Como o dinheiro funciona",
+        "description": "O OpenMacro ensina macroeconomia como uma app de línguas ensina vocabulário: cinco minutos por dia, uma ideia de cada vez, com algo para fazer em cada ecrã.\n\nQuase todos saímos da escola sem que alguém nos tenha dito de onde vem o dinheiro. Não a metáfora — o mecanismo. O OpenMacro começa aí e constrói a partir daí: o que é de facto uma moeda fiduciária, como um banco comercial cria um depósito a partir de um empréstimo, o que um banco central está realmente a fazer quando muda uma taxa, e porque é que uma corrida aos depósitos é um problema de coordenação e não uma fábula moral.\n\nDezassete módulos, 108 lições, 384 desafios. Entre eles:\n\n• Banca e Dinheiro — as lições para começar, com os vídeos da Khan Academy\n• Começa Aqui — a rampa de acesso, se nada disto te é familiar\n• Fundamentos da Moeda Fiduciária\n• A Interface entre Banca Comercial e Banco Central\n• As Alavancas da Fed e do BCE\n• Arquitetura de Crise e o Dólar Global\n• Ler o Balanço da Fed e o do BCE\n• A Curva de Rendimentos do Tesouro\n• Quebrar uma Paridade: setembro de 1992\n• Bancos Centrais Africanos e o Franco CFA\n• Euribor, e o que mexe de facto numa prestação\n• Comprar Casa em Portugal: As Contas\n• Analisar as CBDC: o Projeto Mariana\n\nNão lês sobre um balanço — equilibras um, e tem de fechar. Não lês que subir as taxas arrefece uma economia — mexes na taxa e vês os indicadores responder. Cada simulação é a aritmética real, não uma caricatura dela, e onde um modelo é uma simplificação a lição di-lo em voz alta.\n\nTudo em português europeu, e em inglês se preferires.\n\nNão é preciso conta. O curso inteiro funciona offline, da primeira lição à última, e nada está atrás de uma subscrição ou de um registo obrigatório. Iniciar sessão — com a Apple ou com a Google — é opcional e sincroniza exatamente duas coisas entre os teus dispositivos: os teus XP e a tua sequência de dias.\n\nSem publicidade. Sem rastreio. Sem compras dentro da aplicação. O OpenMacro é gratuito e de código aberto sob a licença MIT, e as próprias lições são públicas — qualquer pessoa as pode ler, corrigir ou traduzir.\n\nFeito para adolescentes, estudantes e qualquer adulto que já tenha acenado com a cabeça num noticiário sobre taxas de juro e desejado em silêncio que alguém começasse do princípio.",
+        "keywords": [
+          "economia",
+          "macroeconomia",
+          "dinheiro",
+          "finanças",
+          "banca",
+          "banco central",
+          "inflação",
+          "juros",
+          "estudar",
+          "euribor"
+        ],
+        "releaseNotes": "Primeira versão. Dezassete módulos e 108 lições, do que é o dinheiro até ler o balanço de um banco central e diagnosticar uma crise enquanto ela acontece. Em português europeu e em inglês.",
+        "promoText": "Cinco minutos por dia sobre como o dinheiro é criado, o que fazem os bancos centrais e porque sobem os preços. Gratuito, offline, sem conta.",
+        "marketingUrl": "https://openmacro.org/pt",
+        "supportUrl": "https://openmacro.org/pt/teach",
+        "privacyPolicyUrl": "https://openmacro.org/pt/privacy"
       }
     },
     "advisory": {
@@ -56,7 +81,7 @@
       "email": "REPLACE_EMAIL@openmacro.org",
       "phone": "+REPLACE_PHONE",
       "demoRequired": false,
-      "notes": "No account is needed to review this app. Launch it and every lesson is playable immediately — tap any lesson on the home screen.\n\nThe app may show a 'Continue with Google' row on the home screen. It is entirely optional: it syncs XP and day streak across devices and nothing else. All course content is available signed out, so no demo account is required. Sign-in opens the system browser (SFAuthenticationSession) and returns to the app via the 'openmacro' URL scheme.\n\nThere are no in-app purchases, no advertising, no third-party analytics, and no user-generated content. Nothing is collected from a signed-out user; the privacy notice at https://openmacro.org/privacy covers this in full, including the COPPA position.\n\nThe app is open source: https://github.com/obrunodegouveia/openmacro"
+      "notes": "No account is needed to review this app. Launch it and every lesson is playable immediately — tap any lesson on the Home tab.\n\nSIGN-IN (optional). The Account tab offers 'Continue with Apple' and 'Continue with Google'. Both are entirely optional and neither gates any content: they sync XP and day streak across devices and nothing else. All 108 lessons are available signed out, so no demo account is required.\n\nSign in with Apple is native (ASAuthorizationController) and is offered first and at equal prominence, per guideline 4.8. Google opens a system browser (ASWebAuthenticationSession) and returns to the app via the 'openmacro' URL scheme. A private relay address is fully supported — nothing in the app needs a real email.\n\nDELETING AN ACCOUNT (guideline 5.1.1(v)). Account tab → 'Danger zone' → 'Delete account'. The panel shows the address the account signs in as — including an Apple private relay address — and asks you to type it, then deletes the auth user and everything that cascades from it. It is one screen deep, needs no email to support, and works for both providers.\n\nLANGUAGE. The app ships in English and European Portuguese. Account tab → Language switches between them; both cover the whole course, not only the interface.\n\nThere are no in-app purchases, no advertising, no third-party analytics and no user-generated content. Nothing is collected from a signed-out learner; when someone signs in, the email address and user id are stored to identify the account, and XP and streak are stored as app functionality. The privacy notice at https://openmacro.org/privacy covers this in full, including the COPPA position.\n\nThe app is open source: https://github.com/obrunodegouveia/openmacro"
     }
   }
 }

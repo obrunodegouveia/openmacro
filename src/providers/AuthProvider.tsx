@@ -3,7 +3,7 @@
  * Authentication
  * ============================================================================
  *
- * Wraps Supabase's Google OAuth in a shape the rest of the app can use without
+ * Wraps Supabase's sign-in in a shape the rest of the app can use without
  * knowing which platform it is on, or whether accounts exist in this build at
  * all.
  *
@@ -11,6 +11,21 @@
  * null, and every account affordance in the UI hides itself. That is the
  * default for a fresh clone: OpenMacro still runs, fully offline, with no
  * mention of signing in.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY THERE ARE TWO PROVIDERS
+ * ---------------------------------------------------------------------------
+ *
+ * App Store guideline 4.8. An app that offers a third-party login service has
+ * to offer an alternative that collects no more than name and email, lets the
+ * learner withhold the real email, and does not use the sign-in to track them.
+ * Sign in with Apple is that alternative, and Google on its own is a rejection.
+ *
+ * The two take different routes on purpose. Google has no native SDK here, so
+ * it opens a system auth session and we exchange the returned code. Apple is
+ * a native sheet that hands back an identity token directly, so there is no
+ * browser, no redirect, and nothing to exchange — which is also why it works
+ * on a device with no default browser configured.
  */
 
 import {
@@ -23,6 +38,7 @@ import {
   type ReactNode,
 } from 'react';
 import { Platform } from 'react-native';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
 import type { Session } from '@supabase/supabase-js';
@@ -41,13 +57,27 @@ interface AuthContextValue {
   /** True while a sign-in round trip is in flight. */
   signingIn: boolean;
   error: string | null;
+  /**
+   * Whether this device can offer Sign in with Apple. False everywhere but a
+   * real iOS 13+ device or simulator, and false in a build with no Supabase
+   * project, so the button simply is not rendered rather than rendered broken.
+   */
+  appleAvailable: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-/** Pulls a display name and avatar out of whatever Google returned. */
+/**
+ * Pulls a display name and avatar out of whatever the provider returned.
+ *
+ * Apple sends neither. Its identity token carries an email — often a private
+ * relay address — and nothing else, so the fallback chain ends at the email and
+ * `signInWithApple` writes `full_name` itself on the one occasion Apple hands
+ * a name over. Google sends all three every time.
+ */
 function readIdentity(session: Session | null): CloudIdentity | null {
   if (!session) return null;
   const meta = session.user.user_metadata as Record<string, unknown>;
@@ -66,6 +96,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(cloudSyncConfigured);
   const [signingIn, setSigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [appleAvailable, setAppleAvailable] = useState(false);
+
+  /**
+   * Asked once, not assumed from `Platform.OS`. Apple sign-in needs iOS 13,
+   * and the entitlement has to have made it into the binary — a build where
+   * the config plugin did not run answers false here, which is exactly when
+   * you want to find out before a learner taps the button.
+   */
+  useEffect(() => {
+    if (!supabase || Platform.OS !== 'ios') return;
+    let live = true;
+    void AppleAuthentication.isAvailableAsync().then((available) => {
+      if (live) setAppleAvailable(available);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!supabase) return;
@@ -127,6 +175,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  /**
+   * Native Apple sign-in: the system sheet returns a signed identity token and
+   * Supabase verifies it against Apple's public keys and this app's bundle id.
+   *
+   * No nonce is sent. Apple only puts a nonce claim in the token if you ask it
+   * to, and Supabase only validates one if you pass it back, so adding one
+   * means hashing it with a second native module for a replay window that is
+   * already closed by the token's five-minute expiry and its audience check.
+   * If that module arrives for another reason, this is the place to use it.
+   *
+   * `fullName` is the part that surprises people: Apple sends it on the very
+   * first authorisation for this app and never again. If we do not store it
+   * now, the learner is their email address forever — which, behind a private
+   * relay, is a string of random characters.
+   */
+  const signInWithApple = useCallback(async () => {
+    if (!supabase) return;
+    setSigningIn(true);
+    setError(null);
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (!credential.identityToken) {
+        throw new Error('Apple did not return an identity token.');
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithIdToken({
+        provider: 'apple',
+        token: credential.identityToken,
+      });
+      if (signInError) throw signInError;
+
+      const name = [credential.fullName?.givenName, credential.fullName?.familyName]
+        .filter(Boolean)
+        .join(' ')
+        .trim();
+      if (name) {
+        // Best effort. A failure here costs a display name, not a session, so
+        // it must not surface as a sign-in error.
+        await supabase.auth.updateUser({ data: { full_name: name } });
+      }
+    } catch (cause) {
+      // Tapping Cancel on the sheet is a decision, not a failure.
+      const code = (cause as { code?: string } | null)?.code;
+      if (code === 'ERR_REQUEST_CANCELED' || code === 'ERR_CANCELED') return;
+      setError(cause instanceof Error ? cause.message : 'Could not sign in with Apple.');
+    } finally {
+      setSigningIn(false);
+    }
+  }, []);
+
   const signOut = useCallback(async () => {
     if (!supabase) return;
     setError(null);
@@ -161,10 +265,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       identity,
       signingIn,
       error,
+      appleAvailable,
       signInWithGoogle,
+      signInWithApple,
       signOut,
     }),
-    [loading, session, identity, signingIn, error, signInWithGoogle, signOut],
+    [
+      loading,
+      session,
+      identity,
+      signingIn,
+      error,
+      appleAvailable,
+      signInWithGoogle,
+      signInWithApple,
+      signOut,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -48,6 +48,7 @@ export const ptPT: UiDictionary = {
   'account.delete.open': 'Eliminar a tua conta',
   'account.delete.title': 'Eliminar esta conta',
   'account.delete.body': 'Os teus XP, a tua sequência e o histórico de lições são apagados e não podem ser recuperados. O curso continua a funcionar neste dispositivo, com a sessão terminada.',
+  'account.delete.accountIs': 'Esta conta inicia sessão como',
   'account.delete.confirmLabel': 'Escreve {email} para confirmar',
   'account.delete.confirmLabelGeneric': 'Escreve o teu endereço de email para confirmar',
   'account.delete.placeholder': 'o teu email',
