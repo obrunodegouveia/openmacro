@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { ChevronDown, ChevronRight, Play } from "lucide-react";
 import type { ModuleVideo as ModuleVideoData } from "@openmacro/core/content/schema";
 
@@ -31,6 +32,7 @@ export function ModuleVideo({
   const [playing, setPlaying] = React.useState(false);
   const [collapsed, setCollapsed] = useVideosCollapsed();
   const { t } = useLocale();
+  const site = useSiteText();
   const id = youTubeId(video.url);
   if (!id) return null;
 
@@ -52,7 +54,7 @@ export function ModuleVideo({
               // youtube-nocookie serves the same player without setting
               // advertising cookies on people who never come back.
               src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`}
-              title={`${moduleTitle} — overview`}
+              title={site("video.overview", { title: moduleTitle })}
               allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="absolute inset-0 size-full"

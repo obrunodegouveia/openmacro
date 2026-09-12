@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { Check, Link2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,7 @@ export function Permalink({
   className?: string;
   size?: "sm" | "md";
 }) {
+  const s = useSiteText();
   const [copied, setCopied] = React.useState(false);
 
   React.useEffect(() => {
@@ -45,8 +47,8 @@ export function Permalink({
   return (
     <a
       href={href}
-      aria-label={copied ? "Link copied" : `Copy a link to ${label}`}
-      title={copied ? "Link copied" : `Copy a link to ${label}`}
+      aria-label={copied ? s("permalink.copied") : s("permalink.copy", { label: label })}
+      title={copied ? s("permalink.copied") : s("permalink.copy", { label: label })}
       onClick={(event) => {
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         if (!navigator.clipboard?.writeText) return;
@@ -70,7 +72,7 @@ export function Permalink({
         <Link2 className={size === "sm" ? "size-3.5" : "size-4"} aria-hidden />
       )}
       <span role="status" aria-live="polite" className="sr-only">
-        {copied ? "Link copied to clipboard" : ""}
+        {copied ? s("permalink.copiedLive") : ""}
       </span>
     </a>
   );

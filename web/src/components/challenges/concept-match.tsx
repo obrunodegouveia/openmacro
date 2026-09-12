@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { Check } from "lucide-react";
 import { seededShuffle } from "@openmacro/core/format";
 import type { ChallengeComponentProps } from "./types";
@@ -28,6 +29,7 @@ export function ConceptMatchView({
   locked,
   result,
 }: ChallengeComponentProps<"concept_match">) {
+  const s = useSiteText();
   const definitions = React.useMemo(
     () => seededShuffle(challenge.pairs, challenge.id),
     [challenge.pairs, challenge.id],
@@ -86,8 +88,8 @@ export function ConceptMatchView({
     <div className="flex flex-col gap-4">
       <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
         {activeTerm && !locked
-          ? "Now pick its definition"
-          : "Pick a term, then its definition"}
+          ? s("match.nowDefinition")
+          : s("match.pickTerm")}
       </p>
 
       {activeTerm && !locked ? (
@@ -100,7 +102,7 @@ export function ConceptMatchView({
             onClick={() => setActiveTerm(null)}
             className="shrink-0 text-xs font-extrabold text-mint-bright underline-offset-4 hover:underline"
           >
-            Change
+            {s("match.change")}
           </button>
         </p>
       ) : null}

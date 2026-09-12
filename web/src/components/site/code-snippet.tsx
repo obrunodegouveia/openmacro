@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { Check, Copy, FileJson } from "lucide-react";
 
 /**
@@ -17,6 +18,7 @@ export function CodeSnippet({
   code: string;
   filename: string;
 }) {
+  const s = useSiteText();
   const [copied, setCopied] = React.useState(false);
 
   const copy = async () => {

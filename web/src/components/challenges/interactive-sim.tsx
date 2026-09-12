@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { Check } from "lucide-react";
 import {
   buildObjectiveSteps,
@@ -28,6 +29,7 @@ export function InteractiveSimView({
   locked,
   result,
 }: ChallengeComponentProps<"interactive_sim">) {
+  const s = useSiteText();
   const currency = challenge.currency ?? "USD";
   const [values, setValues] = React.useState<SimSliderValues>(() =>
     initialSliderValues(challenge),

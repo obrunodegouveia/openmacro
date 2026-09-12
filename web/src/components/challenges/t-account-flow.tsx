@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { Minus, RotateCcw, TrendingDown, TrendingUp } from "lucide-react";
 import type {
   BalanceSheetSide,
@@ -31,6 +32,7 @@ export function TAccountFlowView({
   locked,
   result,
 }: ChallengeComponentProps<"t_account_flow">) {
+  const s = useSiteText();
   const currency = challenge.currency ?? "USD";
   const [placed, setPlaced] = React.useState<readonly string[]>([]);
   const [activeOption, setActiveOption] = React.useState<string | null>(null);
@@ -75,10 +77,10 @@ export function TAccountFlowView({
       <div className="rounded-2xl border border-hairline bg-white/[0.03] p-4">
         <div className="flex items-baseline justify-between gap-3">
           <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
-            Entries to post
+            {s("tflow.entries")}
           </p>
           <p className="text-xs font-bold text-ink-faint">
-            {placed.length} of {challenge.options.length} placed
+            {s("tflow.placed", { done: placed.length, total: challenge.options.length })}
           </p>
         </div>
 
@@ -118,8 +120,8 @@ export function TAccountFlowView({
 
         <p className="mt-3 text-xs leading-relaxed text-ink-faint">
           {activeOption
-            ? "Now choose whose sheet it lands on, and which side."
-            : "Pick an entry, then choose whose sheet it lands on and which side. Every sheet must balance."}
+            ? s("tflow.chooseSide")
+            : s("tflow.pickEntry")}
         </p>
       </div>
 
@@ -153,7 +155,7 @@ export function TAccountFlowView({
             className="inline-flex items-center gap-1.5 text-sm font-bold text-ink-muted hover:text-ink"
           >
             <RotateCcw className="size-3.5" aria-hidden />
-            Start over
+            {s("tflow.startOver")}
           </button>
         </div>
       ) : null}
@@ -233,6 +235,7 @@ function EntitySheet({
   onRemove: (optionId: string) => void;
   placedOptions: readonly { id: string; shift: BalanceSheetShift }[];
 }) {
+  const s = useSiteText();
   const balance = entityBalance(entity.id, shifts);
   const touched = balance.assetDelta !== 0 || balance.liabilityDelta !== 0;
 
@@ -256,7 +259,7 @@ function EntitySheet({
                 : "border-coral/40 bg-coral/10 text-coral",
             )}
           >
-            {balance.balanced ? "Balanced" : "Off balance"}
+            {balance.balanced ? s("tflow.balanced") : s("tflow.offBalance")}
           </span>
         ) : null}
       </header>
@@ -301,6 +304,7 @@ function SheetColumn({
   onRemove: (optionId: string) => void;
   postings: readonly { id: string; shift: BalanceSheetShift }[];
 }) {
+  const s = useSiteText();
   const opening = openingTotal(entity, side);
   const openingLines = (entity.openingLines ?? []).filter((line) => line.side === side);
   // `${side}s` produced "liabilitys" in every one of these labels, which is
@@ -310,10 +314,10 @@ function SheetColumn({
   return (
     <div className="rounded-xl border border-hairline bg-white/[0.03] p-3">
       <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-ink">
-        {side === "asset" ? "Assets" : "Liabilities"}
+        {side === "asset" ? s("tflow.assets") : s("tflow.liabilities")}
       </p>
       <p className="text-[0.65rem] text-ink-faint">
-        {side === "asset" ? "What it owns" : "What it owes"}
+        {side === "asset" ? s("tflow.assetsHint") : s("tflow.liabilitiesHint")}
       </p>
 
       {openingLines.length ? (
@@ -339,7 +343,7 @@ function SheetColumn({
               type="button"
               disabled={locked}
               onClick={() => onRemove(posting.id)}
-              aria-label={`Remove ${posting.shift.account} from ${entity.label} ${sideNoun}`}
+              aria-label={s("tflow.removeA11y", { account: posting.shift.account, entity: entity.label, side: sideNoun })}
               className="flex w-full items-baseline justify-between gap-2 rounded-lg border border-mint/40 bg-mint/10 px-2 py-1.5 text-left disabled:cursor-default"
             >
               <span className="min-w-0 truncate text-[0.7rem] font-bold text-ink">
@@ -362,7 +366,7 @@ function SheetColumn({
         type="button"
         disabled={!armed}
         onClick={() => onDrop(entity.id, side)}
-        aria-label={`Place the selected entry on ${entity.label}'s ${sideNoun}`}
+        aria-label={s("tflow.placeA11y", { entity: entity.label, side: sideNoun })}
         className={cn(
           "mt-2 w-full rounded-lg border border-dashed px-2 py-2 text-[0.7rem] font-bold transition-colors",
           armed
@@ -370,7 +374,9 @@ function SheetColumn({
             : "border-white/10 text-ink-faint",
         )}
       >
-        {armed ? "Place here" : `Opening ${formatCompactCurrency(opening, currency)}`}
+        {armed
+          ? s("tflow.placeHere")
+          : s("tflow.opening", { amount: formatCompactCurrency(opening, currency) })}
       </button>
     </div>
   );

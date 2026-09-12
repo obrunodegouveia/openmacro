@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
 import { seededShuffle } from "@openmacro/core/format";
 import type { FlowEvent } from "@openmacro/core/content/schema";
@@ -21,6 +22,7 @@ export function OrderFlowView({
   locked,
   result,
 }: ChallengeComponentProps<"order_flow">) {
+  const s = useSiteText();
   const [order, setOrder] = React.useState<FlowEvent[]>(() =>
     // Shuffled, but never in the authored order — that would give the answer
     // away to anyone who reads the file.
@@ -99,7 +101,7 @@ export function OrderFlowView({
                       type="button"
                       onClick={() => move(index, -1)}
                       disabled={index === 0}
-                      aria-label={`Move "${event.label}" earlier`}
+                      aria-label={s("order.moveEarlier", { label: event.label })}
                       className="rounded-md p-1 text-ink-muted hover:bg-white/10 hover:text-ink disabled:pointer-events-none disabled:opacity-25"
                     >
                       <ChevronUp className="size-4" aria-hidden />
@@ -108,7 +110,7 @@ export function OrderFlowView({
                       type="button"
                       onClick={() => move(index, 1)}
                       disabled={index === order.length - 1}
-                      aria-label={`Move "${event.label}" later`}
+                      aria-label={s("order.moveLater", { label: event.label })}
                       className="rounded-md p-1 text-ink-muted hover:bg-white/10 hover:text-ink disabled:pointer-events-none disabled:opacity-25"
                     >
                       <ChevronDown className="size-4" aria-hidden />

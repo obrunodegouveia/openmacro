@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSiteText } from "@/lib/use-site-text";
 import { ArrowRight, Check, Clock, Coins, Play, RotateCcw, Trophy } from "lucide-react";
 import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content";
 import { useLocale } from "@/components/site/locale-provider";
@@ -137,6 +138,7 @@ function LessonCard({
   record?: LessonProgress;
 }) {
   const { t } = useLocale();
+  const s = useSiteText();
   const xp = lesson.challenges.reduce(
     (sum, challenge) => sum + (challenge.xp ?? DEFAULT_CHALLENGE_XP),
     0,
@@ -206,7 +208,7 @@ function LessonCard({
           )}
           <span className="ml-auto inline-flex items-center gap-1 text-mint-bright opacity-0 transition-opacity group-hover:opacity-100">
             <Play className="size-3" aria-hidden />
-            {record ? "Replay" : "Play"}
+            {record ? s("map.replay") : s("map.play")}
           </span>
         </span>
       </span>

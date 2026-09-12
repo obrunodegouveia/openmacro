@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSiteText } from "@/lib/use-site-text";
 import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/ui/icons";
 import { useAuth } from "@/components/site/auth-provider";
@@ -30,13 +31,14 @@ export function GoogleSignIn({
   label?: string;
   className?: string;
 }) {
+  const s = useSiteText();
   const { signIn, signingIn, error } = useAuth();
 
   return (
     <div className={className}>
       <Button size="lg" disabled={signingIn} onClick={() => void signIn(redirectTo)}>
         <GoogleIcon className="size-4" aria-hidden />
-        {signingIn ? "Opening Google" : label}
+        {signingIn ? s("google.opening") : label}
       </Button>
 
       {error ? (

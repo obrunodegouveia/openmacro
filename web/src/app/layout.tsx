@@ -6,6 +6,7 @@ import { AuthProvider } from "@/components/site/auth-provider";
 import { LocaleProvider } from "@/components/site/locale-provider";
 import { LOCALE_TAGS } from "@openmacro/core/i18n/locales";
 import { alternates, localeUrl, serverLocale } from "@/lib/locale-server";
+import { getSiteText } from "@/lib/site-text";
 import { localisedCopy } from "@/lib/seo-copy";
 import { SmoothAnchors } from "@/components/site/smooth-anchors";
 
@@ -104,7 +105,7 @@ export default async function RootLayout({
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-mint focus:px-4 focus:py-2 focus:font-bold focus:text-abyss"
         >
-          Skip to content
+          {(await getSiteText())("layout.skip")}
         </a>
         <SmoothAnchors />
         <LocaleProvider initialLocale={locale}>
