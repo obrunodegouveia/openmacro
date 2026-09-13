@@ -52,14 +52,15 @@ import { cn } from "@/lib/utils";
  */
 export function LessonPlayer({
   lesson: englishLesson,
-  moduleTitle,
+  moduleId,
   xpAvailable,
 }: {
   lesson: Lesson;
-  moduleTitle?: string;
+  /** Resolved to a title here, so it follows the reader's language. */
+  moduleId?: string;
   xpAvailable: number;
 }) {
-  const { t, lessonById } = useLocale();
+  const { t, lessonById, modules } = useLocale();
   const s = useSiteText();
 
   /**
@@ -71,6 +72,11 @@ export function LessonPlayer({
    * untranslated module, it is the very same object.
    */
   const lesson = lessonById(englishLesson.id) ?? englishLesson;
+
+  /** The module name over the title, resolved the same way for the same reason. */
+  const moduleTitle = moduleId
+    ? modules.find((candidate) => candidate.id === moduleId)?.title
+    : undefined;
 
   const [state, dispatch] = React.useReducer(
     lessonSessionReducer,

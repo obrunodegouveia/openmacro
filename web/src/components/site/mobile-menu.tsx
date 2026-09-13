@@ -44,14 +44,17 @@
  */
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ArrowUpRight, ChevronRight, LayoutDashboard } from "lucide-react";
+import { ArrowUpRight, Check, ChevronRight, LayoutDashboard } from "lucide-react";
 
 import { LocaleLink } from "@/components/site/locale-link";
 import { LanguagePicker } from "@/components/site/language-picker";
 import { AccountButton } from "@/components/site/account-button";
 import { GithubIcon } from "@/components/ui/icons";
 import { useAuth } from "@/components/site/auth-provider";
+import { isCurrent } from "@/components/site/nav";
+import { stripLocale } from "@/lib/locale-path";
 import { GITHUB_URL } from "@/lib/site";
 import { useSiteText } from "@/lib/use-site-text";
 import type { SiteKey } from "@openmacro/core/i18n/site";
@@ -107,6 +110,7 @@ export function MobileMenu({
   const s = useSiteText();
   const { learner } = useAuth();
   const reduceMotion = useReducedMotion();
+  const here = stripLocale(usePathname() ?? "/");
   const sheetRef = React.useRef<HTMLDivElement>(null);
 
   // Escape closes, and Tab is kept inside the sheet while it is open.
@@ -193,7 +197,7 @@ export function MobileMenu({
             // keyboard equivalent (Escape) and a visible one (the X), so the
             // scrim itself is decoration as far as assistive tech is concerned.
             aria-hidden
-            className="fixed inset-0 top-[var(--header-total)] z-40 bg-abyss/60 backdrop-blur-[2px] md:hidden"
+            className="fixed inset-0 top-[var(--header-total)] z-40 bg-abyss/60 backdrop-blur-[2px] xl:hidden"
           />
 
           <motion.div
@@ -211,7 +215,7 @@ export function MobileMenu({
               + "max-h-[calc(100dvh-var(--header-total))] " +
               "overscroll-contain rounded-b-3xl border-b border-hairline " +
               "bg-canvas/85 backdrop-blur-2xl backdrop-saturate-150 " +
-              "shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)] md:hidden"
+              "shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)] xl:hidden"
             }
           >
             <div className="px-4 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
@@ -223,12 +227,29 @@ export function MobileMenu({
                     <ChevronRight className="size-4 shrink-0 text-ink-faint" aria-hidden />
                   </LocaleLink>
                 ) : null}
-                {links.map((link) => (
-                  <LocaleLink key={link.href} href={link.href} onClick={onClose} className={ROW}>
-                    <span className="flex-1">{s(link.key)}</span>
-                    <ChevronRight className="size-4 shrink-0 text-ink-faint" aria-hidden />
-                  </LocaleLink>
-                ))}
+                {links.map((link) => {
+                  const active = isCurrent(link.href, here);
+                  return (
+                    <LocaleLink
+                      key={link.href}
+                      href={link.href}
+                      onClick={onClose}
+                      aria-current={active ? "page" : undefined}
+                      className={ROW}
+                    >
+                      <span className={active ? "flex-1 text-mint-bright" : "flex-1"}>
+                        {s(link.key)}
+                      </span>
+                      {/* A tick for where you already are, a chevron for
+                          somewhere to go. Both rows stay the same height. */}
+                      {active ? (
+                        <Check className="size-4 shrink-0 text-mint-bright" aria-hidden />
+                      ) : (
+                        <ChevronRight className="size-4 shrink-0 text-ink-faint" aria-hidden />
+                      )}
+                    </LocaleLink>
+                  );
+                })}
               </Group>
 
               {/*

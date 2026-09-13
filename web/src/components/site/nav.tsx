@@ -1,15 +1,16 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { LocaleLink } from "@/components/site/locale-link";
 import { motion, useScroll, useMotionValueEvent, useReducedMotion } from "motion/react";
 import { LayoutDashboard, Menu, X } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
 import { AccountButton } from "@/components/site/account-button";
 import { LanguagePicker } from "@/components/site/language-picker";
 import { MobileMenu } from "@/components/site/mobile-menu";
 import { useAuth } from "@/components/site/auth-provider";
+import { stripLocale } from "@/lib/locale-path";
 import { GITHUB_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { useSiteText } from "@/lib/use-site-text";
@@ -48,10 +49,9 @@ const LINKS = [
  * threshold means a stray pixel of movement cannot toggle it, and it is pinned
  * open whenever the menu is, because the sheet is anchored to its underside.
  *
- * Only on a phone, via `useCompactViewport` — a transform set from JavaScript
- * cannot be switched off by a media query in the stylesheet. A pointer has no
- * scroll-to-reveal instinct and a desktop viewport is not short of vertical
- * room.
+ * Only below `md`, via `useCompactViewport`, which is a different threshold from
+ * the `xl` the navigation collapses at — see that hook for why one number for
+ * both was wrong.
  *
  * MATERIAL. Blur *and* saturation, the same as the sheet. Blur alone greys out
  * whatever passes under the bar; saturation keeps its colour, which is what
@@ -73,6 +73,7 @@ export function Nav() {
   const s = useSiteText();
   const reduceMotion = useReducedMotion();
   const compact = useCompactViewport();
+  const here = stripLocale(usePathname() ?? "/");
   const lastY = React.useRef(0);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -120,7 +121,7 @@ export function Nav() {
           </span>
         </LocaleLink>
 
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1 xl:flex">
           {/*
             Signed in, the dashboard is a place, and places belong in the nav
             with the other places. The account chip on the right links there
@@ -136,28 +137,44 @@ export function Nav() {
               {s("nav.dashboard")}
             </LocaleLink>
           ) : null}
-          {LINKS.map((link) => (
-            <LocaleLink
-              key={link.href}
-              href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-bold text-ink-muted transition-colors hover:bg-white/5 hover:text-ink"
-            >
-              {s(link.key)}
-            </LocaleLink>
-          ))}
+          {LINKS.map((link) => {
+            const active = isCurrent(link.href, here);
+            return (
+              <LocaleLink
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "rounded-lg px-2.5 py-2 text-sm font-bold transition-colors",
+                  active
+                    ? "bg-white/[0.07] text-ink"
+                    : "text-ink-muted hover:bg-white/5 hover:text-ink",
+                )}
+              >
+                {s(link.key)}
+              </LocaleLink>
+            );
+          })}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 xl:flex">
           {/* In the header rather than only the footer: a reader who wants the
               course in Portuguese should not have to reach the bottom of the
               page to find out they can have it. */}
           <LanguagePicker />
-          <Button asChild variant="outline" size="sm">
-            <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">
-              <GithubIcon className="size-4" aria-hidden />
-              {s("nav.github")}
-            </a>
-          </Button>
+          {/* Icon only: the word "GitHub" cost 60px in a bar that did not have
+              60px, and the mark is the more recognisable of the two anyway. The
+              sheet still spells it out, where there is room. */}
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label={s("nav.github")}
+            title={s("nav.github")}
+            className="grid size-9 place-items-center rounded-xl border border-hairline text-ink-muted transition-colors hover:border-mint/50 hover:bg-white/5 hover:text-ink"
+          >
+            <GithubIcon className="size-4" aria-hidden />
+          </a>
           <AccountButton />
         </div>
 
@@ -165,7 +182,7 @@ export function Nav() {
         <button
           ref={menuButton}
           type="button"
-          className="-mr-2 grid size-11 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-white/5 hover:text-ink active:bg-white/10 md:hidden"
+          className="-mr-2 grid size-11 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-white/5 hover:text-ink active:bg-white/10 xl:hidden"
           aria-expanded={open}
           aria-label={open ? s("nav.closeMenu") : s("nav.openMenu")}
           onClick={() => setOpen((value) => !value)}
@@ -180,12 +197,18 @@ export function Nav() {
 }
 
 /**
- * True below the `md` breakpoint.
+ * True on a genuinely small screen — `md` and below, not `xl` and below.
+ *
+ * Two thresholds on purpose, because they answer different questions. The
+ * navigation collapses below `xl` because the link row needs about 1,130px to
+ * fit; the bar retracts below `md` because that is where vertical room is
+ * actually scarce. Using one number for both retracted the bar on a 1,152px
+ * laptop window, which contradicts the only reason to retract it: a pointer has
+ * no scroll-to-reveal instinct, and a laptop is not short of height.
  *
  * The retraction is a transform set from JavaScript, so a media query in the
  * stylesheet cannot switch it off — the same reason `useReducedMotion` is needed
- * alongside the global reduced-motion rule. Matched against the same 48rem
- * Tailwind uses, so the behaviour changes exactly where the layout does.
+ * alongside the global reduced-motion rule.
  *
  * `useSyncExternalStore` rather than state plus an effect, for the reason the
  * lint rule gives and the one `LocaleProvider` already documents: a browser-only
@@ -196,6 +219,22 @@ export function Nav() {
  */
 function useCompactViewport(): boolean {
   return React.useSyncExternalStore(subscribeToCompact, isCompact, () => false);
+}
+
+/**
+ * Whether a nav link points at the page being viewed.
+ *
+ * Hash links are skipped. `/#curriculum` is a place on the home page rather than
+ * a page, so marking it "current" while somebody reads the glossary would be
+ * wrong, and marking it on the home page would put two links in the current
+ * state at once.
+ *
+ * A sub-path counts: reading /glossary/iorb, the Glossary link is where you are.
+ */
+export function isCurrent(href: string, here: string): boolean {
+  if (href.includes("#")) return false;
+  if (href === "/") return here === "/";
+  return here === href || here.startsWith(`${href}/`);
 }
 
 const COMPACT = "(max-width: 47.999rem)";

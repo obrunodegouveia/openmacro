@@ -101,7 +101,9 @@
   --header-total: calc(env(safe-area-inset-top) + var(--header-h));
 }
 
-@media (min-width: 48rem) {
+/* 80rem, not 48rem: the taller bar belongs with the full navigation, and that
+   only fits from `xl` up. See nav.tsx. */
+@media (min-width: 80rem) {
   :root {
     --header-h: 4rem;
   }
