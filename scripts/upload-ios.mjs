@@ -28,13 +28,34 @@
  */
 
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+/**
+ * Key and issuer from the environment, falling back to `eas.json`.
+ *
+ * They were environment-only, which meant a release could fail at the upload —
+ * after the twenty-minute build — because two variables were not exported in
+ * this particular shell. The same two values are already in the
+ * `submit.production.ios` block that `eas submit` reads, so there is no reason
+ * for this to be the one step that needs them typed again.
+ */
+function fromEasJson() {
+  try {
+    const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+    const ios = JSON.parse(readFileSync(join(root, 'eas.json'), 'utf8')).submit?.production?.ios;
+    return { keyId: ios?.ascApiKeyId, issuerId: ios?.ascApiKeyIssuerId };
+  } catch {
+    return {};
+  }
+}
 
 const ipa = process.argv[2];
-const KEY_ID = process.env.ASC_KEY_ID;
-const ISSUER_ID = process.env.ASC_ISSUER_ID;
+const configured = fromEasJson();
+const KEY_ID = process.env.ASC_KEY_ID ?? configured.keyId;
+const ISSUER_ID = process.env.ASC_ISSUER_ID ?? configured.issuerId;
 
 function die(message) {
   console.error(`\x1b[31m✗ ${message}\x1b[0m\n`);
@@ -48,7 +69,10 @@ if (!existsSync(resolve(ipa))) {
   die(`No such file: ${ipa}`);
 }
 if (!KEY_ID || !ISSUER_ID) {
-  die('Set ASC_KEY_ID and ASC_ISSUER_ID. See docs/mobile-release.md.');
+  die(
+    'No App Store Connect key. Set ASC_KEY_ID and ASC_ISSUER_ID, or fill in ' +
+      'submit.production.ios in eas.json. See docs/mobile-release.md.',
+  );
 }
 
 // Fail here rather than inside altool, whose error for a missing key is opaque.
