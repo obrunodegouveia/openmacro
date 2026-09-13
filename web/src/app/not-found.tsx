@@ -27,7 +27,7 @@ export default async function NotFound() {
   return (
     <>
       <Nav />
-      <main id="main" className="pt-16">
+      <main id="main" className="pt-[var(--header-total)]">
         <Section>
           <div className="mx-auto max-w-xl text-center">
             <p className="font-mono text-6xl font-extrabold text-mint-bright">

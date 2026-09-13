@@ -87,7 +87,7 @@ export default async function GlossaryIndexPage() {
       />
 
       <Nav />
-      <main id="main" className="pt-16">
+      <main id="main" className="pt-[var(--header-total)]">
         <Section>
           <LocaleLink
             href="/"

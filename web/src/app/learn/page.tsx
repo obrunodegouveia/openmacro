@@ -78,7 +78,7 @@ export default async function LearnPage() {
       />
 
       <Nav />
-      <main id="main" className="pt-16">
+      <main id="main" className="pt-[var(--header-total)]">
         <Section>
           <SectionHeading
             align="left"

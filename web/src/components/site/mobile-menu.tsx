@@ -193,7 +193,7 @@ export function MobileMenu({
             // keyboard equivalent (Escape) and a visible one (the X), so the
             // scrim itself is decoration as far as assistive tech is concerned.
             aria-hidden
-            className="fixed inset-0 top-16 z-40 bg-abyss/60 backdrop-blur-[2px] md:hidden"
+            className="fixed inset-0 top-[var(--header-total)] z-40 bg-abyss/60 backdrop-blur-[2px] md:hidden"
           />
 
           <motion.div
@@ -207,7 +207,8 @@ export function MobileMenu({
             exit={{ y: "-100%", opacity: 0 }}
             transition={spring}
             className={
-              "fixed inset-x-0 top-16 z-40 max-h-[calc(100dvh-4rem)] overflow-y-auto " +
+              "fixed inset-x-0 top-[var(--header-total)] z-40 overflow-y-auto "
+              + "max-h-[calc(100dvh-var(--header-total))] " +
               "overscroll-contain rounded-b-3xl border-b border-hairline " +
               "bg-canvas/85 backdrop-blur-2xl backdrop-saturate-150 " +
               "shadow-[0_24px_60px_-24px_rgba(0,0,0,0.85)] md:hidden"
