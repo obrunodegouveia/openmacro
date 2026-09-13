@@ -140,7 +140,19 @@ export function Nav() {
                 {s(link.key)}
               </LocaleLink>
             ))}
-            <div className="mt-2 flex gap-3">
+            {/*
+              The language picker gets its own full-width row rather than a
+              third seat in the row below. It used to share one: GitHub took
+              `flex-1`, the account chip up to 10rem of name, and the picker was
+              pushed off the right edge of a phone — in the DOM, out of reach.
+            */}
+            <LanguagePicker
+              layout="block"
+              className="mt-3"
+              onNavigate={() => setOpen(false)}
+            />
+
+            <div className="mt-3 flex items-center gap-3">
               <Button asChild variant="outline" size="sm" className="flex-1">
                 <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">
                   <GithubIcon className="size-4" aria-hidden />
@@ -148,7 +160,6 @@ export function Nav() {
                 </a>
               </Button>
               <AccountButton onNavigate={() => setOpen(false)} />
-              <LanguagePicker className="mt-1 self-start" />
             </div>
           </div>
         </motion.div>
