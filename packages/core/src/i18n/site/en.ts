@@ -22,6 +22,10 @@ export const en = {
   'nav.contribute': 'Contribute',
   'nav.dashboard': 'Dashboard',
   'nav.github': 'GitHub',
+  'nav.menu.title': 'Menu',
+  'nav.menu.browse': 'Browse',
+  'nav.menu.account': 'Account',
+  'nav.menu.project': 'Project',
   'nav.openMenu': 'Open menu',
   'nav.closeMenu': 'Close menu',
 

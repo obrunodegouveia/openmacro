@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import { LocaleLink } from "@/components/site/locale-link";
-import { motion, useScroll, useMotionValueEvent } from "motion/react";
+import { useScroll, useMotionValueEvent } from "motion/react";
 import { LayoutDashboard, Menu, X } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { AccountButton } from "@/components/site/account-button";
 import { LanguagePicker } from "@/components/site/language-picker";
+import { MobileMenu } from "@/components/site/mobile-menu";
 import { useAuth } from "@/components/site/auth-provider";
 import { GITHUB_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,8 @@ const LINKS = [
 export function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const menuButton = React.useRef<HTMLButtonElement>(null);
+  const closeMenu = React.useCallback(() => setOpen(false), []);
   const { scrollY } = useScroll();
   const { learner } = useAuth();
   const s = useSiteText();
@@ -43,7 +46,10 @@ export function Nav() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled
+        // Also when the menu is open: the sheet hangs off the bottom of this
+        // bar, and a transparent bar above it shows the page scrolling past
+        // where the sheet's own material should be.
+        scrolled || open
           ? "border-b border-hairline bg-canvas/80 backdrop-blur-xl"
           : "border-b border-transparent",
       )}
@@ -100,70 +106,20 @@ export function Nav() {
           <AccountButton />
         </div>
 
+        {/* 44px square, which the padding alone did not give it. */}
         <button
+          ref={menuButton}
           type="button"
-          className="rounded-lg p-2 text-ink-muted hover:bg-white/5 hover:text-ink md:hidden"
+          className="-mr-2 grid size-11 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-white/5 hover:text-ink active:bg-white/10 md:hidden"
           aria-expanded={open}
-          aria-controls="mobile-menu"
           aria-label={open ? s("nav.closeMenu") : s("nav.openMenu")}
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
         </button>
       </nav>
 
-      {open ? (
-        <motion.div
-          id="mobile-menu"
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          className="overflow-hidden border-t border-hairline bg-canvas/95 backdrop-blur-xl md:hidden"
-        >
-          <div className="flex flex-col gap-1 px-5 py-4">
-            {learner ? (
-              <LocaleLink
-                href="/dashboard"
-                onClick={() => setOpen(false)}
-                className="mb-1 inline-flex items-center gap-2 rounded-lg border border-mint/30 bg-mint/10 px-3 py-3 text-sm font-bold text-mint-bright"
-              >
-                <LayoutDashboard className="size-4" aria-hidden />
-                {s("nav.dashboard")}
-              </LocaleLink>
-            ) : null}
-            {LINKS.map((link) => (
-              <LocaleLink
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-3 text-sm font-bold text-ink-muted hover:bg-white/5 hover:text-ink"
-              >
-                {s(link.key)}
-              </LocaleLink>
-            ))}
-            {/*
-              The language picker gets its own full-width row rather than a
-              third seat in the row below. It used to share one: GitHub took
-              `flex-1`, the account chip up to 10rem of name, and the picker was
-              pushed off the right edge of a phone — in the DOM, out of reach.
-            */}
-            <LanguagePicker
-              layout="block"
-              className="mt-3"
-              onNavigate={() => setOpen(false)}
-            />
-
-            <div className="mt-3 flex items-center gap-3">
-              <Button asChild variant="outline" size="sm" className="flex-1">
-                <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">
-                  <GithubIcon className="size-4" aria-hidden />
-                  {s("nav.github")}
-                </a>
-              </Button>
-              <AccountButton onNavigate={() => setOpen(false)} />
-            </div>
-          </div>
-        </motion.div>
-      ) : null}
+      <MobileMenu open={open} onClose={closeMenu} links={LINKS} triggerRef={menuButton} />
     </header>
   );
 }

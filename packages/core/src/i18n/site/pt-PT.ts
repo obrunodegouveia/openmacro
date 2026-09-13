@@ -19,6 +19,10 @@ export const ptPT = {
   'nav.contribute': 'Contribuir',
   'nav.dashboard': 'Painel',
   'nav.github': 'GitHub',
+  'nav.menu.title': 'Menu',
+  'nav.menu.browse': 'Navegar',
+  'nav.menu.account': 'Conta',
+  'nav.menu.project': 'Projeto',
   'nav.openMenu': 'Abrir menu',
   'nav.closeMenu': 'Fechar menu',
 
