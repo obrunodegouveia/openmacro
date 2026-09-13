@@ -360,11 +360,25 @@ if (app && accountsExpected) {
   const hasAppleModule = Boolean(pkg?.dependencies?.['expo-apple-authentication']);
 
   if (!app.ios?.usesAppleSignIn) {
-    fail(
+    /**
+     * A warning, not a blocker, and that is a decision rather than an oversight.
+     *
+     * Guideline 4.8 does require an equivalent option, and this is the shape of
+     * rejection that costs a review cycle. Sign in with Apple was built for it
+     * and then deliberately removed, because it needs the Apple provider enabled
+     * in the Supabase project and a button that errors on every tap fails 4.8
+     * harder than an absent one.
+     *
+     * Blocking the build would be a check overruling a choice that has been
+     * made with the risk understood. Saying so on every single run is the
+     * honest middle: the risk stays visible, and nobody has to remember it.
+     */
+    warn(
       'app.json',
-      `the store build offers Google sign-in (Supabase comes from ${accountsExpected}), so ` +
-        'App Store guideline 4.8 requires an equivalent privacy-preserving option. Set ' +
-        'ios.usesAppleSignIn and offer Sign in with Apple, or ship with no accounts at all.',
+      `the store build offers Google sign-in (Supabase comes from ${accountsExpected}) and no ` +
+        'alternative, which App Store guideline 4.8 requires. Shipping this way is an accepted ' +
+        'risk, not an omission — restoring it is expo-apple-authentication, ios.usesAppleSignIn, ' +
+        'a signInWithIdToken call, and the Apple provider switched on in Supabase.',
     );
   }
   if (app.ios?.usesAppleSignIn && !hasApplePlugin) {

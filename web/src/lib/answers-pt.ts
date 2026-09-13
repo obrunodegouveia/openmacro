@@ -80,7 +80,7 @@ export const ANSWERS_PT: Record<string, { question?: string; answer?: string }> 
   'is-it-safe': {
     question: 'É seguro para crianças? Que dados recolhem?',
     answer:
-      'O sítio não tem analítica, publicidade nem scripts de rastreio de terceiros, e podes ler todas as páginas e acabar todas as lições sem conta. Com a sessão fechada, o progresso e os pontos ficam no dispositivo e nunca são enviados. Iniciar sessão é opcional — com a Apple ou com a Google — e guarda apenas os teus XP, a tua sequência de dias e que lições acabaste, armazenados na UE. Não é uma verificação de idade e não a tratamos como tal: o que protege uma criança aqui é não haver nada para recolher, não haver publicidade e não haver forma de chegar a outra pessoa a partir de dentro do produto. Não recolhemos conscientemente informação pessoal de crianças com menos de 13 anos.',
+      'O sítio não tem analítica, publicidade nem scripts de rastreio de terceiros, e podes ler todas as páginas e acabar todas as lições sem conta. Com a sessão fechada, o progresso e os pontos ficam no dispositivo e nunca são enviados. Iniciar sessão com a Google é opcional e guarda apenas os teus XP, a tua sequência de dias e que lições acabaste, armazenados na UE. Não é uma verificação de idade e não a tratamos como tal: o que protege uma criança aqui é não haver nada para recolher, não haver publicidade e não haver forma de chegar a outra pessoa a partir de dentro do produto. Não recolhemos conscientemente informação pessoal de crianças com menos de 13 anos.',
   },
   'not-confident': {
     question: 'E se eu não perceber de economia o suficiente para ensinar?',

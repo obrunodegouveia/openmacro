@@ -171,27 +171,56 @@ async function pushAppInfoLocalisation(locale, copy) {
 // ---------------------------------------------------------------------------
 
 /**
- * The contact fields are deliberately not sent, even when they hold something.
- * `store.config.json` ships with `REPLACE_FIRST_NAME` placeholders, and writing
- * those to Apple under someone's name would be worse than leaving the section
- * empty: an empty section is obviously unfinished, while "REPLACE_EMAIL" in a
- * reviewer's contact field looks like the app was submitted by accident.
+ * All four contact fields, or none — and that is Apple's rule, not a choice.
+ *
+ * Sending the three that were real and omitting the phone looked like the
+ * obviously better behaviour, and Apple rejects it outright: 409, "You must
+ * provide a value for the attribute 'contactPhone' with this request". The
+ * contact is one object to App Store Connect, so a partial one cannot be
+ * written at all, and attempting it fails the whole request — taking the review
+ * notes in the same PATCH down with it.
+ *
+ * A placeholder is never sent either. `REPLACE_EMAIL` under someone's name is
+ * worse than an empty section: empty reads as unfinished, a placeholder reads as
+ * submitted by accident.
  */
 // Anywhere in the value, not anchored: the shipped phone placeholder is
 // `+REPLACE_PHONE`, and an anchored pattern counted it as a real number.
+// Anywhere in the value, not anchored: the shipped phone placeholder is
+// `+REPLACE_PHONE`, and an anchored pattern counted it as a real number.
 const placeholder = /REPLACE_/;
-const contact = ['firstName', 'lastName', 'email', 'phone'].filter(
-  (field) => review[field] && !placeholder.test(review[field]),
-);
+const FIELDS = { firstName: 'contactFirstName', lastName: 'contactLastName', email: 'contactEmail', phone: 'contactPhone' };
+const ready = {};
+const stillPlaceholder = [];
+for (const [field, apple] of Object.entries(FIELDS)) {
+  if (review[field] && !placeholder.test(review[field])) ready[apple] = review[field];
+  else stillPlaceholder.push(field);
+}
+const contact = stillPlaceholder.length === 0 ? ready : {};
 
 const notes = review.notes;
 if (notes) {
   const current = await api(`/v1/appStoreVersions/${version.id}/appStoreReviewDetail`, { bearer }).catch(
     () => null,
   );
-  const attributes = { notes, demoAccountRequired: review.demoRequired ?? false };
+  const attributes = { notes, demoAccountRequired: review.demoRequired ?? false, ...contact };
 
-  if (dryRun) {
+  /**
+   * Once the record exists, Apple requires the whole contact on every update —
+   * including an update that only touches the notes. So an incomplete contact
+   * does not merely leave the contact empty: it freezes the notes at whatever
+   * was written when the record was created, and the record cannot be deleted
+   * and remade either (403). Attempting it fails the request outright.
+   */
+  const frozen = Boolean(current?.data) && Object.keys(contact).length === 0;
+
+  if (frozen) {
+    const live = current.data.attributes.notes ?? '';
+    console.log(
+      `\n\x1b[33m  ! Review notes left as they are — Apple requires the full contact on any ` +
+        `update to this record.${live === notes ? '' : ' They no longer match store.config.json.'}\x1b[0m`,
+    );
+  } else if (dryRun) {
     console.log(`\n  ${current?.data ? 'update' : 'create'} review notes (${notes.length} chars)`);
   } else if (current?.data) {
     await api(`/v1/appStoreReviewDetails/${current.data.id}`, {
@@ -216,10 +245,14 @@ if (notes) {
   }
 }
 
-if (contact.length < 4) {
+if (Object.keys(contact).length) {
+  console.log(`      contact: ${Object.keys(contact).join(', ')}`);
+}
+if (stillPlaceholder.length) {
   console.log(
-    `\n\x1b[33m  ! App Review contact not sent — ${String(4 - contact.length)} field(s) are still ` +
-      'placeholders in store.config.json. Apple requires a real name, email and phone.\x1b[0m',
+    `\n\x1b[33m  ! App Review contact not sent. Apple takes all four fields or none, and ` +
+      `${stillPlaceholder.join(', ')} ${stillPlaceholder.length === 1 ? 'is' : 'are'} still a ` +
+      'placeholder in store.config.json.\x1b[0m',
   );
 }
 console.log('');

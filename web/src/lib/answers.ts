@@ -104,7 +104,7 @@ export const TEACH_ANSWERS: Answer[] = [
     id: "is-it-safe",
     question: "Is it safe for children? What data do you collect?",
     answer:
-      "The website has no analytics, no advertising and no third-party tracking scripts, and you can read every page and finish every lesson without an account. Signed out, progress and reward points stay on the device and are never uploaded. Signing in is optional — with Apple or with Google — and saves only your XP, your day streak and which lessons you have finished, stored in the EU. It is not an age check and we do not treat it as one; what protects a child here is that there is nothing to collect, no advertising, and no way to reach another person from inside the product. We do not knowingly collect personal information from children under 13.",
+      "The website has no analytics, no advertising and no third-party tracking scripts, and you can read every page and finish every lesson without an account. Signed out, progress and reward points stay on the device and are never uploaded. Signing in with Google is optional and saves only your XP, your day streak and which lessons you have finished, stored in the EU. It is not an age check and we do not treat it as one; what protects a child here is that there is nothing to collect, no advertising, and no way to reach another person from inside the product. We do not knowingly collect personal information from children under 13.",
   },
   {
     id: "not-confident",

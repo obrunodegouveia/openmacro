@@ -373,11 +373,11 @@ export const ptPT = {
     'Esta é uma tradução de cortesia. Em caso de divergência, prevalece a versão inglesa.',
   'privacy.short.title': 'A versão curta',
   'privacy.short.body':
-    'Podes ler todas as páginas, jogar todas as simulações e acabar todas as lições deste sítio sem conta, e não usamos analítica, publicidade nem scripts de rastreio de terceiros. Se escolheres iniciar sessão — com a Apple ou com a Google — guardamos os teus XP e a tua sequência de dias para que te sigam entre dispositivos; é essa a única razão para existir uma conta, e os únicos dados pessoais que detemos.',
+    'Podes ler todas as páginas, jogar todas as simulações e acabar todas as lições deste sítio sem conta, e não usamos analítica, publicidade nem scripts de rastreio de terceiros. Se escolheres iniciar sessão com a Google guardamos os teus XP e a tua sequência de dias para que te sigam entre dispositivos; é essa a única razão para existir uma conta, e os únicos dados pessoais que detemos.',
   'privacy.collect.title': 'O que recolhemos',
   'privacy.collect.signin.label': 'Se iniciares sessão.',
   'privacy.collect.signin.body':
-    'Pedimos à Apple ou à Google um nome e um endereço de email, e mais nada. A Google envia também uma fotografia de perfil, que aparece na tua própria linha de conta e em mais nenhum sítio. O Iniciar sessão com a Apple permite-te esconder o teu endereço verdadeiro e, se o fizeres, só vemos o endereço de reencaminhamento — nada aqui precisa de te chegar por email. Guardamos o nome associado ao teu progresso, e o endereço fica com o nosso fornecedor de autenticação para que possas voltar a entrar.',
+    'Pedimos à Google um nome, um endereço de email e uma fotografia de perfil; a fotografia aparece na tua própria linha de conta e em mais nenhum sítio. Guardamos o nome associado ao teu progresso, e o endereço fica com o nosso fornecedor de autenticação para que possas voltar a entrar.',
   'privacy.collect.progress.label': 'O teu progresso, depois de iniciares sessão.',
   'privacy.collect.progress.body':
     'O total de XP, a tua sequência de dias, a data da última lição concluída e, para cada lição, a tua melhor pontuação, quantas vezes a acabaste e quando. Sem respostas, sem tempos, nada sobre como jogaste.',
@@ -391,7 +391,7 @@ export const ptPT = {
   'privacy.notCollect.1': 'Sem cookies para publicidade, perfis ou rastreio entre sítios.',
   'privacy.notCollect.2': 'Sem serviços de analítica ou de gravação de sessões.',
   'privacy.notCollect.3':
-    'Sem moradas, números de telefone ou dados de pagamento. Nunca pedimos uma palavra-passe: são a Apple e a Google que tratam do início de sessão, por isso não há nenhuma para guardarmos.',
+    'Sem moradas, números de telefone ou dados de pagamento. Nunca pedimos uma palavra-passe: é a Google que trata do início de sessão, por isso não há nenhuma para guardarmos.',
   'privacy.notCollect.4': 'Sem venda, aluguer ou troca de quaisquer dados, nunca.',
   'privacy.coppa.title': 'Crianças com menos de 13 anos (COPPA)',
   'privacy.coppa.intro':
@@ -399,7 +399,7 @@ export const ptPT = {
   'privacy.coppa.1':
     'Não é preciso conta para aprender. Todas as lições, no sítio e na aplicação, se jogam por inteiro sem iniciar sessão, e enquanto estiveres com a sessão fechada o progresso fica no dispositivo e nunca é enviado.',
   'privacy.coppa.2':
-    'Iniciar sessão é opcional, e pedimos ao fornecedor um nome e um endereço de email e mais nada. Nem a Apple nem a Google nos dizem a idade de ninguém, por isso iniciar sessão não é uma verificação de idade e não a tratamos como tal. O que protege uma criança aqui é não haver nada para recolher: sem publicidade, sem perfis, sem campos de texto livre e sem forma de chegar a outra pessoa a partir de dentro do produto. Quando uma criança inicia sessão, um ID Apple gerido em família ou uma conta Google Family Link só existem com aprovação de quem tem responsabilidade parental.',
+    'Iniciar sessão é opcional, e pedimos à Google um nome e um endereço de email e mais nada. A Google não nos diz a idade de ninguém, por isso iniciar sessão não é uma verificação de idade e não a tratamos como tal. O que protege uma criança aqui é não haver nada para recolher: sem publicidade, sem perfis, sem campos de texto livre e sem forma de chegar a outra pessoa a partir de dentro do produto. Quando uma criança inicia sessão, uma conta Google Family Link só existe com aprovação de quem tem responsabilidade parental.',
   'privacy.coppa.3.lead':
     'Não recolhemos conscientemente informação pessoal de crianças com menos de 13 anos. Se achares que uma criança iniciou sessão, escreve para',
   'privacy.coppa.3.tail': 'e apagamos a conta e tudo o que lhe está associado.',
@@ -425,8 +425,6 @@ export const ptPT = {
     'para veres, corrigires ou apagares o que temos, incluindo a tua conta inteira. Respondemos no prazo de 30 dias.',
   'privacy.choices.3.lead': 'Também podes revogar o acesso do OpenMacro nas tuas',
   'privacy.choices.3.link': 'permissões da conta Google',
-  'privacy.choices.3.tail':
-    ' ou, se iniciaste sessão com a Apple, em Iniciar sessão com a Apple nas definições da tua Conta Apple.',
   'privacy.choices.4':
     'Apaga a aplicação para eliminar o progresso guardado no dispositivo. Se nunca iniciaste sessão, não sobra nada do nosso lado.',
   'privacy.changes.title': 'Alterações e questões',

@@ -7,7 +7,6 @@
 
 import { memo } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import * as AppleAuthentication from 'expo-apple-authentication';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { useLocale } from '@/providers/LocaleProvider';
@@ -17,17 +16,7 @@ import type { Translator } from '@openmacro/core/i18n';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 function AccountBarComponent() {
-  const {
-    enabled,
-    loading,
-    identity,
-    signingIn,
-    error,
-    appleAvailable,
-    signInWithGoogle,
-    signInWithApple,
-    signOut,
-  } = useAuth();
+  const { enabled, loading, identity, signingIn, error, signInWithGoogle, signOut } = useAuth();
   const { merging, sync } = useProgress();
   const { t } = useLocale();
 
@@ -77,52 +66,25 @@ function AccountBarComponent() {
   }
 
   // ---- signed out -------------------------------------------------------
-  /**
-   * One sign-in at a time. While a round trip is in flight both buttons are
-   * replaced by a single spinner rather than disabled in place: the native
-   * Apple button has no disabled state, and a live-looking button that ignores
-   * taps is worse than one that is briefly not there.
-   */
-  if (signingIn) {
-    return (
-      <View style={styles.signedOut}>
-        <View style={styles.pending}>
-          <ActivityIndicator color={palette.ink} />
-        </View>
-        <Text style={styles.signedOutHint}>{t('account.optional')}</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.signedOut}>
-      {/*
-        Apple first, and full width. Guideline 4.8 asks for an alternative to
-        the third-party login that is offered no less prominently, and the
-        native button is what satisfies Apple's own design requirements — it
-        also comes out already translated into the device's language, which the
-        Google row next to it does through `t`.
-      */}
-      {appleAvailable ? (
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-          cornerRadius={radius.lg}
-          style={styles.appleButton}
-          onPress={() => void signInWithApple()}
-        />
-      ) : null}
-
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('account.signIn')}
+        accessibilityState={{ disabled: signingIn, busy: signingIn }}
+        disabled={signingIn}
         onPress={() => void signInWithGoogle()}
         style={({ pressed }) => [styles.googleButton, pressed && styles.googleButtonPressed]}
       >
-        <GoogleMark />
-        <Text style={styles.googleLabel}>{t('account.signIn')}</Text>
+        {signingIn ? (
+          <ActivityIndicator color={palette.ink} />
+        ) : (
+          <>
+            <GoogleMark />
+            <Text style={styles.googleLabel}>{t('account.signIn')}</Text>
+          </>
+        )}
       </Pressable>
-
       <Text style={styles.signedOutHint}>{t('account.optional')}</Text>
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
@@ -208,20 +170,6 @@ const styles = StyleSheet.create({
   },
   signedOut: {
     gap: spacing.sm,
-  },
-  pending: {
-    minHeight: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  /**
-   * 52 to match the Google row below it. The native button draws its own
-   * background and corner radius, so `styles.appleButton` may only carry
-   * layout — anything else is ignored.
-   */
-  appleButton: {
-    width: '100%',
-    height: 52,
   },
   googleButton: {
     flexDirection: 'row',

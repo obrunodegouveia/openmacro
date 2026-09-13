@@ -151,7 +151,7 @@ export default async function PrivacyPage() {
               >
                 {s("privacy.choices.3.link")}
               </a>
-              {s("privacy.choices.3.tail")}
+              .
             </li>
             <li>
               {s("privacy.choices.4")}

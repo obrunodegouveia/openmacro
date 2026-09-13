@@ -81,6 +81,8 @@ for (const [locale, copy] of Object.entries(info)) {
 
     if (dryRun) {
       for (const file of files) console.log(`      ${file}`);
+      // Counted even in a dry run, or the summary contradicts the list above it.
+      uploaded += files.length;
       continue;
     }
 
@@ -194,6 +196,6 @@ if (failed) {
 }
 console.log(
   uploaded
-    ? `\x1b[32m✓ ${String(uploaded)} screenshot(s) uploaded.\x1b[0m\n`
+    ? `\x1b[32m✓ ${String(uploaded)} screenshot(s) ${dryRun ? 'would be uploaded' : 'uploaded'}.\x1b[0m\n`
     : '\x1b[33m! Nothing to upload — no screenshots listed in store.config.json.\x1b[0m\n',
 );

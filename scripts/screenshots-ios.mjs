@@ -19,11 +19,26 @@
  *
  * Three levers, none of which need UI automation:
  *
- *   1. DEEP LINKS. `simctl openurl openmacro:///progress` puts expo-router on
- *      any route, including a specific lesson. A lesson opens on its first
- *      challenge, so choosing the right lesson chooses which kind of challenge
- *      is photographed — that is why the list below names lessons rather than
- *      screens.
+ *   1. THE HOME SCREEN, AND ONLY THE HOME SCREEN. This wanted to be a deep link
+ *      per shot — `simctl openurl openmacro:///lesson/x` puts expo-router on any
+ *      route, and a lesson opens on its first challenge, so picking lessons
+ *      would have picked which challenge types were photographed.
+ *
+ *      iOS will not have it. Opening a custom scheme from outside the app raises
+ *      an "Open in OpenMacro?" confirmation, on a cold launch as well as a warm
+ *      one, and `simctl` cannot tap it. Every deep-linked shot came back as a
+ *      photograph of that alert, all five identical, which a dimension check
+ *      passes happily — the images were the right size and the wrong picture.
+ *
+ *      Dismissing it needs a tap, and the tap tools all need something this
+ *      machine has not granted: `idb` needs installing, and AppleScript clicking
+ *      needs Accessibility and Screen Recording, without which `screencapture`
+ *      returns "could not create image from rect" and key events go nowhere.
+ *
+ *      So one screenshot per set, which is Apple's minimum and is the screen
+ *      worth leading with anyway. To get the full set, grant Screen Recording
+ *      and Accessibility to the terminal and teach this script to click through
+ *      the alert, or capture the rest by hand from a running simulator.
  *
  *   2. LAUNCH ARGUMENTS. `-AppleLanguages "(pt-PT)"` is the standard Xcode
  *      trick and it is what makes a Portuguese set possible: NSLocale honours
@@ -64,6 +79,7 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 
@@ -71,7 +87,6 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'assets/store/ios');
 
 const BUNDLE_ID = 'org.openmacro.app';
-const SCHEME = 'openmacro';
 
 /** Simulators to shoot, by name, with the App Store slot each one fills. */
 const DEVICES = [
@@ -99,16 +114,49 @@ const LOCALES = [
  * first challenge, so each entry naming a lesson is really naming a challenge
  * type — the balance sheet, the simulator, the matching pairs, the ordering.
  */
-const SHOTS = [
-  { name: 'path', url: '/', settle: 3500 },
-  { name: 'balance-sheet', url: '/lesson/whoever-gets-it-first' },
-  { name: 'simulator', url: '/lesson/what-rising-prices-do-to-you' },
-  { name: 'concept-match', url: '/lesson/base-and-broad-money' },
-  { name: 'order-flow', url: '/lesson/why-paper-is-accepted' },
-  { name: 'progress', url: '/progress' },
-];
+const SHOTS = [{ name: 'path', settle: 6000 }];
 
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
+
+/**
+ * Waits until the app has actually drawn, rather than guessing a delay.
+ *
+ * A fixed wait is what produced a set of screenshots of the splash screen: six
+ * seconds is plenty on a warm device and nowhere near enough on one that has
+ * just cold-booted, and the failure is silent because a splash screenshot is the
+ * right size and the right device and simply the wrong picture.
+ *
+ * Launch always goes splash → content, so this waits for the frame to change at
+ * least once and then to hold still. Stability alone would not do: the splash is
+ * perfectly stable, and was exactly what got photographed.
+ */
+async function waitForFirstPaint(udid, scratch) {
+  const shot = () => {
+    simctl('io', udid, 'screenshot', '--type', 'png', scratch);
+    return createHash('md5').update(readFileSync(scratch)).digest('hex');
+  };
+
+  await sleep(1500);
+  const first = shot();
+  let previous = first;
+  let changed = false;
+  let stable = 0;
+
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    await sleep(1500);
+    const current = shot();
+    if (current !== previous) {
+      changed = true;
+      stable = 0;
+    } else if (changed) {
+      stable += 1;
+      if (stable >= 2) return;
+    }
+    previous = current;
+  }
+  // Fell through: report it rather than photograph whatever is on screen.
+  throw new Error('the app never settled — still changing, or never drew');
+}
 
 /** `xcrun simctl …`, throwing with the tool's own stderr on failure. */
 function simctl(...args) {
@@ -127,12 +175,25 @@ function deviceUdid(name) {
   );
 }
 
+/**
+ * Boots the device from cold, shutting it down first if it is already up.
+ *
+ * The restart is not ceremony. A confirmation alert raised by SpringBoard — the
+ * "Open in OpenMacro?" one a deep link provokes — outlives the app it was asking
+ * about, so terminating and relaunching leaves it sitting over the next
+ * screenshot. It cost a full set of images that were the right size and showed
+ * an alert. A cold boot is the one thing `simctl` can do that clears it.
+ */
 async function boot(udid) {
   const state = JSON.parse(simctl('list', 'devices', '-j'));
   const booted = Object.values(state.devices)
     .flat()
     .find((device) => device.udid === udid)?.state;
-  if (booted !== 'Booted') {
+  if (booted === 'Booted') {
+    simctl('shutdown', udid);
+    await sleep(2000);
+  }
+  {
     simctl('boot', udid);
     // `bootstatus -b` blocks until the device finishes booting, which is the
     // difference between a screenshot of the app and one of a black screen.
@@ -288,12 +349,10 @@ async function captureLocale(udid, device, { locale, appleLanguages, appleLocale
     '-AppleLocale', appleLocale,
   );
 
+  await waitForFirstPaint(udid, join(tmpdir(), `openmacro-settling-${device.slot}-${locale}.png`));
+
   const written = [];
   for (const [index, shot] of SHOTS.entries()) {
-    if (shot.url !== '/') simctl('openurl', udid, `${SCHEME}://${shot.url}`);
-    // Cold start needs longer than a route change; both need the animation to
-    // finish, or the screenshot catches a view mid-slide.
-    await sleep(shot.settle ?? 2200);
 
     const file = join(directory, `${String(index + 1).padStart(2, '0')}-${shot.name}.png`);
     simctl('io', udid, 'screenshot', '--type', 'png', file);

@@ -23,6 +23,10 @@
  * script starts reporting it instead of quietly claiming it cannot be known.
  */
 
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
 import { api, all, credentials, editableVersion, token } from './asc.mjs';
 
 const bearer = token();
@@ -108,7 +112,25 @@ row(
   'App Review contact',
   r ? `${r.contactFirstName ?? '—'} ${r.contactLastName ?? '—'} · ${r.contactEmail ?? 'no email'} · ${r.contactPhone ?? 'no phone'}` : 'not set',
 );
-row(Boolean(r?.notes), 'App Review notes', r?.notes ? `${String(r.notes.length)} characters` : 'not set');
+/**
+ * Not just "are there notes" but "are they the notes we wrote".
+ *
+ * Apple freezes this record once it exists unless the full contact is supplied,
+ * so the notes on Apple can silently fall behind `store.config.json` — and notes
+ * describing a feature the app no longer has is worse than no notes at all.
+ */
+const localNotes = JSON.parse(
+  readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'store.config.json'), 'utf8'),
+).apple?.review?.notes;
+row(
+  Boolean(r?.notes) && r.notes === localNotes,
+  'App Review notes',
+  !r?.notes
+    ? 'not set'
+    : r.notes === localNotes
+      ? `${String(r.notes.length)} characters, matching store.config.json`
+      : 'STALE — differs from store.config.json',
+);
 
 const builds = await all(
   `/v1/apps/${appId}/builds?limit=5&fields[builds]=version,processingState,expired`,
