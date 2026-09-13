@@ -15,6 +15,26 @@
  * `hrefLang` on each link tells a crawler from inside the page what the
  * `<link rel="alternate">` pair in the head says from outside it.
  *
+ * ---------------------------------------------------------------------------
+ * WHY A PLAIN <a> AND NOT next/link
+ * ---------------------------------------------------------------------------
+ *
+ * Because a client-side navigation cannot change the language, and silently
+ * half-changed it. `LocaleProvider` is handed its locale by the root layout,
+ * and a root layout does not re-render on a soft navigation — while the
+ * middleware *rewrites* `/pt/x` to `/x`, so both URLs are the same route as far
+ * as the router is concerned. Tapping Português therefore swapped the URL to
+ * `/pt` and left every client component holding the previous locale: the
+ * headline stayed English, `<html lang>` stayed `en`, and the picker went on
+ * highlighting English — a switcher that appears not to work, sitting next to
+ * text that did not change.
+ *
+ * Opting out of the router fixes it at the root rather than patching the
+ * symptom, and it is the more honest primitive anyway. Changing language
+ * changes the document's language, every string in it, and its canonical URL.
+ * That is a new document, not a transition within one, and it costs a single
+ * request to get unambiguously right.
+ *
  * Language names are never translated — a picker you cannot read is exactly
  * useless to the person who needs it.
  *
@@ -33,15 +53,15 @@
  * against the 44px both Apple and Google ask for. A control you have to aim at
  * reads as broken when you miss it.
  *
- * And it left the menu open. Every other item in that menu closes it on tap;
- * these links had no way to, so switching language navigated *behind* an open
- * overlay and looked like nothing had happened. Hence `onNavigate`.
+ * And it left the menu open, because switching language was a soft navigation
+ * that did not replace the document. That turned out to be the deeper of the two
+ * problems and is dealt with above: the whole document reloads now, so the sheet
+ * goes with it.
  *
  * So: `inline` for a horizontal bar with room, `block` for a full-width row in
  * a narrow menu. Same links, same semantics, different geometry.
  */
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LOCALE_TAGS } from "@openmacro/core/i18n/locales";
 
@@ -52,13 +72,10 @@ import { cn } from "@/lib/utils";
 export function LanguagePicker({
   className,
   layout = "inline",
-  onNavigate,
 }: {
   className?: string;
   /** `block` fills its container and labels itself. For narrow menus. */
   layout?: "inline" | "block";
-  /** Called on tap, so a mobile menu can close itself. */
-  onNavigate?: () => void;
 }) {
   const { t, locale, available, names } = useLocale();
   const pathname = usePathname();
@@ -71,13 +88,12 @@ export function LanguagePicker({
   const options = available.map((candidate) => {
     const current = candidate === locale;
     return (
-      <Link
+      <a
         key={candidate}
         href={localePath(candidate, base)}
         hrefLang={LOCALE_TAGS[candidate]}
         aria-current={current ? "true" : undefined}
         aria-label={t("language.choose", { name: names[candidate] })}
-        onClick={onNavigate}
         className={cn(
           "flex items-center justify-center rounded-md font-bold transition-colors",
           // 44px in the menu, 36px in the bar — matching the small buttons it
@@ -89,7 +105,7 @@ export function LanguagePicker({
         )}
       >
         {names[candidate]}
-      </Link>
+      </a>
     );
   });
 

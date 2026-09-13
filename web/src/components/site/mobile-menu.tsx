@@ -235,11 +235,11 @@ export function MobileMenu({
                 not a row: it is two targets side by side, and squeezing it into
                 the list would put it at odds with everything above it.
               */}
-              <LanguagePicker
-                layout="block"
-                className="mt-5"
-                onNavigate={onClose}
-              />
+              {/* No `onClose`: switching language is a full document load, and
+                  closing the sheet first would show the old page unchanged for
+                  the length of the request — the tap would look ignored. The
+                  sheet going away with the document is the honest feedback. */}
+              <LanguagePicker layout="block" className="mt-5" />
 
               <Group title={s("nav.menu.project")}>
                 <a
