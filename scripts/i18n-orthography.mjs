@@ -75,6 +75,13 @@ const PT_PT_REFORMED = [
   // reform and acção, fracção, objecção and injecção do not.
   ['acç', 'aç'],
   ['ecç', 'eç'],
+  // `cc` is the same silent c in a different spelling, and it needs its own
+  // entry because the two rules above only look at `cç`. Narrow on purpose:
+  // `fraccionário` is the word this project actually uses (twenty-odd times,
+  // across the course and the glossary), while a general `acc` → `ac` would
+  // reach for `accionar` and also for `occipital` and `succinto`, where the
+  // consonant is pronounced and stays.
+  ['fraccion', 'fracion'],
   ['objectiv', 'objetiv'],
   ['optim', 'otim'],
   ['percepç', 'perceç'],

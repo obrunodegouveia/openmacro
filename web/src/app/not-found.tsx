@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { getSiteText } from "@/lib/site-text";
 import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -40,18 +40,18 @@ export default async function NotFound() {
               {s("notFound.body")}
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link
+              <LocaleLink
                 href="/"
                 className="inline-flex h-12 items-center justify-center rounded-xl border-b-4 border-mint-deep bg-mint px-6 font-extrabold text-abyss transition-all hover:bg-mint-bright active:translate-y-[3px] active:border-b-0"
               >
                 {s("notFound.home")}
-              </Link>
-              <Link
+              </LocaleLink>
+              <LocaleLink
                 href="/glossary"
                 className="inline-flex h-12 items-center justify-center rounded-xl border border-hairline bg-white/5 px-6 font-extrabold text-ink transition-colors hover:border-mint/60 hover:bg-white/10"
               >
                 {s("notFound.glossary")}
-              </Link>
+              </LocaleLink>
             </div>
           </div>
         </Section>

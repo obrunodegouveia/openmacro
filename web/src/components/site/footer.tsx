@@ -1,6 +1,6 @@
 import { MessageCircle, Scale, ShieldCheck } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { getSiteText } from "@/lib/site-text";
 import { AccountPanel } from "@/components/site/account-button";
 import { Badge } from "@/components/ui/badge";
@@ -56,7 +56,7 @@ export async function Footer() {
             {COLUMNS.map((column) => (
               <div key={column.heading}>
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
-                  {column.heading}
+                  {s(column.heading)}
                 </h4>
                 <ul className="mt-4 flex flex-col gap-2.5">
                   {column.links.map((link) => (
@@ -78,12 +78,12 @@ export async function Footer() {
                           {link.literal}
                         </a>
                       ) : (
-                        <Link
+                        <LocaleLink
                           href={link.href}
                           className="text-sm font-semibold text-ink-muted underline-offset-4 transition-colors hover:text-mint-bright hover:underline"
                         >
                           {s(link.label)}
-                        </Link>
+                        </LocaleLink>
                       )}
                     </li>
                   ))}
@@ -189,24 +189,24 @@ export async function FooterMinimal() {
     <footer className="border-t border-hairline bg-abyss/60">
       <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-6 text-xs text-ink-faint sm:px-8">
         <p>
-          <Link
+          <LocaleLink
             href="/"
             className="font-display font-extrabold text-ink-muted transition-colors hover:text-ink"
           >
             Open<span className="text-mint-bright">Macro</span>
-          </Link>{" "}
+          </LocaleLink>{" "}
           · © {year} {s("footer.contributors")} {s("footer.disclaimer")}
         </p>
         <nav aria-label={s("footer.aria")} className="flex items-center gap-4 font-semibold">
-          <Link href="/learn" className="transition-colors hover:text-ink">
+          <LocaleLink href="/learn" className="transition-colors hover:text-ink">
             {s("footer.allLessons")}
-          </Link>
-          <Link href="/glossary" className="transition-colors hover:text-ink">
+          </LocaleLink>
+          <LocaleLink href="/glossary" className="transition-colors hover:text-ink">
             {s("footer.glossary")}
-          </Link>
-          <Link href="/privacy" className="transition-colors hover:text-ink">
+          </LocaleLink>
+          <LocaleLink href="/privacy" className="transition-colors hover:text-ink">
             {s("footer.privacy")}
-          </Link>
+          </LocaleLink>
         </nav>
       </div>
     </footer>

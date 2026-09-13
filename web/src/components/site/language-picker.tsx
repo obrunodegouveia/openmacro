@@ -22,13 +22,8 @@ import { usePathname } from "next/navigation";
 import { LOCALE_TAGS } from "@openmacro/core/i18n/locales";
 
 import { useLocale } from "@/components/site/locale-provider";
+import { localePath, stripLocale } from "@/lib/locale-path";
 import { cn } from "@/lib/utils";
-
-/** Strips any locale prefix, leaving the shared route path. */
-function basePath(pathname: string): string {
-  const stripped = pathname.replace(/^\/pt(?=\/|$)/, "");
-  return stripped === "" ? "/" : stripped;
-}
 
 export function LanguagePicker({ className }: { className?: string }) {
   const { t, locale, available, names } = useLocale();
@@ -36,7 +31,7 @@ export function LanguagePicker({ className }: { className?: string }) {
 
   if (available.length < 2) return null;
 
-  const base = basePath(pathname ?? "/");
+  const base = stripLocale(pathname ?? "/");
 
   return (
     <div
@@ -47,7 +42,7 @@ export function LanguagePicker({ className }: { className?: string }) {
       )}
     >
       {available.map((candidate) => {
-        const href = candidate === "en" ? base : `/pt${base === "/" ? "" : base}`;
+        const href = localePath(candidate, base);
         const current = candidate === locale;
         return (
           <Link

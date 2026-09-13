@@ -13,12 +13,11 @@ import { isLocale, type Locale } from '@openmacro/core/i18n/locales';
 
 import { LOCALE_HEADER } from '@/middleware';
 import { SITE } from '@/lib/site';
+import { localePath } from '@/lib/locale-path';
 
-/** URL prefix for a locale. English is unprefixed — see the middleware. */
-export function localePath(locale: Locale, path: string): string {
-  const clean = path === '/' ? '' : path;
-  return locale === 'en' ? clean || '/' : `/pt${clean}`;
-}
+// Re-exported so server callers have one import for locale URL work, while the
+// implementation stays in a module a client component can also reach.
+export { localePath };
 
 export function localeUrl(locale: Locale, path: string): string {
   const suffix = localePath(locale, path);

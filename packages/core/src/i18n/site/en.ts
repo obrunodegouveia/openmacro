@@ -29,6 +29,9 @@ export const en = {
   'hero.title.lead': 'Understand the',
   'hero.title.emphasis': 'Machine',
   'hero.title.tail': 'Behind Money.',
+  'hero.stat.tiers': 'Balance sheet tiers',
+  'hero.stat.lessons': 'Lessons live',
+  'hero.stat.free': 'Free, forever',
   'hero.subtitle':
     'The open-source, gamified platform teaching macroeconomics, central banking, and credit creation — one balance sheet entry at a time.',
   'hero.start': 'Start learning',

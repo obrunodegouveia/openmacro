@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { motion, useScroll, useMotionValueEvent } from "motion/react";
 import { LayoutDashboard, Menu, X } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
@@ -52,12 +52,12 @@ export function Nav() {
         aria-label={s("nav.aria")}
         className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8"
       >
-        <Link href="/#top" className="flex items-center gap-2.5 font-display">
+        <LocaleLink href="/#top" className="flex items-center gap-2.5 font-display">
           <Logomark />
           <span className="text-lg font-extrabold tracking-tight">
             Open<span className="text-mint-bright">Macro</span>
           </span>
-        </Link>
+        </LocaleLink>
 
         <div className="hidden items-center gap-1 md:flex">
           {/*
@@ -67,22 +67,22 @@ export function Nav() {
             their own name looking for their progress.
           */}
           {learner ? (
-            <Link
+            <LocaleLink
               href="/dashboard"
               className="mr-1 inline-flex items-center gap-1.5 rounded-lg border border-mint/30 bg-mint/10 px-3 py-2 text-sm font-bold text-mint-bright transition-colors hover:border-mint/60 hover:bg-mint/15"
             >
               <LayoutDashboard className="size-4" aria-hidden />
               {s("nav.dashboard")}
-            </Link>
+            </LocaleLink>
           ) : null}
           {LINKS.map((link) => (
-            <Link
+            <LocaleLink
               key={link.href}
               href={link.href}
               className="rounded-lg px-3 py-2 text-sm font-bold text-ink-muted transition-colors hover:bg-white/5 hover:text-ink"
             >
               {s(link.key)}
-            </Link>
+            </LocaleLink>
           ))}
         </div>
 
@@ -121,24 +121,24 @@ export function Nav() {
         >
           <div className="flex flex-col gap-1 px-5 py-4">
             {learner ? (
-              <Link
+              <LocaleLink
                 href="/dashboard"
                 onClick={() => setOpen(false)}
                 className="mb-1 inline-flex items-center gap-2 rounded-lg border border-mint/30 bg-mint/10 px-3 py-3 text-sm font-bold text-mint-bright"
               >
                 <LayoutDashboard className="size-4" aria-hidden />
                 {s("nav.dashboard")}
-              </Link>
+              </LocaleLink>
             ) : null}
             {LINKS.map((link) => (
-              <Link
+              <LocaleLink
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className="rounded-lg px-3 py-3 text-sm font-bold text-ink-muted hover:bg-white/5 hover:text-ink"
               >
                 {s(link.key)}
-              </Link>
+              </LocaleLink>
             ))}
             <div className="mt-2 flex gap-3">
               <Button asChild variant="outline" size="sm" className="flex-1">

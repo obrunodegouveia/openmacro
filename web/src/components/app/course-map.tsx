@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { useSiteText } from "@/lib/use-site-text";
 import { ArrowRight, Check, Clock, Coins, Play, RotateCcw, Trophy } from "lucide-react";
 import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content";
@@ -50,7 +50,7 @@ export function CourseMap() {
 
       {/* Resume ---------------------------------------------------------- */}
       {ready && done > 0 && resume ? (
-        <Link
+        <LocaleLink
           href={`/learn/${resume.id}`}
           className="group mt-5 flex items-center gap-4 rounded-card border border-mint/30 bg-mint/[0.06] p-4 transition-colors hover:border-mint/60 hover:bg-mint/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
         >
@@ -69,7 +69,7 @@ export function CourseMap() {
             className="size-5 shrink-0 text-mint-bright transition-transform group-hover:translate-x-1"
             aria-hidden
           />
-        </Link>
+        </LocaleLink>
       ) : null}
 
       <div className="mt-6 flex flex-col gap-8">
@@ -146,7 +146,7 @@ function LessonCard({
   const perfect = record ? record.bestXp >= xp : false;
 
   return (
-    <Link
+    <LocaleLink
       href={`/learn/${lesson.id}`}
       className={cn(
         "group flex h-full gap-4 rounded-2xl border p-4 transition-colors",
@@ -212,6 +212,6 @@ function LessonCard({
           </span>
         </span>
       </span>
-    </Link>
+    </LocaleLink>
   );
 }

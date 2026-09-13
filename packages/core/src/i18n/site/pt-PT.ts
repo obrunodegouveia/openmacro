@@ -26,6 +26,9 @@ export const ptPT = {
   'hero.title.lead': 'Percebe a',
   'hero.title.emphasis': 'Máquina',
   'hero.title.tail': 'por Trás do Dinheiro.',
+  'hero.stat.tiers': 'Níveis de balanço',
+  'hero.stat.lessons': 'Lições disponíveis',
+  'hero.stat.free': 'Gratuito, para sempre',
   'hero.subtitle':
     'A plataforma aberta e gamificada que ensina macroeconomia, banca central e criação de crédito — um lançamento de balanço de cada vez.',
   'hero.start': 'Começar a aprender',

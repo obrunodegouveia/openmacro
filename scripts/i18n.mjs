@@ -75,6 +75,56 @@ const { applyConventions, conventionWarnings, CONVENTIONS } = await import(
 );
 
 /**
+ * The website's own Portuguese overlays.
+ *
+ * These live in `web/` rather than in `packages/core` because they overlay data
+ * that only the website has — the glossary, the tier model, the page titles
+ * search results show. That is a reasonable place for them and it is also how
+ * fifty-six pre-1990 spellings sat in the glossary unnoticed: the checker only
+ * ever saw `packages/core`. It sees these now.
+ *
+ * Loaded defensively. A missing or renamed file should weaken this check, not
+ * break `i18n:status` for someone who only wanted a coverage number.
+ */
+async function webOverlays() {
+  const out = {};
+  for (const [scope, path, exported] of [
+    ['web glossary', '../web/src/lib/glossary-pt.ts', 'GLOSSARY_PT'],
+    ['web curriculum', '../web/src/lib/curriculum-pt.ts', 'CURRICULUM_PT'],
+    ['web page titles', '../web/src/lib/seo-copy.ts', 'SEO_PT'],
+    ['web answers', '../web/src/lib/answers-pt.ts', 'ANSWERS_PT'],
+  ]) {
+    try {
+      const loaded = await import(new URL(path, import.meta.url).href);
+      const root = loaded[exported];
+      if (!root) continue;
+      const units = {};
+      /**
+       * Strings only, at any depth, keyed by their path through the object so a
+       * warning names something a person can search for.
+       *
+       * No English `source` is passed: these are overlays, not units, so there
+       * is nothing to compare against — which is fine here because the values
+       * are all prose, unlike the raw file, where scanning the docblock reported
+       * `actually` and `exactly` as Portuguese misspellings.
+       */
+      const walk = (value, at) => {
+        if (typeof value === 'string') units[at] = { target: value };
+        else if (Array.isArray(value)) value.forEach((item, i) => walk(item, `${at}[${i}]`));
+        else if (value && typeof value === 'object') {
+          for (const [key, item] of Object.entries(value)) walk(item, at ? `${at}.${key}` : key);
+        }
+      };
+      walk(root, '');
+      out[scope] = units;
+    } catch {
+      // Not fatal — see above.
+    }
+  }
+  return out;
+}
+
+/**
  * Shapes a pair of catalogues into what `conventionWarnings` reads.
  *
  * The English is passed as each unit's `source` so a term carried across
@@ -424,6 +474,7 @@ for (const locale of LOCALES) {
     const catalogueWarnings = conventionWarnings(locale, {
       interface: catalogueUnits(en, uiCatalogue(locale)),
       website: catalogueUnits(siteEn, siteCatalogue(locale)),
+      ...(locale === 'pt-PT' ? await webOverlays() : {}),
     });
     if (catalogueWarnings.length) {
       console.log('');

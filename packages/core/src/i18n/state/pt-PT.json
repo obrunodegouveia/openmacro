@@ -8130,6 +8130,7 @@
   "ui": {
     "account.danger": "fd8b8dae4421",
     "account.delete": "a2e20a335700",
+    "account.delete.accountIs": "b2f765e439c4",
     "account.delete.body": "a8a2293989eb",
     "account.delete.busy": "43b5894c3e4e",
     "account.delete.confirm": "1c92e637ec2b",

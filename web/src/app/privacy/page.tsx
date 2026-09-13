@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getSiteText } from "@/lib/site-text";
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { ArrowLeft } from "lucide-react";
 import { SITE, GITHUB_URL } from "@/lib/site";
 import { localisedCopy } from "@/lib/seo-copy";
@@ -29,13 +29,13 @@ export default async function PrivacyPage() {
   const s = await getSiteText();
   return (
     <main id="main" className="mx-auto w-full max-w-3xl px-5 py-20 sm:px-8">
-      <Link
+      <LocaleLink
         href="/"
         className="inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-mint-bright"
       >
         <ArrowLeft className="size-4" aria-hidden />
         {s("privacy.back")}
-      </Link>
+      </LocaleLink>
 
       <h1 className="mt-8 font-display text-4xl font-extrabold tracking-tight">
         {s("privacy.title")}

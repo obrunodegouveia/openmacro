@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { ArrowRight, ChevronRight, LogOut, User } from "lucide-react";
 import { GoogleIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
@@ -64,7 +64,7 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
         labelled "Dashboard" link, because a name reads as a label rather than a
         destination. The chevron is here to say this chip is clickable at all.
       */}
-      <Link
+      <LocaleLink
         href="/dashboard"
         onClick={onNavigate}
         aria-label={s("account.openProgressA11y", { name: learner.name })}
@@ -75,7 +75,7 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
           {learner.name}
         </span>
         <ChevronRight className="size-4 shrink-0 text-ink-faint" aria-hidden />
-      </Link>
+      </LocaleLink>
       <Button
         variant="ghost"
         size="sm"
@@ -129,10 +129,10 @@ export function AccountPanel({
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild>
-              <Link href="/dashboard">
+              <LocaleLink href="/dashboard">
                 {s("account.yourProgress")}
                 <ArrowRight className="size-4" aria-hidden />
-              </Link>
+              </LocaleLink>
             </Button>
             <Button variant="outline" onClick={() => void signOut()}>
               <LogOut className="size-4" aria-hidden />
@@ -155,12 +155,12 @@ export function AccountPanel({
 
           <p className="mt-4 text-xs leading-relaxed text-ink-faint">
             {s("account.freeNotice")}{" "}
-            <a
+            <LocaleLink
               href="/privacy"
               className="text-ink-muted underline underline-offset-4 hover:text-mint-bright"
             >
               {s("account.privacyLink")}
-            </a>
+            </LocaleLink>
             .
           </p>
         </>

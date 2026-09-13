@@ -3,6 +3,8 @@
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
 import { Check, Link2 } from "lucide-react";
+import { useLocale } from "@/components/site/locale-provider";
+import { localePath } from "@/lib/locale-path";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,6 +23,10 @@ import { cn } from "@/lib/utils";
  * is the moment they are most likely to arrive without an account, and putting
  * a sign-in wall between a learner and a link would cost more than it could
  * possibly earn.
+ *
+ * The address is locale-prefixed, because the point of the icon is to hand
+ * somebody a link to what you are looking at. Copying the English URL off a
+ * Portuguese page sends them to a different page than the one you meant.
  */
 export function Permalink({
   href,
@@ -36,6 +42,8 @@ export function Permalink({
   size?: "sm" | "md";
 }) {
   const s = useSiteText();
+  const { locale } = useLocale();
+  const target = localePath(locale, href);
   const [copied, setCopied] = React.useState(false);
 
   React.useEffect(() => {
@@ -46,7 +54,7 @@ export function Permalink({
 
   return (
     <a
-      href={href}
+      href={target}
       aria-label={copied ? s("permalink.copied") : s("permalink.copy", { label: label })}
       title={copied ? s("permalink.copied") : s("permalink.copy", { label: label })}
       onClick={(event) => {
@@ -54,7 +62,7 @@ export function Permalink({
         if (!navigator.clipboard?.writeText) return;
         event.preventDefault();
         void navigator.clipboard
-          .writeText(new URL(href, window.location.origin).toString())
+          .writeText(new URL(target, window.location.origin).toString())
           .then(() => setCopied(true))
           .catch(() => setCopied(false));
       }}

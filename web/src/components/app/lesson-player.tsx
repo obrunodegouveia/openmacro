@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
@@ -316,13 +316,13 @@ function SessionBar({
   return (
     <div className="sticky top-0 z-40 border-b border-hairline bg-canvas/85 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-5 py-3 sm:gap-4 sm:px-8">
-        <Link
+        <LocaleLink
           href="/learn"
           aria-label={t("lesson.leave")}
           className="grid size-9 shrink-0 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-white/5 hover:text-ink"
         >
           <X className="size-5" aria-hidden />
-        </Link>
+        </LocaleLink>
 
         <div
           className="h-3 min-w-0 flex-1 overflow-hidden rounded-full bg-white/10"
@@ -439,7 +439,7 @@ function OutOfHearts({ lesson, onRestart }: { lesson: Lesson; onRestart: () => v
           {t("failed.retry")}
         </Button>
         <Button asChild variant="outline">
-          <Link href="/learn">{t("complete.backToLessons")}</Link>
+          <LocaleLink href="/learn">{t("complete.backToLessons")}</LocaleLink>
         </Button>
       </div>
     </div>
@@ -550,9 +550,9 @@ function LessonComplete({
           {/* The actual next lesson, not the index. Finishing one thing should
               offer the next thing — sending someone back to a list of thirty is
               where a session ends. */}
-          <Link href={next ? `/learn/${next.id}` : "/learn"}>
+          <LocaleLink href={next ? `/learn/${next.id}` : "/learn"}>
             {next ? t("complete.next") : t("complete.backToLessons")}
-          </Link>
+          </LocaleLink>
         </Button>
         <Button variant="outline" onClick={onRestart}>
           <RotateCcw className="size-4" aria-hidden />

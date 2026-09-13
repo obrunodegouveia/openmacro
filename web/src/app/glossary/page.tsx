@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { getSiteText } from "@/lib/site-text";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Nav } from "@/components/site/nav";
@@ -6,7 +6,7 @@ import { Footer } from "@/components/site/footer";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { Badge } from "@/components/ui/badge";
 import { localisedGlossary } from "@/lib/glossary-locale";
-import { TIERS } from "@/lib/curriculum";
+import { localisedTiers } from "@/lib/curriculum-locale";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { localisedCopy } from "@/lib/seo-copy";
 import { serverLocale } from "@/lib/locale-server";
@@ -43,12 +43,16 @@ export async function generateMetadata() {
  */
 export default async function GlossaryIndexPage() {
   const s = await getSiteText();
+  const locale = await serverLocale();
   // Sorted after localisation: "Reservas bancárias" does not sit where "Bank
   // reserves" sat, and a glossary out of alphabetical order is a broken one.
-  const entriesSorted = [...localisedGlossary(await serverLocale())].sort((a, b) =>
+  const entriesSorted = [...localisedGlossary(locale)].sort((a, b) =>
     a.term.localeCompare(b.term),
   );
-  const byTier = TIERS.map((tier) => ({
+  // The tier headings are the group labels on this page, so reading them from
+  // the English constant left "Nível 1 · The Central Bank" above a column of
+  // Portuguese definitions.
+  const byTier = localisedTiers(locale).map((tier) => ({
     tier,
     entries: entriesSorted.filter((entry) => entry.tier === tier.id),
   })).filter((group) => group.entries.length > 0);
@@ -85,13 +89,13 @@ export default async function GlossaryIndexPage() {
       <Nav />
       <main id="main" className="pt-16">
         <Section>
-          <Link
+          <LocaleLink
             href="/"
             className="mb-8 inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-mint-bright"
           >
             <ArrowLeft className="size-4" aria-hidden />
             {s("glossary.back")}
-          </Link>
+          </LocaleLink>
 
           <SectionHeading
             align="left"
@@ -127,7 +131,7 @@ export default async function GlossaryIndexPage() {
                 <ul className="grid gap-3 sm:grid-cols-2">
                   {entries.map((entry) => (
                     <li key={entry.slug}>
-                      <Link
+                      <LocaleLink
                         href={`/glossary/${entry.slug}`}
                         className="group flex h-full flex-col rounded-2xl border border-hairline bg-white/[0.02] p-5 transition-colors hover:border-mint/40 hover:bg-white/[0.05]"
                       >
@@ -146,7 +150,7 @@ export default async function GlossaryIndexPage() {
                           {s("glossary.read")}
                           <ArrowRight className="size-3" aria-hidden />
                         </span>
-                      </Link>
+                      </LocaleLink>
                     </li>
                   ))}
                 </ul>

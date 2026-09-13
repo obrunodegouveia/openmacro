@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import type { SiteKey } from "@openmacro/core/i18n/site";
 import { ArrowRight, Baby, ShieldCheck, Users } from "lucide-react";
 import { Nav } from "@/components/site/nav";
@@ -7,6 +7,7 @@ import { Section, SectionHeading } from "@/components/ui/section";
 import { AnswerList } from "@/components/site/answer-list";
 import { Badge } from "@/components/ui/badge";
 import { TEACH_ANSWERS, faqPageLd } from "@/lib/answers";
+import { localisedAnswers } from "@/lib/answers-locale";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { localisedCopy } from "@/lib/seo-copy";
 import { serverLocale } from "@/lib/locale-server";
@@ -70,9 +71,10 @@ const STAGES: { icon: React.ReactNode; age: SiteKey; idea: SiteKey; body: SiteKe
  */
 export default async function TeachPage() {
   const s = await getSiteText();
+  const answers = localisedAnswers(await serverLocale(), TEACH_ANSWERS);
   return (
     <>
-      <JsonLd data={faqPageLd(TEACH_ANSWERS)} />
+      <JsonLd data={faqPageLd(answers)} />
       <JsonLd
         data={breadcrumbs([
           { name: "Home", path: "/" },
@@ -165,7 +167,7 @@ export default async function TeachPage() {
               {s("teach.questionsTitle")}
             </h2>
             <div className="mt-6">
-              <AnswerList answers={TEACH_ANSWERS} />
+              <AnswerList answers={answers} />
             </div>
           </section>
 
@@ -196,28 +198,28 @@ export default async function TeachPage() {
                 {s("teach.safety.5")}
               </li>
             </ul>
-            <Link
+            <LocaleLink
               href="/privacy"
               className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-mint-bright underline-offset-4 hover:underline"
             >
               {s("teach.readPrivacy")}
               <ArrowRight className="size-3.5" aria-hidden />
-            </Link>
+            </LocaleLink>
           </section>
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Link
+            <LocaleLink
               href="/#demo"
               className="inline-flex h-12 items-center justify-center rounded-xl border-b-4 border-mint-deep bg-mint px-6 font-extrabold text-abyss transition-all hover:bg-mint-bright active:translate-y-[3px] active:border-b-0"
             >
               {s("teach.tryLesson")}
-            </Link>
-            <Link
+            </LocaleLink>
+            <LocaleLink
               href="/learn"
               className="inline-flex h-12 items-center justify-center rounded-xl border border-hairline bg-white/5 px-6 font-extrabold text-ink transition-colors hover:border-mint/60 hover:bg-white/10"
             >
               {s("teach.learnYourself")}
-            </Link>
+            </LocaleLink>
           </div>
         </Section>
       </main>
