@@ -8,6 +8,7 @@
  */
 export const ptPT = {
   // ---- navigation ---------------------------------------------------------
+  'embed.frameTitle': 'Vídeo de lição do OpenMacro',
   'nav.signIn': 'Iniciar sessão',
   'nav.home': 'Início',
   'nav.aria': 'Principal',

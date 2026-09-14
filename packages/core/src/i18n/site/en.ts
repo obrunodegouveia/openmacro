@@ -11,6 +11,7 @@
  */
 export const en = {
   // ---- navigation ---------------------------------------------------------
+  'embed.frameTitle': 'OpenMacro lesson video',
   'nav.signIn': 'Sign in',
   'nav.home': 'Home',
   'nav.aria': 'Main',

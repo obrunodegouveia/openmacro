@@ -24,17 +24,26 @@
  * The module this exists for is somebody else's teaching, used with the
  * player they provide.
  *
- * THE IFRAME IS WRAPPED IN A PAGE, AND MUST STAY THAT WAY. Pointing the WebView
- * straight at the embed URL is the obvious thing and it fails: YouTube answers
- * "Video player configuration error — Error 153". Loaded as a top-level
- * navigation there is no embedding page, so the player cannot establish which
- * origin is embedding it, and it refuses to play rather than guess.
+ * THE PLAYER IS LOADED FROM OUR OWN SITE, AND HAS TO BE. Two simpler things
+ * were tried and both return "Video player configuration error — Error 153".
  *
- * So the WebView is handed a one-line HTML document that contains the iframe,
- * with `baseUrl` giving that document a real https origin and `origin=` on the
- * embed telling the player to expect it. `baseUrl` is not fetched — the markup
- * is supplied inline — so the promise above is intact: nothing reaches Google
- * until the learner presses play, and then only youtube-nocookie.com.
+ * Pointing the WebView at `youtube-nocookie.com/embed/...` loads it as a
+ * top-level navigation: there is no embedding page, so the player cannot
+ * establish which origin is embedding it and refuses rather than guess.
+ * Wrapping the iframe in local HTML and setting `baseUrl` does not help either
+ * — that goes through `loadHTMLString`, which does not give the document a real
+ * origin as far as a cross-origin subframe is concerned, so the player sees the
+ * same nothing.
+ *
+ * Measured, not assumed. The same embed was loaded four ways in a real browser:
+ * top-level → 153, inside a document with no real origin → 153, inside an
+ * iframe on a genuine https origin → plays, and openmacro.org itself → plays.
+ * Only a real origin works, so the app borrows the one the website already has.
+ *
+ * `/embed/<id>` is a bare page that exists for this and nothing else. The
+ * privacy promise above is unchanged: the WebView is not mounted until play, so
+ * nothing is requested until then — and then it is this site and
+ * youtube-nocookie.com, which is what it always was.
  *
  * COLLAPSING IS A PREFERENCE, NOT CARD STATE. A 16:9 frame is the tallest
  * thing on the screen, and a learner who has already watched a module's
@@ -81,7 +90,7 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
         <View style={styles.frame}>
           {playing ? (
             <WebView
-              source={{ html: playerDocument(id), baseUrl: EMBED_ORIGIN }}
+              source={{ uri: `${SITE_ORIGIN}/embed/${id}` }}
               originWhitelist={['*']}
               style={styles.web}
               // The player needs its own JS, and on iOS inline playback has to be
@@ -147,45 +156,14 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
 }
 
 /**
- * The origin the player is told to expect.
+ * Where the embed page lives.
  *
- * Any real https origin satisfies YouTube; this one is used because it is the
- * player's own site and cannot be mistaken for an attempt to disguise where the
- * embed lives. Nothing is ever fetched from it — see the note about `baseUrl`
- * above.
+ * Hardcoded to production on purpose. A build pointed at a local dev server
+ * would play videos for whoever is running one and silently fail for everybody
+ * else, and this is the one screen where a fallback that half-works is worse
+ * than an obvious break.
  */
-const EMBED_ORIGIN = 'https://www.youtube.com';
-
-/**
- * A minimal page whose only job is to be somewhere the iframe can be embedded.
- *
- * `id` is safe to interpolate: every path through `youTubeId` returns only
- * strings matching `/^[\w-]{11}$/`, so nothing here can carry markup.
- */
-function playerDocument(id: string): string {
-  const src =
-    `https://www.youtube-nocookie.com/embed/${id}` +
-    `?autoplay=1&rel=0&playsinline=1&origin=${encodeURIComponent(EMBED_ORIGIN)}`;
-
-  return `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <style>
-      html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
-      iframe { display: block; border: 0; width: 100%; height: 100%; }
-    </style>
-  </head>
-  <body>
-    <iframe
-      src="${src}"
-      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-      allowfullscreen
-    ></iframe>
-  </body>
-</html>`;
-}
+const SITE_ORIGIN = 'https://openmacro.org';
 
 /** Accepts a watch URL, a youtu.be link, or a bare id. */
 function youTubeId(url: string): string | null {
