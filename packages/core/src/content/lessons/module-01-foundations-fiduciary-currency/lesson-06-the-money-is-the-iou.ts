@@ -53,7 +53,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
     'A central bank cannot create money and keep it. The thing it creates is the thing it owes.',
   icon: '⚖️',
   difficulty: 'core',
-  estimatedMinutes: 7,
+  estimatedMinutes: 8,
   hearts: 3,
 
   keyTakeaways: [
@@ -61,6 +61,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
     'The money a central bank creates *is* its liability. There is no moment at which it holds the money it made.',
     'An asset appears at the same instant because the bank received something: an asset it bought, or a promise to repay.',
     'Creating money does not make a central bank richer. Both sides rise together and net worth does not move.',
+    'What makes a purchase monetary financing is not where it was bought or from whom, but whether the central bank’s holdings grew in order to fund new borrowing.',
   ],
 
   challenges: [
@@ -358,6 +359,42 @@ export const theMoneyIsTheIouLesson = defineLesson({
       ],
       explanation:
         'The central bank’s assets did not move, so its equity absorbed the whole $1B — and the Treasury’s net position rose by exactly the same amount. Put the two sheets side by side and the operation is not really money creation at all: it is a transfer of $1B of net worth from the central bank to the government, settled in newly created money. This is the case that proves the rule from the last exercise: the asset side normally appears *because the bank received something*, not because some rule forbids a lone liability. Remove the thing received and the liability still appears — it is simply paid for out of net worth. That is monetary financing, and Article 123 of the Treaty on the Functioning of the European Union prohibits the ECB from doing it. Not because the arithmetic fails, but because it works perfectly: it is a way to fund a government that never shows up as a tax and never shows up as a debt.',
+    },
+
+    // -----------------------------------------------------------------------
+    {
+      id: 'mc-which-one-is-financing',
+      type: 'multiple_choice',
+      tags: ['monetary-financing', 'open-market-operations', 'central-banking'],
+      xp: 20,
+      prompt: 'A central bank makes four purchases. Which one is monetary financing?',
+      explanation:
+        'The first. The test is not where the bond was bought, nor from whom — it is whether the central bank’s holdings grew *in order to fund borrowing that would otherwise have needed a private buyer*. Only the first does that. The rollover looks like the forbidden thing and is not: the bank held the same amount before and after, and the government raised nothing it would not otherwise have raised. The secondary purchase is ordinary QE — the bond was somebody else’s already. The repo is a loan, and it is returned in the morning. Worth knowing that the rules differ: the Fed rolls maturing holdings over at Treasury auctions, while Article 123 bars the ECB from the primary market at all, so it reinvests by buying in the secondary market instead. Same principle, drawn tighter.',
+      options: [
+        {
+          id: 'new-issue',
+          label: 'It buys a newly issued bond at auction, and its holdings rise by that amount',
+        },
+        {
+          id: 'rollover',
+          label: 'A bond it holds matures, and it buys a new one so its holdings stay the same',
+          feedback:
+            'This is the one that looks forbidden and is not. Nothing was funded that would not have been funded anyway — the holding was $100B before and $100B after, and the money supply is where it started.',
+        },
+        {
+          id: 'secondary',
+          label: 'It buys a five-year-old bond from a pension fund',
+          feedback:
+            'That is an ordinary open market purchase — QE. The government was financed years ago, by the pension fund. The central bank replaced the holder; it did not fund anything.',
+        },
+        {
+          id: 'repo',
+          label: 'It lends to a bank overnight, holding a government bond as security',
+          feedback:
+            'That is a loan against collateral, unwound in the morning. The bond never became the central bank’s, and the government was not on either side of it.',
+        },
+      ],
+      correctOptionId: 'new-issue',
     },
   ],
 });
