@@ -13,11 +13,12 @@
 import { defineModule } from '../../schema';
 import { eurodollarSystemLesson } from './lesson-01-eurodollar-system';
 import { swapLinesLesson } from './lesson-02-swap-lines';
-import { dashForCashLesson } from './lesson-03-dash-for-cash';
-import { bailInBailOutLesson } from './lesson-04-bail-in-bail-out';
-import { doomLoopLesson } from './lesson-05-doom-loop';
-import { globalDollarCycleLesson } from './lesson-06-global-dollar-cycle';
-import { readingACrisisLesson } from './lesson-07-reading-a-crisis';
+import { boringMoneyLeveredMoneyLesson } from './lesson-03-boring-money-levered-money';
+import { dashForCashLesson } from './lesson-04-dash-for-cash';
+import { bailInBailOutLesson } from './lesson-05-bail-in-bail-out';
+import { doomLoopLesson } from './lesson-06-doom-loop';
+import { globalDollarCycleLesson } from './lesson-07-global-dollar-cycle';
+import { readingACrisisLesson } from './lesson-08-reading-a-crisis';
 
 export const moduleCrisisArchitecture = defineModule({
   id: 'crisis-architecture-global-dollar',
@@ -28,6 +29,7 @@ export const moduleCrisisArchitecture = defineModule({
   lessons: [
     eurodollarSystemLesson,
     swapLinesLesson,
+    boringMoneyLeveredMoneyLesson,
     dashForCashLesson,
     bailInBailOutLesson,
     doomLoopLesson,
