@@ -24,6 +24,18 @@
  * The module this exists for is somebody else's teaching, used with the
  * player they provide.
  *
+ * THE IFRAME IS WRAPPED IN A PAGE, AND MUST STAY THAT WAY. Pointing the WebView
+ * straight at the embed URL is the obvious thing and it fails: YouTube answers
+ * "Video player configuration error — Error 153". Loaded as a top-level
+ * navigation there is no embedding page, so the player cannot establish which
+ * origin is embedding it, and it refuses to play rather than guess.
+ *
+ * So the WebView is handed a one-line HTML document that contains the iframe,
+ * with `baseUrl` giving that document a real https origin and `origin=` on the
+ * embed telling the player to expect it. `baseUrl` is not fetched — the markup
+ * is supplied inline — so the promise above is intact: nothing reaches Google
+ * until the learner presses play, and then only youtube-nocookie.com.
+ *
  * COLLAPSING IS A PREFERENCE, NOT CARD STATE. A 16:9 frame is the tallest
  * thing on the screen, and a learner who has already watched a module's
  * videos elsewhere — or who simply reads faster than anyone talks — should be
@@ -69,7 +81,8 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
         <View style={styles.frame}>
           {playing ? (
             <WebView
-              source={{ uri: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1` }}
+              source={{ html: playerDocument(id), baseUrl: EMBED_ORIGIN }}
+              originWhitelist={['*']}
               style={styles.web}
               // The player needs its own JS, and on iOS inline playback has to be
               // allowed or tapping play throws it into the fullscreen overlay.
@@ -131,6 +144,47 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
       </Pressable>
     </View>
   );
+}
+
+/**
+ * The origin the player is told to expect.
+ *
+ * Any real https origin satisfies YouTube; this one is used because it is the
+ * player's own site and cannot be mistaken for an attempt to disguise where the
+ * embed lives. Nothing is ever fetched from it — see the note about `baseUrl`
+ * above.
+ */
+const EMBED_ORIGIN = 'https://www.youtube.com';
+
+/**
+ * A minimal page whose only job is to be somewhere the iframe can be embedded.
+ *
+ * `id` is safe to interpolate: every path through `youTubeId` returns only
+ * strings matching `/^[\w-]{11}$/`, so nothing here can carry markup.
+ */
+function playerDocument(id: string): string {
+  const src =
+    `https://www.youtube-nocookie.com/embed/${id}` +
+    `?autoplay=1&rel=0&playsinline=1&origin=${encodeURIComponent(EMBED_ORIGIN)}`;
+
+  return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <style>
+      html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
+      iframe { display: block; border: 0; width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <iframe
+      src="${src}"
+      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+      allowfullscreen
+    ></iframe>
+  </body>
+</html>`;
 }
 
 /** Accepts a watch URL, a youtu.be link, or a bare id. */
