@@ -29,6 +29,10 @@ import { dirname, join } from 'node:path';
 
 import { api, all, credentials, editableVersion, token } from './asc.mjs';
 
+const store = JSON.parse(
+  readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'store.config.json'), 'utf8'),
+);
+
 const bearer = token();
 const { appId } = credentials();
 
@@ -102,6 +106,51 @@ for (const locale of locales) {
   row(sets.length > 0, `Screenshots (${locale.attributes.locale})`, summary);
 }
 
+/**
+ * Version and app attributes that block a submission and are easy to miss,
+ * because App Store Connect asks for them in a dialog at submission time rather
+ * than on a page you can see is unfinished.
+ *
+ * Every one of these was null while the rest of the record was green, which is
+ * exactly the failure this script exists to prevent: a readiness report that
+ * reports readiness and is not looking.
+ */
+const versionAttributes = (await api(`/v1/appStoreVersions/${v}`, { bearer })).data.attributes;
+const appAttributes = (await api(`/v1/apps/${appId}`, { bearer })).data.attributes;
+
+row(Boolean(versionAttributes.copyright), 'Copyright', versionAttributes.copyright ?? 'not set');
+row(
+  versionAttributes.usesIdfa !== null,
+  'Advertising identifier',
+  versionAttributes.usesIdfa === null
+    ? 'unanswered — Apple asks at submission'
+    : versionAttributes.usesIdfa
+      ? 'declares IDFA use'
+      : 'no IDFA',
+);
+row(
+  Boolean(appAttributes.contentRightsDeclaration),
+  'Third-party content rights',
+  appAttributes.contentRightsDeclaration ?? 'undeclared — Apple asks at submission',
+);
+
+/**
+ * Release behaviour, checked against the intent written in store.config.json
+ * rather than against a constant — the two disagreeing is the bug worth
+ * catching, not either value on its own.
+ */
+const wantsAutomatic = store.apple?.release?.automaticRelease;
+const releaseMatches =
+  wantsAutomatic === undefined ||
+  (wantsAutomatic ? versionAttributes.releaseType === 'AFTER_APPROVAL' : versionAttributes.releaseType === 'MANUAL');
+row(
+  releaseMatches,
+  'Release type',
+  releaseMatches
+    ? versionAttributes.releaseType
+    : `${versionAttributes.releaseType}, but store.config.json asks for automaticRelease: ${String(wantsAutomatic)}`,
+);
+
 const review = await api(`/v1/appStoreVersions/${v}/appStoreReviewDetail`, { bearer }).catch(
   () => null,
 );
@@ -119,9 +168,7 @@ row(
  * so the notes on Apple can silently fall behind `store.config.json` — and notes
  * describing a feature the app no longer has is worse than no notes at all.
  */
-const localNotes = JSON.parse(
-  readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'store.config.json'), 'utf8'),
-).apple?.review?.notes;
+const localNotes = store.apple?.review?.notes;
 row(
   Boolean(r?.notes) && r.notes === localNotes,
   'App Review notes',

@@ -192,6 +192,53 @@ async function pushAppInfoLocalisation(locale, copy) {
 }
 
 // ---------------------------------------------------------------------------
+// Version attributes Apple asks for in a dialog, not on a page
+// ---------------------------------------------------------------------------
+
+/**
+ * Copyright, the IDFA answer and the release behaviour.
+ *
+ * These are easy to miss because App Store Connect collects them in the
+ * submission dialog rather than on a form you can see is unfinished — so the
+ * listing looks complete right up until it stops you. All three were null while
+ * everything else was green.
+ *
+ * `usesIdfa` is false as a checked fact rather than an assumption: there is no
+ * advertising or attribution SDK in the dependency tree and no reference to
+ * `AdSupport`, `advertisingIdentifier` or App Tracking Transparency anywhere in
+ * the source. If that ever stops being true this must change, and the claim in
+ * the privacy notice changes with it.
+ *
+ * `releaseType` is derived from `apple.release.automaticRelease` rather than
+ * hardcoded, because the two disagreeing is the failure worth preventing:
+ * AFTER_APPROVAL means Apple publishes the moment it passes review, which is
+ * not what a config asking for a manual release means.
+ */
+const versionAttributes = {};
+if (store.apple?.copyright) versionAttributes.copyright = store.apple.copyright;
+versionAttributes.usesIdfa = false;
+if (store.apple?.release?.automaticRelease !== undefined) {
+  versionAttributes.releaseType = store.apple.release.automaticRelease ? 'AFTER_APPROVAL' : 'MANUAL';
+}
+
+if (Object.keys(versionAttributes).length > 0) {
+  if (dryRun) {
+    console.log(`\n  version attributes: ${JSON.stringify(versionAttributes)}`);
+  } else {
+    await api(`/v1/appStoreVersions/${version.id}`, {
+      bearer,
+      method: 'PATCH',
+      body: { data: { type: 'appStoreVersions', id: version.id, attributes: versionAttributes } },
+    });
+    console.log(
+      `\n  \x1b[32m✓\x1b[0m version: ${Object.entries(versionAttributes)
+        .map(([key, value]) => `${key}=${String(value)}`)
+        .join(', ')}`,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Review notes — and only the notes
 // ---------------------------------------------------------------------------
 
