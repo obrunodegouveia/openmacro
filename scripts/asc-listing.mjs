@@ -22,7 +22,7 @@
  * `--dry-run` prints what would be sent.
  */
 
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 
@@ -33,7 +33,32 @@ const dryRun = process.argv.includes('--dry-run');
 
 const store = JSON.parse(readFileSync(join(ROOT, 'store.config.json'), 'utf8'));
 const info = store.apple?.info ?? {};
-const review = store.apple?.review ?? {};
+
+/**
+ * The App Review contact, from `credentials/review-contact.json` if it exists.
+ *
+ * It lives there rather than in `store.config.json` because that file is
+ * committed and this repository is public — the app's own review notes point
+ * Apple at the GitHub URL. Apple needs a real name, email and telephone number;
+ * the internet does not, and a contributor cloning this should not inherit
+ * somebody's mobile number.
+ *
+ * `credentials/` is already gitignored for the App Store Connect key, which
+ * makes it the obvious home. `store.config.json` keeps its placeholders, so the
+ * shape of what is required stays documented in the open.
+ */
+function localContact() {
+  const path = join(ROOT, 'credentials/review-contact.json');
+  if (!existsSync(path)) return {};
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch (error) {
+    console.error(`\n\x1b[31m✗ credentials/review-contact.json is not valid JSON — ${error.message}\x1b[0m\n`);
+    process.exit(1);
+  }
+}
+
+const review = { ...(store.apple?.review ?? {}), ...localContact() };
 
 const bearer = token();
 const { appId } = credentials();

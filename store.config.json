@@ -102,9 +102,9 @@
       "koreaAgeRatingOverride": "NONE"
     },
     "review": {
-      "firstName": "Bruno",
-      "lastName": "De Gouveia",
-      "email": "brunogouveiarodrigues@gmail.com",
+      "firstName": "REPLACE_FIRST_NAME",
+      "lastName": "REPLACE_LAST_NAME",
+      "email": "REPLACE_EMAIL@openmacro.org",
       "phone": "+REPLACE_PHONE",
       "demoRequired": false,
       "notes": "No account is needed to review this app. Launch it and every lesson is playable immediately — tap any lesson on the Home tab.\n\nSIGN-IN (optional). The Account tab offers 'Continue with Google'. It is entirely optional and gates no content: it syncs XP and day streak across devices and nothing else. All 108 lessons are available signed out, so no demo account is required. Sign-in opens the system browser (ASWebAuthenticationSession) and returns via the 'openmacro' URL scheme.\n\nDELETING AN ACCOUNT (guideline 5.1.1(v)). Account tab → 'Danger zone' → 'Delete account'. The panel shows the address the account signs in as and asks you to type it, then deletes the auth user and everything that cascades from it. It is one screen deep and needs no email to support.\n\nLANGUAGE. The app ships in English and European Portuguese. Account tab → Language switches between them; both cover the whole course, not only the interface.\n\nThere are no in-app purchases, no advertising, no third-party analytics and no user-generated content. Nothing is collected from a signed-out learner; when someone signs in, the email address and user id are stored to identify the account, and XP and streak are stored as app functionality. The privacy notice at https://openmacro.org/privacy covers this in full, including the COPPA position.\n\nThe app is open source: https://github.com/obrunodegouveia/openmacro"
