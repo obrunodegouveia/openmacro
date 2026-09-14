@@ -56,7 +56,7 @@ export const theNightCashCostTenPercentLesson = defineLesson({
 
   keyTakeaways: [
     'A repo is an overnight loan where the lender holds something valuable until they are paid back. Banks do it with government bonds instead of bicycles.',
-    'Quantitative tightening destroys money: a bond matures, the central bank does not replace it, and the reserves used to pay for the replacement cease to exist.',
+    'Quantitative tightening destroys money: a bond matures, the central bank does not reinvest the proceeds, and the reserves the new buyer pays with cease to exist. Only the Treasury ever issues bonds — the central bank just stops buying them.',
     'Reserves are whatever is left on the central bank’s liability side after notes, the government’s account and the money funds have taken their share.',
     'Nobody publishes how many reserves the system needs. It is discovered by going below it.',
   ],
@@ -242,7 +242,7 @@ export const theNightCashCostTenPercentLesson = defineLesson({
         {
           id: 'qt',
           label: 'Two years of QT drain reserves',
-          detail: 'Bonds mature, the Fed does not replace them, reserves fall month after month',
+          detail: 'Bonds mature, the Fed stops reinvesting, reserves fall month after month',
         },
         {
           id: 'tax',
