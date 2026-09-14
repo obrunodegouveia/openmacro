@@ -205,5 +205,57 @@ if (landed.primary !== primary || landed.secondary !== (secondary ?? null)) {
 
 console.log(
   `\x1b[32m✓ Categories set: ${landed.primary}` +
-    `${landed.secondary ? ' + ' + landed.secondary : ''}.\x1b[0m\n`,
+    `${landed.secondary ? ' + ' + landed.secondary : ''}.\x1b[0m`,
 );
+
+// ---------------------------------------------------------------------------
+// Third-party content rights
+// ---------------------------------------------------------------------------
+
+/**
+ * Apple asks whether the app contains, shows or accesses third-party content,
+ * and treats a yes as an assertion that you hold the rights to it.
+ *
+ * The factual half is not a judgement call: the course embeds twenty-five Khan
+ * Academy videos, so `DOES_NOT_USE_THIRD_PARTY_CONTENT` would be false. The
+ * rights half is the developer's to assert, and it rests on Khan Academy
+ * publishing under CC BY-NC-SA and the videos being embedded through YouTube's
+ * own player rather than re-hosted — which is the arrangement YouTube's terms
+ * contemplate.
+ *
+ * Recorded here rather than left to the submission dialog so that the answer,
+ * and the reason for it, live somewhere a future maintainer can read. Apple
+ * asks this once and then never shows it to you again.
+ */
+const RIGHTS = 'USES_THIRD_PARTY_CONTENT';
+
+const app = await api(`/v1/apps/${appId}`, { bearer });
+if (app.data.attributes.contentRightsDeclaration === RIGHTS) {
+  console.log(`\x1b[32m✓ Third-party content rights already declared.\x1b[0m\n`);
+} else {
+  await api(`/v1/apps/${appId}`, {
+    bearer,
+    method: 'PATCH',
+    body: { data: { type: 'apps', id: appId, attributes: { contentRightsDeclaration: RIGHTS } } },
+  });
+  /**
+   * Re-read with retries, because App Store Connect is eventually consistent.
+   *
+   * Reading immediately after a successful PATCH returned the *old* value and
+   * this check reported that the write had failed, which was worse than not
+   * checking: the write had landed, and the script said it had not. A verify
+   * step that produces false alarms gets ignored, and then it is not a verify
+   * step at all.
+   */
+  let landed = null;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    await new Promise((done) => setTimeout(done, 1500));
+    landed = (await api(`/v1/apps/${appId}`, { bearer })).data.attributes.contentRightsDeclaration;
+    if (landed === RIGHTS) break;
+  }
+  if (landed !== RIGHTS) {
+    console.error(`\n\x1b[31m✗ Still reading back as ${String(landed)} after five tries.\x1b[0m\n`);
+    process.exit(1);
+  }
+  console.log(`\x1b[32m✓ Third-party content rights: ${RIGHTS}.\x1b[0m\n`);
+}
