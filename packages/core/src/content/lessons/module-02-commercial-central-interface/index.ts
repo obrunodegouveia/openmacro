@@ -16,9 +16,10 @@ import { interbankPaymentLesson } from './lesson-02-interbank-payment';
 import { settlementSystemsLesson } from './lesson-03-settlement-systems';
 import { correspondentBankingLesson } from './lesson-04-correspondent-banking';
 import { whyBanksHoldReservesLesson } from './lesson-05-why-banks-hold-reserves';
-import { overnightRatesLesson } from './lesson-06-overnight-rates';
-import { runsAndLiquidityLesson } from './lesson-07-runs-and-liquidity';
-import { capitalNotReservesLesson } from './lesson-08-capital-not-reserves';
+import { theDayHasAnEndLesson } from './lesson-06-the-day-has-an-end';
+import { overnightRatesLesson } from './lesson-07-overnight-rates';
+import { runsAndLiquidityLesson } from './lesson-08-runs-and-liquidity';
+import { capitalNotReservesLesson } from './lesson-09-capital-not-reserves';
 
 export const moduleCommercialCentralInterface = defineModule({
   id: 'commercial-central-interface',
@@ -32,6 +33,7 @@ export const moduleCommercialCentralInterface = defineModule({
     settlementSystemsLesson,
     correspondentBankingLesson,
     whyBanksHoldReservesLesson,
+    theDayHasAnEndLesson,
     overnightRatesLesson,
     runsAndLiquidityLesson,
     capitalNotReservesLesson,
