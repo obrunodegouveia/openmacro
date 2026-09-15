@@ -91,10 +91,10 @@ export const en = {
   'lesson.video.show': 'Show',
 
   // ---- the challenge types -----------------------------------------------
-  'challenge.order.empty': 'Tap events below to build the chain',
-  'challenge.order.remaining': 'Remaining',
-  'challenge.order.remove': 'Step {number, number}: {label}. Tap to remove.',
-  'challenge.order.add': '{label}. Tap to add to the sequence.',
+  'challenge.order.dragHint': 'Press and hold a step, then drag to reorder',
+  'challenge.order.position': 'Step {number, number} of {total, number}: {label}',
+  'challenge.order.moveUp': 'Move up',
+  'challenge.order.moveDown': 'Move down',
   'challenge.match.term': 'Term',
   'challenge.match.means': 'Means',
   'challenge.match.hint': 'Tap, then tap a definition to link them',
