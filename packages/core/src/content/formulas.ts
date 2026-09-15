@@ -72,6 +72,47 @@ export const FORMULAS = {
   },
 
   /**
+   * Deposits after a finite number of lending rounds:
+   * M(n) = D x (1 - (1 - R)^n) / R.
+   *
+   * The multiplier formula is the limit of this as n goes to infinity, and
+   * teaching only the limit hides where the number comes from. Each round
+   * re-lends (1 - R) of what the last one deposited, so the series is
+   * geometric and its partial sum is this.
+   *
+   * It is also the arithmetic of Sal Khan's island: 1,000 gold at a 10%
+   * reserve ratio, stopped after three rounds, gives 2,710 — the figure the
+   * video arrives at by drawing every step by hand.
+   *
+   * Expects: `initialDeposit`, `reserveRatio`, `rounds`.
+   */
+  deposits_after_rounds: (inputs) => {
+    const deposit = read(inputs, 'initialDeposit');
+    const reserveRatio = read(inputs, 'reserveRatio');
+    const rounds = Math.max(0, Math.floor(read(inputs, 'rounds')));
+    if (reserveRatio <= 0) return 0;
+    return (deposit * (1 - (1 - reserveRatio) ** rounds)) / reserveRatio;
+  },
+
+  /**
+   * How much of the theoretical maximum a finite chain has reached:
+   * 1 - (1 - R)^n.
+   *
+   * The point it exists to make is how fast the tail dies. At a 10% reserve
+   * ratio three rounds already reach 27% of the limit and ten rounds reach
+   * 65%, so "the multiplier is ten" describes somewhere the system is always
+   * heading and never actually arrives.
+   *
+   * Expects: `reserveRatio`, `rounds`.
+   */
+  share_of_limit: (inputs) => {
+    const reserveRatio = read(inputs, 'reserveRatio');
+    const rounds = Math.max(0, Math.floor(read(inputs, 'rounds')));
+    if (reserveRatio <= 0) return 0;
+    return 1 - (1 - reserveRatio) ** rounds;
+  },
+
+  /**
    * Reserves the system must ultimately hold against total deposits: M x R,
    * which collapses to the original deposit D — a useful sanity check for
    * learners: base money never grew, only deposit money did.
