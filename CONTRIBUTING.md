@@ -1,8 +1,8 @@
 # Contributing to OpenMacro
 
-Welcome. This is the orientation document: what OpenMacro is, how the
-repository is put together, and where a newcomer can do the most good in an
-afternoon. The [README](README.md) is the deeper reference; this is the map.
+Welcome. This is the orientation document: what OpenMacro is, why it matters
+enough to be taught like a language, how the repository is put together, and
+where a newcomer can do the most good in an afternoon. The [README](README.md) is the deeper reference; this is the map.
 
 ---
 
@@ -81,6 +81,69 @@ crisis while it is happening rather than in hindsight. If a lesson would not
 survive contact with somebody who does this for a living, it is not finished. A
 lesson that teaches a vocabulary word instead of a mechanism is not finished
 either.
+
+## Why this belongs next to English
+
+A child in Lisbon learns English without anyone having to justify it. English
+is the language the rest of the world is conducted in, so not having it is a
+ceiling on everything else — the job, the university, the internet, the room
+where the decision gets made. Nobody argues the point.
+
+Money is the other language you are conducted in. The difference is that you
+are already a participant, fluent or not, every day, for your whole life. You
+hold it, borrow it, earn it, lose it to inflation and hand it to institutions
+whose liabilities it actually is — and the system does not pause to check
+whether you followed any of that.
+
+**And this illiteracy is invisible, which is what makes it expensive.** A
+person who does not speak English knows they do not speak English, and can
+route around it. A person signing a thirty-year mortgage at a variable rate has
+no comparable signal. Nothing at the table tells them they are taking a
+position on the future path of ECB policy. They sign, because everyone signs.
+
+So take the central-bank bar above and point it at a household instead of a
+nation. It is the same knowledge:
+
+- What a rate decision in Frankfurt does to a mortgage payment in Porto, and
+  why fixed versus variable is a question about the next decade rather than
+  about this month's instalment. That is what `euribor` and
+  `buying-property-portugal` exist to make obvious.
+- Why a savings account can feel safe and lose you money every year, and what
+  "safe" even means when your deposit is a commercial bank's liability.
+- What your income, your debts and your savings are each denominated in — and
+  what happens when those are not the same currency.
+- Why a peg that has held for years can break in a week, and what the days
+  before it look like from the inside.
+- Which headlines are mechanically load-bearing and which are noise dressed up
+  as urgency.
+
+**The honest version of the wealth claim.** This course will never tell anyone
+what to buy, and anyone who promises returns is selling something — the
+editorial rule above forbids it and always will. What understanding actually
+does is quieter and larger: it removes a class of avoidable, expensive errors
+from the biggest decisions a household ever makes, and it does that repeatedly
+over the decades in which those decisions compound. The person who was not
+panicked into selling, not talked into a product they could not read, not
+surprised by their own rate reset, and not quietly taxed by inflation they
+never priced in, ends up in a materially different place from the person who
+was — with no forecasting talent involved, only comprehension. Wealth built
+that way is a by-product of not being the counterparty everyone else is
+trading against.
+
+**And the English analogy holds all the way down to fluency.** Five hundred
+memorised words do not get you through a conversation, because a real
+conversation contains a sentence you have never heard. "Inflation means prices
+go up" is a memorised word; it does not survive a phone call with a bank. This
+is why the course drills mechanisms and makes people post entries by hand
+rather than recognise definitions — fluency is precisely the ability to handle
+the case nobody prepared you for, which is the only case that ever costs you
+anything.
+
+One last thing English gets right that money does not: it is taught from the
+age of six, to everyone, for free, before anyone can argue about whether that
+particular child will need it. That is the standard this project is trying to
+meet, and it is why the course is MIT-licensed, playable with no account, and
+works with the network off.
 
 ## Where the course stands today
 
