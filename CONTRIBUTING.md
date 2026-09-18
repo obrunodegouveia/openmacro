@@ -9,8 +9,9 @@ afternoon. The [README](README.md) is the deeper reference; this is the map.
 ## What this project is
 
 **Duolingo-style micro-learning for macroeconomics, monetary policy and
-fractional-reserve banking.** Five minutes a day, aimed at teenagers and young
-adults who were never taught where money actually comes from.
+fractional-reserve banking.** Five minutes a day, aimed at children, teenagers
+and young adults who were never taught where money actually comes from — and at
+the parents and teachers who want to be the ones to tell them.
 
 The course is playable at **<https://openmacro.org/learn>** with no account. An
 iOS and Android app ships the same course. Everything is MIT-licensed.
@@ -27,6 +28,59 @@ the machinery works*, not what to think about it. Where a model is a
 simplification — and the deposit multiplier very much is — the lesson says so
 out loud. A reader of any political persuasion should finish a lesson feeling
 informed rather than recruited. PRs that editorialise will be asked to rewrite.
+
+## What we are actually building
+
+The course is the means. These five things are the project, and a
+contribution is good to the extent that it serves them.
+
+**Make it a game, not a textbook with a progress bar.** A twelve-year-old
+should want the next lesson. The loop is already Duolingo's — hearts that
+decrement on a miss, XP, a combo counter for consecutive first-attempt
+answers, a day streak, and a wrong answer re-queued to the end of the run at
+half XP so you cannot leave a lesson until you can actually do every step.
+Treat that as the floor. The T-account challenge exists because somebody asked
+what posting double-entry by hand would feel like as a puzzle, and it turned
+out to be the best thing in the course. Bring that kind of idea. If a mechanic
+would make a child laugh, argue with a sibling about the answer, or drag a
+parent over to look — propose it.
+
+**Build for the adult sitting next to the child.** Parents, guardians and
+teachers are a first-class audience, not an afterthought:
+[`/teach`](https://openmacro.org/teach) lays out what to introduce at what age
+and how to explain inflation or bank money creation to a child, and it answers
+the privacy question plainly, because an adult deciding whether to put a child
+in front of a product should not have to dig for it. No account is needed, and
+nothing is tracked. Anything that helps an educator run this in a classroom, or
+a parent run it at the kitchen table — a printable, a lesson plan, a two-player
+mode, a way to follow a child's progress without surveilling them — is squarely
+in scope.
+
+**Pay the learner in the thing the course explains.** Finishing a module pays
+**€1 in EURC**, Circle's euro stablecoin, on Base, straight to the learner's
+own Coinbase account. There is something honest about a course on money that
+settles in money, and about a child watching a stablecoin transfer arrive and
+knowing exactly which ledger entries just moved. It is capped by construction —
+one claim per learner per module, so the maximum anyone can ever earn is
+`modules × the reward`, and no bug or cheat raises it. See
+[docs/rewards.md](docs/rewards.md).
+
+**The goal is a community that understands this deeply — starting with your
+own family.** Not familiarity, not vibes: the reward recipients in
+`docs/rewards.md` are literally family members with Coinbase accounts, because
+that is where this began and where it should spread. Teach your kids, your
+siblings, your parents. The measure of success is not downloads; it is the
+number of people who can explain, over dinner, where the money in their account
+came from and whose liability it is.
+
+**The bar: a proficient student could run a central bank.** That is the exam we
+write against. Someone who finishes this course should be able to read the Fed's
+and the ECB's balance sheets line by line, know which lever moves which rate and
+why, understand what a peg costs to defend and when it breaks, and diagnose a
+crisis while it is happening rather than in hindsight. If a lesson would not
+survive contact with somebody who does this for a living, it is not finished. A
+lesson that teaches a vocabulary word instead of a mechanism is not finished
+either.
 
 ## Where the course stands today
 
@@ -200,6 +254,17 @@ invisible to `i18n:status`, so a custom ESLint rule
   small, self-contained editorial fix.
 - **More Portuguese.** Content sits at 88%; `banking-and-money` is the module
   furthest behind.
+- **Make it more fun.** The most open-ended invitation here, and the one with
+  the least prior art to respect. Better celebrations, a sound or animation
+  that lands, module-completion moments worth screenshotting, mascots,
+  leaderboards among friends, a two-player mode a parent and child can play
+  against each other, anything that makes a streak feel worth defending.
+  Bring the idea to an issue first if it needs new data on the lesson schema;
+  everything else, just show us.
+- **Something for educators and parents.** Classroom-shaped things: a lesson
+  plan, a printable worksheet generated from a module, a projector mode, a way
+  for a teacher or parent to see where a learner is stuck without collecting
+  data about them. `/teach` on the website is the entry point to extend.
 - **A new challenge type.** Four files: the variant in
   [`schema.ts`](packages/core/src/content/schema.ts), its answer shape and
   grading in `packages/core/src/engine/`, a validator rule, and a component in
