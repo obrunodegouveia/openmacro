@@ -1,0 +1,264 @@
+# Contributing to OpenMacro
+
+Welcome. This is the orientation document: what OpenMacro is, how the
+repository is put together, and where a newcomer can do the most good in an
+afternoon. The [README](README.md) is the deeper reference; this is the map.
+
+---
+
+## What this project is
+
+**Duolingo-style micro-learning for macroeconomics, monetary policy and
+fractional-reserve banking.** Five minutes a day, aimed at teenagers and young
+adults who were never taught where money actually comes from.
+
+The course is playable at **<https://openmacro.org/learn>** with no account. An
+iOS and Android app ships the same course. Everything is MIT-licensed.
+
+Two things are worth internalising before you write any code:
+
+**Content is data, not code.** A lesson is a plain serialisable object matching
+a schema. Adding one touches no React, no engine, no UI. This is the single
+most important design decision in the repository, and it is why the most
+valuable contribution here is a lesson rather than a patch.
+
+**The editorial line is mechanical, not political.** OpenMacro explains *how
+the machinery works*, not what to think about it. Where a model is a
+simplification — and the deposit multiplier very much is — the lesson says so
+out loud. A reader of any political persuasion should finish a lesson feeling
+informed rather than recruited. PRs that editorialise will be asked to rewrite.
+
+## Where the course stands today
+
+| | |
+|---|---|
+| Content | 17 modules · 112 lessons · 488 challenges across 5 challenge types |
+| Languages | English (source) and European Portuguese — interface and website at 100%, course content at 88% |
+| Web | Next.js 16 on Cloud Run, the thing learners actually play |
+| Mobile | Expo SDK 57 / React Native 0.86, built and submitted through EAS |
+| Tests | **None.** There is no test runner configured. See "Good first contributions" |
+
+`npm run lint:content` and `npm run i18n:status` print the live versions of the
+first two rows; the numbers above will drift.
+
+## The three places code lives
+
+This is one npm workspace with three deliverables, and knowing which one you
+are in saves a lot of confusion:
+
+| Directory | What it is |
+|---|---|
+| **`packages/core`** | The course itself: content, schema, grading engine, progress rules, i18n. Imported by both clients, so a lesson is written once. |
+| **`web/`** | `openmacro.org` — Next.js 16, App Router, Tailwind v4, deployed to Cloud Run. The web course, the marketing site, the glossary and the dashboard. |
+| **repository root** | The Expo app (`app/` routes, `src/` providers, components, services, theme). |
+
+`packages/core` must keep compiling without DOM *or* React Native globals —
+the website, the mobile app and the content validator all import it, and CI
+enforces this with `npm run typecheck:core`. Do not reach for `window`,
+`document` or anything from `react-native` inside it.
+
+The mobile app can be run in a browser with `npm run web`, but that is a
+debugging convenience, not a deployment target.
+
+### The layering rule
+
+**Content knows nothing about the engine, and the engine knows nothing about
+React.** `packages/core/src/engine/` is plain functions you could run in Node:
+
+```
+packages/core/src/
+  content/
+    schema.ts       The challenge/lesson type system — the contract
+    registry.ts     The list of shipped modules; order here is the curriculum
+    formulas.ts     Pure maths behind interactive simulations
+    validate.ts     The content linter
+    lessons/        One folder per module — start at its README
+  engine/
+    lessonSession.ts  Progression state machine (hearts, XP, re-queue)
+    grading.ts        Answer -> verdict + explanation
+    simulation.ts     Evaluates sim readouts and objectives
+    tAccounts.ts      Double-entry balance checking
+  progress/rules.ts   Pure XP + streak + merge rules, clock-free
+  i18n/               Locale catalogues and the overlay machinery
+```
+
+That separation is what makes the progression rules easy to reason about and
+new challenge types cheap to add.
+
+## Setup
+
+Requires **Node 22.18 or newer** — `npm run lint:content` loads the real lesson
+registry through Node's built-in TypeScript type stripping, so it needs a
+runtime that has it.
+
+```bash
+git clone https://github.com/obrunodegouveia/openmacro.git
+cd openmacro
+npm install            # installs the root app, packages/core and web/
+cp .env.example .env
+
+npm start              # Expo dev server — press i, a or w
+npm run dev --workspace web   # the website on http://localhost:3000
+```
+
+No backend, no API keys, no account. The default `.env` leaves cloud sync
+switched off, and with it off the app never mentions accounts at all. Every
+value in `.env.example` is public by construction — Expo inlines
+`EXPO_PUBLIC_*` into the shipped bundle, so nothing secret ever belongs there.
+
+### The commands worth knowing
+
+| Command | What it does |
+|---|---|
+| `npm run lint:content` | Validates every lesson in the registry. Run this before every content PR |
+| `npm run audit:content` | Quality pass: duplicates, dead ids, guessable options. Warnings are advisory |
+| `npm run typecheck` | The mobile app |
+| `npm run typecheck:core` | The shared package's platform surface |
+| `npm run lint` | ESLint, including the untranslated-string rule |
+| `npm run i18n:status` | Translation coverage per language and module |
+| `npm start` / `ios` / `android` / `web` | Expo dev server |
+
+## The highest-value contribution: a lesson
+
+Read
+**[`packages/core/src/content/lessons/README.md`](packages/core/src/content/lessons/README.md)**
+— it is the authoring guide, and it assumes no familiarity with the codebase.
+You do not need to be a developer. If you can explain a central bank operation
+precisely, you can write a lesson.
+
+The short version:
+
+1. Author in `.json` (checked by `npm run lint:content`) or `.ts` via
+   `defineLesson` (which additionally gets you autocomplete and inline type
+   errors). Both compile to the same thing.
+2. Create `packages/core/src/content/lessons/module-XX-your-topic/index.ts`
+   exporting a `defineModule({ ... })`.
+3. Add one import and one entry to `MODULES` in
+   [`registry.ts`](packages/core/src/content/registry.ts). Order in that array
+   *is* the curriculum, on both clients.
+4. Run `npm run lint:content` and `npm run typecheck`.
+
+The five challenge types:
+
+| Type | Interaction |
+|---|---|
+| `multiple_choice` | Pick one, get a rebuttal aimed at your exact mistake |
+| `concept_match` | Tap a term, tap its definition |
+| `order_flow` | Drag shuffled events into a causal chain |
+| `interactive_sim` | Drive sliders, watch derived values, hit an objective |
+| `t_account_flow` | Post double-entry shifts across balance sheets |
+
+`t_account_flow` is the primitive the platform is built on and the one with
+real rules — every expected shift must balance per entity, or the validator
+rejects the lesson. The lessons README covers all of them.
+
+Two rules for the prose, because they are what separate a course from a quiz:
+**`explanation` carries the lesson** (it is shown whether the learner was right
+or wrong — write about *why* the answer works, never just restate that it was
+correct), and **be precise about what is contested**. Where economists
+genuinely disagree, say so. Precision is the product.
+
+Expect a review of the economics, not just the syntax. Push back if you think
+we have the mechanism wrong.
+
+## Translating
+
+The course ships in English and European Portuguese, and a translation is an
+**overlay**: a flat map of key to string that replaces individual fields.
+Anything the overlay does not mention renders in English — per key, not per
+language. A language can therefore ship at 5% and improve.
+
+```bash
+npm run i18n:status                 # where every language is
+npm run i18n:extract -- pt-PT       # hand work out to a translator
+npm run i18n:import  -- pt-PT       # take it back, validated
+```
+
+Adding a language is adding catalogues under `translations/`. No code changes.
+Full guide: [docs/translation.md](docs/translation.md).
+
+One rule to know while writing UI: user-visible strings go through the i18n
+layer. A string typed straight into JSX is invisible to the typechecker and
+invisible to `i18n:status`, so a custom ESLint rule
+(`tools/eslint/no-untranslated-text.js`) fails CI on it.
+
+## Good first contributions
+
+- **Tests.** There is no test runner configured, and the most testable code in
+  the repository is sitting uncovered: `engine/grading.ts`,
+  `engine/lessonSession.ts`, `engine/simulation.ts`, `content/formulas.ts` and
+  `progress/rules.ts` are pure, dependency-free and full of edge cases —
+  especially the streak rules. Wiring up a runner and covering the reducer
+  would be a genuinely valuable first PR.
+- **Run it on a device.** Most verification so far has been against the web
+  build. Reanimated entering animations, `expo-haptics` and the slider all
+  behave differently on native; a pass on an iOS and Android simulator, fixing
+  what differs, is wanted.
+- **Content review.** `npm run audit:content` currently reports a few hundred
+  advisory warnings — distractors without feedback, correct options that are
+  conspicuously the longest and so guessable without reading. Each one is a
+  small, self-contained editorial fix.
+- **More Portuguese.** Content sits at 88%; `banking-and-money` is the module
+  furthest behind.
+- **A new challenge type.** Four files: the variant in
+  [`schema.ts`](packages/core/src/content/schema.ts), its answer shape and
+  grading in `packages/core/src/engine/`, a validator rule, and a component in
+  `src/components/challenges/` plus `web/src/components/challenges/`.
+
+## Conventions
+
+**Branches** follow `type/short-slug` — `feat/i18n-round-trip`,
+`chore/lint-untranslated-strings`, `docs/contributing-guide`. Branch from
+`main` and open a PR back to it.
+
+**Commits** are `type(scope): subject`, subject in lowercase, describing the
+change in plain language rather than in file names:
+
+```
+feat(content): a lesson on why created money is a liability
+fix(web): the Portuguese site sent every reader back to English
+i18n(pt-PT): the drag strings, and a first pass at module 16
+```
+
+Everything — code, comments, docblocks, commit messages, PR descriptions — is
+written in English.
+
+**Before opening a PR**, run what CI runs:
+
+```bash
+npm run typecheck && npm run typecheck:core
+npm run lint:content && npm run audit:content
+npm run lint
+npm run i18n:status -- --strict
+npm run typecheck --workspace web && npm run lint --workspace web && npm run build --workspace web
+```
+
+CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs all of it on
+every push to `main` and every pull request, with read-only permissions and
+first-party actions only. `audit:content` and `i18n:status --strict` fail on
+errors but not on style warnings or on untranslated strings — a rule that
+blocks a new lesson until every language has caught up is a rule that stops
+lessons being written.
+
+## What needs accounts, and therefore a maintainer
+
+These paths are fully wired in the repository but cannot run from a fork,
+because they need credentials that belong to a person rather than a codebase.
+Read them for context; do not expect to exercise them.
+
+| Area | Document |
+|---|---|
+| Google sign-in and cross-device progress (Supabase) | [docs/cloud-sync.md](docs/cloud-sync.md) |
+| App Store and Google Play releases (EAS, ASC, Play Console) | [docs/mobile-release.md](docs/mobile-release.md) |
+| EURC rewards on Base for finishing a module | [docs/rewards.md](docs/rewards.md) |
+| Website deployment (Cloud Run, `openmacro.org`) | [web/README.md](web/README.md) |
+
+Merging to `main` publishes an over-the-air content update to the `preview`
+channel automatically. Production is always a deliberate act — an OTA update
+faces no store review, so nothing stands between a mistake and a learner except
+the checks above.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE). By contributing you agree your work ships under
+it.
