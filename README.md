@@ -1,5 +1,12 @@
 # OpenMacro
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/v3/openmacro-lockup-dark.png">
+  <img src="assets/brand/v3/openmacro-lockup-light.png" alt="OpenMacro" width="280">
+</picture>
+
+[Brand assets and usage](assets/brand/v3/README.md)
+
 **Duolingo-style micro-learning for macroeconomics, monetary policy and
 fractional-reserve banking.** Five minutes a day, aimed at teenagers and young
 adults who were never taught where money actually comes from.

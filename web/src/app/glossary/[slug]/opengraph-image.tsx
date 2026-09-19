@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { GLOSSARY, findTerm } from "@/lib/glossary";
 import { TIERS } from "@/lib/curriculum";
 import { SITE } from "@/lib/site";
+import { getBrandImage } from "@/lib/brand-image";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -28,6 +29,7 @@ export default async function GlossaryOpenGraphImage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const brandImage = await getBrandImage();
   const entry = findTerm(slug);
   const tier = entry ? TIERS.find((item) => item.id === entry.tier) : undefined;
 
@@ -54,10 +56,8 @@ export default async function GlossaryOpenGraphImage({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ display: "flex", fontSize: 28, fontWeight: 700 }}>
-            <span>Open</span>
-            <span style={{ color: "#3ee08a" }}>Macro</span>
-          </div>
+          {/* Satori renders the image directly; next/image is for the DOM. */}
+          <img src={brandImage} alt={SITE.name} width={300} height={49} />
           <div style={{ display: "flex", fontSize: 24, color: "#64748b" }}>
             / glossary
           </div>
