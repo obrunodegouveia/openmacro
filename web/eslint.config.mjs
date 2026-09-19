@@ -40,10 +40,8 @@ const eslintConfig = defineConfig([
         "error",
         {
           allow: [
-            // The brand, split across elements for two-tone styling.
+            // Brand and product names.
             "OpenMacro",
-            "Open",
-            "Macro",
             "MacroXP",
             "MintBucks",
             "GitHub",

@@ -6,10 +6,11 @@
     "version": "1.0.0",
     "description": "Duolingo-style micro-learning for macroeconomics, monetary policy and fractional-reserve banking. Five minutes a day, no account needed.",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/brand/v3/openmacro-icon-light.png",
     "userInterfaceStyle": "light",
     "primaryColor": "#2FBF71",
     "ios": {
+      "icon": "./assets/brand/v3/OpenMacro.icon",
       "supportsTablet": true,
       "bundleIdentifier": "org.openmacro.app",
       "config": {
@@ -24,10 +25,9 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#E3EDE5",
+        "foregroundImage": "./assets/brand/v3/openmacro-android-foreground.png",
+        "monochromeImage": "./assets/brand/v3/openmacro-android-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "org.openmacro.app",
@@ -38,7 +38,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/brand/v3/openmacro-favicon.png",
       "bundler": "metro",
       "output": "single"
     },
@@ -50,8 +50,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/brand/v3/openmacro-splash.png",
+          "imageWidth": 180,
           "resizeMode": "contain",
           "backgroundColor": "#F7F9FB"
         }

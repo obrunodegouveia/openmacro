@@ -10,7 +10,7 @@
  */
 
 import { Fragment } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { router } from 'expo-router';
@@ -42,7 +42,14 @@ export default function LearningPathScreen() {
       {/* ---- header ---------------------------------------------------- */}
       <View style={styles.header}>
         <View style={styles.headerText}>
-          <Text style={styles.brand}>OpenMacro</Text>
+          <Image
+            source={require('../../assets/brand/v3/openmacro-lockup-light.png')}
+            style={styles.brandLockup}
+            resizeMode="contain"
+            accessible
+            accessibilityRole="image"
+            accessibilityLabel="OpenMacro"
+          />
           <Text style={styles.tagline}>{course.description}</Text>
         </View>
         <View style={styles.headerStats}>
@@ -186,9 +193,11 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.xs,
   },
-  brand: {
-    ...typography.display,
-    color: palette.ink,
+  brandLockup: {
+    width: '100%',
+    maxWidth: 212,
+    height: 40,
+    alignSelf: 'flex-start',
   },
   tagline: {
     ...typography.caption,

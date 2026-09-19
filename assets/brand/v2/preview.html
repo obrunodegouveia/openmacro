@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenMacro — An open system</title>
+<style>
+  :root { color-scheme: light; --pine:#183d35; --celadon:#e3ede5; --ink:#14261f; --muted:#5c7267; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#fff; color:var(--pine); font-family:'Avenir Next',Avenir,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  main { max-width:1440px; margin:auto; padding:48px 64px 32px; }
+  header { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-bottom:52px; }
+  header img { width:174px; }
+  header p { color:var(--muted); font-size:14px; margin:0; }
+  .identity { display:grid; grid-template-columns:1fr 1fr; min-height:500px; }
+  .identity-copy { display:flex; flex-direction:column; justify-content:center; padding:30px 64px 50px 0; }
+  .wordmark { width:100%; max-width:460px; margin-bottom:38px; }
+  h1 { font-size:30px; font-weight:400; line-height:1.3; letter-spacing:-.7px; margin:0 0 20px; max-width:300px; }
+  .identity-copy p { margin:0; max-width:340px; font-size:15px; line-height:1.7; color:var(--muted); }
+  .hero-mark { background:var(--celadon); display:grid; place-items:center; }
+  .hero-mark img { width:86%; display:block; }
+  .applications { display:grid; grid-template-columns:1.3fr 1fr; gap:80px; align-items:center; padding-top:68px; }
+  h2 { font-size:20px; font-weight:500; letter-spacing:-.4px; margin:0 0 24px; }
+  .icons { display:flex; align-items:flex-start; justify-content:space-between; gap:26px; }
+  figure { margin:0; }
+  .icons figure { flex:1; max-width:144px; }
+  .icons img { width:100%; display:block; border-radius:23%; }
+  figcaption { margin-top:14px; font-size:13px; color:var(--muted); }
+  .sizes { margin-top:42px; display:flex; align-items:center; gap:22px; }
+  .sizes img { display:block; border-radius:23%; }
+  .sizes span { color:var(--muted); font-size:13px; margin-left:8px; }
+  .launch { display:flex; align-items:center; gap:34px; }
+  .screen { position:relative; width:178px; height:350px; flex-shrink:0; border:1px solid #dce4df; border-radius:30px; background:#f7f9fb; display:grid; place-items:center; overflow:hidden; }
+  .screen img { width:85px; }
+  .screen::after { content:''; position:absolute; bottom:9px; width:58px; height:3px; border-radius:4px; background:var(--ink); }
+  .launch p { color:var(--muted); font-size:14px; line-height:1.6; margin:0; max-width:160px; }
+  .launch h2 { margin-bottom:12px; }
+  footer { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:58px; padding-top:26px; border-top:1px solid #e6ece8; }
+  .palette { display:flex; gap:22px; font-size:12px; color:var(--muted); flex-wrap:wrap; }
+  .swatch { display:inline-flex; align-items:center; gap:8px; }
+  .swatch i { width:12px; height:12px; border-radius:50%; display:inline-block; }
+  footer a { color:var(--pine); text-underline-offset:4px; font-size:13px; }
+  a:focus-visible { outline:2px solid var(--pine); outline-offset:5px; }
+  @media(max-width:900px) { main{padding:28px} .identity-copy{padding-right:32px} .identity{min-height:390px} .applications{gap:38px} .launch{gap:20px} .screen{width:142px;height:286px} }
+  @media(max-width:650px) { header{margin-bottom:34px} header p{display:none} .identity{grid-template-columns:1fr} .identity-copy{padding:36px 0 44px} .wordmark{max-width:330px} .hero-mark{aspect-ratio:1} .applications{grid-template-columns:1fr;gap:46px;padding-top:42px} .icons{gap:22px} .icons figure{max-width:130px} .launch{justify-content:center;gap:40px} footer{align-items:flex-start;flex-direction:column} }
+</style>
+<main>
+  <header><img src="openmacro-lockup.svg" alt="OpenMacro"><p>Identity, second iteration</p></header>
+  <section class="identity" aria-label="Brand identity">
+    <div class="identity-copy">
+      <img class="wordmark" src="openmacro-wordmark.svg" alt="openmacro">
+      <h1>Understand how<br>money works.</h1>
+      <p>Two interlocking forms. An open O.<br>A quiet M in the counterspace.<br>A mark about seeing the whole system.</p>
+    </div>
+    <div class="hero-mark"><img src="openmacro-splash.png" alt="The OpenMacro symbol in deep pine"></div>
+  </section>
+  <section class="applications" aria-label="App applications">
+    <div>
+      <h2>At home on your Home Screen.</h2>
+      <div class="icons">
+        <figure><img src="openmacro-icon-light.png" alt="Default app icon"><figcaption>Default</figcaption></figure>
+        <figure><img src="openmacro-icon-dark.png" alt="Dark app icon"><figcaption>Dark</figcaption></figure>
+        <figure><img src="openmacro-icon-tinted.png" alt="Monochrome source for system tinting"><figcaption>Tinted source</figcaption></figure>
+      </div>
+      <div class="sizes" aria-label="Small size samples">
+        <img src="openmacro-icon-light.png" width="60" height="60" alt="60 pixels">
+        <img src="openmacro-icon-light.png" width="40" height="40" alt="40 pixels">
+        <img src="openmacro-icon-light.png" width="24" height="24" alt="24 pixels">
+        <span>One silhouette, every size.</span>
+      </div>
+    </div>
+    <div class="launch">
+      <div class="screen"><img src="openmacro-splash.png" alt="Splash screen logo"></div>
+      <div><h2>A quiet arrival.</h2><p>The same mark, centered on the app’s light canvas.</p></div>
+    </div>
+  </section>
+  <footer>
+    <div class="palette">
+      <span class="swatch"><i style="background:#183d35"></i>Pine</span>
+      <span class="swatch"><i style="background:#e3ede5"></i>Celadon</span>
+      <span class="swatch"><i style="background:#14261f"></i>Night</span>
+      <span class="swatch"><i style="background:white;border:1px solid #dce4df"></i>White</span>
+    </div>
+    <a href="openmacro-mark.svg" download>Download the vector mark</a>
+  </footer>
+</main>
+</html>

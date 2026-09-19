@@ -5,6 +5,7 @@ import { getSiteText } from "@/lib/site-text";
 import { AccountPanel } from "@/components/site/account-button";
 import { Badge } from "@/components/ui/badge";
 import { LanguagePicker } from "@/components/site/language-picker";
+import { BrandLogo } from "@/components/site/brand-logo";
 import {
   GITHUB_CONTRIBUTING_URL,
   GITHUB_ISSUES_URL,
@@ -114,9 +115,9 @@ export async function Footer() {
 
         <div className="mt-10 flex flex-col items-start justify-between gap-5 border-t border-hairline pt-8 sm:flex-row sm:items-center">
           <div>
-            <p className="font-display text-sm font-extrabold">
-              Open<span className="text-mint-bright">Macro</span>
-            </p>
+            <LocaleLink href="/" className="inline-flex min-h-11 items-center">
+              <BrandLogo />
+            </LocaleLink>
             <p className="mt-1 text-xs text-ink-faint">
               © {year} {SITE.name} {s("footer.contributors")}{" "}
               {s("footer.disclaimer")}
@@ -191,9 +192,9 @@ export async function FooterMinimal() {
         <p>
           <LocaleLink
             href="/"
-            className="font-display font-extrabold text-ink-muted transition-colors hover:text-ink"
+            className="mr-2 inline-flex min-h-11 items-center align-middle"
           >
-            Open<span className="text-mint-bright">Macro</span>
+            <BrandLogo className="w-[140px]" />
           </LocaleLink>{" "}
           · © {year} {s("footer.contributors")} {s("footer.disclaimer")}
         </p>

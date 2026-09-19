@@ -96,7 +96,7 @@ export const ORGANIZATION = {
   "@type": "Organization",
   name: SITE.name,
   url: SITE.url,
-  logo: `${SITE.url}/icon.svg`,
+  logo: `${SITE.url}/brand/icon-512.png`,
   description: SITE.description,
   sameAs: [`https://github.com/${SITE.githubRepo}`],
 } as const;

@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { SITE } from "@/lib/site";
+import { getBrandImage } from "@/lib/brand-image";
 
 export const alt = `${SITE.name} — ${SITE.tagline}`;
 export const size = { width: 1200, height: 630 };
@@ -13,7 +14,8 @@ export const contentType = "image/png";
  * `display: flex`. That is why the colours are inlined and each line of the
  * headline is its own flex row rather than a text node with a `<br />`.
  */
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  const brandImage = await getBrandImage();
   return new ImageResponse(
     (
       <div
@@ -31,24 +33,8 @@ export default function OpenGraphImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div
-            style={{
-              display: "flex",
-              width: 60,
-              height: 60,
-              borderRadius: 18,
-              border: "3px solid #3ee08a",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 30,
-            }}
-          >
-            🪙
-          </div>
-          <div style={{ display: "flex", fontSize: 34, fontWeight: 700 }}>
-            <span>Open</span>
-            <span style={{ color: "#3ee08a" }}>Macro</span>
-          </div>
+          {/* Satori renders the image directly; next/image is for the DOM. */}
+          <img src={brandImage} alt={SITE.name} width={360} height={58} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>

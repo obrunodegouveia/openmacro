@@ -14,6 +14,7 @@ import { stripLocale } from "@/lib/locale-path";
 import { GITHUB_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { useSiteText } from "@/lib/use-site-text";
+import { BrandLogo } from "@/components/site/brand-logo";
 
 /**
  * Hash targets are written root-relative (`/#demo`, not `#demo`) so the nav
@@ -114,11 +115,8 @@ export function Nav() {
         aria-label={s("nav.aria")}
         className="mx-auto flex h-[var(--header-h)] w-full max-w-6xl items-center justify-between px-5 sm:px-8"
       >
-        <LocaleLink href="/#top" className="flex items-center gap-2.5 font-display">
-          <Logomark />
-          <span className="text-lg font-extrabold tracking-tight">
-            Open<span className="text-mint-bright">Macro</span>
-          </span>
+        <LocaleLink href="/#top" className="flex min-h-11 shrink-0 items-center">
+          <BrandLogo />
         </LocaleLink>
 
         <div className="hidden items-center gap-1 xl:flex">
@@ -247,24 +245,4 @@ function subscribeToCompact(onChange: () => void): () => void {
 
 function isCompact(): boolean {
   return window.matchMedia(COMPACT).matches;
-}
-
-/** Coin-and-ledger mark. Inline SVG so it inherits the theme colours. */
-function Logomark() {
-  return (
-    <span
-      className="grid size-9 place-items-center rounded-xl border border-mint/30 bg-mint/10"
-      aria-hidden
-    >
-      <svg viewBox="0 0 24 24" className="size-5" fill="none">
-        <circle cx="12" cy="12" r="9" stroke="var(--color-mint-bright)" strokeWidth="2" />
-        <path
-          d="M8 14.5c0 1.4 1.8 2.3 4 2.3s4-.9 4-2.6c0-3.6-7.6-1.8-7.6-5 0-1.6 1.7-2.5 3.8-2.5s3.7.9 3.7 2.2"
-          stroke="var(--color-gold)"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-      </svg>
-    </span>
-  );
 }
