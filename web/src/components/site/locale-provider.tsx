@@ -10,25 +10,24 @@
  * those live in the shared package. "Sign out" is translated once.
  *
  * ---------------------------------------------------------------------------
- * WHY THIS IS CLIENT-SIDE, AND WHAT THAT COSTS
+ * WHY THIS EXISTS AT ALL, GIVEN THE URL ALREADY SAYS
  * ---------------------------------------------------------------------------
  *
- * Every lesson page is statically prerendered in English at build time, and
- * that English HTML is what a crawler sees. The reader's language is applied
- * after hydration.
+ * It used to be the only answer: the language lived in `localStorage`, every
+ * URL served English HTML, and the reader's choice was applied after
+ * hydration. `middleware.ts` replaced that — `/pt/...` is now a real address
+ * per page, with its own `hreflang` pair and its own entry in the sitemap, and
+ * `initialLocale` is handed down from the server so the HTML a crawler fetches
+ * is already Portuguese.
  *
- * That is the right trade for the learner-facing app — it is behind a choice,
- * it is interactive, and nobody is finding a lesson player through search in a
- * language the page does not claim to be in. It is *not* the right answer for
- * the marketing pages, and they are deliberately left alone: a genuinely
- * multilingual site needs a `/pt/...` URL per page so that each language has
- * its own crawlable address and `hreflang` pair. That is a routing decision
- * with consequences for the sitemap, the canonical tags and every internal
- * link, and it should be made deliberately rather than arriving as a side
- * effect of adding a language toggle.
+ * What is left for this provider is everything a client island needs: the
+ * translator, the localised course, and the language the picker highlights.
+ * The URL still wins whenever it says anything, so the stored preference only
+ * decides for a tree mounted outside the routed layout.
  *
- * So: the course speaks Portuguese, the sales pitch does not yet. The gap is
- * visible, on purpose, rather than papered over.
+ * The one thing to remember when adding to the site: an internal link must go
+ * through `<LocaleLink>`, or it will send a Portuguese reader to the English
+ * page. That was true of all forty of them until it was fixed.
  */
 
 import * as React from "react";

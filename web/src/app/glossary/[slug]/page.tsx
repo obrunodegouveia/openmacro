@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getSiteText } from "@/lib/site-text";
 import { serverLocale } from "@/lib/locale-server";
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, TriangleAlert } from "lucide-react";
 import { Nav } from "@/components/site/nav";
@@ -10,7 +10,7 @@ import { Section } from "@/components/ui/section";
 import { Badge } from "@/components/ui/badge";
 import { GLOSSARY } from "@/lib/glossary";
 import { localisedTerm } from "@/lib/glossary-locale";
-import { TIERS } from "@/lib/curriculum";
+import { localisedTiers } from "@/lib/curriculum-locale";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
@@ -63,7 +63,7 @@ export default async function GlossaryTermPage({
   const entry = localisedTerm(locale, slug);
   if (!entry) notFound();
 
-  const tier = TIERS.find((candidate) => candidate.id === entry.tier);
+  const tier = localisedTiers(locale).find((candidate) => candidate.id === entry.tier);
   const related = entry.related
     .map((relatedSlug) => localisedTerm(locale, relatedSlug))
     .filter((candidate) => candidate !== undefined);
@@ -105,16 +105,16 @@ export default async function GlossaryTermPage({
       />
 
       <Nav />
-      <main id="main" className="pt-16">
+      <main id="main" className="pt-[var(--header-total)]">
         <Section>
           <div className="mx-auto max-w-3xl">
-            <Link
+            <LocaleLink
               href="/glossary"
               className="inline-flex items-center gap-2 text-sm font-bold text-ink-muted transition-colors hover:text-mint-bright"
             >
               <ArrowLeft className="size-4" aria-hidden />
               {s("term.allTerms")}
-            </Link>
+            </LocaleLink>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
               {entry.abbreviation ? (
@@ -208,7 +208,7 @@ export default async function GlossaryTermPage({
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {related.map((item) => (
                     <li key={item.slug}>
-                      <Link
+                      <LocaleLink
                         href={`/glossary/${item.slug}`}
                         className="flex h-full flex-col rounded-2xl border border-hairline bg-white/[0.02] p-4 transition-colors hover:border-mint/40 hover:bg-white/[0.05]"
                       >
@@ -218,7 +218,7 @@ export default async function GlossaryTermPage({
                         <span className="mt-1 text-xs leading-relaxed text-ink-muted">
                           {item.definition}
                         </span>
-                      </Link>
+                      </LocaleLink>
                     </li>
                   ))}
                 </ul>
@@ -257,12 +257,12 @@ export default async function GlossaryTermPage({
               <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                 {s("term.postItBody")}
               </p>
-              <Link
+              <LocaleLink
                 href="/#demo"
                 className="mt-4 inline-flex h-11 items-center justify-center rounded-xl border-b-4 border-mint-deep bg-mint px-5 font-extrabold text-abyss transition-all hover:bg-mint-bright active:translate-y-[3px] active:border-b-0"
               >
                 {s("term.tryDemo")}
-              </Link>
+              </LocaleLink>
             </div>
           </div>
         </Section>

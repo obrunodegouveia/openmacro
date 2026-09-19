@@ -91,6 +91,110 @@ export const kabIsItRealWealthLesson = defineLesson({
       explanation:
         'This is the counter-example to "money creation always means inflation". Money grew, and prices still fell, because the money was put to work building things that made the pie bigger faster than the money grew. Inflation is about the race between the two, not about the creation of money alone.',
     },
+    {
+      id: 'mc-bad-projects',
+      type: 'multiple_choice',
+      tags: ['money-creation', 'inflation', 'credit-risk'],
+      xp: 30,
+      prompt:
+        'Run the same story with bad projects. The canal silts up, the tool factory never opens, and apple production stays at 1,000 a year. Deposits are still 2,710. What has gone wrong, and where?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'both',
+          label: 'Both an inflation and a bank failure, out of the same failed projects',
+        },
+        {
+          id: 'inflation',
+          label: 'Only inflation — more money chasing the same number of apples',
+          feedback:
+            'That is half of it. Ask what is on the asset side of the bank against those 2,710 of deposits: two loans that will not be repaid.',
+        },
+        {
+          id: 'bankonly',
+          label: 'Only the bank fails. Prices are set by supply and demand, not by deposits',
+          feedback:
+            'Prices here are set by claims meeting goods. 2,710 of spendable claims against 1,000 apples is a different price level from 1,000 against 1,000.',
+        },
+        {
+          id: 'nothing',
+          label: 'Nothing. The money was created and still exists',
+          feedback:
+            'It exists as a number in an account. What it buys, and whether the bank can honour it, are exactly what the failed projects have changed.',
+        },
+      ],
+      correctOptionId: 'both',
+      explanation:
+        'This is the mirror image of the video and the more useful half. Credit expansion is not inflationary or benign by nature — it depends entirely on whether the things borrowed for get built. When they do, money and goods grow together. When they do not, you get both an inflation and a banking crisis out of the same failed projects, which is a fair description of most financial crises.',
+    },
+    {
+      id: 'mc-partial-growth',
+      type: 'multiple_choice',
+      tags: ['inflation', 'money-supply'],
+      xp: 30,
+      prompt:
+        'Now suppose the projects half worked: apple output rises from 1,000 to 1,500 a year rather than 3,000, while deposits still reach 2,710. What happens to the price of an apple?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'rises',
+          label: 'It rises — claims grew 2.7 times and apples only 1.5',
+        },
+        {
+          id: 'falls',
+          label: 'It falls, as it did in the video, because output went up',
+          feedback:
+            'Output going up is not enough on its own. What matters is whether it went up faster than the claims on it, and 1.5 times is well short of 2.7.',
+        },
+        {
+          id: 'same',
+          label: 'It stays at one gold piece, because M0 is still 1,000',
+          feedback:
+            'People spend what they believe they hold, which is the 2,710 in their accounts. M0 sitting in a vault is not what meets the apples at market.',
+        },
+        {
+          id: 'unknowable',
+          label: 'There is not enough information without knowing the interest rate',
+          feedback:
+            'The interest rate decides who gets to borrow. The price level here follows from the two ratios you already have.',
+        },
+      ],
+      correctOptionId: 'rises',
+      explanation:
+        'Roughly 2,710 of claims against 1,500 apples is about 1.8 gold pieces an apple, up from one. The video picks numbers where wealth outruns money and gets deflation; pick numbers where it does not and the same mechanism gives inflation. Nothing about credit creation determines which — the productivity of what was funded does.',
+    },
+    {
+      id: 'match-money-wealth',
+      type: 'concept_match',
+      tags: ['money-supply', 'wealth'],
+      xp: 25,
+      prompt: 'The video insists on one distinction above all others. Match each idea to what it actually refers to on the island.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'money',
+          term: 'Money',
+          definition: 'The 2,710 of claims — you cannot eat it, live under it or travel on it',
+        },
+        {
+          id: 'wealth',
+          term: 'Wealth',
+          definition: 'The apples, the canal and the tool factory, which is what the claims are claims on',
+        },
+        {
+          id: 'm0',
+          term: 'M0',
+          definition: 'The 1,000 gold pieces, which never changed and never could',
+        },
+        {
+          id: 'deflation',
+          term: 'Deflation on the island',
+          definition: 'Wealth grew faster than the claims on it, so each claim came to buy more',
+        },
+      ],
+      explanation:
+        'Sal says confusing the two will make you unhappy, and he is making an economic point rather than a moral one. Gold represents wealth; it is not wealth. An island that doubles its gold and grows no apples is not richer, and an island that triples its apples is richer whether or not anyone mines anything.',
+    },
   ],
   keyTakeaways: [
     'Created money is real wealth exactly insofar as the projects it funded are real.',

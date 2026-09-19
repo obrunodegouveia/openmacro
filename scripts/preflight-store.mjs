@@ -41,6 +41,13 @@ const strictMetadata = process.argv.includes('--metadata');
 const errors = [];
 const warnings = [];
 
+/**
+ * Where the store build gets its Supabase configuration from, or null if it
+ * does not get one. Set while reading `eas.json`; read by the account and
+ * sign-in checks further down, which only apply to a build that has accounts.
+ */
+let accountsExpected = null;
+
 /** @param {string} where @param {string} message */
 const fail = (where, message) => errors.push({ where, message });
 /** @param {string} where @param {string} message */
@@ -56,6 +63,11 @@ function readJson(relativePath) {
     fail(relativePath, `not valid JSON — ${error.message}`);
     return null;
   }
+}
+
+/** Apple's App Store locale for a bundle language, e.g. `en` → `en-US`. */
+function APPLE_LOCALE(language, overrides) {
+  return overrides[language] ?? language;
 }
 
 /**
@@ -207,14 +219,21 @@ if (!eas) {
     return { ...inherited, ...(profile.env ?? {}) };
   };
 
-  if (resolvedEnv('production').EXPO_PUBLIC_SUPABASE_URL) {
-    warn(
-      'eas.json',
-      'the production profile configures Supabase, so the store build will offer Google ' +
-        'sign-in. Both stores then require in-app account deletion (Apple 5.1.1(v)); ' +
-        '`reset()` clears progress rows but does not delete the auth user. ' +
-        'See docs/mobile-release.md#accounts-change-what-review-asks-for.',
-    );
+  /**
+   * Whether the store build will have accounts at all.
+   *
+   * This used to read `eas.json` alone and answer no — while the production
+   * build has had Supabase all along, because the value lives in the EAS
+   * `production` environment (`eas env:list production`), not in this file. A
+   * check that looks in one of two places and reports "not configured" is worse
+   * than no check, so it consults both and says which one it found.
+   */
+  const profileEnv = resolvedEnv('production').EXPO_PUBLIC_SUPABASE_URL;
+  const hostedEnv = eas.build?.production?.environment;
+  if (profileEnv) {
+    accountsExpected = 'eas.json';
+  } else if (hostedEnv) {
+    accountsExpected = `the EAS "${hostedEnv}" environment`;
   }
 
   // EXPO_PUBLIC_* is inlined into the JavaScript bundle at build time and
@@ -313,6 +332,249 @@ if (!store) {
       `still contains placeholder(s): ${[...new Set(placeholders)].join(', ')}. ` +
         'Fill them in before `npm run metadata:push` — TestFlight does not read them.',
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sign-in: every surface has to agree, including one that is not in this repo
+// ---------------------------------------------------------------------------
+
+/**
+ * Guideline 4.8 and the three-way split it creates.
+ *
+ * An app offering a third-party login service must also offer one that
+ * collects no more than name and email and does not track the person. Sign in
+ * with Apple is that option, and offering it takes three things that live in
+ * three different places: the entitlement (`app.json`), the client code (the
+ * plugin and the module), and the provider switched on in the Supabase
+ * dashboard. Two out of three is a sign-in button that throws.
+ *
+ * A broken alternative is worse than an absent one — Apple reads it as a 4.8
+ * failure *and* a crash — so the ones this can prove are blocking.
+ */
+if (app && accountsExpected) {
+  const hasApplePlugin = (app.plugins ?? []).some(
+    (plugin) => (Array.isArray(plugin) ? plugin[0] : plugin) === 'expo-apple-authentication',
+  );
+  const pkg = readJson('package.json');
+  const hasAppleModule = Boolean(pkg?.dependencies?.['expo-apple-authentication']);
+
+  if (!app.ios?.usesAppleSignIn) {
+    /**
+     * A warning, not a blocker, and that is a decision rather than an oversight.
+     *
+     * Guideline 4.8 does require an equivalent option, and this is the shape of
+     * rejection that costs a review cycle. Sign in with Apple was built for it
+     * and then deliberately removed, because it needs the Apple provider enabled
+     * in the Supabase project and a button that errors on every tap fails 4.8
+     * harder than an absent one.
+     *
+     * Blocking the build would be a check overruling a choice that has been
+     * made with the risk understood. Saying so on every single run is the
+     * honest middle: the risk stays visible, and nobody has to remember it.
+     */
+    warn(
+      'app.json',
+      `the store build offers Google sign-in (Supabase comes from ${accountsExpected}) and no ` +
+        'alternative, which App Store guideline 4.8 requires. Shipping this way is an accepted ' +
+        'risk, not an omission — restoring it is expo-apple-authentication, ios.usesAppleSignIn, ' +
+        'a signInWithIdToken call, and the Apple provider switched on in Supabase.',
+    );
+  }
+  if (app.ios?.usesAppleSignIn && !hasApplePlugin) {
+    fail(
+      'app.json',
+      'ios.usesAppleSignIn is set but "expo-apple-authentication" is not in plugins, so the ' +
+        'entitlement never reaches the binary and `isAvailableAsync()` answers false in the ' +
+        'build you ship.',
+    );
+  }
+  if (app.ios?.usesAppleSignIn && !hasAppleModule) {
+    fail(
+      'package.json',
+      'ios.usesAppleSignIn is set but expo-apple-authentication is not a dependency.',
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Screenshots — the only part of the listing that is not text
+// ---------------------------------------------------------------------------
+
+/**
+ * Required sizes, keyed by App Store Connect's own display type.
+ *
+ * Apple accepts two pixel sizes per slot because two generations of hardware
+ * share it, and rejects anything else at push time. `supportsTablet` is what
+ * makes the iPad set mandatory rather than optional — an app that says it runs
+ * on iPad has to show itself running on one.
+ */
+const SCREENSHOT_SLOTS = {
+  APP_IPHONE_67: {
+    label: '6.9" iPhone',
+    sizes: [
+      [1320, 2868],
+      [1290, 2796],
+    ],
+  },
+  APP_IPAD_PRO_3GEN_129: {
+    label: '13" iPad',
+    sizes: [
+      [2064, 2752],
+      [2048, 2732],
+    ],
+    onlyIfTablet: true,
+  },
+};
+
+if (store?.apple?.info) {
+  for (const [locale, info] of Object.entries(store.apple.info)) {
+    const sets = info.screenshots ?? {};
+
+    for (const [slot, spec] of Object.entries(SCREENSHOT_SLOTS)) {
+      if (spec.onlyIfTablet && !app?.ios?.supportsTablet) continue;
+
+      const shots = sets[slot] ?? [];
+      if (shots.length === 0) {
+        (strictMetadata ? fail : warn)(
+          'store.config.json',
+          `apple.info.${locale} has no ${spec.label} screenshots (${slot}). A submission ` +
+            'without them is rejected before a human sees the app, and they are the one part ' +
+            'of the listing that cannot be written — they are pictures of it running.',
+        );
+        continue;
+      }
+
+      for (const relative of shots) {
+        const png = readPng(relative.replace(/^\.\//, ''));
+        if (!png) {
+          fail('store.config.json', `screenshot ${relative} is missing or is not a PNG.`);
+          continue;
+        }
+        const matches = spec.sizes.some(([w, h]) => png.width === w && png.height === h);
+        if (!matches) {
+          fail(
+            'assets',
+            `${relative} is ${png.width}×${png.height}; ${slot} accepts only ` +
+              `${spec.sizes.map(([w, h]) => `${w}×${h}`).join(' or ')}.`,
+          );
+        }
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Languages — the binary and the listing should claim the same ones
+// ---------------------------------------------------------------------------
+
+/**
+ * A language in `CFBundleLocalizations` with no App Store listing means the app
+ * speaks Portuguese and its store page does not, which costs nothing at review
+ * and everything in discovery: the App Store will not show a localised page it
+ * does not have. The reverse — a listing for a language the binary does not
+ * declare — is the one that looks like a mistake to a reviewer.
+ */
+if (app && store?.apple?.info) {
+  const APP_STORE_LOCALE = { en: 'en-US' };
+  const declared = app.ios?.infoPlist?.CFBundleLocalizations ?? [];
+  const listed = Object.keys(store.apple.info);
+
+  for (const language of declared) {
+    const expected = APPLE_LOCALE(language, APP_STORE_LOCALE);
+    if (!listed.includes(expected)) {
+      warn(
+        'store.config.json',
+        `the app declares "${language}" in CFBundleLocalizations but there is no ` +
+          `apple.info["${expected}"], so the App Store has no page in that language.`,
+      );
+    }
+  }
+  for (const locale of listed) {
+    const language = locale.startsWith('en') ? 'en' : locale;
+    if (!declared.includes(language)) {
+      warn(
+        'app.json',
+        `there is an App Store listing for "${locale}" but the app does not declare ` +
+          `"${language}" in ios.infoPlist.CFBundleLocalizations.`,
+      );
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// The one check that needs the network
+// ---------------------------------------------------------------------------
+
+/**
+ * Is the Apple provider actually switched on in Supabase?
+ *
+ * Everything above is in this repository. This is not: the provider is a toggle
+ * in the Supabase dashboard, and with it off `signInWithIdToken` rejects a
+ * perfectly valid Apple token. The app then ships a Sign in with Apple button
+ * that fails every time it is pressed, which fails guideline 4.8 more
+ * comprehensively than not offering Apple at all — a reviewer sees the required
+ * alternative, taps it, and watches it error.
+ *
+ * `/auth/v1/settings` is a public endpoint that lists the enabled providers, so
+ * this is cheap and needs no secret. It reads the URL from `.env`, which is the
+ * local copy of what the EAS environment holds; a build that gets its values
+ * only from EAS still gets the same answer, because it is the same project.
+ *
+ * Unreachable is a warning, not a failure. A preflight that cannot run on a
+ * train is a preflight people learn to skip.
+ */
+function dotEnv() {
+  const path = join(ROOT, '.env');
+  if (!existsSync(path)) return {};
+  const out = {};
+  for (const line of readFileSync(path, 'utf8').split('\n')) {
+    const match = /^\s*([A-Z0-9_]+)\s*=\s*(.*)$/.exec(line);
+    if (match) out[match[1]] = match[2].trim().replace(/^['"]|['"]$/g, '');
+  }
+  return out;
+}
+
+if (app?.ios?.usesAppleSignIn && accountsExpected) {
+  const local = dotEnv();
+  const url = local.EXPO_PUBLIC_SUPABASE_URL;
+  const key = local.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !key) {
+    warn(
+      '.env',
+      'cannot check which sign-in providers Supabase has enabled without ' +
+        'EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY here. The store build ' +
+        `reads them from ${accountsExpected}; this check reads .env.`,
+    );
+  } else {
+    try {
+      const response = await fetch(`${url}/auth/v1/settings`, {
+        headers: { apikey: key },
+        signal: AbortSignal.timeout(6000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${String(response.status)}`);
+      const settings = await response.json();
+      if (settings.external?.apple !== true) {
+        const enabled = Object.entries(settings.external ?? {})
+          .filter(([, on]) => on)
+          .map(([name]) => name);
+        fail(
+          'supabase',
+          'the app offers Sign in with Apple but the Supabase project has the Apple provider ' +
+            `switched off (enabled: ${enabled.join(', ') || 'none'}). Every tap will error. ` +
+            'Enable it under Authentication → Sign In / Providers → Apple and add the bundle ' +
+            `id "${app.ios?.bundleIdentifier ?? ''}" to its authorised client ids — a native ` +
+            'iOS sign-in needs no Services ID and no secret key.',
+        );
+      }
+    } catch (error) {
+      warn(
+        'supabase',
+        `could not reach ${url}/auth/v1/settings to check the enabled providers ` +
+          `(${error.message}). Verify by hand that Apple is on before submitting.`,
+      );
+    }
   }
 }
 

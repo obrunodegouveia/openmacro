@@ -11,6 +11,7 @@
  */
 export const en = {
   // ---- navigation ---------------------------------------------------------
+  'embed.frameTitle': 'OpenMacro lesson video',
   'nav.signIn': 'Sign in',
   'nav.home': 'Home',
   'nav.aria': 'Main',
@@ -22,6 +23,10 @@ export const en = {
   'nav.contribute': 'Contribute',
   'nav.dashboard': 'Dashboard',
   'nav.github': 'GitHub',
+  'nav.menu.title': 'Menu',
+  'nav.menu.browse': 'Browse',
+  'nav.menu.account': 'Account',
+  'nav.menu.project': 'Project',
   'nav.openMenu': 'Open menu',
   'nav.closeMenu': 'Close menu',
 
@@ -29,6 +34,9 @@ export const en = {
   'hero.title.lead': 'Understand the',
   'hero.title.emphasis': 'Machine',
   'hero.title.tail': 'Behind Money.',
+  'hero.stat.tiers': 'Balance sheet tiers',
+  'hero.stat.lessons': 'Lessons live',
+  'hero.stat.free': 'Free, forever',
   'hero.subtitle':
     'The open-source, gamified platform teaching macroeconomics, central banking, and credit creation — one balance sheet entry at a time.',
   'hero.start': 'Start learning',
@@ -368,11 +376,11 @@ export const en = {
   'privacy.authoritative': '',
   'privacy.short.title': 'The short version',
   'privacy.short.body':
-    'You can read every page, play every simulation and finish every lesson on this site without an account, and we do not run analytics, advertising or third-party tracking scripts. If you choose to sign in with Google, we save your XP and day streak so they follow you between devices — that is the only reason an account exists, and the only personal data we hold.',
+    'You can read every page, play every simulation and finish every lesson on this site without an account, and we do not run analytics, advertising or third-party tracking scripts. If you choose to sign in with Google we save your XP and day streak so they follow you between devices; that is the only reason an account exists, and the only personal data we hold.',
   'privacy.collect.title': 'What we collect',
-  'privacy.collect.google.label': 'If you sign in with Google.',
-  'privacy.collect.google.body':
-    'Google sends us your name, email address, profile picture and your Google account identifier. We store your name against your progress, and the email address is held by our authentication provider so you can sign back in.',
+  'privacy.collect.signin.label': 'If you sign in.',
+  'privacy.collect.signin.body':
+    'We ask Google for a name, an email address and a profile picture; the picture appears on your own account row and nowhere else. We store the name against your progress, and the address is held by our authentication provider so you can sign back in.',
   'privacy.collect.progress.label': 'Your progress, once signed in.',
   'privacy.collect.progress.body':
     'Total XP, your day streak, the date of your last completed lesson, and for each lesson your best score, how many times you have finished it and when. No answers, no timings, nothing about how you played.',
@@ -394,7 +402,7 @@ export const en = {
   'privacy.coppa.1':
     'No account is needed to learn. Every lesson, on the site and in the app, plays in full without signing in, and while you are signed out progress stays on the device and is never uploaded.',
   'privacy.coppa.2':
-    'Signing in is optional and requires a Google Account, which Google does not issue to children under 13 — and under 16 in some countries. A child using a Family Link account signs in only with their parent’s approval.',
+    'Signing in is optional, and we ask Google for a name and an email address and nothing else. Google does not tell us how old anyone is, so sign-in is not an age check and we do not treat it as one. What protects a child here is that there is nothing to collect: no advertising, no profiling, no free-text field, and no way to reach another person from inside the product. Where a child does sign in, a Google Family Link account exists only with a parent’s approval.',
   'privacy.coppa.3.lead':
     'We do not knowingly collect personal information from children under 13. If you believe a child has signed in, write to',
   'privacy.coppa.3.tail': 'and we will delete the account and everything attached to it.',

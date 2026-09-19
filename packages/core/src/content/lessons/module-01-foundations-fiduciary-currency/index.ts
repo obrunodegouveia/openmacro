@@ -15,7 +15,8 @@ import { whyPaperIsAcceptedLesson } from './lesson-02-why-paper-is-accepted';
 import { purchasingPowerLesson } from './lesson-03-purchasing-power';
 import { pegsAndConvertibilityLesson } from './lesson-04-pegs-and-convertibility';
 import { baseAndBroadMoneyLesson } from './lesson-05-base-and-broad-money';
-import { whenCurrenciesFailLesson } from './lesson-06-when-currencies-fail';
+import { theMoneyIsTheIouLesson } from './lesson-06-the-money-is-the-iou';
+import { whenCurrenciesFailLesson } from './lesson-07-when-currencies-fail';
 
 export const moduleFoundationsFiduciaryCurrency = defineModule({
   id: 'foundations-fiduciary-currency',
@@ -29,6 +30,7 @@ export const moduleFoundationsFiduciaryCurrency = defineModule({
     purchasingPowerLesson,
     pegsAndConvertibilityLesson,
     baseAndBroadMoneyLesson,
+    theMoneyIsTheIouLesson,
     whenCurrenciesFailLesson,
   ],
 });

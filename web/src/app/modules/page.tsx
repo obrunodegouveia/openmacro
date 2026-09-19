@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { getSiteText } from "@/lib/site-text";
 import { FileText, Video } from "lucide-react";
 import { MODULES } from "@openmacro/core/content";
@@ -31,7 +31,7 @@ export default async function ModuleBriefsPage() {
   return (
     <>
       <Nav />
-      <main id="main" className="pt-16">
+      <main id="main" className="pt-[var(--header-total)]">
         <Section>
           <SectionHeading
             align="left"
@@ -105,9 +105,9 @@ export default async function ModuleBriefsPage() {
             </p>
             <p className="mt-3 text-xs leading-relaxed text-ink-faint">
               {s("briefs.privacy")}{" "}
-              <Link href="/privacy" className="text-ink-muted underline underline-offset-4">
+              <LocaleLink href="/privacy" className="text-ink-muted underline underline-offset-4">
                 {s("briefs.privacyLink")}
-              </Link>
+              </LocaleLink>
               .
             </p>
           </div>

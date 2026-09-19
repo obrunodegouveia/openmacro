@@ -11,6 +11,22 @@
  * null, and every account affordance in the UI hides itself. That is the
  * default for a fresh clone: OpenMacro still runs, fully offline, with no
  * mention of signing in.
+ *
+ * ---------------------------------------------------------------------------
+ * GOOGLE IS THE ONLY PROVIDER, AND THAT IS A KNOWN RISK
+ * ---------------------------------------------------------------------------
+ *
+ * App Store guideline 4.8 says an app offering a third-party login service must
+ * also offer an alternative that collects no more than name and email, lets the
+ * learner withhold the real address, and does not use the sign-in to track them.
+ * Sign in with Apple was implemented for exactly that and then deliberately
+ * removed: it needs the Apple provider enabled in the Supabase project, and a
+ * button that errors on every tap fails 4.8 harder than not offering one.
+ *
+ * So this ships Google-only as an accepted risk, not an oversight.
+ * `preflight:store` says so on every run. Restoring it is a small change —
+ * `expo-apple-authentication`, `ios.usesAppleSignIn`, a `signInWithIdToken`
+ * call — plus one toggle in the Supabase dashboard.
  */
 
 import {

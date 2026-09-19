@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { motion } from "motion/react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { MODULES } from "@openmacro/core/content";
@@ -42,12 +42,12 @@ function StartCta() {
   const browse = (
     <p className="mt-4 text-sm text-ink-faint">
       {s("hero.or")}{" "}
-      <Link
+      <LocaleLink
         href="/learn"
         className="text-ink-muted underline underline-offset-4 hover:text-mint-bright"
       >
         {s("hero.browse", { count: LESSON_COUNT })}
-      </Link>{" "}
+      </LocaleLink>{" "}
       {s("hero.noAccount")}
     </p>
   );
@@ -56,10 +56,10 @@ function StartCta() {
     return (
       <div>
         <Button asChild size="lg">
-          <Link href="/learn">
+          <LocaleLink href="/learn">
             {s("hero.start")}
             <ArrowRight className="size-4" aria-hidden />
-          </Link>
+          </LocaleLink>
         </Button>
       </div>
     );
@@ -69,10 +69,10 @@ function StartCta() {
     return (
       <div>
         <Button asChild size="lg">
-          <Link href="/dashboard">
+          <LocaleLink href="/dashboard">
             {s("hero.continue")}
             <ArrowRight className="size-4" aria-hidden />
-          </Link>
+          </LocaleLink>
         </Button>
         {browse}
       </div>
@@ -123,9 +123,9 @@ export function Hero() {
 
           <dl className="rise rise-3 mt-11 grid max-w-lg grid-cols-3 gap-4 border-t border-hairline pt-7">
             {[
-              { value: "4", label: "Balance sheet tiers" },
-              { value: String(LESSON_COUNT), label: "Lessons live" },
-              { value: "100%", label: "Free, forever" },
+              { value: "4", label: s("hero.stat.tiers") },
+              { value: String(LESSON_COUNT), label: s("hero.stat.lessons") },
+              { value: "100%", label: s("hero.stat.free") },
             ].map((stat) => (
               <div key={stat.label}>
                 <dt className="sr-only">{stat.label}</dt>

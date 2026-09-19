@@ -35,6 +35,7 @@ export const en = {
   'account.delete.title': 'Delete this account',
   'account.delete.body':
     'Your XP, streak and lesson history are erased and cannot be recovered. The course keeps working on this device, signed out.',
+  'account.delete.accountIs': 'This account signs in as',
   'account.delete.confirmLabel': 'Type {email} to confirm',
   'account.delete.confirmLabelGeneric': 'Type your email address to confirm',
   'account.delete.placeholder': 'your email',
@@ -90,10 +91,10 @@ export const en = {
   'lesson.video.show': 'Show',
 
   // ---- the challenge types -----------------------------------------------
-  'challenge.order.empty': 'Tap events below to build the chain',
-  'challenge.order.remaining': 'Remaining',
-  'challenge.order.remove': 'Step {number, number}: {label}. Tap to remove.',
-  'challenge.order.add': '{label}. Tap to add to the sequence.',
+  'challenge.order.dragHint': 'Press and hold a step, then drag to reorder',
+  'challenge.order.position': 'Step {number, number} of {total, number}: {label}',
+  'challenge.order.moveUp': 'Move up',
+  'challenge.order.moveDown': 'Move down',
   'challenge.match.term': 'Term',
   'challenge.match.means': 'Means',
   'challenge.match.hint': 'Tap, then tap a definition to link them',

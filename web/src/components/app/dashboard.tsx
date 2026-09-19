@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import {
   ArrowRight,
   Check,
@@ -43,9 +43,9 @@ export function Dashboard() {
     return (
       <p className="text-sm leading-relaxed text-ink-muted">
         {s("dash.noBackend.lead")}{" "}
-        <Link href="/learn" className="text-mint-bright underline underline-offset-4">
+        <LocaleLink href="/learn" className="text-mint-bright underline underline-offset-4">
           {s("dash.noBackend.link")}
-        </Link>
+        </LocaleLink>
         .
       </p>
     );
@@ -157,7 +157,7 @@ export function DashboardView({
       {/* What next ------------------------------------------------------- */}
       {progress.next ? (
         <section aria-label={s("dash.continueAria")}>
-          <Link
+          <LocaleLink
             href={`/learn/${progress.next.lesson.id}`}
             className="group flex items-center gap-4 rounded-card border border-mint/30 bg-mint/[0.06] p-5 transition-colors hover:border-mint/60 hover:bg-mint/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
           >
@@ -179,7 +179,7 @@ export function DashboardView({
               className="size-5 shrink-0 text-mint-bright transition-transform group-hover:translate-x-1"
               aria-hidden
             />
-          </Link>
+          </LocaleLink>
         </section>
       ) : state === "ready" ? (
         <section className="rounded-card border border-gold/30 bg-gold/[0.06] p-5 text-center">
@@ -277,7 +277,7 @@ function LessonRow({
   const perfect = record ? record.bestXp >= maxXp : false;
 
   return (
-    <Link
+    <LocaleLink
       href={`/learn/${lesson.id}`}
       className={cn(
         "flex items-center gap-3 rounded-xl border p-3 transition-colors",
@@ -313,7 +313,7 @@ function LessonRow({
       ) : record ? (
         <RotateCcw className="size-3.5 shrink-0 text-ink-faint" aria-label={s("dash.replay")} />
       ) : null}
-    </Link>
+    </LocaleLink>
   );
 }
 

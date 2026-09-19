@@ -19,11 +19,12 @@
  */
 
 import { defineModule } from '../../schema';
-import { h41AnatomyLesson } from './lesson-01-h41-anatomy';
-import { treasuryAccountDrainLesson } from './lesson-02-treasury-account-drain';
-import { reservesAreTheResidualLesson } from './lesson-03-reserves-are-the-residual';
-import { theBufferThatDrainedLesson } from './lesson-04-the-buffer-that-drained';
-import { isTighteningOverLesson } from './lesson-05-is-tightening-over';
+import { theNightCashCostTenPercentLesson } from './lesson-01-the-night-cash-cost-ten-percent';
+import { h41AnatomyLesson } from './lesson-02-h41-anatomy';
+import { treasuryAccountDrainLesson } from './lesson-03-treasury-account-drain';
+import { reservesAreTheResidualLesson } from './lesson-04-reserves-are-the-residual';
+import { theBufferThatDrainedLesson } from './lesson-05-the-buffer-that-drained';
+import { isTighteningOverLesson } from './lesson-06-is-tightening-over';
 
 export const moduleReadingTheFedBalanceSheet = defineModule({
   id: 'reading-the-fed-balance-sheet',
@@ -32,6 +33,7 @@ export const moduleReadingTheFedBalanceSheet = defineModule({
     "The real H.4.1, line by line: what the Fed owns, who holds its liabilities, and why reserves are whatever is left over. Figures as reported for 2 September 2026.",
   accent: 'mint',
   lessons: [
+    theNightCashCostTenPercentLesson,
     h41AnatomyLesson,
     treasuryAccountDrainLesson,
     reservesAreTheResidualLesson,

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { getSiteText } from "@/lib/site-text";
 import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -57,12 +57,12 @@ export default async function LoginPage() {
 
             <p className="mt-6 text-sm leading-relaxed text-ink-faint">
               {s("login.noAccount.lead")}{" "}
-              <Link
+              <LocaleLink
                 href="/learn"
                 className="text-ink-muted underline underline-offset-4 hover:text-mint-bright"
               >
                 {s("login.noAccount.link")}
-              </Link>{" "}
+              </LocaleLink>{" "}
               {s("login.noAccount.tail")}
             </p>
           </div>

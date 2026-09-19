@@ -73,6 +73,42 @@
   }
 }
 
+:root {
+  /*
+   * The height of the fixed header, in one place.
+   *
+   * It was `h-16` in the nav, `pt-16` in six page files and `top-16` plus a
+   * `calc(100dvh-4rem)` in the menu sheet — five spellings of one number, which
+   * is four opportunities for the bar and the content under it to disagree.
+   * Shortening it for phones meant fixing all of them or none.
+   *
+   * 56px on a phone, 64px from `md` up: a nav bar is 44pt on iOS and the extra
+   * eight give the logo room, while 64 is a sixth of a small screen's height
+   * spent on a bar the reader is not looking at.
+   */
+  --header-h: 3.5rem;
+
+  /*
+   * What everything *below* the bar must clear.
+   *
+   * Two variables rather than one because they answer different questions. The
+   * bar's own row is 56px tall and should stay 56px tall; the distance from the
+   * top of the viewport to the bottom of the bar also includes whatever the
+   * notch takes. Folding the inset into `--header-h` would grow the row itself,
+   * and using `--header-h` as the offset leaves the sheet tucked under the bar
+   * by exactly the height of the notch.
+   */
+  --header-total: calc(env(safe-area-inset-top) + var(--header-h));
+}
+
+/* 80rem, not 48rem: the taller bar belongs with the full navigation, and that
+   only fits from `xl` up. See nav.tsx. */
+@media (min-width: 80rem) {
+  :root {
+    --header-h: 4rem;
+  }
+}
+
 html {
   /*
    * NOT `scroll-behavior: smooth`.

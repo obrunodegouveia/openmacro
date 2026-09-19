@@ -8,6 +8,7 @@
  */
 export const ptPT = {
   // ---- navigation ---------------------------------------------------------
+  'embed.frameTitle': 'Vídeo de lição do OpenMacro',
   'nav.signIn': 'Iniciar sessão',
   'nav.home': 'Início',
   'nav.aria': 'Principal',
@@ -19,6 +20,10 @@ export const ptPT = {
   'nav.contribute': 'Contribuir',
   'nav.dashboard': 'Painel',
   'nav.github': 'GitHub',
+  'nav.menu.title': 'Menu',
+  'nav.menu.browse': 'Navegar',
+  'nav.menu.account': 'Conta',
+  'nav.menu.project': 'Projeto',
   'nav.openMenu': 'Abrir menu',
   'nav.closeMenu': 'Fechar menu',
 
@@ -26,6 +31,9 @@ export const ptPT = {
   'hero.title.lead': 'Percebe a',
   'hero.title.emphasis': 'Máquina',
   'hero.title.tail': 'por Trás do Dinheiro.',
+  'hero.stat.tiers': 'Níveis de balanço',
+  'hero.stat.lessons': 'Lições disponíveis',
+  'hero.stat.free': 'Gratuito, para sempre',
   'hero.subtitle':
     'A plataforma aberta e gamificada que ensina macroeconomia, banca central e criação de crédito — um lançamento de balanço de cada vez.',
   'hero.start': 'Começar a aprender',
@@ -64,7 +72,7 @@ export const ptPT = {
   'features.lede': 'Três convicções moldam todas as lições que publicamos.',
   'features.budgeting.title': 'Não É Mais Uma App de Orçamentos',
   'features.budgeting.body':
-    'Saber que deves saltar o café diário não te diz porque é que a renda subiu mais depressa do que o teu ordenado. E os cursos de «noções básicas de dinheiro» param exactamente onde a coisa fica interessante — no ponto em que terias de abrir o balanço de um banco central.',
+    'Saber que deves saltar o café diário não te diz porque é que a renda subiu mais depressa do que o teu ordenado. E os cursos de «noções básicas de dinheiro» param exatamente onde a coisa fica interessante — no ponto em que terias de abrir o balanço de um banco central.',
   'features.budgeting.theirsHeading': 'As apps de orçamento perguntam',
   'features.budgeting.theirs.0': 'Para onde foi o meu dinheiro?',
   'features.budgeting.theirs.1': 'Posso dar-me a isto?',
@@ -88,7 +96,7 @@ export const ptPT = {
     'Reordena módulos, esconde o que ainda não deste, e fixa uma lição como o trabalho de casa desta semana.',
   'features.educator.prizes.title': 'Prémios patrocinados',
   'features.educator.prizes.body':
-    'Financia um prémio para a tua turma ou para o teu filho — livros, equipamento ou privilégios. Defines o objectivo e atribui-lo directamente.',
+    'Financia um prémio para a tua turma ou para o teu filho — livros, equipamento ou privilégios. Defines o objetivo e atribui-lo diretamente.',
   'features.educator.ledger.title': 'Registo sem custódia',
   'features.educator.ledger.body':
     'O registo de recompensas vive no dispositivo de quem aprende. Sem carteira, sem dinheiro real, nada para levantar.',
@@ -102,7 +110,7 @@ export const ptPT = {
     'O dinheiro é o passivo de alguém em todos os níveis. O OpenMacro ensina a hierarquia inteira, não uma caricatura do topo dela.',
   'tiers.tier': 'Nível {n, number}',
   'tiers.tierOf': 'Nível {n, number} · {subject}',
-  'tiers.assets': 'Activo',
+  'tiers.assets': 'Ativo',
   'tiers.assetsHint': 'O que possui',
   'tiers.liabilities': 'Passivo',
   'tiers.liabilitiesHint': 'O que deve',
@@ -152,7 +160,7 @@ export const ptPT = {
   'contribute.validatedBy': 'por',
   'contribute.validatedTail':
     'que rejeita qualquer cenário cujos lançamentos esperados deixem um balanço por fechar — o erro que todos os contribuidores cometem à primeira.',
-  'contribute.live': 'Em directo do GitHub',
+  'contribute.live': 'Em direto do GitHub',
   'contribute.awaiting': 'À espera da primeira versão',
   'contribute.stars': 'Estrelas no GitHub',
   'contribute.prs': 'PR abertos',
@@ -182,7 +190,7 @@ export const ptPT = {
   'demo.reset': 'Recomeçar',
   'demo.check': 'Verificar lançamentos',
   'demo.note':
-    'Simplificado num aspecto: o balanço do próprio dealer fica fora do ecrã para caberem duas contas-T num telemóvel. Na app o dealer aparece como terceira entidade, e a mesma operação é repetida com contrapartes e montantes aleatórios para que a resposta não possa ser decorada.',
+    'Simplificado num aspeto: o balanço do próprio dealer fica fora do ecrã para caberem duas contas-T num telemóvel. Na app o dealer aparece como terceira entidade, e a mesma operação é repetida com contrapartes e montantes aleatórios para que a resposta não possa ser decorada.',
 
   // ---- syllabus -----------------------------------------------------------
   'roadmap.overline': 'Programa',
@@ -213,10 +221,10 @@ export const ptPT = {
     'Pontos ganhos apenas através de domínio verificado, sequências diárias de análise e módulos concluídos. Não inflacionários por desenho: não há forma de os comprar, cultivar ou trocar.',
   'rewards.credentials.title': 'Credenciais por Níveis',
   'rewards.credentials.body':
-    'Atestados criptográficos de uma competência demonstrada — «Especialista em Operações de Mercado Aberto», «Mecânico de Balanço: Arquitectura do BCE». Verificáveis por qualquer pessoa, emitidos só contra uma avaliação passada.',
+    'Atestados criptográficos de uma competência demonstrada — «Especialista em Operações de Mercado Aberto», «Mecânico de Balanço: Arquitetura do BCE». Verificáveis por qualquer pessoa, emitidos só contra uma avaliação passada.',
   'rewards.prizes.title': 'Prémios e Recompensas',
   'rewards.prizes.body':
-    'Patrocinados por pais, educadores e pela comunidade: livros (Mehrling, Bagehot, Stigum), equipamento ou privilégios definidos pela família. Os patrocinadores financiam e atribuem directamente — nunca a plataforma.',
+    'Patrocinados por pais, educadores e pela comunidade: livros (Mehrling, Bagehot, Stigum), equipamento ou privilégios definidos pela família. Os patrocinadores financiam e atribuem diretamente — nunca a plataforma.',
   'rewards.notTitle': 'O que os pontos não são',
   'rewards.notBody':
     'Os MacroXP e os MintBucks são uma pontuação de aprendizagem. Não são moeda, não são um token que se compre ou venda, e não há bolsa, carteira nem forma de levantar dinheiro em lado nenhum do produto. Os prémios são financiados e atribuídos por quem os criou — um pai, uma escola, uma comunidade — e o OpenMacro nunca fica com a custódia do dinheiro. Nada aqui é uma aposta, e nada custa seja o que for a quem aprende.',
@@ -285,7 +293,7 @@ export const ptPT = {
   'learn.title.lead': 'Como aprender o que o dinheiro',
   'learn.title.emphasis': 'realmente é',
   'learn.lede':
-    'A maior parte do dinheiro não é impressa por um governo. É criada pelos bancos comerciais quando emprestam, e pelos bancos centrais quando compram activos. Tudo o resto decorre daí, e este é o caminho honesto mais curto para o perceber.',
+    'A maior parte do dinheiro não é impressa por um governo. É criada pelos bancos comerciais quando emprestam, e pelos bancos centrais quando compram ativos. Tudo o resto decorre daí, e este é o caminho honesto mais curto para o perceber.',
   'learn.pathTitle': 'O percurso, por ordem',
   'learn.step.1.title': 'Faz uma operação a sério, antes de leres seja o que for',
   'learn.step.1.body':
@@ -329,7 +337,7 @@ export const ptPT = {
   'briefs.title.lead': 'Um resumo por módulo, pronto a',
   'briefs.title.emphasis': 'transformar em vídeo',
   'briefs.lede':
-    'Cada ligação abaixo devolve esse módulo em texto simples: as perguntas a que responde, o mecanismo por trás de cada uma, os equívocos com as respectivas refutações, e as conclusões. Cola uma ligação no NotebookLM como fonte web e pede-lhe um Video Overview.',
+    'Cada ligação abaixo devolve esse módulo em texto simples: as perguntas a que responde, o mecanismo por trás de cada uma, os equívocos com as respetivas refutações, e as conclusões. Cola uma ligação no NotebookLM como fonte web e pede-lhe um Video Overview.',
   'briefs.lessons': '{count, plural, one {# lição} other {# lições}}',
   'briefs.videoLive': 'vídeo publicado',
   'briefs.videoNone': 'ainda sem vídeo',
@@ -361,16 +369,16 @@ export const ptPT = {
   // ---- privacy & COPPA notice ---------------------------------------------
   'privacy.back': 'Voltar a openmacro.org',
   'privacy.title': 'Aviso de privacidade e de privacidade infantil',
-  'privacy.updated': 'Última actualização: 5 de Setembro de 2026. Abrange {domain} e a aplicação móvel OpenMacro.',
+  'privacy.updated': 'Última atualização: 5 de Setembro de 2026. Abrange {domain} e a aplicação móvel OpenMacro.',
   'privacy.authoritative':
     'Esta é uma tradução de cortesia. Em caso de divergência, prevalece a versão inglesa.',
   'privacy.short.title': 'A versão curta',
   'privacy.short.body':
-    'Podes ler todas as páginas, jogar todas as simulações e acabar todas as lições deste sítio sem conta, e não usamos analítica, publicidade nem scripts de rastreio de terceiros. Se escolheres iniciar sessão com a Google, guardamos os teus XP e a tua sequência de dias para que te sigam entre dispositivos — é essa a única razão para existir uma conta, e os únicos dados pessoais que detemos.',
+    'Podes ler todas as páginas, jogar todas as simulações e acabar todas as lições deste sítio sem conta, e não usamos analítica, publicidade nem scripts de rastreio de terceiros. Se escolheres iniciar sessão com a Google guardamos os teus XP e a tua sequência de dias para que te sigam entre dispositivos; é essa a única razão para existir uma conta, e os únicos dados pessoais que detemos.',
   'privacy.collect.title': 'O que recolhemos',
-  'privacy.collect.google.label': 'Se iniciares sessão com a Google.',
-  'privacy.collect.google.body':
-    'A Google envia-nos o teu nome, endereço de email, fotografia de perfil e o identificador da tua conta Google. Guardamos o teu nome associado ao teu progresso, e o endereço de email fica com o nosso fornecedor de autenticação para que possas voltar a entrar.',
+  'privacy.collect.signin.label': 'Se iniciares sessão.',
+  'privacy.collect.signin.body':
+    'Pedimos à Google um nome, um endereço de email e uma fotografia de perfil; a fotografia aparece na tua própria linha de conta e em mais nenhum sítio. Guardamos o nome associado ao teu progresso, e o endereço fica com o nosso fornecedor de autenticação para que possas voltar a entrar.',
   'privacy.collect.progress.label': 'O teu progresso, depois de iniciares sessão.',
   'privacy.collect.progress.body':
     'O total de XP, a tua sequência de dias, a data da última lição concluída e, para cada lição, a tua melhor pontuação, quantas vezes a acabaste e quando. Sem respostas, sem tempos, nada sobre como jogaste.',
@@ -392,7 +400,7 @@ export const ptPT = {
   'privacy.coppa.1':
     'Não é preciso conta para aprender. Todas as lições, no sítio e na aplicação, se jogam por inteiro sem iniciar sessão, e enquanto estiveres com a sessão fechada o progresso fica no dispositivo e nunca é enviado.',
   'privacy.coppa.2':
-    'Iniciar sessão é opcional e exige uma Conta Google, que a Google não emite a crianças com menos de 13 anos — e menos de 16 nalguns países. Uma criança com uma conta Family Link só inicia sessão com aprovação de quem tem responsabilidade parental.',
+    'Iniciar sessão é opcional, e pedimos à Google um nome e um endereço de email e mais nada. A Google não nos diz a idade de ninguém, por isso iniciar sessão não é uma verificação de idade e não a tratamos como tal. O que protege uma criança aqui é não haver nada para recolher: sem publicidade, sem perfis, sem campos de texto livre e sem forma de chegar a outra pessoa a partir de dentro do produto. Quando uma criança inicia sessão, uma conta Google Family Link só existe com aprovação de quem tem responsabilidade parental.',
   'privacy.coppa.3.lead':
     'Não recolhemos conscientemente informação pessoal de crianças com menos de 13 anos. Se achares que uma criança iniciou sessão, escreve para',
   'privacy.coppa.3.tail': 'e apagamos a conta e tudo o que lhe está associado.',
@@ -442,7 +450,7 @@ export const ptPT = {
     '. O mesmo endereço noutra rede não chega e não pode ser recuperado.',
   'treasury.attention': 'Precisa de atenção',
   'treasury.attentionBody':
-    'Estas pararam entre a difusão e o registo. Procura o nonce do endereço da tesouraria no BaseScan: se existir uma transacção o dinheiro saiu, se não existir não saiu. Não repitas o pagamento — uma transacção pendente ainda pode ser minada.',
+    'Estas pararam entre a difusão e o registo. Procura o nonce do endereço da tesouraria no BaseScan: se existir uma transação o dinheiro saiu, se não existir não saiu. Não repitas o pagamento — uma transação pendente ainda pode ser minada.',
   'treasury.nonce': 'nonce',
   'treasury.wasPaid': 'Foi paga',
   'treasury.neverSent': 'Nunca saiu',
@@ -450,15 +458,15 @@ export const ptPT = {
   'treasury.recipientsBody.lead': 'Um endereço novo começa',
   'treasury.recipientsBody.pending': 'pendente',
   'treasury.recipientsBody.tail':
-    'e não pode receber uma recompensa do jogo. Envia um teste, confirma que chegou à conta Coinbase, e só depois activa.',
+    'e não pode receber uma recompensa do jogo. Envia um teste, confirma que chegou à conta Coinbase, e só depois ativa.',
   'treasury.perModule': '{amount} € por módulo',
   'treasury.defaultAmount': 'valor por omissão',
   'treasury.claimedBy': 'reclamado por {email}',
   'treasury.unbound': 'sem conta associada — ninguém pode ganhar para esta carteira',
   'treasury.sending': 'A enviar…',
   'treasury.testSend': 'Enviar teste de 1 €',
-  'treasury.activate': 'Activar',
-  'treasury.disable': 'Desactivar',
+  'treasury.activate': 'Ativar',
+  'treasury.disable': 'Desativar',
   'treasury.nobody': 'Ainda ninguém.',
   'treasury.payouts': 'Pagamentos recentes',
   'treasury.baseScan': 'BaseScan ↗',
@@ -476,7 +484,7 @@ export const ptPT = {
   'treasury.field.claimantPlaceholder': 'ela@email.com',
   'treasury.field.note': 'Nota (opcional)',
   'treasury.addedPending':
-    'Adicionado como pendente. Não pode receber recompensa enquanto não enviares um teste e o activares.',
+    'Adicionado como pendente. Não pode receber recompensa enquanto não enviares um teste e o ativares.',
   'treasury.add': 'Adicionar',
   'treasury.cancel': 'Cancelar',
 
@@ -515,7 +523,7 @@ export const ptPT = {
   'moduleRewards.title': 'Recompensas',
   'moduleRewards.rate': '{amount} por módulo · {earned} € ganhos',
   'moduleRewards.body':
-    'Acaba todas as lições de um módulo e a recompensa é tua, paga em EURC directamente para a tua conta Coinbase.',
+    'Acaba todas as lições de um módulo e a recompensa é tua, paga em EURC diretamente para a tua conta Coinbase.',
   'moduleRewards.ready': '{count, number} prontas a reclamar',
   'moduleRewards.lessons': '{done, number} de {total, number} lições',
   'moduleRewards.paidLink': 'Pago ↗',
@@ -532,7 +540,7 @@ export const ptPT = {
   'tflow.startOver': 'Recomeçar',
   'tflow.balanced': 'Equilibrado',
   'tflow.offBalance': 'Não fecha',
-  'tflow.assets': 'Activo',
+  'tflow.assets': 'Ativo',
   'tflow.liabilities': 'Passivo',
   'tflow.assetsHint': 'O que possui',
   'tflow.liabilitiesHint': 'O que deve',

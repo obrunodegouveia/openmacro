@@ -27,8 +27,14 @@ interface PageCopy {
   keywords?: string[];
 }
 
-/** Keyed by route path, exactly as it appears after the domain. */
-const PT: Record<string, PageCopy> = {
+/**
+ * Keyed by route path, exactly as it appears after the domain.
+ *
+ * Exported so `npm run i18n:status` can hold it to the same spelling
+ * conventions as every other Portuguese string. Nothing else should read it —
+ * `localisedCopy` is the way in.
+ */
+export const SEO_PT: Record<string, PageCopy> = {
   '/': {
     title: 'Aprende Como o Dinheiro Funciona',
     description:
@@ -39,7 +45,7 @@ const PT: Record<string, PageCopy> = {
       'o que faz um banco central',
       'literacia financeira',
       'política monetária',
-      'banca de reservas fraccionárias',
+      'banca de reservas fracionárias',
       'ensinar dinheiro às crianças',
       'macroeconomia explicada',
     ],
@@ -99,5 +105,5 @@ const PT: Record<string, PageCopy> = {
  */
 export function localisedCopy(path: string, locale: Locale): Partial<PageCopy> {
   if (locale === 'en') return {};
-  return PT[path] ?? {};
+  return SEO_PT[path] ?? {};
 }

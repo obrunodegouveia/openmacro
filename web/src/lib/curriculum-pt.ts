@@ -46,7 +46,7 @@ export const CURRICULUM_PT: CurriculumOverlay = {
       subject: 'O Estado e o quadro legal',
       premise:
         'Porque é que um token sem cobertura é sequer aceite: obrigações fiscais, curso legal e confiança institucional.',
-      assets: ['Direitos fiscais futuros', 'Infra-estrutura pública'],
+      assets: ['Direitos fiscais futuros', 'Infraestrutura pública'],
       liabilities: ['Dívida soberana', 'A própria moeda'],
       levers: ['Cartalismo e procura induzida por impostos', 'Lei do curso legal', 'Câmbios fixos', 'Confiança e credibilidade'],
     },
@@ -65,8 +65,8 @@ export const CURRICULUM_PT: CurriculumOverlay = {
     },
     'commercial-central-interface': {
       promise:
-        'Seguir um pagamento de um banco para outro e dizer exactamente o que liquida, e em quê.',
-      concepts: ['Banca correspondente', 'Fedwire e TARGET2', 'Reservas fraccionárias', 'SOFR e €STR'],
+        'Seguir um pagamento de um banco para outro e dizer exatamente o que liquida, e em quê.',
+      concepts: ['Banca correspondente', 'Fedwire e TARGET2', 'Reservas fracionárias', 'SOFR e €STR'],
     },
     'fed-ecb-levers': {
       promise:
@@ -96,7 +96,7 @@ export const CURRICULUM_PT: CurriculumOverlay = {
     'debt-debasement-and-capital': {
       promise:
         'Descobrir quem paga uma dívida que nunca é reembolsada, e o que os mesmos recursos construiriam em vez disso.',
-      concepts: ['O imposto inflacionário', 'Financiar guerras ao longo dos tempos', 'r − g e a trajectória da dívida', 'Formação e afectação de capital'],
+      concepts: ['O imposto inflacionário', 'Financiar guerras ao longo dos tempos', 'r − g e a trajetória da dívida', 'Formação e afetação de capital'],
     },
     'breaking-a-peg-1992': {
       promise:
@@ -116,7 +116,7 @@ export const CURRICULUM_PT: CurriculumOverlay = {
     'real-assets-and-property': {
       promise:
         'Descobrir quem paga um boom imobiliário, e o que teria de ser verdade para que revertesse.',
-      concepts: ['Activos reais contra direitos nominais', 'O efeito Cantillon', 'O crédito à habitação como dinheiro criado', 'Custo de reposição e oferta', 'O que prevê mesmo uma queda'],
+      concepts: ['Ativos reais contra direitos nominais', 'O efeito Cantillon', 'O crédito à habitação como dinheiro criado', 'Custo de reposição e oferta', 'O que prevê mesmo uma queda'],
     },
     euribor: {
       promise:
@@ -126,7 +126,7 @@ export const CURRICULUM_PT: CurriculumOverlay = {
     'buying-property-portugal': {
       promise:
         'Saber ao euro quanto custa uma compra, e quantos anos de valorização são precisos para a compensar.',
-      concepts: ['A tabela do IMT de 2026', 'Imposto do Selo e a escritura', 'IMI', 'VPT e manutenção', 'Custos de transacção de ida e volta', 'A taxa de carregamento como fasquia'],
+      concepts: ['A tabela do IMT de 2026', 'Imposto do Selo e a escritura', 'IMI', 'VPT e manutenção', 'Custos de transação de ida e volta', 'A taxa de carregamento como fasquia'],
     },
     'scrutinising-cbdcs': {
       promise:

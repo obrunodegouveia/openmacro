@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/site/locale-link";
 import { getSiteText } from "@/lib/site-text";
 import { ArrowRight, BookOpen, Coins, GraduationCap } from "lucide-react";
 import { Nav } from "@/components/site/nav";
@@ -7,6 +7,7 @@ import { Section, SectionHeading } from "@/components/ui/section";
 import { AnswerList } from "@/components/site/answer-list";
 import { Badge } from "@/components/ui/badge";
 import { LEARN_ANSWERS, faqPageLd } from "@/lib/answers";
+import { localisedAnswers } from "@/lib/answers-locale";
 import { TRACK_COUNT_LABEL } from "@/lib/curriculum";
 import { localisedSyllabus } from "@/lib/curriculum-locale";
 import { CourseMap } from "@/components/app/course-map";
@@ -44,10 +45,15 @@ export async function generateMetadata() {
  */
 export default async function LearnPage() {
   const s = await getSiteText();
-  const SYLLABUS = localisedSyllabus(await serverLocale());
+  const locale = await serverLocale();
+  const SYLLABUS = localisedSyllabus(locale);
+  // Both the visible list and the FAQ structured data, from one array — a
+  // Portuguese page that answers in Portuguese on screen and in English to a
+  // crawler is telling two different stories about what it is.
+  const answers = localisedAnswers(locale, LEARN_ANSWERS);
   return (
     <>
-      <JsonLd data={faqPageLd(LEARN_ANSWERS)} />
+      <JsonLd data={faqPageLd(answers)} />
       <JsonLd
         data={breadcrumbs([
           { name: "Home", path: "/" },
@@ -72,7 +78,7 @@ export default async function LearnPage() {
       />
 
       <Nav />
-      <main id="main" className="pt-16">
+      <main id="main" className="pt-[var(--header-total)]">
         <Section>
           <SectionHeading
             align="left"
@@ -143,13 +149,13 @@ export default async function LearnPage() {
                     <p className="mt-2 leading-relaxed text-ink-muted">
                       {step.body}
                     </p>
-                    <Link
+                    <LocaleLink
                       href={step.href}
                       className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-mint-bright underline-offset-4 hover:underline"
                     >
                       {step.cta}
                       <ArrowRight className="size-3.5" aria-hidden />
-                    </Link>
+                    </LocaleLink>
                   </div>
                 </li>
               ))}
@@ -165,7 +171,7 @@ export default async function LearnPage() {
               {s("learn.questionsTitle")}
             </h2>
             <div className="mt-6">
-              <AnswerList answers={LEARN_ANSWERS} />
+              <AnswerList answers={answers} />
             </div>
           </section>
 
@@ -176,12 +182,12 @@ export default async function LearnPage() {
             <p className="mt-2 max-w-2xl leading-relaxed text-ink-muted">
               {s("learn.teachingBody")}
             </p>
-            <Link
+            <LocaleLink
               href="/teach"
               className="mt-4 inline-flex h-11 items-center justify-center rounded-xl border-b-4 border-mint-deep bg-mint px-5 font-extrabold text-abyss transition-all hover:bg-mint-bright active:translate-y-[3px] active:border-b-0"
             >
               {s("learn.teachingCta")}
-            </Link>
+            </LocaleLink>
           </div>
         </Section>
       </main>

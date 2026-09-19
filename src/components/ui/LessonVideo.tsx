@@ -24,6 +24,27 @@
  * The module this exists for is somebody else's teaching, used with the
  * player they provide.
  *
+ * THE PLAYER IS LOADED FROM OUR OWN SITE, AND HAS TO BE. Two simpler things
+ * were tried and both return "Video player configuration error — Error 153".
+ *
+ * Pointing the WebView at `youtube-nocookie.com/embed/...` loads it as a
+ * top-level navigation: there is no embedding page, so the player cannot
+ * establish which origin is embedding it and refuses rather than guess.
+ * Wrapping the iframe in local HTML and setting `baseUrl` does not help either
+ * — that goes through `loadHTMLString`, which does not give the document a real
+ * origin as far as a cross-origin subframe is concerned, so the player sees the
+ * same nothing.
+ *
+ * Measured, not assumed. The same embed was loaded four ways in a real browser:
+ * top-level → 153, inside a document with no real origin → 153, inside an
+ * iframe on a genuine https origin → plays, and openmacro.org itself → plays.
+ * Only a real origin works, so the app borrows the one the website already has.
+ *
+ * `/embed/<id>` is a bare page that exists for this and nothing else. The
+ * privacy promise above is unchanged: the WebView is not mounted until play, so
+ * nothing is requested until then — and then it is this site and
+ * youtube-nocookie.com, which is what it always was.
+ *
  * COLLAPSING IS A PREFERENCE, NOT CARD STATE. A 16:9 frame is the tallest
  * thing on the screen, and a learner who has already watched a module's
  * videos elsewhere — or who simply reads faster than anyone talks — should be
@@ -69,7 +90,8 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
         <View style={styles.frame}>
           {playing ? (
             <WebView
-              source={{ uri: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1` }}
+              source={{ uri: `${SITE_ORIGIN}/embed/${id}` }}
+              originWhitelist={['*']}
               style={styles.web}
               // The player needs its own JS, and on iOS inline playback has to be
               // allowed or tapping play throws it into the fullscreen overlay.
@@ -132,6 +154,16 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
     </View>
   );
 }
+
+/**
+ * Where the embed page lives.
+ *
+ * Hardcoded to production on purpose. A build pointed at a local dev server
+ * would play videos for whoever is running one and silently fail for everybody
+ * else, and this is the one screen where a fallback that half-works is worse
+ * than an obvious break.
+ */
+const SITE_ORIGIN = 'https://openmacro.org';
 
 /** Accepts a watch URL, a youtu.be link, or a bare id. */
 function youTubeId(url: string): string | null {

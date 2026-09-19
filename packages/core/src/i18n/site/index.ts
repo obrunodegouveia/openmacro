@@ -23,6 +23,8 @@ import { DEFAULT_LOCALE, LOCALE_TAGS, type Locale } from '../locales';
 import { en } from './en';
 import { ptPT } from './pt-PT';
 
+export { en as siteEn } from './en';
+
 export type SiteKey = keyof typeof en;
 export type SiteDictionary = Record<SiteKey, string>;
 
@@ -53,6 +55,17 @@ export function siteCoverage(locale: Locale): number {
   if (keys.length === 0) return 1;
   const catalogue = CATALOGUES[locale] ?? {};
   return keys.filter((key) => catalogue[key] !== undefined).length / keys.length;
+}
+
+/**
+ * A locale's raw catalogue, with no fallback — an absent key reads as absent.
+ *
+ * Same contract as `uiCatalogue`, and for the same reason: the tooling has to
+ * tell "translated to the same word" from "not translated at all", which
+ * `siteTranslate` deliberately cannot.
+ */
+export function siteCatalogue(locale: Locale): Partial<SiteDictionary> {
+  return CATALOGUES[locale] ?? {};
 }
 
 export function missingSiteKeys(locale: Locale): SiteKey[] {

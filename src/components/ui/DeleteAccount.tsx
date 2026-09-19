@@ -13,10 +13,16 @@
  * sits in plain sight under the account strip rather than behind a settings
  * screen that does not otherwise exist.
  *
- * IT ASKS FOR THE EMAIL. Typing the address of the account you are deleting is
- * a hard thing to do by accident, and unlike a "are you sure?" it cannot be
- * dismissed by muscle memory. The server checks it too; this is not the guard,
- * only the part the learner sees.
+ * IT ASKS FOR THE EMAIL, AND IT TELLS YOU WHAT THE EMAIL IS. Typing the address
+ * of the account you are deleting is a hard thing to do by accident, and unlike
+ * a "are you sure?" it cannot be dismissed by muscle memory. The server checks
+ * it too; this is not the guard, only the part the learner sees.
+ *
+ * Showing the address is not a convenience. Sign in with Apple can hide the
+ * real one behind a relay — `k2n9x4vq7m@privaterelay.appleid.com` — and that,
+ * not the learner's own address, is what the account is. Ask for it without
+ * showing it and deletion becomes impossible for exactly the people who chose
+ * the most private way in, which is the opposite of what 5.1.1(v) is for.
  *
  * IT DOES NOT ARGUE. No offer to export, no "you will lose your streak", no
  * dark pattern. The learner has decided.
@@ -43,6 +49,13 @@ export function DeleteAccount() {
 
   // Nothing to delete when nobody is signed in.
   if (!session || !identity) return null;
+
+  /**
+   * The address the server will compare against — it reads the email off the
+   * verified token, so this is the same string, and it is the only one that
+   * will be accepted.
+   */
+  const accountEmail = session.user.email ?? null;
 
   async function remove() {
     if (busy) return;
@@ -92,19 +105,25 @@ export function DeleteAccount() {
       <Text style={styles.title}>{t('account.delete.title')}</Text>
       <Text style={styles.body}>{t('account.delete.body')}</Text>
 
+      {accountEmail ? (
+        <Text style={styles.body}>
+          {t('account.delete.accountIs')} <Text style={styles.accountEmail}>{accountEmail}</Text>
+        </Text>
+      ) : null}
+
       <TextInput
         value={email}
         onChangeText={setEmail}
-        placeholder={
-          identity.displayName.includes('@')
-            ? identity.displayName
-            : t('account.delete.placeholder')
-        }
+        placeholder={accountEmail ?? t('account.delete.placeholder')}
         placeholderTextColor={palette.inkFaint}
         autoCapitalize="none"
         autoCorrect={false}
         keyboardType="email-address"
-        accessibilityLabel={t('account.delete.confirmLabelGeneric')}
+        accessibilityLabel={
+          accountEmail
+            ? t('account.delete.confirmLabel', { email: accountEmail })
+            : t('account.delete.confirmLabelGeneric')
+        }
         style={styles.input}
       />
 
@@ -167,6 +186,11 @@ const styles = StyleSheet.create({
   },
   body: {
     ...typography.caption,
+    color: palette.ink,
+  },
+  accountEmail: {
+    ...typography.caption,
+    fontWeight: '700',
     color: palette.ink,
   },
   input: {

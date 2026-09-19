@@ -87,6 +87,105 @@ export const kabRatesNotQuantitiesLesson = defineLesson({
       explanation:
         'To know the funds rate you ring a few banks. To know M2 you survey the banking system and wait. A policymaker who wants to correct course this afternoon needs a number available this afternoon — which is a thoroughly practical reason, sitting underneath the elegant one about elasticity.',
     },
+    {
+      id: 'mc-which-error-worse',
+      type: 'multiple_choice',
+      tags: ['monetary-policy', 'capital-allocation'],
+      xp: 35,
+      prompt:
+        'A fixed money supply produces two errors: a 12% project goes unfunded in the planting season, and a 1% project gets funded once the season ends. Sal thinks one is worse. Which, and why?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'funding-bad',
+          label: 'Funding the 1% project, which can destroy wealth rather than merely forgo it',
+        },
+        {
+          id: 'missing-good',
+          label: 'Missing the 12% project, since 12% is a much larger number than 1%',
+          feedback:
+            'Comparing the headline numbers misses the asymmetry. Not doing the 12% project leaves the world where it was. Doing the 1% project can leave it worse off than before.',
+        },
+        {
+          id: 'same',
+          label: 'They are equally bad — both are capital in the wrong place',
+          feedback:
+            'Both are misallocations, but only one has a downside beyond the opportunity cost. Sal makes the point explicitly: the 1% return is what the investor *expects*, and it may turn out to be minus 5%.',
+        },
+        {
+          id: 'neither',
+          label: 'Neither of them, because the market corrects both in time',
+          feedback:
+            'The seasons are the point: by the time it corrects, the planting season has passed and the seeds were never bought.',
+        },
+      ],
+      correctOptionId: 'funding-bad',
+      explanation:
+        'A marginal project is marginal on the investor’s own optimistic estimate, so the realised return can easily be negative — capital consumed rather than merely idle. This asymmetry is why cheap money for too long worries people more than dear money for too long, and it is the seed of the argument that a long period of near-zero rates funds things that should never have been funded.',
+    },
+    {
+      id: 'mc-the-spread',
+      type: 'multiple_choice',
+      tags: ['interest-rates', 'monetary-policy'],
+      xp: 30,
+      prompt:
+        'The Fed targets 5% between banks, and Sal has real projects borrowing at around 8%. Why does the farmer not get 5%?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'risk',
+          label: 'He might not repay, and he is borrowing for a season rather than for a night',
+        },
+        {
+          id: 'profit',
+          label: 'Purely bank profiteering on the difference',
+          feedback:
+            'Some of the gap is margin, and competition between banks squeezes it. It cannot explain the whole spread, because a loan to a farmer is genuinely a different asset from a loan to a bank overnight.',
+        },
+        {
+          id: 'reserverules',
+          label: 'Because reserve requirements force banks to charge more',
+          feedback:
+            'Reserve requirements limit how much a bank can lend, not what it must charge. The spread would exist with no requirement at all.',
+        },
+        {
+          id: 'broken',
+          label: 'The transmission is broken; in theory he should get 5%',
+          feedback:
+            'The transmission is working exactly as intended. The policy rate sets the floor the whole structure of rates is built on, not the rate any particular borrower pays.',
+        },
+      ],
+      correctOptionId: 'risk',
+      explanation:
+        'Every rate in an economy is the overnight rate plus compensation for the two things that make a loan different from it: how long the money is gone, and how likely it is not to come back. The Fed moves the base of that stack and the spreads move on their own — which is why cutting rates does nothing for a borrower nobody will lend to, and why the 2008 crisis was a crisis of spreads rather than of the policy rate.',
+    },
+    {
+      id: 'match-elastic',
+      type: 'concept_match',
+      tags: ['monetary-policy', 'elasticity'],
+      xp: 30,
+      prompt: 'Match each idea from the argument for targeting a rate to what it actually means.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'elastic',
+          term: 'An elastic currency',
+          definition: 'A money supply that grows and shrinks with the demand for credit rather than to a fixed plan',
+        },
+        {
+          id: 'threshold',
+          term: 'A target rate as a threshold',
+          definition: 'A hurdle every project must clear to be worth funding, whatever the season',
+        },
+        {
+          id: 'measurable',
+          term: 'The unglamorous reason',
+          definition: 'You can ask the market its price this minute; measuring M2 takes a survey and a delay',
+        },
+      ],
+      explanation:
+        'Setting a rate lets the quantity of money settle wherever demand puts it, and that is the feature rather than a side effect — it is why "elastic currency" appears in the opening line of the Federal Reserve Act of 1913. The inelastic alternative is what the gold standard delivered, and what the 1907 panic was blamed on: no way to expand when everyone needed cash at once.',
+    },
   ],
   keyTakeaways: [
     'A fixed quantity of money makes the funding hurdle depend on the season.',
