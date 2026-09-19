@@ -63,7 +63,7 @@ export function TAccountFlowView({
   locked,
   result,
 }: ChallengeComponentProps<'t_account_flow'>) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   /** Option ids the learner has posted, in placement order. */
   const [placed, setPlaced] = useState<string[]>([]);
 
@@ -164,7 +164,7 @@ export function TAccountFlowView({
                 // the entity has to be in the label or they are indistinguishable
                 // to a screen reader.
                 accessibilityLabel={t('challenge.taccount.post', {
-                  amount: formatSignedCompactCurrency(option.shift.delta, currency),
+                  amount: formatSignedCompactCurrency(option.shift.delta, currency, locale),
                   account: option.shift.account,
                   entity: entityLabel(challenge.entities, option.shift.entityId),
                   side: t(
@@ -194,7 +194,7 @@ export function TAccountFlowView({
                     option.shift.delta < 0 ? styles.deltaDown : styles.deltaUp,
                   ]}
                 >
-                  {formatSignedCompactCurrency(option.shift.delta, currency)}
+                  {formatSignedCompactCurrency(option.shift.delta, currency, locale)}
                 </Text>
               </Pressable>
             </Animated.View>
@@ -254,7 +254,7 @@ function EntityCard({
   isShiftCorrect,
   onRemove,
 }: EntityCardProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const balance = entityBalance(entity.id, shifts);
   const touched = placedOptions.length > 0;
 
@@ -278,7 +278,7 @@ function EntityCard({
               {line.account}
             </Text>
             <Text style={styles.openingAmount}>
-              {formatCompactCurrency(line.amount, currency)}
+              {formatCompactCurrency(line.amount, currency, locale)}
             </Text>
           </View>
         ))}
@@ -318,7 +318,7 @@ function EntityCard({
                     option.shift.delta < 0 ? styles.deltaDown : styles.deltaUp,
                   ]}
                 >
-                  {formatSignedCompactCurrency(option.shift.delta, currency)}
+                  {formatSignedCompactCurrency(option.shift.delta, currency, locale)}
                 </Text>
               </Pressable>
             </Animated.View>
@@ -328,10 +328,7 @@ function EntityCard({
         {/* Running total for this side, once anything has been posted. */}
         {touched ? (
           <Text style={styles.sideTotal}>
-            {formatSignedCompactCurrency(
-              side === 'asset' ? balance.assetDelta : balance.liabilityDelta,
-              currency,
-            )}
+            {formatSignedCompactCurrency(side === 'asset' ? balance.assetDelta : balance.liabilityDelta, currency, locale)}
           </Text>
         ) : null}
       </View>
@@ -365,10 +362,7 @@ function EntityCard({
             {balance.balanced
               ? t('challenge.taccount.balanced')
               : t('challenge.taccount.offBy', {
-                  amount: formatCompactCurrency(
-                    Math.abs(balance.assetDelta - balance.liabilityDelta),
-                    currency,
-                  ),
+                  amount: formatCompactCurrency(Math.abs(balance.assetDelta - balance.liabilityDelta), currency, locale),
                 })}
           </Text>
         </View>

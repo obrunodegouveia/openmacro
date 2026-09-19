@@ -98,6 +98,7 @@ export const en = {
   'challenge.match.term': 'Term',
   'challenge.match.means': 'Means',
   'challenge.match.hint': 'Tap, then tap a definition to link them',
+  'challenge.sim.try': 'Try {value}',
   'challenge.sim.goal': 'Your goal',
   'challenge.taccount.entries': 'Entries to post',
   'challenge.taccount.moved': 'What moved',

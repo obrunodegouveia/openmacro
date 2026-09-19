@@ -532,6 +532,7 @@ export const ptPT = {
   'moduleRewards.claim': 'Reclamar {amount} €',
 
   // ---- challenge widgets --------------------------------------------------
+  'sim.try': 'Experimenta {value}',
   'tflow.entries': 'Lançamentos a fazer',
   'tflow.placed': '{done, number} de {total, number} colocados',
   'tflow.chooseSide': 'Agora escolhe em que balanço cai, e de que lado.',

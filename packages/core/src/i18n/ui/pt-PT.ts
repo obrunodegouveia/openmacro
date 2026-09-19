@@ -101,6 +101,7 @@ export const ptPT: UiDictionary = {
   'challenge.match.term': 'Termo',
   'challenge.match.means': 'Significa',
   'challenge.match.hint': 'Toca aqui e depois num significado para os ligar',
+  'challenge.sim.try': 'Experimenta {value}',
   'challenge.sim.goal': 'O teu objetivo',
   'challenge.taccount.entries': 'Lançamentos a fazer',
   'challenge.taccount.moved': 'O que se moveu',

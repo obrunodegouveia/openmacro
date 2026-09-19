@@ -30,7 +30,7 @@ export function InteractiveSimView({
   onAnswerChange,
   locked,
 }: ChallengeComponentProps<'interactive_sim'>) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const currency = challenge.currency ?? 'USD';
   const [values, setValues] = useState<Record<string, number>>(() => ({
     ...initialSliderValues(challenge),
@@ -56,11 +56,17 @@ export function InteractiveSimView({
 
   const objectiveSteps = useMemo(
     () =>
-      buildObjectiveSteps(challenge.objective, observed, readouts, (value, sliderKey) => {
-        const slider = sliderByKey(sliderKey);
-        return formatValue(value, slider?.format ?? 'number', currency);
-      }),
-    [challenge.objective, observed, readouts, sliderByKey],
+      buildObjectiveSteps(
+        challenge.objective,
+        observed,
+        readouts,
+        (value, sliderKey) => {
+          const slider = sliderByKey(sliderKey);
+          return formatValue(value, slider?.format ?? 'number', currency, locale);
+        },
+        (formatted) => t('challenge.sim.try', { value: formatted }),
+      ),
+    [challenge.objective, observed, readouts, sliderByKey, currency, locale, t],
   );
 
   /**
@@ -116,7 +122,7 @@ export function InteractiveSimView({
         <Animated.View entering={FadeIn.duration(220)} style={styles.heroCard}>
           <Text style={styles.heroLabel}>{hero.label}</Text>
           <Text style={styles.heroValue}>
-            {formatValue(readouts[hero.key] ?? 0, hero.format, currency)}
+            {formatValue(readouts[hero.key] ?? 0, hero.format, currency, locale)}
           </Text>
           {hero.caption ? <Text style={styles.heroCaption}>{hero.caption}</Text> : null}
         </Animated.View>
@@ -129,7 +135,7 @@ export function InteractiveSimView({
             <Text style={styles.sliderLabel}>{slider.label}</Text>
             <View style={styles.sliderValueChip}>
               <Text style={styles.sliderValueText}>
-                {formatValue(values[slider.key] ?? slider.defaultValue, slider.format, currency)}
+                {formatValue(values[slider.key] ?? slider.defaultValue, slider.format, currency, locale)}
               </Text>
             </View>
           </View>
@@ -149,9 +155,9 @@ export function InteractiveSimView({
           />
 
           <View style={styles.sliderScale}>
-            <Text style={styles.sliderBound}>{formatValue(slider.min, slider.format, currency)}</Text>
+            <Text style={styles.sliderBound}>{formatValue(slider.min, slider.format, currency, locale)}</Text>
             {slider.hint ? <Text style={styles.sliderHint}>{slider.hint}</Text> : null}
-            <Text style={styles.sliderBound}>{formatValue(slider.max, slider.format, currency)}</Text>
+            <Text style={styles.sliderBound}>{formatValue(slider.max, slider.format, currency, locale)}</Text>
           </View>
         </View>
       ))}
@@ -162,7 +168,7 @@ export function InteractiveSimView({
           <View key={readout.key} style={styles.readoutCard}>
             <Text style={styles.readoutLabel}>{readout.label}</Text>
             <Text style={styles.readoutValue}>
-              {formatValue(readouts[readout.key] ?? 0, readout.format, currency)}
+              {formatValue(readouts[readout.key] ?? 0, readout.format, currency, locale)}
             </Text>
             {readout.caption ? (
               <Text style={styles.readoutCaption}>{readout.caption}</Text>

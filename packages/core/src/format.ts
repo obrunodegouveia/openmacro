@@ -3,9 +3,47 @@
  *
  * Deliberately dependency-free (no `Intl`) so output is byte-identical across
  * Hermes, JSC and web, which keeps snapshot tests meaningful.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY THE SEPARATORS ARE A PARAMETER
+ * ---------------------------------------------------------------------------
+ *
+ * `1,000` is not a cosmetic difference in Portuguese — it reads as one. A
+ * learner driving a reserve-ratio slider in a fully translated lesson was
+ * being shown the deposit total in US notation, so the one number the
+ * exercise exists to teach was the one thing still in English, and wrong by
+ * three orders of magnitude to anybody reading it as written.
+ *
+ * Passing a locale rather than reaching for `Intl.NumberFormat` keeps the
+ * promise at the top of this file: Hermes ships a partial `Intl` and its
+ * grouping has differed from V8's, which would make the same lesson render
+ * differently on a phone and in a browser.
  */
 
 import type { ValueFormat } from './content/schema';
+
+/**
+ * How a locale writes a number. Anything not listed falls back to English,
+ * which is also what an unlocalised caller gets.
+ */
+const SEPARATORS: Readonly<Record<string, { group: string; decimal: string }>> = {
+  en: { group: ',', decimal: '.' },
+  // European Portuguese groups with a non-breaking space and separates the
+  // decimal with a comma — `1 234,50`. The space is non-breaking on purpose:
+  // a readout must never wrap between a thousand and its hundreds.
+  'pt-PT': { group: '\u00A0', decimal: ',' },
+};
+
+function separators(locale: string): { group: string; decimal: string } {
+  return SEPARATORS[locale] ?? SEPARATORS.en!;
+}
+
+/** `1234.5` -> `"1,234.5"` in English, `"1\u00A0234,5"` in Portuguese. */
+function group(whole: string, cents: string | undefined, locale: string): string {
+  const { group: g, decimal } = separators(locale);
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, g);
+  return cents ? `${grouped}${decimal}${cents}` : grouped;
+}
 
 /** Currency symbols for the codes lessons actually use. */
 const CURRENCY_SYMBOLS: Readonly<Record<string, string>> = {
@@ -17,13 +55,12 @@ const CURRENCY_SYMBOLS: Readonly<Record<string, string>> = {
 };
 
 /** `1000` -> `"$1,000"`, `1234.5` -> `"$1,234.50"`. */
-export function formatCurrency(value: number, currency = '$'): string {
+export function formatCurrency(value: number, currency = '$', locale = 'en'): string {
   const rounded = Math.round(value * 100) / 100;
   const hasCents = !Number.isInteger(rounded);
   const [whole = '0', cents] = Math.abs(rounded).toFixed(hasCents ? 2 : 0).split('.');
-  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const sign = rounded < 0 ? '-' : '';
-  return `${sign}${currency}${grouped}${cents ? `.${cents}` : ''}`;
+  return `${sign}${currency}${group(whole, cents, locale)}`;
 }
 
 /**
@@ -35,19 +72,24 @@ export function formatCurrency(value: number, currency = '$'): string {
  * target of 3.01% and everything up to 3.49%, so the learner could not see the
  * number they were being asked to move.
  */
-export function formatPercent(value: number, fractionDigits = 2): string {
+export function formatPercent(value: number, fractionDigits = 2, locale = 'en'): string {
   const rounded = Number((value * 100).toFixed(fractionDigits));
-  return `${rounded}%`;
+  const [whole = '0', cents] = Math.abs(rounded).toString().split('.');
+  return `${rounded < 0 ? '-' : ''}${group(whole, cents, locale)}%`;
 }
 
 /** `10` -> `"10x"`, `6.6666` -> `"6.7x"`. */
-export function formatMultiplier(value: number): string {
+export function formatMultiplier(value: number, locale = 'en'): string {
   const rounded = Math.round(value * 10) / 10;
-  return `${Number.isInteger(rounded) ? rounded : rounded.toFixed(1)}x`;
+  const text = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  const [whole = '0', cents] = text.replace('-', '').split('.');
+  return `${rounded < 0 ? '-' : ''}${group(whole, cents, locale)}x`;
 }
 
-export function formatNumber(value: number): string {
-  return String(Math.round(value * 100) / 100);
+export function formatNumber(value: number, locale = 'en'): string {
+  const rounded = Math.round(value * 100) / 100;
+  const [whole = '0', cents] = Math.abs(rounded).toString().split('.');
+  return `${rounded < 0 ? '-' : ''}${group(whole, cents, locale)}`;
 }
 
 /**
@@ -62,18 +104,19 @@ export function formatValue(
   value: number,
   format: ValueFormat,
   currency = 'USD',
+  locale = 'en',
 ): string {
   switch (format) {
     case 'currency':
       return Math.abs(value) >= 1e6
-        ? formatCompactCurrency(value, currency)
-        : formatCurrency(value, CURRENCY_SYMBOLS[currency] ?? `${currency}\u00A0`);
+        ? formatCompactCurrency(value, currency, locale)
+        : formatCurrency(value, CURRENCY_SYMBOLS[currency] ?? `${currency}\u00A0`, locale);
     case 'percent':
-      return formatPercent(value);
+      return formatPercent(value, 2, locale);
     case 'multiplier':
-      return formatMultiplier(value);
+      return formatMultiplier(value, locale);
     case 'number':
-      return formatNumber(value);
+      return formatNumber(value, locale);
   }
 }
 
@@ -132,7 +175,7 @@ export function snapToStep(value: number, min: number, step: number): number {
  * number swamping the column. Grouped digits would wrap on a phone; compact
  * suffixes keep every line one glance wide.
  */
-export function formatCompactCurrency(value: number, currency = 'USD'): string {
+export function formatCompactCurrency(value: number, currency = 'USD', locale = 'en'): string {
   const symbol = CURRENCY_SYMBOLS[currency] ?? `${currency}\u00A0`;
   const sign = value < 0 ? '-' : '';
   const magnitude = Math.abs(value);
@@ -150,15 +193,16 @@ export function formatCompactCurrency(value: number, currency = 'USD'): string {
       // One decimal below 100 keeps "5.2T" readable; above it the decimal is
       // noise ("420B", not "420.0B").
       const text = scaled >= 100 ? String(Math.round(scaled)) : String(Math.round(scaled * 10) / 10);
-      return `${sign}${symbol}${text}${suffix}`;
+      const [whole = '0', cents] = text.split('.');
+      return `${sign}${symbol}${group(whole, cents, locale)}${suffix}`;
     }
   }
 
-  return `${sign}${symbol}${Math.round(magnitude * 100) / 100}`;
+  return `${sign}${symbol}${formatNumber(Math.round(magnitude * 100) / 100, locale)}`;
 }
 
 /** Same, but always carrying an explicit + or - for a delta. */
-export function formatSignedCompactCurrency(value: number, currency = 'USD'): string {
-  const formatted = formatCompactCurrency(value, currency);
+export function formatSignedCompactCurrency(value: number, currency = 'USD', locale = 'en'): string {
+  const formatted = formatCompactCurrency(value, currency, locale);
   return value > 0 ? `+${formatted}` : formatted;
 }

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
+import { useLocale } from "@/components/site/locale-provider";
 import { Check } from "lucide-react";
 import {
   buildObjectiveSteps,
@@ -30,6 +31,7 @@ export function InteractiveSimView({
   result,
 }: ChallengeComponentProps<"interactive_sim">) {
   const s = useSiteText();
+  const { locale } = useLocale();
   const currency = challenge.currency ?? "USD";
   const [values, setValues] = React.useState<SimSliderValues>(() =>
     initialSliderValues(challenge),
@@ -46,11 +48,17 @@ export function InteractiveSimView({
 
   const steps = React.useMemo(
     () =>
-      buildObjectiveSteps(challenge.objective, observed, readouts, (value, sliderKey) => {
-        const slider = challenge.sliders.find((s) => s.key === sliderKey);
-        return formatValue(value, slider?.format ?? "number", currency);
-      }),
-    [challenge, observed, readouts, currency],
+      buildObjectiveSteps(
+        challenge.objective,
+        observed,
+        readouts,
+        (value, sliderKey) => {
+          const slider = challenge.sliders.find((entry) => entry.key === sliderKey);
+          return formatValue(value, slider?.format ?? "number", currency, locale);
+        },
+        (formatted) => s("sim.try", { value: formatted }),
+      ),
+    [challenge, observed, readouts, currency, locale, s],
   );
 
   const complete = isObjectiveComplete(steps);
@@ -89,7 +97,7 @@ export function InteractiveSimView({
               {hero.label}
             </p>
             <p className="mt-1 font-display text-4xl font-extrabold tracking-tight text-mint-bright tabular-nums">
-              {formatValue(readouts[hero.key] ?? 0, hero.format, currency)}
+              {formatValue(readouts[hero.key] ?? 0, hero.format, currency, locale)}
             </p>
             {hero.caption ? (
               <p className="mt-1 font-mono text-xs text-ink-faint">{hero.caption}</p>
@@ -110,7 +118,7 @@ export function InteractiveSimView({
                   {readout.label}
                 </dt>
                 <dd className="mt-0.5 font-display text-xl font-extrabold tabular-nums text-ink">
-                  {formatValue(readouts[readout.key] ?? 0, readout.format, currency)}
+                  {formatValue(readouts[readout.key] ?? 0, readout.format, currency, locale)}
                 </dd>
                 {readout.caption ? (
                   <p className="mt-0.5 font-mono text-[0.7rem] text-ink-faint">
@@ -137,7 +145,7 @@ export function InteractiveSimView({
                   {slider.label}
                 </label>
                 <span className="font-display text-base font-extrabold tabular-nums text-gold">
-                  {formatValue(value, slider.format, currency)}
+                  {formatValue(value, slider.format, currency, locale)}
                 </span>
               </div>
               <input

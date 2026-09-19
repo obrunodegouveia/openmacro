@@ -534,6 +534,7 @@ export const en = {
   'moduleRewards.claim': 'Claim €{amount}',
 
   // ---- challenge widgets --------------------------------------------------
+  'sim.try': 'Try {value}',
   'tflow.entries': 'Entries to post',
   'tflow.placed': '{done, number} of {total, number} placed',
   'tflow.chooseSide': 'Now choose whose sheet it lands on, and which side.',
