@@ -38,6 +38,7 @@ import { consumptionIsNotCapitalLesson } from './lesson-02-consumption-is-not-ca
 import { destructionDoesNotSubtractLesson } from './lesson-03-destruction-does-not-subtract';
 import { whoPaysForItLesson } from './lesson-04-who-pays-for-it';
 import { sameNumberThreeEconomiesLesson } from './lesson-05-same-number-three-economies';
+import { theCaseAgainstThisModuleLesson } from './lesson-06-the-case-against-this-module';
 
 export const moduleWhatGdpCounts = defineModule({
   id: 'what-gdp-counts',
@@ -51,5 +52,6 @@ export const moduleWhatGdpCounts = defineModule({
     destructionDoesNotSubtractLesson,
     whoPaysForItLesson,
     sameNumberThreeEconomiesLesson,
+    theCaseAgainstThisModuleLesson,
   ],
 });
