@@ -10,12 +10,32 @@ const web = path.join(root, 'web/public/brand');
 await mkdir(web, { recursive: true });
 const wordmark = await readFile(path.join(root, 'assets/brand/v2/openmacro-wordmark.svg'), 'utf8');
 
-// Preserve the outlined wordmark and Apple's actual icon render in each lockup.
+/**
+ * Preserve the outlined wordmark beside the production icon in each lockup.
+ *
+ * The symbol is the shipping icon with the launcher's own corner radius
+ * applied, not one of the `native-icon-*.png` previews. Those previews come
+ * out of Icon Composer, which has no command line, so a lockup built from
+ * them could only be refreshed by hand — and it silently kept the old, looser
+ * framing when the mark was retightened. The production PNGs are reproducible
+ * from the material masters, so the lockup now moves whenever they do.
+ */
+const CORNER = 276 / 1254; // the radius Apple's mask uses, as a fraction
 for (const [appearance, icon, ink] of [
-  ['light', 'native-icon-default.png', '#183d35'],
-  ['dark', 'native-icon-Dark.png', '#e3ede5'],
+  ['light', 'openmacro-icon-light.png', '#183d35'],
+  ['dark', 'openmacro-icon-dark.png', '#e3ede5'],
 ]) {
-  const symbol = await sharp(path.join(brand, icon)).resize(208, 208).toBuffer();
+  const radius = Math.round(208 * CORNER);
+  const mask = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="208" height="208">` +
+      `<rect width="208" height="208" rx="${radius}" fill="#fff"/></svg>`,
+  );
+  const symbol = await sharp(path.join(brand, icon))
+    .resize(208, 208)
+    .ensureAlpha()
+    .composite([{ input: mask, blend: 'dest-in' }])
+    .png()
+    .toBuffer();
   const type = await sharp(Buffer.from(wordmark.replace(/#183d35/gi, ink)))
     .resize(990, 150).png().toBuffer();
   const name = `openmacro-lockup-${appearance}.png`;
