@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1254 1254">
 <defs><linearGradient id="jade" x1="12%" y1="100%" x2="88%" y2="0%"><stop offset="0" stop-color="#A7C7B2"/><stop offset="0.52" stop-color="#7BA88E"/><stop offset="1" stop-color="#608B74"/></linearGradient></defs>
-<g transform="translate(0,1254) scale(0.1,-0.1)" fill="url(#jade)"><path d="M8841 8777 c-7 -10 -11 -472 -14 -1623 -3 -1466 -5 -1615 -20 -1676
+<g transform="translate(627,627) scale(1.18) translate(-627,-627) translate(0,1254) scale(0.1,-0.1)" fill="url(#jade)"><path d="M8841 8777 c-7 -10 -11 -472 -14 -1623 -3 -1466 -5 -1615 -20 -1676
 -50 -201 -142 -354 -264 -439 l-43 -30 0 728 c0 424 -4 766 -10 818 -42 375
 -248 680 -569 844 -206 105 -336 136 -571 135 -148 0 -176 -3 -265 -27 -129
 -35 -300 -119 -395 -196 -93 -74 -187 -190 -235 -288 -20 -41 -35 -77 -32 -79

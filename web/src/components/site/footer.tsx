@@ -194,7 +194,7 @@ export async function FooterMinimal() {
             href="/"
             className="mr-2 inline-flex min-h-11 items-center align-middle"
           >
-            <BrandLogo className="w-[140px]" />
+            <BrandLogo className="h-7" />
           </LocaleLink>{" "}
           · © {year} {s("footer.contributors")} {s("footer.disclaimer")}
         </p>

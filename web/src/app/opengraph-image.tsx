@@ -34,7 +34,7 @@ export default async function OpenGraphImage() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           {/* Satori renders the image directly; next/image is for the DOM. */}
-          <img src={brandImage} alt={SITE.name} width={360} height={58} />
+          <img src={brandImage} alt={SITE.name} width={410} height={76} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>

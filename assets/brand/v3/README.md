@@ -7,6 +7,23 @@ remains legible at Home Screen size. The lowercase wordmark stays flat.
 
 [Interactive proof](preview.html) · [Presentation image](brand-proof.png)
 
+## Framing
+
+The mark is drawn at **1.18×** inside its square, so it spans about 78% of the
+canvas and leaves an 11% margin — tight enough that the round O reads as the
+icon's subject rather than as something placed on a tile. The scale lives in
+the `transform` on each layer in `native-layers/`, composed ahead of the
+existing flip, so it travels with the geometry wherever the SVG is inlined —
+the Icon Composer bundle, the vector favicon, anything built later. Nothing
+downstream carries a second copy of the number.
+
+The raster masters were re-framed by the same 1.18 about their centre. The two
+opaque icons were re-derived from the 1254 px material sources, so the zoom is
+a crop of a larger image rather than an upscale. The Android foreground and
+monochrome keep their extra padding — they sit at 62% because the launcher
+masks them far more aggressively than iOS does, and 78% there would clip on a
+round mask.
+
 ## Production assets
 
 - `openmacro-lockup-light.png` and `openmacro-lockup-dark.png`: native OM icon
@@ -22,8 +39,20 @@ remains legible at Home Screen size. The lowercase wordmark stays flat.
 
 `app.json` selects `OpenMacro.icon` for iOS and the PNGs for splash, Android,
 and web. The PNG icon trio remains available as static brand/fallback artwork.
-The mobile header, website navigation and footers, social cards, and repository
-README use the material icon with the outlined lowercase wordmark. Earlier
+The website navigation, footers and social cards use the **bare** lockup —
+`web/public/brand/openmacro-lockup-bare-{light,dark}.svg`, the mark and the
+wordmark with no tile behind them. A launcher draws a square around an app
+icon, so the icon is authored to fill one; a web page draws nothing, and the
+tile on a dark page reads as a screenshot of an app icon rather than as the
+brand. The dark file uses the sage layers rather than a recolour of the pine
+ones, because the jade gradients are authored per appearance. The mobile
+header and the repository README still use the framed lockup.
+
+The framed lockup The lockup's
+symbol is `openmacro-icon-light.png` / `-dark.png` with the launcher corner
+radius applied, not an Icon Composer preview: the previews cannot be rebuilt
+from a script, and a lockup that depends on a hand-made file is a lockup that
+quietly goes stale. Earlier
 iterations and the original vector master remain available as design history.
 
 Run `npm run brand:export` from the repository root to reproduce the header
@@ -50,6 +79,12 @@ The bundle stores the actual Dark and Mono overrides in `icon.json`.
 Highlights, shadows, and depth are applied by Apple's renderer, following its
 [layered icon workflow](https://developer.apple.com/documentation/xcode/creating-your-app-icon-using-icon-composer).
 The static splash and Android artwork retain their fine ceramic texture.
+
+**These four previews, and `brand-proof.png` and `preview.html` with them,
+still show the previous looser framing.** Icon Composer has no command line —
+`ictool` will not export from a shell — so they can only be refreshed by
+opening `OpenMacro.icon` and exporting again. The bundle itself is current, so
+the shipped iOS icon is correct; it is only the documentation images that lag.
 
 `native-icon-default.png`, `native-icon-Dark.png`,
 `native-icon-ClearLight.png`, and `native-icon-TintedDark.png` are 1024 px
