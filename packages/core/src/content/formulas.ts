@@ -959,6 +959,49 @@ export const FORMULAS = {
   capital_yield_decade: (inputs) =>
     read(inputs, 'outlay') * read(inputs, 'capitalShare') * read(inputs, 'returnOnCapital') * 10,
 
+
+  /**
+   * What the cost share predicts you will lose: share × shortfall.
+   *
+   * The intuitive answer, and the wrong one. If energy is 5% of costs, a 20%
+   * energy shortfall "should" cost 1% of output — which is how a shock in a
+   * small sector gets waved away, and is not what happens.
+   *
+   * Expects: `inputShare`, `shortfall`, both decimal fractions.
+   */
+  cost_share_estimate: (inputs) => read(inputs, 'inputShare') * read(inputs, 'shortfall'),
+
+  /**
+   * What fixed proportions actually cost you: the shortfall itself, less
+   * whatever can be substituted away within the horizon.
+   *
+   * A car needs its chip, a smelter needs its power, and a bakery needs its
+   * flour. Where inputs combine in fixed proportions, output is set by the
+   * scarcest one and the cost share tells you nothing about the loss — a
+   * missing €4 part idles a €30,000 vehicle. Leontief's insight and the
+   * reason criticality is not size.
+   *
+   * `substitutability` is what the horizon allows: near zero in a month, far
+   * higher over a decade, which is the whole difference between 1974 and
+   * 1985.
+   *
+   * Expects: `shortfall`, `substitutability`, both decimal fractions.
+   */
+  output_lost_to_shortfall: (inputs) =>
+    read(inputs, 'shortfall') * (1 - read(inputs, 'substitutability')),
+
+  /**
+   * How many times worse than the cost-share guess, as a multiplier.
+   *
+   * Expects: `inputShare`, `shortfall`, `substitutability`.
+   */
+  criticality_ratio: (inputs) => {
+    const share = read(inputs, 'inputShare');
+    const shortfall = read(inputs, 'shortfall');
+    if (share <= 0 || shortfall <= 0) return 0;
+    return (shortfall * (1 - read(inputs, 'substitutability'))) / (share * shortfall);
+  },
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
