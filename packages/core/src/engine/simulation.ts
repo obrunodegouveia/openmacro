@@ -100,11 +100,18 @@ export function observationKey(sliderKey: string, value: number): string {
   return `${sliderKey}:${value}`;
 }
 
+/**
+ * `tryLabel` exists because this function invents a sentence, and a sentence
+ * belongs to a language. The default is English so a caller with no
+ * translator — `grading.ts`, which only counts the steps and never shows
+ * them — stays unchanged. Every caller that renders a step passes one.
+ */
 export function buildObjectiveSteps(
   objective: SimObjective,
   observed: ReadonlySet<string>,
   readouts: SimReadoutValues,
   formatValue: (value: number, sliderKey: string) => string,
+  tryLabel: (formatted: string) => string = (formatted) => `Try ${formatted}`,
 ): ObjectiveStep[] {
   const steps: ObjectiveStep[] = [];
 
@@ -113,7 +120,7 @@ export function buildObjectiveSteps(
       const key = observationKey(requirement.sliderKey, value);
       steps.push({
         id: key,
-        label: `Try ${formatValue(value, requirement.sliderKey)}`,
+        label: tryLabel(formatValue(value, requirement.sliderKey)),
         done: observed.has(key),
       });
     }

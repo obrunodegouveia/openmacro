@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
+import { useLocale } from "@/components/site/locale-provider";
 import { Minus, RotateCcw, TrendingDown, TrendingUp } from "lucide-react";
 import type {
   BalanceSheetSide,
@@ -33,6 +34,7 @@ export function TAccountFlowView({
   result,
 }: ChallengeComponentProps<"t_account_flow">) {
   const s = useSiteText();
+  const { locale } = useLocale();
   const currency = challenge.currency ?? "USD";
   const [placed, setPlaced] = React.useState<readonly string[]>([]);
   const [activeOption, setActiveOption] = React.useState<string | null>(null);
@@ -108,7 +110,7 @@ export function TAccountFlowView({
                     option.shift.delta >= 0 ? "text-mint-bright" : "text-coral",
                   )}
                 >
-                  {formatSignedCompactCurrency(option.shift.delta, currency)}
+                  {formatSignedCompactCurrency(option.shift.delta, currency, locale)}
                 </span>
                 <span className="text-sm font-semibold text-ink">
                   {option.shift.account}
@@ -307,6 +309,7 @@ function SheetColumn({
   postings: readonly { id: string; shift: BalanceSheetShift }[];
 }) {
   const s = useSiteText();
+  const { locale } = useLocale();
   const opening = openingTotal(entity, side);
   const openingLines = (entity.openingLines ?? []).filter((line) => line.side === side);
   // `${side}s` produced "liabilitys" in every one of these labels, which is
@@ -331,7 +334,7 @@ function SheetColumn({
             >
               <span className="min-w-0 truncate">{line.account}</span>
               <span className="shrink-0 font-mono">
-                {formatCompactCurrency(line.amount, currency)}
+                {formatCompactCurrency(line.amount, currency, locale)}
               </span>
             </li>
           ))}
@@ -357,7 +360,7 @@ function SheetColumn({
                   posting.shift.delta >= 0 ? "text-mint-bright" : "text-coral",
                 )}
               >
-                {formatSignedCompactCurrency(posting.shift.delta, currency)}
+                {formatSignedCompactCurrency(posting.shift.delta, currency, locale)}
               </span>
             </button>
           </li>
@@ -378,7 +381,7 @@ function SheetColumn({
       >
         {armed
           ? s("tflow.placeHere")
-          : s("tflow.opening", { amount: formatCompactCurrency(opening, currency) })}
+          : s("tflow.opening", { amount: formatCompactCurrency(opening, currency, locale) })}
       </button>
     </div>
   );
