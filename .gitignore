@@ -55,8 +55,3 @@ credentials.json
 google-play-service-account*.json
 *.keystore
 translations/
-
-# Local EAS builds drop their artefact in the repository root.
-build-*.ipa
-build-*.apk
-build-*.aab
