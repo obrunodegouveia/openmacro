@@ -39,8 +39,16 @@ round mask.
 
 `app.json` selects `OpenMacro.icon` for iOS and the PNGs for splash, Android,
 and web. The PNG icon trio remains available as static brand/fallback artwork.
-The mobile header, website navigation and footers, social cards, and repository
-README use the material icon with the outlined lowercase wordmark. The lockup's
+The website navigation, footers and social cards use the **bare** lockup —
+`web/public/brand/openmacro-lockup-bare-{light,dark}.svg`, the mark and the
+wordmark with no tile behind them. A launcher draws a square around an app
+icon, so the icon is authored to fill one; a web page draws nothing, and the
+tile on a dark page reads as a screenshot of an app icon rather than as the
+brand. The dark file uses the sage layers rather than a recolour of the pine
+ones, because the jade gradients are authored per appearance. The mobile
+header and the repository README still use the framed lockup.
+
+The framed lockup The lockup's
 symbol is `openmacro-icon-light.png` / `-dark.png` with the launcher corner
 radius applied, not an Icon Composer preview: the previews cannot be rebuilt
 from a script, and a lockup that depends on a hand-made file is a lockup that
