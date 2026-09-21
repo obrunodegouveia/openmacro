@@ -37,6 +37,7 @@ import { moduleEuribor } from './lessons/module-13-euribor';
 import { moduleBuyingPropertyPortugal } from './lessons/module-14-buying-property-portugal';
 import { moduleScrutinisingCbdcs } from './lessons/module-15-scrutinising-cbdcs';
 import { moduleBankingAndMoney } from './lessons/module-16-banking-and-money';
+import { moduleWhatGdpCounts } from './lessons/module-17-what-gdp-counts';
 
 /**
  * Ordered list of every module shipped with the app. Add yours here.
@@ -69,6 +70,7 @@ export const MODULES: readonly Module[] = [
   moduleEuribor,
   moduleBuyingPropertyPortugal,
   moduleScrutinisingCbdcs,
+  moduleWhatGdpCounts,
 ];
 
 export const COURSE: Course = {

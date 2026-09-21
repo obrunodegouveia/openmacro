@@ -38,6 +38,34 @@ function separators(locale: string): { group: string; decimal: string } {
   return SEPARATORS[locale] ?? SEPARATORS.en!;
 }
 
+/**
+ * Compact magnitude suffixes, which are not the same symbols everywhere.
+ *
+ * English "billion" is 10^9 and Portuguese *bilião* is 10^12, so `€100B`
+ * rendered for a Portuguese reader says a thousand times what it means. The
+ * long scale needs *mil milhões* for 10^9 and keeps B for 10^12, which is
+ * why this cannot be a shared table with a locale-specific separator bolted
+ * on — the letters themselves move.
+ */
+const MAGNITUDES: Readonly<Record<string, readonly (readonly [number, string])[]>> = {
+  en: [
+    [1e12, 'T'],
+    [1e9, 'B'],
+    [1e6, 'M'],
+    [1e3, 'K'],
+  ],
+  'pt-PT': [
+    [1e12, '\u00A0B'],
+    [1e9, '\u00A0mM'],
+    [1e6, '\u00A0M'],
+    [1e3, '\u00A0mil'],
+  ],
+};
+
+function magnitudes(locale: string): readonly (readonly [number, string])[] {
+  return MAGNITUDES[locale] ?? MAGNITUDES.en!;
+}
+
 /** `1234.5` -> `"1,234.5"` in English, `"1\u00A0234,5"` in Portuguese. */
 function group(whole: string, cents: string | undefined, locale: string): string {
   const { group: g, decimal } = separators(locale);
@@ -180,14 +208,7 @@ export function formatCompactCurrency(value: number, currency = 'USD', locale = 
   const sign = value < 0 ? '-' : '';
   const magnitude = Math.abs(value);
 
-  const units: readonly [number, string][] = [
-    [1e12, 'T'],
-    [1e9, 'B'],
-    [1e6, 'M'],
-    [1e3, 'K'],
-  ];
-
-  for (const [scale, suffix] of units) {
+  for (const [scale, suffix] of magnitudes(locale)) {
     if (magnitude >= scale) {
       const scaled = magnitude / scale;
       // One decimal below 100 keeps "5.2T" readable; above it the decimal is

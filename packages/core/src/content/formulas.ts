@@ -914,6 +914,51 @@ export const FORMULAS = {
     if (trade <= 0) return 0;
     return read(inputs, 'poolSize') / trade;
   },
+
+  /**
+   * GDP from an outlay: the outlay, whatever it bought.
+   *
+   * Deliberately a pass-through, because that is the lesson. Expenditure-side
+   * GDP records what was spent on newly produced final output in the period;
+   * it does not ask whether the thing bought will still exist next year. A
+   * hospital and a stock of munitions enter the same number at the same size,
+   * and the sim exists so a learner can watch that happen while the split
+   * moves underneath.
+   *
+   * Expects: `outlay`.
+   */
+  gdp_from_outlay: (inputs) => read(inputs, 'outlay'),
+
+  /**
+   * The part of an outlay that is still there next year.
+   *
+   * Expects: `outlay`, `capitalShare` as a decimal fraction.
+   */
+  capital_formed: (inputs) => read(inputs, 'outlay') * read(inputs, 'capitalShare'),
+
+  /**
+   * What the capital formed yields each year once it is working.
+   *
+   * A deliberately crude constant return: a road or a hospital raises what the
+   * economy can produce, and the point here is the sign and the order of
+   * magnitude rather than a growth model anybody should forecast with.
+   *
+   * Expects: `outlay`, `capitalShare`, `returnOnCapital` as a decimal fraction.
+   */
+  capital_yield: (inputs) =>
+    read(inputs, 'outlay') * read(inputs, 'capitalShare') * read(inputs, 'returnOnCapital'),
+
+  /**
+   * Ten years of that yield, undiscounted.
+   *
+   * Undiscounted on purpose: discounting would be more correct and would put a
+   * second unfamiliar idea in front of the one being taught.
+   *
+   * Expects: `outlay`, `capitalShare`, `returnOnCapital`.
+   */
+  capital_yield_decade: (inputs) =>
+    read(inputs, 'outlay') * read(inputs, 'capitalShare') * read(inputs, 'returnOnCapital') * 10,
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
