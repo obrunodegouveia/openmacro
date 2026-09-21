@@ -38,6 +38,28 @@ export type ChallengeType =
 export type Difficulty = 'intro' | 'core' | 'advanced';
 
 /**
+ * What a learner needs to know *before* starting a module.
+ *
+ * Deliberately not the same question as a lesson's `difficulty`, and the two
+ * disagree on purpose. `difficulty` says how hard a challenge is within its
+ * own topic; `level` says what the topic assumes. "What GDP Counts" has
+ * several advanced challenges and assumes nothing at all, so it is a
+ * beginner module with hard questions in it — which is a better description
+ * of it than either field could give alone.
+ *
+ *   beginner      Assumes nothing. Explains money, banks and the headlines
+ *                 from a standing start.
+ *   intermediate  Assumes you know what a deposit is and who issues
+ *                 reserves. Rates, debt, property, the household cases.
+ *   advanced      Assumes the interface and the levers. Reads real balance
+ *                 sheets and diagnoses crises.
+ */
+export type ModuleLevel = 'beginner' | 'intermediate' | 'advanced';
+
+/** The three levels, in the order a learner meets them. */
+export const MODULE_LEVELS: readonly ModuleLevel[] = ['beginner', 'intermediate', 'advanced'];
+
+/**
  * The four balance-sheet tiers OpenMacro models.
  *
  * Every entity in a `t_account_flow` belongs to exactly one tier, and the tier
@@ -386,6 +408,16 @@ export interface Module {
   id: string;
   title: string;
   description: string;
+  /**
+   * What the module assumes the learner already knows. See `ModuleLevel`.
+   *
+   * `registry.ts` keeps `MODULES` in level order, so grouping the learning
+   * path is a matter of printing a heading when this changes rather than of
+   * sorting anything — and the order the path shows is the order
+   * `localisedNextLesson` walks, which is the only way those two can be
+   * guaranteed to agree.
+   */
+  level: ModuleLevel;
   /** Accent colour for the module header. Any token from `palette`. */
   accent: string;
   /**

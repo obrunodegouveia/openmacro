@@ -38,6 +38,7 @@ export const moduleRealAssetsAndProperty = defineModule({
   description:
     'Money grew 69%, consumer prices 32%, houses 60%. Why holding property through that transfers wealth from whoever held euros, what puts a floor under a price — and why Dublin still fell by half.',
   accent: 'violet',
+  level: 'intermediate',
   lessons: [
     eurosOrAHouseLesson,
     whoeverGetsItFirstLesson,

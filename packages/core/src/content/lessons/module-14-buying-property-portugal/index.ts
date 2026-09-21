@@ -56,6 +56,7 @@ export const moduleBuyingPropertyPortugal = defineModule({
   description:
     'IMT, stamp duty, IMI, maintenance and the agency commission, to the euro — and how many years of appreciation it takes to clear them. Then owning against renting, and the same flat bought purely to make money.',
   accent: 'emerald',
+  level: 'intermediate',
   lessons: [
     theCostOfTheDeedLesson,
     theCarryLesson,

@@ -44,6 +44,7 @@ export const moduleStartHere = defineModule({
   description:
     'No background needed. What the number in your banking app actually is, what a bank does with it, what an interest rate is for, and why a decision in Frankfurt reaches your mortgage.',
   accent: 'mint',
+  level: 'beginner',
   lessons: [
     yourMoneyIsAPromiseLesson,
     whatABankIsLesson,

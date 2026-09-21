@@ -73,10 +73,15 @@ export function CourseMap() {
       ) : null}
 
       <div className="mt-6 flex flex-col gap-8">
-        {modules.map((module) => {
+        {modules.map((module, index) => {
           const moduleDone = module.lessons.filter(
             (lesson) => snapshot?.progress[lesson.id],
           ).length;
+          /* `MODULES` is stored in level order, so a heading is drawn when
+             the level changes rather than by grouping — see registry.ts.
+             Sorting a copy here would let this page disagree with the order
+             the lesson runner walks. */
+          const opensLevel = module.level !== modules[index - 1]?.level;
 
           return (
             /* The `id` makes each module a real destination — without one,
@@ -84,6 +89,16 @@ export function CourseMap() {
                here: `scroll-padding-top` on <html> already clears the fixed
                header, and adding a margin as well lands 88px too low. */
             <section key={module.id} id={module.id}>
+              {opensLevel ? (
+                <div className="mb-5 mt-2 border-t border-hairline pt-6 first:mt-0 first:border-0 first:pt-0">
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-mint-bright">
+                    {t(`level.${module.level}`)}
+                  </h3>
+                  <p className="mt-0.5 text-xs text-ink-faint">
+                    {t(`level.${module.level}.blurb`)}
+                  </p>
+                </div>
+              ) : null}
               <div className="flex items-baseline justify-between gap-4">
                 <h3 className="min-w-0 font-display text-base font-extrabold tracking-tight text-ink">
                   {module.title}

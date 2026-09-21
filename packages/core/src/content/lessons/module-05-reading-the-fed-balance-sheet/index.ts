@@ -32,6 +32,7 @@ export const moduleReadingTheFedBalanceSheet = defineModule({
   description:
     "The real H.4.1, line by line: what the Fed owns, who holds its liabilities, and why reserves are whatever is left over. Figures as reported for 2 September 2026.",
   accent: 'mint',
+  level: 'advanced',
   lessons: [
     theNightCashCostTenPercentLesson,
     h41AnatomyLesson,

@@ -28,6 +28,7 @@ export const moduleReadingTheEcbBalanceSheet = defineModule({
   description:
     "The Eurosystem's weekly statement against the Fed's: a fifth of it gold, two reserve accounts instead of one, and a lending framework it no longer needs. Figures as at 28 August 2026.",
   accent: 'azure',
+  level: 'advanced',
   lessons: [
     aDifferentShapeLesson,
     goldAndRevaluationLesson,

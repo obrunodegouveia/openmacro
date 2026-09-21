@@ -535,6 +535,12 @@ export const en = {
 
   // ---- challenge widgets --------------------------------------------------
   'sim.try': 'Try {value}',
+  'level.beginner': 'Beginner',
+  'level.beginner.blurb': 'Assumes nothing at all',
+  'level.intermediate': 'Intermediate',
+  'level.intermediate.blurb': 'Assumes you know what a deposit is',
+  'level.advanced': 'Advanced',
+  'level.advanced.blurb': 'Assumes the interface and the levers',
   'tflow.entries': 'Entries to post',
   'tflow.placed': '{done, number} of {total, number} placed',
   'tflow.chooseSide': 'Now choose whose sheet it lands on, and which side.',

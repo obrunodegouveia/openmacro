@@ -86,6 +86,7 @@ export const moduleBankingAndMoney = defineModule({
   description:
     'Sal Khan builds the banking system from one island, one vault and a thousand gold coins — through fractional reserve, leverage, the central bank and open market operations, to the Fed’s real balance sheet. Twenty-five videos, each with questions written against what it actually says, ending with his own argument against the system he just explained.',
   accent: 'gold',
+  level: 'beginner',
   lessons: [
     kabWhatABankIsForLesson,
     kabIncomeStatementLesson,

@@ -37,6 +37,7 @@ export const moduleDebtDebasementAndCapital = defineModule({
   description:
     'Who actually pays for a debt that is never repaid, what debasement has historically been used to fund, and what the same resources build when they go into capital instead.',
   accent: 'violet',
+  level: 'intermediate',
   lessons: [
     theInflationTaxLesson,
     debasementAndWarLesson,

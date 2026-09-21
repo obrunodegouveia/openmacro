@@ -40,6 +40,7 @@ export const moduleFedEcbLevers = defineModule({
   description:
     'IORB, the ON RRP floor, the discount window and the DFR corridor — posted entry by entry.',
   accent: 'blue',
+  level: 'advanced',
   lessons: [
     qePrimaryDealerLesson,
     rrpFloorMechanicsLesson,
