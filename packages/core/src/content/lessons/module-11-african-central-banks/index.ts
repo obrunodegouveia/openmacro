@@ -45,6 +45,7 @@ export const moduleAfricanCentralBanks = defineModule({
   description:
     'Fourteen countries, two currencies with one name, and a peg fixed at 655.957 since 1999. What the account in Paris was, what changed in 2020, and who bears the cost of a rate that cannot move.',
   accent: 'gold',
+  level: 'advanced',
   lessons: [
     theFrancZoneMapLesson,
     theOperationsAccountLesson,

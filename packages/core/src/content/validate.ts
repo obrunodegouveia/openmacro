@@ -13,6 +13,7 @@
  */
 
 import { isKnownFormulaId } from './formulas';
+import { MODULE_LEVELS } from './schema';
 import type { BalanceSheetShift, Challenge, Lesson, Module } from './schema';
 
 /** Amounts are authored as plain numbers; tolerate float noise when summing. */
@@ -261,6 +262,12 @@ export function validateModules(modules: readonly Module[]): ContentIssue[] {
       issues.push({
         path: `module:${module.id}`,
         message: 'Module video URL must be https — an http embed will be blocked.',
+      });
+    }
+    if (!MODULE_LEVELS.includes(module.level)) {
+      issues.push({
+        path: `module:${module.id}`,
+        message: `Module level must be one of ${MODULE_LEVELS.join(', ')} — got ${String(module.level)}.`,
       });
     }
     if (module.lessons.length === 0) {

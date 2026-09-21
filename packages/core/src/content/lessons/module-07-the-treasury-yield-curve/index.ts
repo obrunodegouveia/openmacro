@@ -21,5 +21,6 @@ export const moduleTheTreasuryYieldCurve = defineModule({
   description:
     'One borrower, eleven maturities, eleven rates. Why price and yield are one number, what an inversion actually says, and how to read the curve as published on 3 September 2026.',
   accent: 'gold',
+  level: 'intermediate',
   lessons: [whatTheCurveIsLesson, priceAndYieldLesson, theLongInversionLesson],
 });

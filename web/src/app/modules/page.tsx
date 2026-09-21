@@ -66,6 +66,11 @@ export default async function ModuleBriefsPage() {
                   </a>
                 </span>
                 <span className="flex shrink-0 items-center gap-3 text-xs font-bold text-ink-faint">
+                  {/* The level is the one thing a brief index can say about
+                      whether to start here, and it costs a word. */}
+                  <span className="rounded-full border border-hairline px-2 py-0.5">
+                    {s(`level.${module.level}`)}
+                  </span>
                   <span className="inline-flex items-center gap-1.5">
                     <FileText className="size-3.5" aria-hidden />
                     {s("briefs.lessons", { count: module.lessons.length })}

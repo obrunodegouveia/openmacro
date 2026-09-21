@@ -26,6 +26,7 @@ export const moduleCrisisArchitecture = defineModule({
   description:
     'Offshore dollars, swap lines, resolution and the doom loop — and how to tell one kind of crisis from another.',
   accent: 'violet',
+  level: 'advanced',
   lessons: [
     eurodollarSystemLesson,
     swapLinesLesson,

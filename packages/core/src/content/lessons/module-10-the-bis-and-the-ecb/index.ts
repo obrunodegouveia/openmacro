@@ -40,6 +40,7 @@ export const moduleTheBisAndTheEcb = defineModule({
   description:
     'Which channels of influence between Basel and Frankfurt are real: standards that must pass a legislature, research that sets the terms, statistics nobody else collects — and which are the other way round.',
   accent: 'emerald',
+  level: 'advanced',
   lessons: [
     aBankForCentralBanksLesson,
     baselToBrusselsLesson,

@@ -46,6 +46,7 @@ export const moduleWhatGdpCounts = defineModule({
   description:
     'Why building a hospital and shelling a city both show up as growth, and what the number would have to be to tell them apart. Flow against stock, consumption against capital, and who ends up paying for the difference.',
   accent: 'gold',
+  level: 'beginner',
   lessons: [
     whatGdpCountsLesson,
     consumptionIsNotCapitalLesson,

@@ -27,6 +27,7 @@ export const moduleCommercialCentralInterface = defineModule({
   description:
     'How a payment actually settles, why banks hold reserves, and what really limits lending.',
   accent: 'emerald',
+  level: 'intermediate',
   lessons: [
     banksCreateDepositsLesson,
     interbankPaymentLesson,

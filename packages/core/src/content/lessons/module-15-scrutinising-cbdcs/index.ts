@@ -68,6 +68,7 @@ export const moduleScrutinisingCbdcs = defineModule({
   description:
     'One BIS experiment, read properly. What a wholesale CBDC changes and what it does not, what Mariana actually built, what instant settlement costs in parked liquidity, which control features are new — and who would have to say yes before any of it is money.',
   accent: 'violet',
+  level: 'advanced',
   lessons: [
     wholesaleIsNotRetailLesson,
     whatMarianaBuiltLesson,

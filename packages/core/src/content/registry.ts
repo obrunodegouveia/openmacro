@@ -48,31 +48,48 @@ import { moduleWhatCannotStop } from './lessons/module-18-what-cannot-stop';
  * here moves it everywhere — mobile and web both — and nothing else has to
  * be touched.
  *
+ * **Grouped by `level`, in level order.** Both clients draw a heading when
+ * the level changes, which only works because the array is sorted — and
+ * sorting it, rather than sorting a copy for display, is what keeps the path
+ * the learner reads and the sequence `localisedNextLesson` walks from
+ * drifting apart. A module added out of level order will render under the
+ * wrong heading, so add it beside its peers.
+ *
  * Banking and Money leads because it is the only module with a video on
  * every lesson. A complete beginner does better watching somebody explain a
  * balance sheet before being asked to post one, and Khan Academy's series
  * does that better than any text we would write.
+ *
+ * The two newest modules sit in the beginner block rather than at the end,
+ * which is where they were written. Neither assumes anything about banking:
+ * they are about a number the news quotes every quarter, and they are a
+ * better second thing to read than a balance sheet is.
  */
 export const MODULES: readonly Module[] = [
+  // ---- beginner: assumes nothing ------------------------------------------
   moduleBankingAndMoney,
   moduleStartHere,
   moduleFoundationsFiduciaryCurrency,
+  moduleWhatGdpCounts,
+  moduleWhatCannotStop,
+
+  // ---- intermediate: assumes a deposit and who issues reserves ------------
   moduleCommercialCentralInterface,
+  moduleTheTreasuryYieldCurve,
+  moduleDebtDebasementAndCapital,
+  moduleRealAssetsAndProperty,
+  moduleEuribor,
+  moduleBuyingPropertyPortugal,
+
+  // ---- advanced: assumes the interface and the levers ---------------------
   moduleFedEcbLevers,
   moduleCrisisArchitecture,
   moduleReadingTheFedBalanceSheet,
   moduleReadingTheEcbBalanceSheet,
-  moduleTheTreasuryYieldCurve,
-  moduleDebtDebasementAndCapital,
   moduleBreakingAPeg,
   moduleTheBisAndTheEcb,
   moduleAfricanCentralBanks,
-  moduleRealAssetsAndProperty,
-  moduleEuribor,
-  moduleBuyingPropertyPortugal,
   moduleScrutinisingCbdcs,
-  moduleWhatGdpCounts,
-  moduleWhatCannotStop,
 ];
 
 export const COURSE: Course = {

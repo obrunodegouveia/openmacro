@@ -533,6 +533,12 @@ export const ptPT = {
 
   // ---- challenge widgets --------------------------------------------------
   'sim.try': 'Experimenta {value}',
+  'level.beginner': 'Iniciante',
+  'level.beginner.blurb': 'Não pressupõe nada',
+  'level.intermediate': 'Médio',
+  'level.intermediate.blurb': 'Pressupõe que sabes o que é um depósito',
+  'level.advanced': 'Avançado',
+  'level.advanced.blurb': 'Pressupõe a interface e as alavancas',
   'tflow.entries': 'Lançamentos a fazer',
   'tflow.placed': '{done, number} de {total, number} colocados',
   'tflow.chooseSide': 'Agora escolhe em que balanço cai, e de que lado.',

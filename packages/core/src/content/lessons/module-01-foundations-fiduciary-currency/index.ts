@@ -24,6 +24,7 @@ export const moduleFoundationsFiduciaryCurrency = defineModule({
   description:
     'Why unbacked paper is accepted, what inflation actually is, and what breaks when a currency fails.',
   accent: 'gold',
+  level: 'beginner',
   lessons: [
     whatMoneyDoesLesson,
     whyPaperIsAcceptedLesson,

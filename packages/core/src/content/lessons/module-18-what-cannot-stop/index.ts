@@ -45,6 +45,7 @@ export const moduleWhatCannotStop = defineModule({
   description:
     'Agriculture is 2% of output and nobody eats without it. Semiconductors are under 1% and they idled the car industry. How to tell what a sector is worth from what would stop without it — and why that is a different ranking from its size.',
   accent: 'coral',
+  level: 'beginner',
   lessons: [
     shareIsNotImportanceLesson,
     whatStopsWhenItStopsLesson,

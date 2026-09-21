@@ -32,6 +32,7 @@ export const moduleBreakingAPeg = defineModule({
   description:
     'The sterling trade, priced rather than retold: why the ERM position was unbearable, why shorting a peg costs only carry, what defending one actually spends, and the arithmetic of Black Wednesday.',
   accent: 'coral',
+  level: 'advanced',
   lessons: [
     theTrapLesson,
     theAsymmetricBetLesson,

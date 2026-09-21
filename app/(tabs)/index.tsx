@@ -77,13 +77,25 @@ export default function LearningPathScreen() {
         </View>
       ) : null}
 
-      {/* ---- modules --------------------------------------------------- */}
+      {/* ---- modules ----------------------------------------------------
+        A level heading is drawn whenever the level changes rather than by
+        grouping into sections, because `MODULES` is already in level order
+        — see the note in `registry.ts`. Sorting a copy here would let the
+        path disagree with the order the lesson runner walks.
+      */}
       {modules.map((module, moduleIndex) => (
         <Animated.View
           key={module.id}
           entering={FadeInDown.delay(moduleIndex * 80).duration(280)}
           style={styles.module}
         >
+          {module.level !== modules[moduleIndex - 1]?.level ? (
+            <View style={styles.levelHeader}>
+              <Text style={styles.levelTitle}>{t(`level.${module.level}`)}</Text>
+              <Text style={styles.levelBlurb}>{t(`level.${module.level}.blurb`)}</Text>
+            </View>
+          ) : null}
+
           <View style={styles.moduleHeader}>
             <Text style={styles.moduleEyebrow}>
               {t('path.module', { number: moduleIndex + 1 })}
@@ -229,6 +241,22 @@ const styles = StyleSheet.create({
   },
   module: {
     gap: spacing.md,
+  },
+  levelHeader: {
+    gap: 2,
+    borderTopWidth: 1,
+    borderTopColor: palette.border,
+    paddingTop: spacing.lg,
+    marginTop: spacing.sm,
+  },
+  levelTitle: {
+    ...typography.overline,
+    color: palette.ink,
+    textTransform: 'uppercase',
+  },
+  levelBlurb: {
+    ...typography.caption,
+    color: palette.inkFaint,
   },
   moduleHeader: {
     gap: spacing.xs,
