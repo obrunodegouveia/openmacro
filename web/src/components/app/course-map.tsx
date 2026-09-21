@@ -90,11 +90,18 @@ export function CourseMap() {
                header, and adding a margin as well lands 88px too low. */
             <section key={module.id} id={module.id}>
               {opensLevel ? (
-                <div className="mb-5 mt-2 border-t border-hairline pt-6 first:mt-0 first:border-0 first:pt-0">
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-mint-bright">
-                    {t(`level.${module.level}`)}
-                  </h3>
-                  <p className="mt-0.5 text-xs text-ink-faint">
+                <div className="mb-7 mt-12 border-t border-hairline pt-9 first:mt-0 first:border-0 first:pt-0">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <h3 className="font-display text-2xl font-extrabold tracking-tight text-ink">
+                      {t(`level.${module.level}`)}
+                    </h3>
+                    <span className="rounded-full border border-mint/30 bg-mint/10 px-2.5 py-0.5 text-xs font-bold text-mint-bright">
+                      {t('level.count', {
+                        count: modules.filter((entry) => entry.level === module.level).length,
+                      })}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 max-w-2xl leading-relaxed text-ink-muted">
                     {t(`level.${module.level}.blurb`)}
                   </p>
                 </div>

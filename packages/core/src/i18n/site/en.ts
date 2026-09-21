@@ -535,6 +535,7 @@ export const en = {
 
   // ---- challenge widgets --------------------------------------------------
   'sim.try': 'Try {value}',
+  'level.count': '{count, plural, one {# module} other {# modules}}',
   'level.beginner': 'Beginner',
   'level.beginner.blurb': 'Assumes nothing at all',
   'level.intermediate': 'Intermediate',

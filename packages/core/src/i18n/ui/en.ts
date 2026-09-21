@@ -166,6 +166,7 @@ export const en = {
   'map.resume': 'Pick up where you left off',
   'map.best': 'Best {best, number} / {total, number} XP',
   'map.runs': '{count, plural, one {# run} other {# runs}}',
+  'level.count': '{count, plural, one {# module} other {# modules}}',
   'level.beginner': 'Beginner',
   'level.beginner.blurb': 'Assumes nothing at all',
   'level.intermediate': 'Intermediate',

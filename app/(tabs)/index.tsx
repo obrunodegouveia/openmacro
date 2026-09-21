@@ -91,7 +91,14 @@ export default function LearningPathScreen() {
         >
           {module.level !== modules[moduleIndex - 1]?.level ? (
             <View style={styles.levelHeader}>
-              <Text style={styles.levelTitle}>{t(`level.${module.level}`)}</Text>
+              <View style={styles.levelTitleRow}>
+                <Text style={styles.levelTitle}>{t(`level.${module.level}`)}</Text>
+                <Text style={styles.levelCount}>
+                  {t('level.count', {
+                    count: modules.filter((entry) => entry.level === module.level).length,
+                  })}
+                </Text>
+              </View>
               <Text style={styles.levelBlurb}>{t(`level.${module.level}.blurb`)}</Text>
             </View>
           ) : null}
@@ -243,20 +250,33 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   levelHeader: {
-    gap: 2,
+    gap: spacing.xs,
     borderTopWidth: 1,
     borderTopColor: palette.border,
-    paddingTop: spacing.lg,
-    marginTop: spacing.sm,
+    paddingTop: spacing.xl,
+    marginTop: spacing.lg,
+  },
+  levelTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   levelTitle: {
-    ...typography.overline,
+    ...typography.display,
     color: palette.ink,
-    textTransform: 'uppercase',
+  },
+  levelCount: {
+    ...typography.caption,
+    color: palette.mintDark,
+    backgroundColor: palette.mintSoft,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: 999,
+    overflow: 'hidden',
   },
   levelBlurb: {
-    ...typography.caption,
-    color: palette.inkFaint,
+    ...typography.body,
+    color: palette.inkMuted,
   },
   moduleHeader: {
     gap: spacing.xs,
