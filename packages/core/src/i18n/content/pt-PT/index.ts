@@ -24,6 +24,7 @@ import { scrutinisingCbdcsPtPT } from './scrutinising-cbdcs';
 import { startHerePtPT } from './start-here';
 import { theBisAndTheEcbPtPT } from './the-bis-and-the-ecb';
 import { theTreasuryYieldCurvePtPT } from './the-treasury-yield-curve';
+import { whatCannotStopPtPT } from './what-cannot-stop';
 import { whatGdpCountsPtPT } from './what-gdp-counts';
 
 export const ptPTContent: ContentTranslation = {
@@ -46,6 +47,7 @@ export const ptPTContent: ContentTranslation = {
     'start-here': startHerePtPT,
     'the-bis-and-the-ecb': theBisAndTheEcbPtPT,
     'the-treasury-yield-curve': theTreasuryYieldCurvePtPT,
+    'what-cannot-stop': whatCannotStopPtPT,
     'what-gdp-counts': whatGdpCountsPtPT,
   },
 };
