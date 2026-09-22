@@ -1089,6 +1089,127 @@ export const FORMULAS = {
     read(inputs, 'capitalShare') *
     read(inputs, 'capitalReturn'),
 
+
+  // -------------------------------------------------------------------------
+  // Bank capital, liquidity and stress
+  // -------------------------------------------------------------------------
+
+  /**
+   * Common equity tier 1 after a loss, as a share of risk-weighted assets.
+   *
+   * Take total assets as 100. Risk-weighted assets are `rwaDensity` × 100, and
+   * capital is `cet1Ratio` × RWA. A loss of `lossRate` falls on *assets*, not
+   * on the weighted number — so the ratio falls by `lossRate / rwaDensity`.
+   *
+   * That division is the lesson. A bank stuffed with mortgages carries low
+   * risk weights, so it holds fewer euros of capital per euro of asset, and
+   * the same percentage loss eats a larger share of its ratio. Density is the
+   * amplifier hiding inside every capital ratio.
+   *
+   * Risk weights are held fixed, which flatters the result: in a real stress
+   * they rise as exposures are downgraded, and the ratio falls further.
+   *
+   * Expects: `cet1Ratio`, `lossRate`, `rwaDensity` — decimal fractions.
+   */
+  cet1_after_shock: (inputs) => {
+    const density = read(inputs, 'rwaDensity');
+    if (density <= 0) return 0;
+    return read(inputs, 'cet1Ratio') - read(inputs, 'lossRate') / density;
+  },
+
+  /**
+   * How far the post-shock ratio sits above the 4.5% CET1 minimum.
+   *
+   * Negative means the bank is below the line and the question stops being
+   * supervisory and starts being resolution.
+   *
+   * Expects: `cet1Ratio`, `lossRate`, `rwaDensity`.
+   */
+  distance_to_minimum: (inputs) => {
+    const density = read(inputs, 'rwaDensity');
+    if (density <= 0) return 0;
+    return read(inputs, 'cet1Ratio') - read(inputs, 'lossRate') / density - 0.045;
+  },
+
+  /**
+   * The loss rate on assets that takes the bank to the minimum.
+   *
+   * The number a supervisor actually wants: not "is it solvent today" but
+   * "how far from today does it stop being".
+   *
+   * Expects: `cet1Ratio`, `rwaDensity`.
+   */
+  loss_rate_to_breach: (inputs) =>
+    (read(inputs, 'cet1Ratio') - 0.045) * read(inputs, 'rwaDensity'),
+
+  // -------------------------------------------------------------------------
+  // Collateral
+  // -------------------------------------------------------------------------
+
+  /**
+   * Cash a borrower raises against collateral, after the haircut.
+   *
+   * Expects: `collateralValue`, `haircut` — haircut as a decimal fraction.
+   */
+  collateral_cash_raised: (inputs) =>
+    read(inputs, 'collateralValue') * (1 - read(inputs, 'haircut')),
+
+  /**
+   * How much collateral must be pledged to raise a given amount of cash.
+   *
+   * The direction that matters in a crisis: a bank does not ask what its
+   * bonds are worth, it asks how many it must hand over to survive Friday.
+   *
+   * Expects: `cashNeeded`, `haircut`.
+   */
+  collateral_required: (inputs) => {
+    const haircut = read(inputs, 'haircut');
+    if (haircut >= 1) return Number.POSITIVE_INFINITY;
+    return read(inputs, 'cashNeeded') / (1 - haircut);
+  },
+
+  /**
+   * Cash still raisable after the collateral is marked down *and* the haircut
+   * is widened — the two things that happen together in a crisis.
+   *
+   * Expects: `collateralValue`, `priceFall`, `haircut`.
+   */
+  collateral_after_stress: (inputs) =>
+    read(inputs, 'collateralValue') *
+    (1 - read(inputs, 'priceFall')) *
+    (1 - read(inputs, 'haircut')),
+
+
+  // -------------------------------------------------------------------------
+  // Real-time data
+  // -------------------------------------------------------------------------
+
+  /**
+   * The Taylor prescription computed on the output gap as later revised.
+   *
+   * Same rule as `taylor_rate`, reading `revisedGap` instead of `outputGap`,
+   * so a sim can put the two side by side. Orphanides' point in one pair of
+   * readouts: the rule did not fail in the 1970s, the gap estimate did.
+   *
+   * Expects: `neutralReal`, `inflation`, `target`, `revisedGap`,
+   * `inflationWeight`, `gapWeight`.
+   */
+  taylor_rate_revised: (inputs) =>
+    read(inputs, 'neutralReal') +
+    read(inputs, 'inflation') +
+    read(inputs, 'inflationWeight') * (read(inputs, 'inflation') - read(inputs, 'target')) +
+    read(inputs, 'gapWeight') * read(inputs, 'revisedGap'),
+
+  /**
+   * How far the real-time prescription sat from the one the revised data
+   * would have given. Negative means policy was set looser than it should
+   * have been.
+   *
+   * Expects: `outputGap`, `revisedGap`, `gapWeight`.
+   */
+  real_time_policy_error: (inputs) =>
+    read(inputs, 'gapWeight') * (read(inputs, 'outputGap') - read(inputs, 'revisedGap')),
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
