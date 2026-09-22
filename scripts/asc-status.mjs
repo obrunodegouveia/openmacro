@@ -60,8 +60,23 @@ const secondary = info?.relationships?.secondaryCategory?.data?.id;
 row(Boolean(primary), 'Category', primary ? `${primary}${secondary ? ' + ' + secondary : ''}` : 'not set');
 
 const rating = await api(`/v1/appInfos/${info.id}/ageRatingDeclaration`, { bearer }).catch(() => null);
+/**
+ * Three fields are null for a reason rather than by omission.
+ *
+ * `kidsAgeBand` is only set for the Kids category. `developerAgeRatingInfoUrl`
+ * is optional. `gracRatingClassificationNumber` is a registration number
+ * issued by Korea's Game Rating and Administration Committee — it applies to
+ * games distributed there, and there is nothing for an education app to put
+ * in it.
+ *
+ * The last one cost an hour: withdrawing a version from review creates a
+ * fresh `appInfo` in PREPARE_FOR_SUBMISSION whose GRAC field is null, so a
+ * check that had been green for weeks started reporting a missing answer at
+ * the exact moment somebody needed to resubmit.
+ */
+const notApplicable = ['kidsAgeBand', 'developerAgeRatingInfoUrl', 'gracRatingClassificationNumber'];
 const unanswered = Object.entries(rating?.data?.attributes ?? {})
-  .filter(([key, value]) => value === null && !['kidsAgeBand', 'developerAgeRatingInfoUrl'].includes(key))
+  .filter(([key, value]) => value === null && !notApplicable.includes(key))
   .map(([key]) => key);
 row(
   Boolean(rating?.data) && unanswered.length === 0,
