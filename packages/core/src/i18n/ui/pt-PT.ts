@@ -157,6 +157,7 @@ export const ptPT: UiDictionary = {
   'map.resume': 'Retoma onde ficaste',
   'map.best': 'Melhor {best, number} / {total, number} XP',
   'map.runs': '{count, plural, one {# tentativa} other {# tentativas}}',
+  'level.count': '{count, plural, one {# módulo} other {# módulos}}',
   'level.beginner': 'Iniciante',
   'level.beginner.blurb': 'Não pressupõe nada',
   'level.intermediate': 'Médio',

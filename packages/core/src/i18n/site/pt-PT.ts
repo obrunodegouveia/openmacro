@@ -533,6 +533,7 @@ export const ptPT = {
 
   // ---- challenge widgets --------------------------------------------------
   'sim.try': 'Experimenta {value}',
+  'level.count': '{count, plural, one {# módulo} other {# módulos}}',
   'level.beginner': 'Iniciante',
   'level.beginner.blurb': 'Não pressupõe nada',
   'level.intermediate': 'Médio',
