@@ -1335,6 +1335,93 @@ export const FORMULAS = {
     read(inputs, 'grossPayments') * (1 - read(inputs, 'offsetRate')),
 
   // -------------------------------------------------------------------------
+  // Price indices and cost dynamics
+  // -------------------------------------------------------------------------
+
+  /**
+   * Headline inflation as the weighted sum of its parts.
+   *
+   * The index is an average, and an average is its weights. Whatever is not
+   * energy, food or housing is treated as the residual "everything else",
+   * which is where the underlying trend actually lives.
+   *
+   * Expects: `energyWeight`, `energyChange`, `foodWeight`, `foodChange`,
+   * `housingWeight`, `housingChange`, `coreChange` — all decimal fractions.
+   */
+  headline_from_components: (inputs) => {
+    const wEnergy = read(inputs, 'energyWeight');
+    const wFood = read(inputs, 'foodWeight');
+    const wHousing = read(inputs, 'housingWeight');
+    const wRest = Math.max(1 - wEnergy - wFood - wHousing, 0);
+    return (
+      wEnergy * read(inputs, 'energyChange') +
+      wFood * read(inputs, 'foodChange') +
+      wHousing * read(inputs, 'housingChange') +
+      wRest * read(inputs, 'coreChange')
+    );
+  },
+
+  /**
+   * The same basket with energy and food removed and the remaining weights
+   * rescaled — which is all "core" means.
+   *
+   * Expects: `energyWeight`, `foodWeight`, `housingWeight`, `housingChange`,
+   * `coreChange`.
+   */
+  core_from_components: (inputs) => {
+    const wHousing = read(inputs, 'housingWeight');
+    const wRest = Math.max(1 - read(inputs, 'energyWeight') - read(inputs, 'foodWeight') - wHousing, 0);
+    const total = wHousing + wRest;
+    if (total <= 0) return 0;
+    return (wHousing * read(inputs, 'housingChange') + wRest * read(inputs, 'coreChange')) / total;
+  },
+
+  /**
+   * Unit labour cost growth: what an hour of work costs per unit produced.
+   *
+   * Pay rising faster than output per hour raises the cost of making a thing;
+   * pay rising alongside productivity does not. This is why a wage number on
+   * its own says nothing about inflation.
+   *
+   * Expects: `wageGrowth`, `productivityGrowth`.
+   */
+  unit_labour_cost_growth: (inputs) => read(inputs, 'wageGrowth') - read(inputs, 'productivityGrowth'),
+
+  /**
+   * Price growth implied by costs and margins.
+   *
+   * Labour costs weighted by the labour share, everything else by the
+   * remainder, plus whatever firms add to or give up from their margin.
+   *
+   * Expects: `wageGrowth`, `productivityGrowth`, `labourShare`,
+   * `otherCostGrowth`, `marginChange`.
+   */
+  inflation_from_costs: (inputs) => {
+    const ulc = read(inputs, 'wageGrowth') - read(inputs, 'productivityGrowth');
+    const share = read(inputs, 'labourShare');
+    return share * ulc + (1 - share) * read(inputs, 'otherCostGrowth') + read(inputs, 'marginChange');
+  },
+
+  /**
+   * How much of a depreciation reaches consumer prices.
+   *
+   * Only the imported share of the basket is exposed, and only a fraction of
+   * the currency move is passed on — the rest is absorbed in margins, or
+   * arrives later than the horizon anyone is forecasting over.
+   *
+   * Expects: `depreciation`, `importShare`, `passThrough`.
+   */
+  fx_pass_through: (inputs) =>
+    read(inputs, 'depreciation') * read(inputs, 'importShare') * read(inputs, 'passThrough'),
+
+  /**
+   * Change in the real wage: what the pay rise was actually worth.
+   *
+   * Expects: `wageGrowth`, `inflationRate`.
+   */
+  real_wage_change: (inputs) => read(inputs, 'wageGrowth') - read(inputs, 'inflationRate'),
+
+  // -------------------------------------------------------------------------
   // Consolidated public sector
   // -------------------------------------------------------------------------
 

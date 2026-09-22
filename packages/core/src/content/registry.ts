@@ -47,6 +47,7 @@ import { moduleReservesAndTheRate } from './lessons/module-23-reserves-and-the-r
 import { moduleThePlumbing } from './lessons/module-24-the-plumbing';
 import { moduleSomeoneElsesCurrency } from './lessons/module-25-someone-elses-currency';
 import { moduleTheTreasuryOnThePhone } from './lessons/module-26-the-treasury-on-the-phone';
+import { moduleWhatYouAreTargeting } from './lessons/module-27-what-you-are-targeting';
 
 /**
  * Ordered list of every module shipped with the app. Add yours here.
@@ -106,6 +107,7 @@ export const MODULES: readonly Module[] = [
   moduleThePlumbing,
   moduleSomeoneElsesCurrency,
   moduleTheTreasuryOnThePhone,
+  moduleWhatYouAreTargeting,
 ];
 
 export const COURSE: Course = {
