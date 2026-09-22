@@ -43,6 +43,10 @@ import { moduleSettingTheRate } from './lessons/module-19-setting-the-rate';
 import { moduleBeforeItBreaks } from './lessons/module-20-before-it-breaks';
 import { moduleWhatYouLendAgainst } from './lessons/module-21-what-you-lend-against';
 import { moduleTheDataYouHave } from './lessons/module-22-the-data-you-have';
+import { moduleReservesAndTheRate } from './lessons/module-23-reserves-and-the-rate';
+import { moduleThePlumbing } from './lessons/module-24-the-plumbing';
+import { moduleSomeoneElsesCurrency } from './lessons/module-25-someone-elses-currency';
+import { moduleTheTreasuryOnThePhone } from './lessons/module-26-the-treasury-on-the-phone';
 
 /**
  * Ordered list of every module shipped with the app. Add yours here.
@@ -98,6 +102,10 @@ export const MODULES: readonly Module[] = [
   moduleBeforeItBreaks,
   moduleWhatYouLendAgainst,
   moduleTheDataYouHave,
+  moduleReservesAndTheRate,
+  moduleThePlumbing,
+  moduleSomeoneElsesCurrency,
+  moduleTheTreasuryOnThePhone,
 ];
 
 export const COURSE: Course = {

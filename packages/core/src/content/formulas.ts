@@ -1210,6 +1210,170 @@ export const FORMULAS = {
   real_time_policy_error: (inputs) =>
     read(inputs, 'gapWeight') * (read(inputs, 'outputGap') - read(inputs, 'revisedGap')),
 
+
+  // -------------------------------------------------------------------------
+  // Reserves and intervention
+  // -------------------------------------------------------------------------
+
+  /**
+   * Months of imports the reserves would cover.
+   *
+   * The oldest adequacy metric and the crudest. Three months was the rule of
+   * thumb when the risk was a trade shock and capital did not move; it says
+   * nothing about a country whose danger is an investor leaving.
+   *
+   * Expects: `reserves`, `monthlyImports`.
+   */
+  reserve_import_cover: (inputs) => {
+    const imports = read(inputs, 'monthlyImports');
+    if (imports <= 0) return 0;
+    return read(inputs, 'reserves') / imports;
+  },
+
+  /**
+   * Reserves as a multiple of external debt falling due within the year.
+   *
+   * Guidotti and Greenspan's rule: a country should be able to live for a
+   * year without borrowing abroad. A ratio below one means a refusal to roll
+   * over is a crisis rather than an inconvenience.
+   *
+   * Expects: `reserves`, `shortTermDebt`.
+   */
+  reserve_debt_cover: (inputs) => {
+    const debt = read(inputs, 'shortTermDebt');
+    if (debt <= 0) return 0;
+    return read(inputs, 'reserves') / debt;
+  },
+
+  /**
+   * How many days of selling at the current rate the reserves survive.
+   *
+   * Expects: `reserves`, `dailyDrain`.
+   */
+  days_of_defence: (inputs) => {
+    const drain = read(inputs, 'dailyDrain');
+    if (drain <= 0) return Number.POSITIVE_INFINITY;
+    return read(inputs, 'reserves') / drain;
+  },
+
+  /**
+   * The annual carrying cost of sterilised intervention.
+   *
+   * Buying foreign currency creates domestic money; sterilising it means
+   * selling domestic paper to take that money back. The central bank then
+   * earns the foreign rate on the reserves and pays the domestic rate on the
+   * paper — so a country with high domestic rates pays for its own reserves
+   * every year, which is why large reserve stocks are not free.
+   *
+   * Expects: `reserves`, `domesticRate`, `foreignRate`.
+   */
+  sterilisation_cost: (inputs) =>
+    read(inputs, 'reserves') * (read(inputs, 'domesticRate') - read(inputs, 'foreignRate')),
+
+  // -------------------------------------------------------------------------
+  // Foreign-currency debt
+  // -------------------------------------------------------------------------
+
+  /**
+   * Debt-to-GDP after a depreciation, when part of the debt is in foreign
+   * currency.
+   *
+   * The domestic-currency value of the foreign slice rises by the full
+   * depreciation while GDP does not, so the ratio jumps without anybody
+   * borrowing anything. This is why a devaluation that helps an exporter can
+   * bankrupt the state that hoped it would.
+   *
+   * Expects: `debtRatio`, `fxShare`, `depreciation` — decimal fractions.
+   */
+  debt_ratio_after_depreciation: (inputs) => {
+    const ratio = read(inputs, 'debtRatio');
+    const fxShare = read(inputs, 'fxShare');
+    const depreciation = read(inputs, 'depreciation');
+    if (depreciation <= -1) return ratio;
+    return ratio * (1 - fxShare) + (ratio * fxShare) / (1 - depreciation);
+  },
+
+  /**
+   * How much of the jump was the currency rather than any new borrowing.
+   *
+   * Expects: `debtRatio`, `fxShare`, `depreciation`.
+   */
+  depreciation_debt_jump: (inputs) => {
+    const ratio = read(inputs, 'debtRatio');
+    const fxShare = read(inputs, 'fxShare');
+    const depreciation = read(inputs, 'depreciation');
+    if (depreciation <= -1) return 0;
+    return (ratio * fxShare) / (1 - depreciation) - ratio * fxShare;
+  },
+
+  // -------------------------------------------------------------------------
+  // Settlement
+  // -------------------------------------------------------------------------
+
+  /**
+   * Liquidity saved by netting: the share of gross payments that never has to
+   * be funded because it offsets.
+   *
+   * Expects: `grossPayments`, `netObligations`.
+   */
+  netting_efficiency: (inputs) => {
+    const gross = read(inputs, 'grossPayments');
+    if (gross <= 0) return 0;
+    // Net obligations cannot exceed gross flow; a learner dragging the sliders
+    // into that corner should see zero saving, not a negative percentage.
+    const net = Math.min(read(inputs, 'netObligations'), gross);
+    return (gross - net) / gross;
+  },
+
+  /**
+   * Cash a bank must find to settle gross, given how much of its outgoing
+   * payments are matched by incoming ones it can recycle.
+   *
+   * Expects: `grossPayments`, `offsetRate` — the share that can be recycled.
+   */
+  gross_settlement_need: (inputs) =>
+    read(inputs, 'grossPayments') * (1 - read(inputs, 'offsetRate')),
+
+  // -------------------------------------------------------------------------
+  // Consolidated public sector
+  // -------------------------------------------------------------------------
+
+  /**
+   * Average maturity of public debt once the central bank's holdings are
+   * consolidated away.
+   *
+   * Asset purchases do not retire debt; they swap a long bond held by the
+   * public for overnight reserves held by the public. Consolidating the two
+   * balance sheets, the state's effective funding has shortened — which is
+   * why a purchase programme and a debt office lengthening issuance can
+   * cancel each other out without either being wrong.
+   *
+   * Reserves are treated as maturing overnight, so they contribute nothing to
+   * the weighted average.
+   *
+   * Expects: `totalDebt`, `avgMaturity` (years), `cbHoldings`,
+   * `heldMaturity` (years).
+   */
+  consolidated_maturity: (inputs) => {
+    const total = read(inputs, 'totalDebt');
+    if (total <= 0) return 0;
+    const held = Math.min(read(inputs, 'cbHoldings'), total);
+    const weighted = total * read(inputs, 'avgMaturity') - held * read(inputs, 'heldMaturity');
+    return Math.max(weighted / total, 0);
+  },
+
+  /**
+   * Years of average maturity the purchase programme took out of the market.
+   *
+   * Expects: `totalDebt`, `cbHoldings`, `heldMaturity`.
+   */
+  duration_removed: (inputs) => {
+    const total = read(inputs, 'totalDebt');
+    if (total <= 0) return 0;
+    const held = Math.min(read(inputs, 'cbHoldings'), total);
+    return (held * read(inputs, 'heldMaturity')) / total;
+  },
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
