@@ -34,6 +34,26 @@ function dataProviderKind(value: string | undefined): DataProviderKind {
   return match ?? 'local';
 }
 
+/** The feedback clip sets. Mirrors `SOUND_PACKS` in `src/feedback`. */
+const SOUND_PACKS = ['classic', 'arcade'] as const;
+export type SoundPackName = (typeof SOUND_PACKS)[number];
+
+/**
+ * Narrow the sound-pack env var.
+ *
+ * Kept here rather than imported from `src/feedback` so that reading
+ * configuration never drags in the audio stack; the two lists are small,
+ * named the same, and a mismatch shows up immediately as a type error at the
+ * one place they meet, in `app/_layout.tsx`.
+ */
+function soundPackName(value: string | undefined): SoundPackName {
+  const match = SOUND_PACKS.find((pack) => pack === value);
+  if (!match && value) {
+    console.warn(`[OpenMacro] Unknown EXPO_PUBLIC_SOUND_PACK "${value}"; falling back to "classic".`);
+  }
+  return match ?? 'classic';
+}
+
 export const env = {
   /**
    * `local` (default) persists to the device via AsyncStorage; `mock` keeps
@@ -54,6 +74,16 @@ export const env = {
   /** Master switches so contributors can silence feedback while developing. */
   hapticsEnabled: flag(process.env.EXPO_PUBLIC_ENABLE_HAPTICS, true),
   soundEnabled: flag(process.env.EXPO_PUBLIC_ENABLE_SOUND, true),
+
+  /**
+   * Which set of feedback clips to play: `classic` (tuned tones, the default)
+   * or `arcade` (bent pitches and cartoon drops).
+   *
+   * A build-time switch rather than a setting, because that is how the other
+   * feedback options already work and there is no settings screen to hang a
+   * toggle on yet.
+   */
+  soundPack: soundPackName(process.env.EXPO_PUBLIC_SOUND_PACK),
 
   /** Runs `validateModules` over the registry on boot. Defaults to on in dev. */
   validateContentOnBoot: flag(process.env.EXPO_PUBLIC_VALIDATE_CONTENT, __DEV__),
