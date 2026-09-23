@@ -73,6 +73,19 @@ export const ptPT: UiDictionary = {
   'path.module': 'Módulo {number, number}',
   'path.module.progress': '{done, number} / {total, number}',
   'path.module.done': 'Concluído',
+
+  'review.title': 'Revisão',
+  'review.due': '{count, plural, one {# coisa para rever} other {# coisas para rever}}',
+  'review.blurb': 'Perguntas que estás prestes a esquecer, de todo o curso.',
+  'review.empty': 'Nada para rever hoje',
+  'review.empty.blurb':
+    'Acaba uma lição e aquilo em que erraste volta aqui, espaçado no tempo para ficar.',
+  'review.start': 'Começar revisão',
+  'review.from': 'De {lesson}',
+  'review.done.title': 'Revisão concluída',
+  'review.done.body':
+    '{count, plural, one {# pergunta revista} other {# perguntas revistas}}. Cada uma volta mais tarde, e mais cedo se te custou.',
+  'review.done.close': 'Voltar ao percurso',
   'path.streak': '{count, plural, one {sequência de # dia} other {sequência de # dias}}',
   'path.lesson.minutes': '{count, number} min',
   'path.lesson.steps': '{count, plural, one {# passo} other {# passos}}',

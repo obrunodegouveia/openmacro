@@ -83,6 +83,11 @@ export default function RootLayout() {
                 name="lesson/[lessonId]"
                 options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
               />
+              {/* Review is the same kind of focused context as a lesson. */}
+              <Stack.Screen
+                name="review"
+                options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+              />
             </Stack>
           </ProgressProvider>
           </ContentUpdateProvider>
