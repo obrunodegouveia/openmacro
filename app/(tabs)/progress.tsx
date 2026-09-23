@@ -20,15 +20,28 @@ import { ProgressBar } from '@/components/ui/ProgressBar';
 import { StreakBadge } from '@/components/ui/StatusPills';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
+import { useReview } from '@/hooks/useReview';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 export default function ProgressScreen() {
   const insets = useSafeAreaInsets();
   const { t, modules } = useLocale();
   const { profile, progress, loading, isLessonComplete } = useProgress();
+  const { summary } = useReview();
 
   const lessons = modules.flatMap((module) => module.lessons);
   const done = lessons.filter((lesson) => isLessonComplete(lesson.id)).length;
+
+  /**
+   * `weakestModules` comes back as ids, because the scheduler has no business
+   * knowing what a module is called. Resolved here, against the course in the
+   * language being read; an id that no longer matches a module is dropped
+   * rather than printed raw.
+   */
+  const weakest = (summary?.weakestModules ?? [])
+    .slice(0, 3)
+    .map((id) => modules.find((module) => module.id === id)?.title)
+    .filter((title): title is string => Boolean(title));
 
   return (
     <ScrollView
@@ -69,6 +82,47 @@ export default function ProgressScreen() {
           </View>
 
           <ProgressBar progress={lessons.length ? done / lessons.length : 0} height={12} />
+
+          {/* ---- memory ------------------------------------------------
+            The other half of "how far am I?". Everything above counts what
+            was finished; this counts what is still held. A course can be
+            100% complete and mostly forgotten, and until this panel existed
+            the app had no way to say so.
+
+            Hidden entirely before the first lesson: an empty state that says
+            "0 tracked" to someone who has not started is noise dressed as
+            information.
+          */}
+          {summary && summary.tracked > 0 ? (
+            <View style={styles.memory}>
+              <Text style={styles.sectionTitle}>{t('progress.memory.title')}</Text>
+              <Text style={styles.sectionBlurb}>{t('progress.memory.blurb')}</Text>
+              <View style={styles.stats}>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>{summary.tracked}</Text>
+                  <Text style={styles.statLabel}>{t('progress.memory.tracked')}</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>{summary.dueThisWeek}</Text>
+                  <Text style={styles.statLabel}>{t('progress.memory.week')}</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>{summary.lapsed}</Text>
+                  <Text style={styles.statLabel}>{t('progress.memory.lapsed')}</Text>
+                </View>
+              </View>
+              {weakest.length > 0 ? (
+                <View style={styles.weakest}>
+                  <Text style={styles.weakestLabel}>{t('progress.memory.weakest')}</Text>
+                  {weakest.map((title) => (
+                    <Text key={title} style={styles.weakestItem} numberOfLines={1}>
+                      {title}
+                    </Text>
+                  ))}
+                </View>
+              ) : null}
+            </View>
+          ) : null}
 
           {modules.map((module, index) => {
             const total = module.lessons.length;
@@ -131,6 +185,24 @@ const styles = StyleSheet.create({
   },
   statValue: { ...typography.title, color: palette.ink },
   statLabel: { ...typography.caption, color: palette.inkMuted, textAlign: 'center' },
+  memory: { gap: spacing.sm },
+  sectionTitle: { ...typography.heading, color: palette.ink },
+  sectionBlurb: { ...typography.caption, color: palette.inkMuted },
+  weakest: {
+    gap: spacing.xs,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: palette.border,
+    backgroundColor: palette.surface,
+  },
+  weakestLabel: {
+    ...typography.overline,
+    color: palette.inkMuted,
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
+  weakestItem: { ...typography.body, color: palette.ink },
   module: { gap: spacing.sm },
   moduleHead: {
     flexDirection: 'row',

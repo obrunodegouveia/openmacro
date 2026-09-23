@@ -67,6 +67,13 @@ export const ptPT: UiDictionary = {
   'progress.stat.lessons': 'de {total, plural, one {# lição} other {# lições}}',
   'progress.stat.streak': 'Dias seguidos',
   'progress.module.count': '{done, number} / {total, number}',
+  'progress.memory.title': 'Memória',
+  'progress.memory.blurb':
+    'O que o curso te viu errar, e quando tenciona voltar a perguntar. Isto nunca sai do teu dispositivo.',
+  'progress.memory.tracked': 'a acompanhar',
+  'progress.memory.week': 'esta semana',
+  'progress.memory.lapsed': 'ganharam ferrugem',
+  'progress.memory.weakest': 'Mais frágil neste momento',
   'account.title': 'Conta',
   'account.danger': 'Zona de perigo',
   'path.xp': '{count, number} XP',

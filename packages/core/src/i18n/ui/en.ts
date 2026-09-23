@@ -57,6 +57,13 @@ export const en = {
   'progress.stat.lessons': 'of {total, plural, one {# lesson} other {# lessons}}',
   'progress.stat.streak': 'Day streak',
   'progress.module.count': '{done, number} / {total, number}',
+  'progress.memory.title': 'Memory',
+  'progress.memory.blurb':
+    'What the course has seen you get wrong, and when it plans to ask again. This never leaves your device.',
+  'progress.memory.tracked': 'tracked',
+  'progress.memory.week': 'due this week',
+  'progress.memory.lapsed': 'gone rusty',
+  'progress.memory.weakest': 'Shakiest right now',
 
   'account.title': 'Account',
   'account.danger': 'Danger zone',
