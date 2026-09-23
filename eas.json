@@ -10,7 +10,8 @@
       "env": {
         "EXPO_PUBLIC_DATA_PROVIDER": "local",
         "EXPO_PUBLIC_ENABLE_HAPTICS": "true",
-        "EXPO_PUBLIC_ENABLE_SOUND": "true"
+        "EXPO_PUBLIC_ENABLE_SOUND": "true",
+        "EXPO_PUBLIC_AUDIO_TIMING": "true"
       }
     },
     "development": {

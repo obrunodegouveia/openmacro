@@ -251,6 +251,46 @@ feedback.setSoundPack('arcade');
 check('switching to the pack already in use does nothing', harness.calls.length === 0);
 feedback.setSoundPack('classic');
 
+console.log('\nSeek timing instrumentation');
+feedback.setAudioTimingEnabled(false);
+reset();
+feedback.emitFeedback('correct');
+await settle();
+check('with timing off, nothing is recorded', feedback.audioTimingReport() === null);
+const withoutTiming = harness.calls.filter((c) => c.call === 'play').length;
+
+feedback.setAudioTimingEnabled(true);
+reset();
+feedback.emitFeedback('correct');
+await settle();
+const withTiming = harness.calls.filter((c) => c.call === 'play').length;
+check(
+  'turning it on does not change what the player is asked to do',
+  withTiming === withoutTiming,
+  `${withoutTiming} play(s) off, ${withTiming} on`,
+);
+check('…and a sample is recorded', (feedback.audioTimingReport()?.samples ?? 0) === 1);
+
+// Drive past the sample ceiling: it must stop on its own rather than grow.
+for (let i = 0; i < 400; i++) {
+  feedback.emitFeedback('select');
+  await settle();
+}
+const capped = feedback.audioTimingReport();
+check(
+  'it stops sampling on its own rather than growing unbounded',
+  capped !== null && capped.samples <= 120,
+  `${capped?.samples} samples after 400 further cues`,
+);
+reset();
+feedback.emitFeedback('correct');
+await settle();
+check(
+  '…and cues still play normally once it has stopped',
+  harness.calls.filter((c) => c.call === 'play').length === 1,
+);
+feedback.setAudioTimingEnabled(false);
+
 /**
  * The clips are pulled in with `require`, which Metro resolves at bundle time.
  * A mistyped path there does not fail the build — it ships an app with no
