@@ -53,6 +53,7 @@
     "gen:sounds": "node ./scripts/generate-sounds.mjs",
     "audit:content": "node ./scripts/audit-content.mjs",
     "lint:content": "node ./scripts/validate-content.mjs",
+    "check:exam": "node ./scripts/check-exam.mjs",
     "build:web": "expo export --platform web",
     "doctor": "npx expo-doctor@latest",
     "native:prebuild": "expo prebuild --clean --no-install",
