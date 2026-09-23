@@ -20,6 +20,12 @@ saves your XP and day streak across devices and nothing else; see
 Open source, offline-first, and built so that writing a lesson is easier than
 writing a blog post.
 
+**What this is for:** understand money deeply enough to run your own financial
+life on the best terms available to you — and deeply enough to sit in the chair
+of the president of any central bank and do the job on the technical merits.
+Those are the same knowledge checked at two scales. See
+**[GOALS.md](GOALS.md)**.
+
 ---
 
 ## Where things run
@@ -36,16 +42,19 @@ the web course is the Next.js site.
 
 ## Status
 
-Four modules ship today — 30 lessons and 116 challenges across all five
+Nineteen modules ship today — 122 lessons and 528 challenges across all five
 challenge types, from what money is through to diagnosing a crisis while it
 happens. The engine, schema, progress sync and contributor tooling are done.
 
-| Module | Lessons |
-|---|---|
-| Foundations of Fiduciary Currency | 6 |
-| The Commercial–Central Bank Interface | 8 |
-| The Fed & ECB Levers | 9 |
-| Crisis Architecture & The Global Dollar | 7 |
+| Level | Modules | Lessons | Challenges | What it covers |
+|---|---:|---:|---:|---|
+| Beginner | 5 | 48 | 224 | What money is, where it comes from, what GDP counts |
+| Intermediate | 6 | 30 | 126 | Rates, curves, credit, the instruments and their markets |
+| Advanced | 8 | 44 | 178 | Running the institution: policy levers, balance sheets, crisis machinery |
+
+The full course in order is on
+[openmacro.org/learn](https://openmacro.org/learn); the bar every lesson is
+written against is in [GOALS.md](GOALS.md).
 
 Content is still where help is most wanted: more lessons, more languages, and
 review from people who teach this for a living.
@@ -54,8 +63,8 @@ Optional Google sign-in syncs progress across devices — see
 [docs/cloud-sync.md](docs/cloud-sync.md). It is off unless configured, so a
 fresh clone stays fully offline with no account UI at all.
 
-Lessons are verified end to end on web. **Not yet run on an iOS or Android
-simulator.** Google sign-in is built and its redirect is verified up to the
+Lessons are verified end to end on web, and the iOS app has shipped to
+TestFlight. Google sign-in is built and its redirect is verified up to the
 hand-off to Supabase, but no one has completed a real sign-in yet — see
 [docs/cloud-sync.md](docs/cloud-sync.md#what-has-actually-been-tested) for the
 exact line between tested and untested.
@@ -189,7 +198,7 @@ keeps their streak. Setup, the data model and the known limits are in
 ## Contributing
 
 **The single most valuable contribution is a lesson.** Start here:
-[`src/content/lessons/README.md`](src/content/lessons/README.md) — it covers the
+[`packages/core/src/content/lessons/README.md`](packages/core/src/content/lessons/README.md) — it covers the
 schema, the editorial standards, and the two lines you add to register a module.
 
 Adding a module never requires touching the engine or the UI.
