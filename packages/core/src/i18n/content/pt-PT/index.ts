@@ -17,16 +17,24 @@ import { debtDebasementAndCapitalPtPT } from './debt-debasement-and-capital';
 import { euriborPtPT } from './euribor';
 import { fedEcbLeversPtPT } from './fed-ecb-levers';
 import { foundationsFiduciaryCurrencyPtPT } from './foundations-fiduciary-currency';
+import { howItReachesTheEconomyPtPT } from './how-it-reaches-the-economy';
 import { readingTheEcbBalanceSheetPtPT } from './reading-the-ecb-balance-sheet';
 import { readingTheFedBalanceSheetPtPT } from './reading-the-fed-balance-sheet';
 import { realAssetsAndPropertyPtPT } from './real-assets-and-property';
+import { reservesAndTheRatePtPT } from './reserves-and-the-rate';
 import { scrutinisingCbdcsPtPT } from './scrutinising-cbdcs';
 import { settingTheRatePtPT } from './setting-the-rate';
+import { someoneElsesCurrencyPtPT } from './someone-elses-currency';
 import { startHerePtPT } from './start-here';
 import { theBisAndTheEcbPtPT } from './the-bis-and-the-ecb';
+import { theForecastRoundPtPT } from './the-forecast-round';
+import { thePlumbingPtPT } from './the-plumbing';
+import { theTreasuryOnThePhonePtPT } from './the-treasury-on-the-phone';
 import { theTreasuryYieldCurvePtPT } from './the-treasury-yield-curve';
 import { whatCannotStopPtPT } from './what-cannot-stop';
 import { whatGdpCountsPtPT } from './what-gdp-counts';
+import { whatTheTargetShouldBePtPT } from './what-the-target-should-be';
+import { whatYouAreTargetingPtPT } from './what-you-are-targeting';
 
 export const ptPTContent: ContentTranslation = {
   course: coursePtPT,
@@ -41,15 +49,23 @@ export const ptPTContent: ContentTranslation = {
     'euribor': euriborPtPT,
     'fed-ecb-levers': fedEcbLeversPtPT,
     'foundations-fiduciary-currency': foundationsFiduciaryCurrencyPtPT,
+    'how-it-reaches-the-economy': howItReachesTheEconomyPtPT,
     'reading-the-ecb-balance-sheet': readingTheEcbBalanceSheetPtPT,
     'reading-the-fed-balance-sheet': readingTheFedBalanceSheetPtPT,
     'real-assets-and-property': realAssetsAndPropertyPtPT,
+    'reserves-and-the-rate': reservesAndTheRatePtPT,
     'scrutinising-cbdcs': scrutinisingCbdcsPtPT,
     'setting-the-rate': settingTheRatePtPT,
+    'someone-elses-currency': someoneElsesCurrencyPtPT,
     'start-here': startHerePtPT,
     'the-bis-and-the-ecb': theBisAndTheEcbPtPT,
+    'the-forecast-round': theForecastRoundPtPT,
+    'the-plumbing': thePlumbingPtPT,
+    'the-treasury-on-the-phone': theTreasuryOnThePhonePtPT,
     'the-treasury-yield-curve': theTreasuryYieldCurvePtPT,
     'what-cannot-stop': whatCannotStopPtPT,
     'what-gdp-counts': whatGdpCountsPtPT,
+    'what-the-target-should-be': whatTheTargetShouldBePtPT,
+    'what-you-are-targeting': whatYouAreTargetingPtPT,
   },
 };
