@@ -91,8 +91,17 @@ const CLIPS = {
  * two places and the WAVs lie about how loud they are.
  */
 
-/** One player per cue. Created once — see `preloadSounds`. */
-const players = new Map<FeedbackCue, AudioPlayer>();
+interface Voice {
+  player: AudioPlayer;
+  /**
+   * Incremented on every fire. A rewind that resolves after a newer fire has
+   * already started is stale and must not play — this is how that is known.
+   */
+  generation: number;
+}
+
+/** One voice per cue. Created once — see `preloadSounds`. */
+const voices = new Map<FeedbackCue, Voice>();
 
 /** True once the audio session has been configured. See `configureAudio`. */
 let audioConfigured = false;
@@ -117,14 +126,13 @@ function configureAudio(): void {
   });
 }
 
-/** Get the player for a cue, creating it if `preloadSounds` has not run. */
-function playerFor(cue: FeedbackCue): AudioPlayer {
-  let player = players.get(cue);
-  if (!player) {
-    player = createAudioPlayer(CLIPS[cue]);
-    players.set(cue, player);
-  }
-  return player;
+/** Get the voice for a cue, creating it if `preloadSounds` has not run. */
+function voiceFor(cue: FeedbackCue): Voice {
+  const existing = voices.get(cue);
+  if (existing) return existing;
+  const voice: Voice = { player: createAudioPlayer(CLIPS[cue]), generation: 0 };
+  voices.set(cue, voice);
+  return voice;
 }
 
 /**
@@ -143,23 +151,54 @@ function playerFor(cue: FeedbackCue): AudioPlayer {
 export function preloadSounds(): void {
   try {
     configureAudio();
-    for (const cue of Object.keys(CLIPS) as FeedbackCue[]) playerFor(cue);
+    for (const cue of Object.keys(CLIPS) as FeedbackCue[]) voiceFor(cue);
   } catch {
     // A device that cannot prepare audio simply plays none.
   }
 }
 
+/**
+ * Play a cue, restarting it if it is already sounding.
+ *
+ * The bug this replaces: `seekTo` is asynchronous and `play` is not, so firing
+ * them back to back does not rewind-then-play. It starts playback from
+ * wherever the player happens to be and lands the rewind some time afterwards.
+ * What that sounds like depends on where the player was — at the end of the
+ * previous clip, playback from the end is nothing and the cue is silently
+ * dropped; part-way through, the previous fire keeps sounding and then jumps
+ * back to the start mid-note. Both are heard as the sound being out of step
+ * with the screen, and both depend on timing, which is why it came and went.
+ * Dragging a slider is the worst case: `select` fires on every notch, far
+ * faster than any clip finishes.
+ *
+ * So `play` is only ever called on the next line after a rewind has actually
+ * resolved. The generation counter handles the other half: when cues arrive
+ * faster than the rewinds resolve, every superseded one drops out rather than
+ * stacking up into a burst of overlapping copies.
+ *
+ * This costs a microtask and a native seek on every fire, and buys a rule that
+ * holds under any interleaving: playback never begins from an unknown
+ * position. A preferable trade, on a clip already decoded in memory, to a
+ * faster path whose correctness depends on events arriving in an order this
+ * code cannot guarantee.
+ */
 function playCue(cue: FeedbackCue): void {
   if (!soundEnabled) return;
 
   try {
     configureAudio();
-    const player = playerFor(cue);
+    const voice = voiceFor(cue);
+    const generation = (voice.generation += 1);
 
-    // Rewind first: a cue re-fired before its tail finishes must restart, not
-    // be ignored, or fast tapping goes silent.
-    player.seekTo(0);
-    player.play();
+    voice.player.pause();
+    void voice.player
+      .seekTo(0)
+      .then(() => {
+        // Superseded by a later fire, or sound was switched off while waiting.
+        if (voice.generation !== generation || !soundEnabled) return;
+        voice.player.play();
+      })
+      .catch(() => {});
   } catch {
     // Sound is cosmetic — a device that will not play it still teaches.
   }
@@ -170,14 +209,14 @@ function playCue(cue: FeedbackCue): void {
  * itself never needs this, since the players live as long as the process.
  */
 export function releaseSounds(): void {
-  for (const player of players.values()) {
+  for (const voice of voices.values()) {
     try {
-      player.remove();
+      voice.player.remove();
     } catch {
       // Already gone.
     }
   }
-  players.clear();
+  voices.clear();
 }
 
 /** Fire-and-forget: emits the haptic and the (stubbed) sound for a cue. */
