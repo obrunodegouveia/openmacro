@@ -30,6 +30,7 @@ import { StreakBadge } from '@/components/ui/StatusPills';
 import { interpolate } from '@/i18n/interpolate';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
+import { useReview } from '@/hooks/useReview';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import type { Lesson, ModuleLevel } from '@openmacro/core/content/schema';
 import { currentLevel, groupByLevel } from '@openmacro/core/content/levels';
@@ -40,6 +41,7 @@ export default function LearningPathScreen() {
   // The course arrives already translated; nothing below knows which language
   // it is in, which is what keeps the screen free of `locale ===` branches.
   const { t, course, modules } = useLocale();
+  const { due: reviewDue } = useReview();
 
   const groups = useMemo(() => groupByLevel(modules), [modules]);
 
@@ -202,6 +204,30 @@ export default function LearningPathScreen() {
           <View style={styles.lessonBody}>
             <Text style={styles.resumeEyebrow}>{t('map.resume')}</Text>
             <Text style={styles.lessonTitle}>{resume.title}</Text>
+          </View>
+        </Pressable>
+      ) : null}
+
+      {/* ---- what is slipping -------------------------------------------
+        Sits under the resume card because it is the second thing to do, not
+        the first: the course moves forwards, and review is what keeps the
+        ground behind you from giving way. Absent entirely when the schedule
+        has nothing due, rather than shown as an empty state — a permanent
+        "0 to review" is a nag, not information.
+      */}
+      {reviewDue.length > 0 ? (
+        <Pressable
+          onPress={() => router.push('/review')}
+          accessibilityRole="button"
+          accessibilityLabel={t('review.start')}
+          style={({ pressed }) => [styles.review, pressed && styles.lessonCardPressed]}
+        >
+          <View style={styles.reviewIcon}>
+            <Text style={styles.lessonIconText}>🔁</Text>
+          </View>
+          <View style={styles.lessonBody}>
+            <Text style={styles.reviewEyebrow}>{t('review.title')}</Text>
+            <Text style={styles.lessonTitle}>{t('review.due', { count: reviewDue.length })}</Text>
           </View>
         </Pressable>
       ) : null}
@@ -549,6 +575,37 @@ const styles = StyleSheet.create({
     borderColor: palette.mint,
     borderRadius: radius.lg,
     padding: spacing.lg,
+  },
+  /** The review card. Blue, so it reads as the other action, not a second
+      copy of the mint one. */
+  review: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    backgroundColor: palette.blueSoft,
+    borderWidth: 2,
+    borderBottomWidth: 5,
+    borderColor: palette.blue,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+  },
+  reviewIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: palette.surface,
+    borderWidth: 2,
+    borderColor: palette.blue,
+  },
+  reviewEyebrow: {
+    ...typography.caption,
+    color: palette.blueDark,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    marginBottom: 2,
   },
   resumeIcon: {
     width: 52,

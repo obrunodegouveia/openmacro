@@ -72,6 +72,26 @@ export const en = {
    */
   'path.module.progress': '{done, number} / {total, number}',
   'path.module.done': 'Finished',
+
+  /**
+   * The review queue.
+   *
+   * Called "review" rather than "practice" because it is not extra practice —
+   * it is the course coming back for something it already taught, at the
+   * moment you were about to lose it.
+   */
+  'review.title': 'Review',
+  'review.due': '{count, plural, one {# thing to review} other {# things to review}}',
+  'review.blurb': 'Questions you are about to forget, from across the course.',
+  'review.empty': 'Nothing due today',
+  'review.empty.blurb':
+    'Finish a lesson and what you got wrong comes back here, spaced out so it sticks.',
+  'review.start': 'Start review',
+  'review.from': 'From {lesson}',
+  'review.done.title': 'Review done',
+  'review.done.body':
+    '{count, plural, one {# question reviewed} other {# questions reviewed}}. Each one comes back later, and sooner if you struggled.',
+  'review.done.close': 'Back to the path',
   'path.streak': '{count, number} day streak',
   'path.lesson.minutes': '{count, number} min',
   'path.lesson.steps': '{count, plural, one {# step} other {# steps}}',

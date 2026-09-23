@@ -91,8 +91,12 @@ export interface LessonOutcome {
  * A challenge in neither was never reached — the run ended before it came up
  * — and is not recorded. Grading a question nobody was asked would put it in
  * the review queue on the strength of nothing.
+ *
+ * Takes only the two id lists, not a whole `LessonOutcome`: a review session
+ * spans many lessons and has no single lesson id to give, and the mapping has
+ * never depended on one.
  */
-export function gradesFor(outcome: LessonOutcome): Map<string, ReviewGrade> {
+export function gradesFor(outcome: Pick<LessonOutcome, 'resolved' | 'missed'>): Map<string, ReviewGrade> {
   const missed = new Set(outcome.missed);
   const grades = new Map<string, ReviewGrade>();
   for (const id of outcome.resolved) grades.set(id, missed.has(id) ? 'struggled' : 'known');
@@ -123,6 +127,38 @@ export async function recordLessonOutcome(
           ? reviewed(current, grade, today)
           : newReviewItem(id, outcome.lessonId, outcome.moduleId, grade, today),
       );
+    }
+
+    const next = [...byId.values()];
+    await writeVersioned(KEY, VERSION, next);
+    return next;
+  });
+}
+
+/**
+ * Record the outcome of a review session.
+ *
+ * Keyed by `ReviewItem.id` rather than by challenge, because a review session
+ * draws from many lessons at once and a bare challenge id would collide
+ * across them — the same reason the exam keys the way it does.
+ *
+ * An id with no stored item is ignored rather than created: every item in a
+ * session came out of the library, so one that is missing by the time the
+ * session ends means the library was cleared underneath it, and inventing a
+ * fresh schedule from a half-finished session would be worse than dropping it.
+ */
+export async function recordReviewGrades(
+  grades: ReadonlyMap<string, ReviewGrade>,
+  today: string = localDateKey(),
+): Promise<ReviewItem[]> {
+  return queue(async () => {
+    const existing = await loadReviewItems();
+    const byId = new Map(existing.map((item) => [item.id, item]));
+
+    for (const [id, grade] of grades) {
+      const current = byId.get(id);
+      if (!current) continue;
+      byId.set(id, reviewed(current, grade, today));
     }
 
     const next = [...byId.values()];

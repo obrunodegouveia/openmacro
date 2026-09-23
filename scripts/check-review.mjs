@@ -58,6 +58,8 @@ const { newReviewItem, reviewed, dueItems, summarise, addDays, compareDateKeys }
   '@openmacro/core/progress/review'
 );
 const { gradesFor } = await import('@/services/reviewStore');
+const { resolveDue, reviewChallenges } = await import('@openmacro/core/progress/reviewSession');
+const { createSession, lessonSessionReducer } = await import('@openmacro/core/engine/lessonSession');
 
 let failures = 0;
 const check = (name, ok, detail = '') => {
@@ -98,6 +100,150 @@ console.log('Grading a finished run');
     'a challenge never reached is not graded at all',
     !failed.has('d'),
     'grading an unasked question would schedule it on the strength of nothing',
+  );
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * A review session drawn from more than one lesson
+ * ----------------------------------------------------------------------------
+ *
+ * The trap this exists for: challenge ids are unique only *within* a lesson,
+ * and twenty-one of them are reused across the course — `mc-haircut` sits in
+ * both `kab-repos` and `open-market-operations`. A lesson never trips over
+ * this because it only ever holds its own. A review queue holds whatever is
+ * due, from anywhere, and the session reducer keys its queue by challenge id.
+ *
+ * Two colliding ids therefore collapse into one: the learner is asked once,
+ * and the second item is graded on an answer it never received. Nothing about
+ * that is visible in a type or on screen — the session simply runs one
+ * question short — so it is checked by running the real reducer over a queue
+ * built to contain the collision.
+ */
+/**
+ * ----------------------------------------------------------------------------
+ * Resolving a schedule against content that has moved on
+ * ----------------------------------------------------------------------------
+ *
+ * A review item is a reference — `lessonId#challengeId` and nothing else — so
+ * that an edit to the course does not leave the queue asking a question the
+ * course no longer contains. The cost of that choice is that resolution can
+ * fail, and the only acceptable failure is a silent drop. Anything else means
+ * a learner opening review after a content update gets a crash or a blank
+ * question.
+ */
+console.log('\nA schedule resolved against edited content');
+{
+  const lesson = {
+    id: 'kab-repos',
+    title: 'Repos',
+    challenges: [{ id: 'mc-haircut', type: 'multiple_choice' }],
+  };
+  const lessons = new Map([[lesson.id, lesson]]);
+  const lessonById = (id) => lessons.get(id);
+
+  const items = [
+    newReviewItem('kab-repos#mc-haircut', 'kab-repos', 'm', 'missed', DAY0),
+    // The lesson was deleted from the course.
+    newReviewItem('gone-lesson#mc-x', 'gone-lesson', 'm', 'missed', DAY0),
+    // The lesson is still there; this challenge was rewritten out of it.
+    newReviewItem('kab-repos#mc-removed', 'kab-repos', 'm', 'missed', DAY0),
+  ];
+
+  const due = resolveDue(items, lessonById, { today: addDays(DAY0, 1) });
+  check('an item whose lesson is gone is dropped', !due.some((d) => d.lessonId === 'gone-lesson'));
+  check(
+    'an item whose challenge was rewritten out is dropped',
+    !due.some((d) => d.itemId === 'kab-repos#mc-removed'),
+  );
+  check('the item that still exists survives', due.length === 1 && due[0].itemId === 'kab-repos#mc-haircut');
+  check(
+    'and carries the lesson it came from, for the "from" line',
+    due[0]?.lessonTitle === 'Repos',
+    due[0]?.lessonTitle,
+  );
+  check(
+    'a schedule that resolves to nothing is an empty queue, not a throw',
+    resolveDue(items, () => undefined, { today: addDays(DAY0, 1) }).length === 0,
+  );
+}
+
+console.log('\nA session drawn from more than one lesson');
+{
+  const mc = (id, correctOptionId) => ({
+    id,
+    type: 'multiple_choice',
+    prompt: `prompt for ${id}`,
+    options: [
+      { id: 'a', label: 'a' },
+      { id: 'b', label: 'b' },
+    ],
+    correctOptionId,
+    explanation: 'because',
+  });
+
+  // The same challenge id, due from two different lessons. `itemId` is what
+  // the store keys on and is unique; `challenge.id` is not.
+  const due = [
+    { itemId: 'kab-repos#mc-haircut', challenge: mc('mc-haircut', 'a'), lessonId: 'kab-repos', lessonTitle: 'Repos' },
+    { itemId: 'open-market-operations#mc-haircut', challenge: mc('mc-haircut', 'b'), lessonId: 'open-market-operations', lessonTitle: 'OMOs' },
+  ];
+
+  const challenges = reviewChallenges(due);
+  check(
+    'colliding challenges stay two distinct questions',
+    new Set(challenges.map((c) => c.id)).size === 2,
+    challenges.map((c) => c.id).join(', '),
+  );
+  check(
+    '…re-keyed to the id the store records against',
+    challenges.every((c, i) => c.id === due[i].itemId),
+  );
+
+  // Drive the real reducer, answering each question correctly, and confirm
+  // the session asks both and grades both.
+  const lesson = {
+    id: '__review__',
+    title: 'Review',
+    subtitle: '',
+    icon: '🔁',
+    difficulty: 'core',
+    estimatedMinutes: 1,
+    hearts: 999,
+    challenges,
+    keyTakeaways: [],
+  };
+  const t = (key) => key;
+  let session = createSession(lesson);
+  const asked = [];
+  for (let guard = 0; guard < 20 && session.status === 'in_progress'; guard++) {
+    const current = lesson.challenges.find((c) => c.id === session.queue[0]);
+    asked.push(current.id);
+    session = lessonSessionReducer(session, {
+      kind: 'submit',
+      answer: { type: 'multiple_choice', optionId: current.correctOptionId },
+      t,
+    });
+    session = lessonSessionReducer(session, { kind: 'continue' });
+  }
+
+  /**
+   * Counting the questions is not enough: with colliding ids the reducer still
+   * shifts twice, so a broken session asks the *same* question twice and looks
+   * the right length. What has to hold is that two different ones were asked.
+   */
+  check(
+    'two different questions are asked, not one twice',
+    new Set(asked).size === 2,
+    asked.join(', '),
+  );
+  check('the session finishes', session.status !== 'in_progress', session.status);
+
+  const grades = gradesFor({ resolved: session.resolved, missed: session.missed });
+  check(
+    'both items are graded, under their own ids',
+    grades.size === 2 && due.every((d) => grades.get(d.itemId) === 'known'),
+    [...grades].map(([k, v]) => `${k}=${v}`).join(' '),
   );
 }
 
