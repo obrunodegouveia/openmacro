@@ -73,6 +73,13 @@ jobs:
       - name: Feedback cue self-test
         run: npm run check:feedback
 
+      # A scheduler is a set of claims about the future and every one of them
+      # fails quietly: an ease below its floor turns the queue into the same
+      # six cards forever, an unbounded interval stops asking about material
+      # the course says a learner still knows. Two simulated years, checked.
+      - name: Review scheduler self-test
+        run: npm run check:review
+
       # The other half of the translation guarantee. `i18n:status` proves the
       # catalogue is complete; this proves the app actually *reads* it. A
       # string typed straight into JSX is invisible to typecheck (a string is
