@@ -164,6 +164,13 @@ export const ptPT: UiDictionary = {
   'level.intermediate.blurb': 'Pressupõe que sabes o que é um depósito',
   'level.advanced': 'Avançado',
   'level.advanced.blurb': 'Pressupõe a interface e as alavancas',
+
+  'level.beginner.unlocks':
+    'Ler o saldo da tua conta pelo que ele é — uma promessa de um banco — e acompanhar uma decisão de taxas nas notícias sem acreditar na palavra de ninguém sobre o que significa.',
+  'level.intermediate.unlocks':
+    'Avaliar um crédito à habitação, um empréstimo ou uma obrigação pelo que te custam na realidade, ler uma curva de rendimentos e julgar a compra de uma casa pela aritmética e não pela vontade.',
+  'level.advanced.unlocks':
+    'Ler os balanços da Fed e do BCE linha a linha, fixar uma taxa diretora e defendê-la com os dados que tinhas no momento, e dirigir a instituição.',
   'difficulty.intro': 'Introdução',
   'difficulty.core': 'Base',
   'difficulty.advanced': 'Avançado',

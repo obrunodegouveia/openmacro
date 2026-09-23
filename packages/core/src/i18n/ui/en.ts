@@ -173,6 +173,21 @@ export const en = {
   'level.intermediate.blurb': 'Assumes you know what a deposit is',
   'level.advanced': 'Advanced',
   'level.advanced.blurb': 'Assumes the interface and the levers',
+
+  /**
+   * What finishing a level lets you do.
+   *
+   * The `blurb` above says what a level assumes; this says what it is worth.
+   * Both are on the header because "Intermediate" tells a learner nothing
+   * about whether it is for them, and a prerequisite alone only tells them
+   * whether they are allowed in.
+   */
+  'level.beginner.unlocks':
+    'Read your own bank balance for what it is — a promise from a bank — and follow a rate decision in the news without taking anyone’s word for what it means.',
+  'level.intermediate.unlocks':
+    'Price a mortgage, a loan or a bond for what it actually costs you, read a yield curve, and judge a property purchase with the arithmetic rather than the mood.',
+  'level.advanced.unlocks':
+    'Read the Fed’s and the ECB’s balance sheets line by line, set a policy rate and defend it against the data you had at the time, and run the institution.',
   'difficulty.intro': 'Intro',
   'difficulty.core': 'Core',
   'difficulty.advanced': 'Advanced',

@@ -9,8 +9,17 @@
  * this screen is only the course.
  */
 
-import { Fragment } from 'react';
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Fragment, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  LayoutAnimation,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { router } from 'expo-router';
@@ -22,7 +31,8 @@ import { interpolate } from '@/i18n/interpolate';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
-import type { Lesson } from '@openmacro/core/content/schema';
+import type { Lesson, ModuleLevel } from '@openmacro/core/content/schema';
+import { currentLevel, groupByLevel } from '@openmacro/core/content/levels';
 
 export default function LearningPathScreen() {
   const insets = useSafeAreaInsets();
@@ -30,6 +40,45 @@ export default function LearningPathScreen() {
   // The course arrives already translated; nothing below knows which language
   // it is in, which is what keeps the screen free of `locale ===` branches.
   const { t, course, modules } = useLocale();
+
+  const groups = useMemo(() => groupByLevel(modules), [modules]);
+
+  /**
+   * The level the learner is actually in — the first with an unfinished
+   * lesson, or the last one if they have finished everything.
+   *
+   * Collapsing every level would open the app on three headings and no course,
+   * so exactly one starts open, and it is the one they would have had to
+   * scroll to find.
+   */
+  const openByDefault = useMemo(
+    () => currentLevel(groups, isLessonComplete),
+    [groups, isLessonComplete],
+  );
+
+  const [collapsed, setCollapsed] = useState<readonly ModuleLevel[]>([]);
+  const [touched, setTouched] = useState(false);
+
+  /**
+   * Until the learner touches a header, openness follows their progress; after
+   * that it follows them. Deriving it rather than seeding state in an effect
+   * means the first paint is already correct — no flash of three open levels
+   * collapsing a frame later.
+   */
+  const isOpen = (level: ModuleLevel) =>
+    touched ? !collapsed.includes(level) : level === openByDefault;
+
+  const toggle = (level: ModuleLevel) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    const open = isOpen(level);
+    setCollapsed((current) => {
+      const base = touched
+        ? current
+        : groups.map((group) => group.level).filter((level) => level !== openByDefault);
+      return open ? [...base, level] : base.filter((entry) => entry !== level);
+    });
+    setTouched(true);
+  };
 
   return (
     <ScrollView
@@ -78,49 +127,65 @@ export default function LearningPathScreen() {
       ) : null}
 
       {/* ---- modules ----------------------------------------------------
-        A level heading is drawn whenever the level changes rather than by
-        grouping into sections, because `MODULES` is already in level order
-        — see the note in `registry.ts`. Sorting a copy here would let the
-        path disagree with the order the lesson runner walks.
+        One collapsible section per level. The path is 32 modules long, so a
+        flat list meant scrolling past two levels to reach the one you are in;
+        grouping is what makes the last third reachable.
       */}
-      {modules.map((module, moduleIndex) => (
-        <Animated.View
-          key={module.id}
-          entering={FadeInDown.delay(moduleIndex * 80).duration(280)}
-          style={styles.module}
-        >
-          {module.level !== modules[moduleIndex - 1]?.level ? (
-            <View style={styles.levelHeader}>
+      {groups.map((group) => {
+        const open = isOpen(group.level);
+        return (
+          <View key={group.level} style={styles.level}>
+            <Pressable
+              onPress={() => toggle(group.level)}
+              style={({ pressed }) => [styles.levelHeader, pressed && styles.levelHeaderPressed]}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: open }}
+              accessibilityLabel={t(`level.${group.level}`)}
+              accessibilityHint={t(`level.${group.level}.unlocks`)}
+            >
               <View style={styles.levelTitleRow}>
-                <Text style={styles.levelTitle}>{t(`level.${module.level}`)}</Text>
+                <Text style={styles.levelTitle}>{t(`level.${group.level}`)}</Text>
                 <Text style={styles.levelCount}>
-                  {t('level.count', {
-                    count: modules.filter((entry) => entry.level === module.level).length,
-                  })}
+                  {t('level.count', { count: group.modules.length })}
                 </Text>
+                {/* A glyph, not a word: the lint rule that requires t() for
+                    user-visible text exempts strings with no two consecutive
+                    letters, and a chevron needs no translation. */}
+                <Text style={styles.levelChevron}>{open ? '⌃' : '⌄'}</Text>
               </View>
-              <Text style={styles.levelBlurb}>{t(`level.${module.level}.blurb`)}</Text>
-            </View>
-          ) : null}
+              <Text style={styles.levelBlurb}>{t(`level.${group.level}.blurb`)}</Text>
+              <Text style={styles.levelUnlocks}>{t(`level.${group.level}.unlocks`)}</Text>
+            </Pressable>
 
-          <View style={styles.moduleHeader}>
-            <Text style={styles.moduleEyebrow}>
-              {t('path.module', { number: moduleIndex + 1 })}
-            </Text>
-            <Text style={styles.moduleTitle}>{module.title}</Text>
-            <Text style={styles.moduleDescription}>{module.description}</Text>
+            {open
+              ? group.modules.map((module, indexInLevel) => (
+                  <Animated.View
+                    key={module.id}
+                    entering={FadeInDown.delay(indexInLevel * 60).duration(240)}
+                    style={styles.module}
+                  >
+                    <View style={styles.moduleHeader}>
+                      <Text style={styles.moduleEyebrow}>
+                        {t('path.module', { number: group.offset + indexInLevel + 1 })}
+                      </Text>
+                      <Text style={styles.moduleTitle}>{module.title}</Text>
+                      <Text style={styles.moduleDescription}>{module.description}</Text>
+                    </View>
+
+                    {module.lessons.map((lesson) => (
+                      <LessonCard
+                        key={lesson.id}
+                        lesson={lesson}
+                        complete={isLessonComplete(lesson.id)}
+                        bestXp={progress[lesson.id]?.bestXp ?? 0}
+                      />
+                    ))}
+                  </Animated.View>
+                ))
+              : null}
           </View>
-
-          {module.lessons.map((lesson) => (
-            <LessonCard
-              key={lesson.id}
-              lesson={lesson}
-              complete={isLessonComplete(lesson.id)}
-              bestXp={progress[lesson.id]?.bestXp ?? 0}
-            />
-          ))}
-        </Animated.View>
-      ))}
+        );
+      })}
 
       {/* ---- contributor call to action -------------------------------- */}
       <View style={styles.contributeCard}>
@@ -248,6 +313,15 @@ const styles = StyleSheet.create({
   },
   module: {
     gap: spacing.md,
+  },
+  level: { marginBottom: spacing.lg },
+  levelHeaderPressed: { opacity: 0.7 },
+  levelChevron: { ...typography.caption, color: palette.inkFaint, marginLeft: 'auto' },
+  levelUnlocks: {
+    ...typography.caption,
+    color: palette.inkMuted,
+    marginTop: spacing.xs,
+    lineHeight: 18,
   },
   levelHeader: {
     gap: spacing.xs,
