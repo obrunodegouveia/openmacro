@@ -39,6 +39,7 @@ import { moduleScrutinisingCbdcs } from './lessons/module-15-scrutinising-cbdcs'
 import { moduleBankingAndMoney } from './lessons/module-16-banking-and-money';
 import { moduleWhatGdpCounts } from './lessons/module-17-what-gdp-counts';
 import { moduleWhatCannotStop } from './lessons/module-18-what-cannot-stop';
+import { moduleSettingTheRate } from './lessons/module-19-setting-the-rate';
 
 /**
  * Ordered list of every module shipped with the app. Add yours here.
@@ -90,6 +91,7 @@ export const MODULES: readonly Module[] = [
   moduleTheBisAndTheEcb,
   moduleAfricanCentralBanks,
   moduleScrutinisingCbdcs,
+  moduleSettingTheRate,
 ];
 
 export const COURSE: Course = {

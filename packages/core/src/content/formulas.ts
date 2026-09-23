@@ -1002,6 +1002,93 @@ export const FORMULAS = {
     return (shortfall * (1 - read(inputs, 'substitutability'))) / (share * shortfall);
   },
 
+
+  // -------------------------------------------------------------------------
+  // Setting the policy rate
+  // -------------------------------------------------------------------------
+
+  /**
+   * The Taylor rule: i = r* + π + a(π − π*) + b(gap).
+   *
+   * Taylor's 1993 coefficients were 0.5 and 0.5, fitted to what the Fed had
+   * actually done, and the paper presented it as a description rather than an
+   * instruction. It survives because of one property: the coefficient on
+   * inflation exceeds one once you add the π term, so a point of extra
+   * inflation raises the *real* rate rather than lowering it. A rule that
+   * fails that test is one under which inflation feeds itself.
+   *
+   * Expects: `neutralReal` (r*), `inflation`, `target`, `outputGap`,
+   * `inflationWeight`, `gapWeight` — all decimal fractions.
+   */
+  taylor_rate: (inputs) =>
+    read(inputs, 'neutralReal') +
+    read(inputs, 'inflation') +
+    read(inputs, 'inflationWeight') * (read(inputs, 'inflation') - read(inputs, 'target')) +
+    read(inputs, 'gapWeight') * read(inputs, 'outputGap'),
+
+  /**
+   * The stance: how far the prescribed real rate sits above neutral.
+   *
+   * Positive is restrictive, negative is accommodative, and the sign is the
+   * only part anybody should trust — r* is unobservable and estimates of it
+   * move by a point when the model changes.
+   *
+   * Expects: the same inputs as `taylor_rate`.
+   */
+  policy_stance: (inputs) =>
+    read(inputs, 'inflationWeight') * (read(inputs, 'inflation') - read(inputs, 'target')) +
+    read(inputs, 'gapWeight') * read(inputs, 'outputGap'),
+
+  /**
+   * What the rule prescribes once the floor at zero is applied.
+   *
+   * The gap between this and `taylor_rate` is the part of the prescription
+   * that cannot be delivered with the rate alone, and is the reason asset
+   * purchases were invented.
+   *
+   * Expects: the same inputs as `taylor_rate`.
+   */
+  taylor_rate_floored: (inputs) => {
+    const prescribed =
+      read(inputs, 'neutralReal') +
+      read(inputs, 'inflation') +
+      read(inputs, 'inflationWeight') * (read(inputs, 'inflation') - read(inputs, 'target')) +
+      read(inputs, 'gapWeight') * read(inputs, 'outputGap');
+    return Math.max(0, prescribed);
+  },
+
+  /**
+   * Credit that lands in new productive capital, as a share of the economy.
+   *
+   * Expects: `creditGrowth`, `capitalShare` — decimal fractions.
+   */
+  credit_to_capital: (inputs) => read(inputs, 'creditGrowth') * read(inputs, 'capitalShare'),
+
+  /**
+   * Credit that lands on assets that already exist.
+   *
+   * It buys no new output. It bids up the price of the existing stock, which
+   * is why an economy can run a credit boom, report strong growth in lending,
+   * and add nothing to what it can produce.
+   *
+   * Expects: `creditGrowth`, `capitalShare`.
+   */
+  credit_to_existing_assets: (inputs) =>
+    read(inputs, 'creditGrowth') * (1 - read(inputs, 'capitalShare')),
+
+  /**
+   * Extra output per year from the productive share, at a flat return.
+   *
+   * Crude on purpose, in the same way as the GDP module's capital yield: the
+   * object is the sign and the order of magnitude, not a growth forecast.
+   *
+   * Expects: `creditGrowth`, `capitalShare`, `capitalReturn`.
+   */
+  capacity_from_credit: (inputs) =>
+    read(inputs, 'creditGrowth') *
+    read(inputs, 'capitalShare') *
+    read(inputs, 'capitalReturn'),
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
