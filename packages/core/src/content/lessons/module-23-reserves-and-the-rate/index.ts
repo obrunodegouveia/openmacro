@@ -25,7 +25,7 @@ export const moduleReservesAndTheRate = defineModule({
   title: 'Reserves and the Rate',
   description:
     'What reserves are actually for, what holding them costs every year, why buying foreign currency is a domestic monetary operation, and the swap line network that decides which countries have to insure themselves at all.',
-  accent: 'blue',
+  accent: 'azure',
   level: 'advanced',
   lessons: [whatReservesAreForLesson, sterilisedOrNotLesson, theSwapLineLesson],
 });

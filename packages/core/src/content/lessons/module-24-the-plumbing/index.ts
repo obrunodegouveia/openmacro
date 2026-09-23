@@ -13,7 +13,7 @@ export const moduleThePlumbing = defineModule({
   title: 'The Plumbing',
   description:
     'Settlement, intraday liquidity and operational risk — the largest thing a central bank operates and the least discussed.',
-  accent: 'amber',
+  accent: 'gold',
   level: 'advanced',
   lessons: [settlementIsTheProductLesson, intradayLiquidityLesson, whenItStopsLesson],
 });

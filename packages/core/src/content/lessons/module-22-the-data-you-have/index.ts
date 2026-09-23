@@ -35,7 +35,7 @@ export const moduleTheDataYouHave = defineModule({
   title: 'The Data You Actually Have',
   description:
     'The output gap is revised by whole points, the quarter you are deciding on has not been published, your forecast is conditional on an assumption nobody reads, and the variable that matters most cannot be observed. What to do anyway.',
-  accent: 'emerald',
+  accent: 'mint',
   level: 'advanced',
   lessons: [
     everythingIsRevisedLesson,

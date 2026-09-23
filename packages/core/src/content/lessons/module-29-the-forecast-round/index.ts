@@ -18,7 +18,7 @@ export const moduleTheForecastRound = defineModule({
   title: 'The Forecast Round',
   description:
     'Conditioning assumptions, models and judgement, fan charts and risk management, and what to do after a very large miss.',
-  accent: 'blue',
+  accent: 'gold',
   level: 'advanced',
   lessons: [
     whatAForecastIsForLesson,

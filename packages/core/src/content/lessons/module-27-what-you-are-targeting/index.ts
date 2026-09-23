@@ -21,7 +21,7 @@ export const moduleWhatYouAreTargeting = defineModule({
   title: 'What You Are Actually Targeting',
   description:
     'How inflation is measured, which measure to act on, where expectations come from, and what wages and exchange rates really do to prices.',
-  accent: 'emerald',
+  accent: 'mint',
   level: 'advanced',
   lessons: [
     buildingTheIndexLesson,
