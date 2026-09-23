@@ -283,5 +283,33 @@ export function validateModules(modules: readonly Module[]): ContentIssue[] {
     issues.push({ path: 'registry', message: `Lesson id "${dupe}" is used by more than one lesson.` });
   }
 
+  /**
+   * Levels must appear in one run each, in `MODULE_LEVELS` order.
+   *
+   * Both clients group the path by walking the list and starting a section
+   * when the level changes — see `content/levels.ts`. That is correct for an
+   * ordered registry and silently wrong for a shuffled one: an advanced
+   * module dropped among the beginner ones produces two "Advanced" headings,
+   * and a learner following the path is sent somewhere the numbering does not
+   * match. Cheaper to refuse here than to explain later.
+   */
+  let highest = -1;
+  const opened = new Set<string>();
+  for (const module of modules) {
+    const rank = MODULE_LEVELS.indexOf(module.level);
+    if (rank < 0) continue; // already reported above
+    if (rank < highest || (rank > highest && opened.has(module.level))) {
+      issues.push({
+        path: `module:${module.id}`,
+        message:
+          `Level "${module.level}" appears again after the registry has moved on. ` +
+          'Modules must be grouped by level, in beginner → intermediate → advanced order, ' +
+          'or the path draws a duplicate heading and the module numbering stops matching.',
+      });
+    }
+    opened.add(module.level);
+    highest = Math.max(highest, rank);
+  }
+
   return issues;
 }

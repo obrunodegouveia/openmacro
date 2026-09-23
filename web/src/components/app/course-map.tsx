@@ -1,11 +1,14 @@
 "use client";
 
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { LocaleLink } from "@/components/site/locale-link";
 import { useSiteText } from "@/lib/use-site-text";
 import { ArrowRight, Check, Clock, Coins, Play, RotateCcw, Trophy } from "lucide-react";
 import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content";
 import { useLocale } from "@/components/site/locale-provider";
-import type { Lesson } from "@openmacro/core/content/schema";
+import type { Lesson, ModuleLevel } from "@openmacro/core/content/schema";
+import { currentLevel, groupByLevel, levelOfModule } from "@openmacro/core/content/levels";
 import type { LessonProgress } from "@openmacro/core/progress/types";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import { Permalink } from "@/components/ui/permalink";
@@ -34,6 +37,62 @@ export function CourseMap() {
     : 0;
   const resume = all.find((lesson) => !snapshot?.progress[lesson.id]);
   const ready = state === "ready" && Boolean(snapshot);
+
+  const groups = useMemo(() => groupByLevel(modules), [modules]);
+  const openByDefault = useMemo(
+    () => currentLevel(groups, (lessonId) => Boolean(snapshot?.progress[lessonId])),
+    [groups, snapshot],
+  );
+
+  const [collapsed, setCollapsed] = useState<readonly ModuleLevel[]>([]);
+  const [touched, setTouched] = useState(false);
+  /** A level a link asked for, which must be open however the rest are set. */
+  const [linked, setLinked] = useState<ModuleLevel | null>(null);
+
+  /**
+   * Every module is a link target — `/learn#the-plumbing`, and the Permalink
+   * beside each heading exists to be copied. A collapsed section would
+   * otherwise swallow those links: the browser finds no element with that id,
+   * stays at the top, and the page looks broken to whoever followed it.
+   *
+   * So the hash decides which level opens, on load and on every subsequent
+   * hashchange. Scrolling is left to the browser, which does it once the
+   * element exists.
+   */
+  useEffect(() => {
+    const open = () => {
+      const id = window.location.hash.slice(1);
+      if (!id) return;
+      const level = levelOfModule(groups, id);
+      if (!level) return;
+      setLinked(level);
+      // The section mounts this render; scroll on the next frame, once it has.
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ block: "start" });
+      });
+    };
+    open();
+    window.addEventListener("hashchange", open);
+    return () => window.removeEventListener("hashchange", open);
+  }, [groups]);
+
+  const isOpen = useCallback(
+    (level: ModuleLevel) =>
+      level === linked || (touched ? !collapsed.includes(level) : level === openByDefault),
+    [collapsed, linked, openByDefault, touched],
+  );
+
+  const toggle = (level: ModuleLevel) => {
+    const open = isOpen(level);
+    if (open && level === linked) setLinked(null);
+    setCollapsed((current) => {
+      const base = touched
+        ? current
+        : groups.map((group) => group.level).filter((entry) => entry !== openByDefault);
+      return open ? [...base, level] : base.filter((entry) => entry !== level);
+    });
+    setTouched(true);
+  };
 
   return (
     <div>
@@ -73,77 +132,99 @@ export function CourseMap() {
       ) : null}
 
       <div className="mt-6 flex flex-col gap-8">
-        {modules.map((module, index) => {
-          const moduleDone = module.lessons.filter(
-            (lesson) => snapshot?.progress[lesson.id],
-          ).length;
-          /* `MODULES` is stored in level order, so a heading is drawn when
-             the level changes rather than by grouping — see registry.ts.
-             Sorting a copy here would let this page disagree with the order
-             the lesson runner walks. */
-          const opensLevel = module.level !== modules[index - 1]?.level;
-
+        {groups.map((group) => {
+          const open = isOpen(group.level);
+          const panelId = `level-${group.level}`;
           return (
-            /* The `id` makes each module a real destination — without one,
-               "share the module" has nothing to point at. No scroll offset
-               here: `scroll-padding-top` on <html> already clears the fixed
-               header, and adding a margin as well lands 88px too low. */
-            <section key={module.id} id={module.id}>
-              {opensLevel ? (
-                <div className="mb-7 mt-12 border-t border-hairline pt-9 first:mt-0 first:border-0 first:pt-0">
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <h3 className="font-display text-2xl font-extrabold tracking-tight text-ink">
-                      {t(`level.${module.level}`)}
-                    </h3>
-                    <span className="rounded-full border border-mint/30 bg-mint/10 px-2.5 py-0.5 text-xs font-bold text-mint-bright">
-                      {t('level.count', {
-                        count: modules.filter((entry) => entry.level === module.level).length,
-                      })}
-                    </span>
-                  </div>
-                  <p className="mt-1.5 max-w-2xl leading-relaxed text-ink-muted">
-                    {t(`level.${module.level}.blurb`)}
-                  </p>
-                </div>
-              ) : null}
-              <div className="flex items-baseline justify-between gap-4">
-                <h3 className="min-w-0 font-display text-base font-extrabold tracking-tight text-ink">
-                  {module.title}
-                  <Permalink
-                    href={`/learn#${module.id}`}
-                    label={module.title}
-                    size="sm"
-                    className="ml-1.5 translate-y-[-0.05em]"
+            <section key={group.level}>
+              {/* A disclosure, not a link: it reveals content already on this
+                  page. `aria-controls` ties it to the panel so a screen reader
+                  announces what expanded, and `aria-expanded` is the state. */}
+              <button
+                type="button"
+                onClick={() => toggle(group.level)}
+                aria-expanded={open}
+                aria-controls={panelId}
+                className="group w-full border-t border-hairline pt-9 text-left first:border-0 first:pt-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-mint-bright"
+              >
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h3 className="font-display text-2xl font-extrabold tracking-tight text-ink">
+                    {t(`level.${group.level}`)}
+                  </h3>
+                  <span className="rounded-full border border-mint/30 bg-mint/10 px-2.5 py-0.5 text-xs font-bold text-mint-bright">
+                    {t("level.count", { count: group.modules.length })}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "ml-auto size-5 shrink-0 text-ink-faint transition-transform",
+                      open && "rotate-180",
+                    )}
+                    aria-hidden
                   />
-                </h3>
-                {ready ? (
-                  <p className="shrink-0 text-xs font-bold text-ink-faint">
-                    {moduleDone} / {module.lessons.length}
-                  </p>
-                ) : null}
-              </div>
-              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">
-                {module.description}
-              </p>
-
-              {/* Watch first, then play. Only rendered for modules that have
-                  a video — every other module is unchanged. */}
-              {module.video ? (
-                <div className="max-w-2xl">
-                  <ModuleVideo video={module.video} moduleTitle={module.title} />
                 </div>
-              ) : null}
+                <p className="mt-1.5 max-w-2xl leading-relaxed text-ink-muted">
+                  {t(`level.${group.level}.blurb`)}
+                </p>
+                {/* What the level is worth, as opposed to what it assumes.
+                    "Intermediate" tells a learner nothing about whether it is
+                    for them; a prerequisite alone only says whether they are
+                    allowed in. */}
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-faint">
+                  {t(`level.${group.level}.unlocks`)}
+                </p>
+              </button>
 
-              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                {module.lessons.map((lesson) => (
-                  <li key={lesson.id}>
-                    <LessonCard
-                      lesson={lesson}
-                      record={snapshot?.progress[lesson.id]}
-                    />
-                  </li>
-                ))}
-              </ul>
+              <div id={panelId} hidden={!open} className="mt-7 flex flex-col gap-8">
+                {group.modules.map((module) => {
+                  const moduleDone = module.lessons.filter(
+                    (lesson) => snapshot?.progress[lesson.id],
+                  ).length;
+                  return (
+                    /* The `id` makes each module a real destination — without
+                       one, "share the module" has nothing to point at. No
+                       scroll offset here: `scroll-padding-top` on <html>
+                       already clears the fixed header. */
+                    <section key={module.id} id={module.id}>
+                      <div className="flex items-baseline justify-between gap-4">
+                        <h3 className="min-w-0 font-display text-base font-extrabold tracking-tight text-ink">
+                          {module.title}
+                          <Permalink
+                            href={`/learn#${module.id}`}
+                            label={module.title}
+                            size="sm"
+                            className="ml-1.5 translate-y-[-0.05em]"
+                          />
+                        </h3>
+                        {ready ? (
+                          <p className="shrink-0 text-xs font-bold text-ink-faint">
+                            {moduleDone} / {module.lessons.length}
+                          </p>
+                        ) : null}
+                      </div>
+                      <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">
+                        {module.description}
+                      </p>
+
+                      {module.video ? (
+                        <div className="max-w-2xl">
+                          <ModuleVideo video={module.video} moduleTitle={module.title} />
+                        </div>
+                      ) : null}
+
+                      <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                        {module.lessons.map((lesson) => (
+                          <li key={lesson.id}>
+                            <LessonCard
+                              lesson={lesson}
+                              record={snapshot?.progress[lesson.id]}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  );
+                })}
+              </div>
             </section>
           );
         })}
