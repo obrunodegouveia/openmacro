@@ -71,6 +71,8 @@ export const ptPT: UiDictionary = {
   'account.danger': 'Zona de perigo',
   'path.xp': '{count, number} XP',
   'path.module': 'Módulo {number, number}',
+  'path.module.progress': '{done, number} / {total, number}',
+  'path.module.done': 'Concluído',
   'path.streak': '{count, plural, one {sequência de # dia} other {sequência de # dias}}',
   'path.lesson.minutes': '{count, number} min',
   'path.lesson.steps': '{count, plural, one {# passo} other {# passos}}',

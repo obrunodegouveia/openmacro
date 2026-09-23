@@ -21,7 +21,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 import { router } from 'expo-router';
 
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
@@ -56,8 +56,47 @@ export default function LearningPathScreen() {
     [groups, isLessonComplete],
   );
 
+  /**
+   * Honour the OS "reduce motion" setting.
+   *
+   * The website gets this for free from a `prefers-reduced-motion` rule in
+   * `globals.css`; the app had nothing, so every expand animated regardless
+   * of what the learner had asked the system for. Someone who turns that on
+   * usually means it.
+   */
+  const reduceMotion = useReducedMotion();
+
   const [collapsed, setCollapsed] = useState<readonly ModuleLevel[]>([]);
   const [touched, setTouched] = useState(false);
+
+  /**
+   * The module holding the next unfinished lesson — open by default, for the
+   * same reason exactly one level is.
+   */
+  const openModuleId = useMemo(() => {
+    const next = modules.find((module) =>
+      module.lessons.some((lesson) => !isLessonComplete(lesson.id)),
+    );
+    return next?.id ?? modules[modules.length - 1]?.id;
+  }, [modules, isLessonComplete]);
+
+  const [closedModules, setClosedModules] = useState<readonly string[]>([]);
+  const [moduleTouched, setModuleTouched] = useState(false);
+
+  const isModuleOpen = (moduleId: string) =>
+    moduleTouched ? !closedModules.includes(moduleId) : moduleId === openModuleId;
+
+  const toggleModule = (moduleId: string) => {
+    if (!reduceMotion) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    const open = isModuleOpen(moduleId);
+    setClosedModules((current) => {
+      const base = moduleTouched
+        ? current
+        : modules.map((module) => module.id).filter((id) => id !== openModuleId);
+      return open ? [...base, moduleId] : base.filter((id) => id !== moduleId);
+    });
+    setModuleTouched(true);
+  };
 
   /**
    * Until the learner touches a header, openness follows their progress; after
@@ -69,7 +108,7 @@ export default function LearningPathScreen() {
     touched ? !collapsed.includes(level) : level === openByDefault;
 
   const toggle = (level: ModuleLevel) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    if (!reduceMotion) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     const open = isOpen(level);
     setCollapsed((current) => {
       const base = touched
@@ -158,30 +197,68 @@ export default function LearningPathScreen() {
             </Pressable>
 
             {open
-              ? group.modules.map((module, indexInLevel) => (
-                  <Animated.View
-                    key={module.id}
-                    entering={FadeInDown.delay(indexInLevel * 60).duration(240)}
-                    style={styles.module}
-                  >
-                    <View style={styles.moduleHeader}>
-                      <Text style={styles.moduleEyebrow}>
-                        {t('path.module', { number: group.offset + indexInLevel + 1 })}
-                      </Text>
-                      <Text style={styles.moduleTitle}>{module.title}</Text>
-                      <Text style={styles.moduleDescription}>{module.description}</Text>
-                    </View>
+              ? group.modules.map((module, indexInLevel) => {
+                  const moduleOpen = isModuleOpen(module.id);
+                  const done = module.lessons.filter((lesson) =>
+                    isLessonComplete(lesson.id),
+                  ).length;
+                  const finished = done === module.lessons.length;
 
-                    {module.lessons.map((lesson) => (
-                      <LessonCard
-                        key={lesson.id}
-                        lesson={lesson}
-                        complete={isLessonComplete(lesson.id)}
-                        bestXp={progress[lesson.id]?.bestXp ?? 0}
-                      />
-                    ))}
-                  </Animated.View>
-                ))
+                  return (
+                    <Animated.View
+                      key={module.id}
+                      entering={
+                        reduceMotion
+                          ? undefined
+                          : FadeInDown.delay(indexInLevel * 60).duration(240)
+                      }
+                      style={styles.module}
+                    >
+                      <Pressable
+                        onPress={() => toggleModule(module.id)}
+                        style={({ pressed }) => [
+                          styles.moduleHeader,
+                          pressed && styles.levelHeaderPressed,
+                        ]}
+                        accessibilityRole="button"
+                        accessibilityState={{ expanded: moduleOpen }}
+                        accessibilityLabel={module.title}
+                        accessibilityHint={module.description}
+                      >
+                        <View style={styles.moduleTopRow}>
+                          <Text style={styles.moduleEyebrow}>
+                            {t('path.module', { number: group.offset + indexInLevel + 1 })}
+                          </Text>
+                          {/* The collapsed row has to carry what the learner
+                              came to find out, or collapsing hides exactly the
+                              thing that makes the list scannable. */}
+                          <Text style={[styles.moduleProgress, finished && styles.moduleProgressDone]}>
+                            {finished
+                              ? t('path.module.done')
+                              : t('path.module.progress', {
+                                  done,
+                                  total: module.lessons.length,
+                                })}
+                          </Text>
+                          <Text style={styles.levelChevron}>{moduleOpen ? '⌃' : '⌄'}</Text>
+                        </View>
+                        <Text style={styles.moduleTitle}>{module.title}</Text>
+                        <Text style={styles.moduleDescription}>{module.description}</Text>
+                      </Pressable>
+
+                      {moduleOpen
+                        ? module.lessons.map((lesson) => (
+                            <LessonCard
+                              key={lesson.id}
+                              lesson={lesson}
+                              complete={isLessonComplete(lesson.id)}
+                              bestXp={progress[lesson.id]?.bestXp ?? 0}
+                            />
+                          ))
+                        : null}
+                    </Animated.View>
+                  );
+                })
               : null}
           </View>
         );
@@ -315,6 +392,14 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   level: { marginBottom: spacing.lg },
+  moduleTopRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  moduleProgress: {
+    ...typography.caption,
+    color: palette.inkFaint,
+    marginLeft: 'auto',
+    fontVariant: ['tabular-nums'],
+  },
+  moduleProgressDone: { color: palette.mint },
   levelHeaderPressed: { opacity: 0.7 },
   levelChevron: { ...typography.caption, color: palette.inkFaint, marginLeft: 'auto' },
   levelUnlocks: {
