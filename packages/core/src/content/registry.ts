@@ -48,6 +48,10 @@ import { moduleThePlumbing } from './lessons/module-24-the-plumbing';
 import { moduleSomeoneElsesCurrency } from './lessons/module-25-someone-elses-currency';
 import { moduleTheTreasuryOnThePhone } from './lessons/module-26-the-treasury-on-the-phone';
 import { moduleWhatYouAreTargeting } from './lessons/module-27-what-you-are-targeting';
+import { moduleWhatTheTargetShouldBe } from './lessons/module-28-what-the-target-should-be';
+import { moduleTheForecastRound } from './lessons/module-29-the-forecast-round';
+import { moduleHowItReachesTheEconomy } from './lessons/module-30-how-it-reaches-the-economy';
+import { moduleWhereTheRiskWent } from './lessons/module-31-where-the-risk-went';
 
 /**
  * Ordered list of every module shipped with the app. Add yours here.
@@ -108,6 +112,10 @@ export const MODULES: readonly Module[] = [
   moduleSomeoneElsesCurrency,
   moduleTheTreasuryOnThePhone,
   moduleWhatYouAreTargeting,
+  moduleWhatTheTargetShouldBe,
+  moduleTheForecastRound,
+  moduleHowItReachesTheEconomy,
+  moduleWhereTheRiskWent,
 ];
 
 export const COURSE: Course = {

@@ -1335,6 +1335,121 @@ export const FORMULAS = {
     read(inputs, 'grossPayments') * (1 - read(inputs, 'offsetRate')),
 
   // -------------------------------------------------------------------------
+  // Framework design
+  // -------------------------------------------------------------------------
+
+  /**
+   * How far the policy rate can fall before it hits the floor.
+   *
+   * The neutral nominal rate is the neutral real rate plus the inflation
+   * target, so the target is not only what you aim at — it is what sets the
+   * distance between a normal policy rate and the bound. This is the single
+   * strongest argument against a lower target.
+   *
+   * Expects: `rStar`, `inflationTarget`, `lowerBound` — decimal fractions.
+   */
+  policy_space: (inputs) =>
+    read(inputs, 'rStar') + read(inputs, 'inflationTarget') - read(inputs, 'lowerBound'),
+
+  /**
+   * How much of a typical recession's required easing the framework cannot
+   * deliver with the rate alone.
+   *
+   * Positive means the balance sheet, or guidance, or something else has to
+   * cover the difference.
+   *
+   * Expects: `rStar`, `inflationTarget`, `lowerBound`, `typicalCut`.
+   */
+  easing_shortfall: (inputs) => {
+    const space = read(inputs, 'rStar') + read(inputs, 'inflationTarget') - read(inputs, 'lowerBound');
+    return Math.max(read(inputs, 'typicalCut') - space, 0);
+  },
+
+  // -------------------------------------------------------------------------
+  // Forecasting
+  // -------------------------------------------------------------------------
+
+  /**
+   * Probability that the outturn lands above a threshold, given a central
+   * forecast and its uncertainty.
+   *
+   * This is what a fan chart draws and a point forecast hides: the same
+   * central projection is a different policy problem depending on how much
+   * of the distribution sits on the wrong side of a line.
+   *
+   * Uses a logistic approximation to the normal CDF, accurate to well under
+   * a percentage point across the range these sliders cover.
+   *
+   * Expects: `centralForecast`, `uncertainty` (standard deviation),
+   * `threshold`.
+   */
+  prob_above_threshold: (inputs) => {
+    const sigma = read(inputs, 'uncertainty');
+    const z = (read(inputs, 'centralForecast') - read(inputs, 'threshold')) / (sigma > 0 ? sigma : 1e-9);
+    // Normal CDF via the standard logistic approximation.
+    return 1 / (1 + Math.exp(-1.702 * z));
+  },
+
+  // -------------------------------------------------------------------------
+  // Transmission
+  // -------------------------------------------------------------------------
+
+  /**
+   * Share of a policy rate move that reaches household mortgage payments
+   * within the first year.
+   *
+   * Floating-rate borrowers feel all of it. Fixed-rate borrowers feel it only
+   * as their deals expire, so the same decision by the same central bank does
+   * very different things in Lisbon and in Los Angeles.
+   *
+   * Expects: `floatingShare`, `resetShare` — the fraction of fixed-rate
+   * borrowers whose deal expires within the year.
+   */
+  household_rate_passthrough: (inputs) => {
+    const floating = read(inputs, 'floatingShare');
+    return floating + (1 - floating) * read(inputs, 'resetShare');
+  },
+
+  /**
+   * Share of household income absorbed by a rate rise within the year.
+   *
+   * Expects: `debtToIncome`, `rateRise`, `floatingShare`, `resetShare`.
+   */
+  income_absorbed: (inputs) => {
+    const floating = read(inputs, 'floatingShare');
+    const reach = floating + (1 - floating) * read(inputs, 'resetShare');
+    return read(inputs, 'debtToIncome') * read(inputs, 'rateRise') * reach;
+  },
+
+  // -------------------------------------------------------------------------
+  // Non-bank leverage
+  // -------------------------------------------------------------------------
+
+  /**
+   * Cash a leveraged holder must post when yields move against it.
+   *
+   * Duration is the sensitivity of value to yield, so notional x duration x
+   * move is the loss — and on a derivative or a repo it is a loss that must
+   * be settled in cash, this week, whatever the position is worth at
+   * maturity.
+   *
+   * Expects: `notional`, `duration` (years), `yieldMove` (decimal).
+   */
+  margin_call: (inputs) =>
+    read(inputs, 'notional') * read(inputs, 'duration') * read(inputs, 'yieldMove'),
+
+  /**
+   * What the margin call exceeds the holder's liquid assets by — the amount
+   * that has to be raised by selling something.
+   *
+   * Expects: `notional`, `duration`, `yieldMove`, `liquidAssets`.
+   */
+  liquidity_shortfall: (inputs) => {
+    const call = read(inputs, 'notional') * read(inputs, 'duration') * read(inputs, 'yieldMove');
+    return Math.max(call - read(inputs, 'liquidAssets'), 0);
+  },
+
+  // -------------------------------------------------------------------------
   // Price indices and cost dynamics
   // -------------------------------------------------------------------------
 
