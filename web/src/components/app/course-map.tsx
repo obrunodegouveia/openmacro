@@ -49,6 +49,18 @@ export function CourseMap() {
   /** A level a link asked for, which must be open however the rest are set. */
   const [linked, setLinked] = useState<ModuleLevel | null>(null);
 
+  /** The module holding the next unfinished lesson, open by default. */
+  const openModuleId = useMemo(
+    () =>
+      modules.find((module) => module.lessons.some((lesson) => !snapshot?.progress[lesson.id]))?.id ??
+      modules[modules.length - 1]?.id,
+    [modules, snapshot],
+  );
+  const [closedModules, setClosedModules] = useState<readonly string[]>([]);
+  const [moduleTouched, setModuleTouched] = useState(false);
+  /** A module a link asked for — opened alongside its level. */
+  const [linkedModule, setLinkedModule] = useState<string | null>(null);
+
   /**
    * Every module is a link target — `/learn#the-plumbing`, and the Permalink
    * beside each heading exists to be copied. A collapsed section would
@@ -66,6 +78,10 @@ export function CourseMap() {
       const level = levelOfModule(groups, id);
       if (!level) return;
       setLinked(level);
+      // Open the module too: a link to a module whose lessons are collapsed
+      // lands on a heading with nothing under it, which is not what the
+      // person who followed it was promised.
+      setLinkedModule(id);
       // The section mounts this render; scroll on the next frame, once it has.
       requestAnimationFrame(() => {
         document.getElementById(id)?.scrollIntoView({ block: "start" });
@@ -81,6 +97,25 @@ export function CourseMap() {
       level === linked || (touched ? !collapsed.includes(level) : level === openByDefault),
     [collapsed, linked, openByDefault, touched],
   );
+
+  const isModuleOpen = useCallback(
+    (moduleId: string) =>
+      moduleId === linkedModule ||
+      (moduleTouched ? !closedModules.includes(moduleId) : moduleId === openModuleId),
+    [closedModules, linkedModule, moduleTouched, openModuleId],
+  );
+
+  const toggleModule = (moduleId: string) => {
+    const open = isModuleOpen(moduleId);
+    if (open && moduleId === linkedModule) setLinkedModule(null);
+    setClosedModules((current) => {
+      const base = moduleTouched
+        ? current
+        : modules.map((module) => module.id).filter((id) => id !== openModuleId);
+      return open ? [...base, moduleId] : base.filter((id) => id !== moduleId);
+    });
+    setModuleTouched(true);
+  };
 
   const toggle = (level: ModuleLevel) => {
     const open = isOpen(level);
@@ -179,15 +214,30 @@ export function CourseMap() {
                   const moduleDone = module.lessons.filter(
                     (lesson) => snapshot?.progress[lesson.id],
                   ).length;
+                  const moduleOpen = isModuleOpen(module.id);
+                  const panel = `module-panel-${module.id}`;
+                  const finished = ready && moduleDone === module.lessons.length;
+
                   return (
                     /* The `id` makes each module a real destination — without
                        one, "share the module" has nothing to point at. No
                        scroll offset here: `scroll-padding-top` on <html>
                        already clears the fixed header. */
                     <section key={module.id} id={module.id}>
-                      <div className="flex items-baseline justify-between gap-4">
+                      <div className="flex items-baseline justify-between gap-3">
                         <h3 className="min-w-0 font-display text-base font-extrabold tracking-tight text-ink">
-                          {module.title}
+                          <button
+                            type="button"
+                            onClick={() => toggleModule(module.id)}
+                            aria-expanded={moduleOpen}
+                            aria-controls={panel}
+                            className="text-left hover:text-mint-bright focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-mint-bright"
+                          >
+                            {module.title}
+                          </button>
+                          {/* Outside the button: a link inside a button is
+                              neither, and copying a permalink should not also
+                              collapse what it points at. */}
                           <Permalink
                             href={`/learn#${module.id}`}
                             label={module.title}
@@ -195,32 +245,53 @@ export function CourseMap() {
                             className="ml-1.5 translate-y-[-0.05em]"
                           />
                         </h3>
-                        {ready ? (
-                          <p className="shrink-0 text-xs font-bold text-ink-faint">
-                            {moduleDone} / {module.lessons.length}
-                          </p>
-                        ) : null}
+                        <div className="flex shrink-0 items-center gap-2">
+                          {ready ? (
+                            <p
+                              className={cn(
+                                "font-mono text-xs font-bold tabular-nums",
+                                finished ? "text-mint-bright" : "text-ink-faint",
+                              )}
+                            >
+                              {finished
+                                ? t("path.module.done")
+                                : t("path.module.progress", {
+                                    done: moduleDone,
+                                    total: module.lessons.length,
+                                  })}
+                            </p>
+                          ) : null}
+                          <ChevronDown
+                            className={cn(
+                              "size-4 text-ink-faint transition-transform",
+                              moduleOpen && "rotate-180",
+                            )}
+                            aria-hidden
+                          />
+                        </div>
                       </div>
                       <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">
                         {module.description}
                       </p>
 
-                      {module.video ? (
-                        <div className="max-w-2xl">
-                          <ModuleVideo video={module.video} moduleTitle={module.title} />
-                        </div>
-                      ) : null}
+                      <div id={panel} hidden={!moduleOpen}>
+                        {module.video ? (
+                          <div className="max-w-2xl">
+                            <ModuleVideo video={module.video} moduleTitle={module.title} />
+                          </div>
+                        ) : null}
 
-                      <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                        {module.lessons.map((lesson) => (
-                          <li key={lesson.id}>
-                            <LessonCard
-                              lesson={lesson}
-                              record={snapshot?.progress[lesson.id]}
-                            />
-                          </li>
-                        ))}
-                      </ul>
+                        <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                          {module.lessons.map((lesson) => (
+                            <li key={lesson.id}>
+                              <LessonCard
+                                lesson={lesson}
+                                record={snapshot?.progress[lesson.id]}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </section>
                   );
                 })}

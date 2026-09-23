@@ -63,6 +63,15 @@ export const en = {
 
   'path.xp': '{count, number} XP',
   'path.module': 'Module {number, number}',
+  /**
+   * Progress on a module whose lessons are collapsed out of sight.
+   *
+   * A collapsed row has to carry the thing the learner opened the screen to
+   * find out. Without it, collapsing hides exactly the information that makes
+   * the list worth scanning, and every module has to be opened to be judged.
+   */
+  'path.module.progress': '{done, number} / {total, number}',
+  'path.module.done': 'Finished',
   'path.streak': '{count, number} day streak',
   'path.lesson.minutes': '{count, number} min',
   'path.lesson.steps': '{count, plural, one {# step} other {# steps}}',
