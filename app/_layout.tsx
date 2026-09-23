@@ -14,7 +14,13 @@ import { Stack } from 'expo-router';
 import { env } from '@/config/env';
 import { MODULES } from '@openmacro/core/content/registry';
 import { validateModules } from '@openmacro/core/content/validate';
-import { preloadSounds, setHapticsEnabled, setSoundEnabled, setSoundPack } from '@/feedback';
+import {
+  preloadSounds,
+  setAudioTimingEnabled,
+  setHapticsEnabled,
+  setSoundEnabled,
+  setSoundPack,
+} from '@/feedback';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { LocaleProvider } from '@/providers/LocaleProvider';
 import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
@@ -27,6 +33,7 @@ export default function RootLayout() {
     setHapticsEnabled(env.hapticsEnabled);
     setSoundEnabled(env.soundEnabled);
     setSoundPack(env.soundPack);
+    setAudioTimingEnabled(env.audioTiming);
 
     /**
      * Build the audio players now rather than on first use. A player created

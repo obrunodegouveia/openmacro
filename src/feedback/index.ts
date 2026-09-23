@@ -206,6 +206,83 @@ export function preloadSounds(): void {
 }
 
 /**
+ * ---------------------------------------------------------------------------
+ * Seek timing
+ * ---------------------------------------------------------------------------
+ *
+ * `playCue` waits for a rewind before every sound, which is what makes the
+ * timing correct. What that costs is a native seek, and the honest answer to
+ * "how long does it take" was that nobody had measured it — the JS half is
+ * sub-microsecond, but `seekTo` is an AVPlayer seek on iOS and an ExoPlayer
+ * seek on Android, neither of which is free.
+ *
+ * So: measure it on a real device instead of estimating. The numbers decide
+ * whether the current one-player-per-cue design is already fast enough, or
+ * whether it is worth pooling several players per cue so the hot path can
+ * play synchronously with no seek at all.
+ *
+ * Self-limiting on purpose. It takes a bounded sample, prints one line, and
+ * switches itself off — so a build that ships with it enabled costs a boolean
+ * check per cue and one log per session, rather than becoming something that
+ * has to be remembered and removed.
+ */
+const TIMING_SAMPLE_SIZE = 120;
+
+let timingEnabled = false;
+let timings: number[] = [];
+
+export interface AudioTimingReport {
+  samples: number;
+  /** Milliseconds from requesting the rewind to it resolving. */
+  min: number;
+  median: number;
+  p95: number;
+  max: number;
+}
+
+export function setAudioTimingEnabled(enabled: boolean): void {
+  timingEnabled = enabled;
+  if (!enabled) timings = [];
+}
+
+/** The measurement so far, or `null` before anything has been recorded. */
+export function audioTimingReport(): AudioTimingReport | null {
+  if (timings.length === 0) return null;
+  const sorted = [...timings].sort((a, b) => a - b);
+  const at = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] ?? 0;
+  return {
+    samples: sorted.length,
+    min: sorted[0] ?? 0,
+    median: at(0.5),
+    p95: at(0.95),
+    max: sorted[sorted.length - 1] ?? 0,
+  };
+}
+
+/** Monotonic where available; `Date.now` is accurate enough as a fallback. */
+function now(): number {
+  return typeof performance !== 'undefined' && typeof performance.now === 'function'
+    ? performance.now()
+    : Date.now();
+}
+
+function recordSeek(startedAt: number): void {
+  timings.push(now() - startedAt);
+  if (timings.length < TIMING_SAMPLE_SIZE) return;
+
+  const report = audioTimingReport();
+  timingEnabled = false;
+  if (!report) return;
+  const ms = (value: number) => value.toFixed(2);
+  console.log(
+    `[OpenMacro] audio seek over ${report.samples} cues — ` +
+      `min ${ms(report.min)}ms, median ${ms(report.median)}ms, ` +
+      `p95 ${ms(report.p95)}ms, max ${ms(report.max)}ms ` +
+      `(one 60fps frame is 16.67ms)`,
+  );
+}
+
+/**
  * Play a cue, restarting it if it is already sounding.
  *
  * The bug this replaces: `seekTo` is asynchronous and `play` is not, so firing
@@ -238,10 +315,12 @@ function playCue(cue: FeedbackCue): void {
     const voice = voiceFor(cue);
     const generation = (voice.generation += 1);
 
+    const startedAt = timingEnabled ? now() : 0;
     voice.player.pause();
     void voice.player
       .seekTo(0)
       .then(() => {
+        if (timingEnabled) recordSeek(startedAt);
         // Superseded by a later fire, or sound was switched off while waiting.
         if (voice.generation !== generation || !soundEnabled) return;
         voice.player.play();

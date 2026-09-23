@@ -85,6 +85,18 @@ export const env = {
    */
   soundPack: soundPackName(process.env.EXPO_PUBLIC_SOUND_PACK),
 
+  /**
+   * Measure how long the audio rewind before each cue actually takes, and
+   * print one summary line.
+   *
+   * On by default: it is self-limiting — a bounded sample, one log, then it
+   * switches itself off — so the cost of leaving it on is a boolean check per
+   * cue. It exists because the alternative to measuring on a device was
+   * guessing, and the number decides whether the current audio design needs
+   * changing at all.
+   */
+  audioTiming: flag(process.env.EXPO_PUBLIC_AUDIO_TIMING, true),
+
   /** Runs `validateModules` over the registry on boot. Defaults to on in dev. */
   validateContentOnBoot: flag(process.env.EXPO_PUBLIC_VALIDATE_CONTENT, __DEV__),
 } as const;
