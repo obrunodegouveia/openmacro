@@ -58,6 +58,13 @@ jobs:
       - name: Audit content quality
         run: npm run audit:content
 
+      # The exam engine's claims — a seed rebuilds the same paper, the paper
+      # spans the course, the level gate fails a candidate the overall mark
+      # would pass. Runs against the live registry, so content that grows or
+      # shrinks under the blueprint is caught here rather than by a candidate.
+      - name: Exam engine self-test
+        run: npm run check:exam
+
       # The other half of the translation guarantee. `i18n:status` proves the
       # catalogue is complete; this proves the app actually *reads* it. A
       # string typed straight into JSX is invisible to typecheck (a string is
