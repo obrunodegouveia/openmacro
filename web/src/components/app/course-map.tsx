@@ -170,6 +170,9 @@ export function CourseMap() {
         {groups.map((group) => {
           const open = isOpen(group.level);
           const panelId = `level-${group.level}`;
+          const levelDone = group.modules.filter((module) =>
+            module.lessons.every((lesson) => snapshot?.progress[lesson.id]),
+          ).length;
           return (
             <section key={group.level}>
               {/* A disclosure, not a link: it reveals content already on this
@@ -189,13 +192,26 @@ export function CourseMap() {
                   <span className="rounded-full border border-mint/30 bg-mint/10 px-2.5 py-0.5 text-xs font-bold text-mint-bright">
                     {t("level.count", { count: group.modules.length })}
                   </span>
-                  <ChevronDown
-                    className={cn(
-                      "ml-auto size-5 shrink-0 text-ink-faint transition-transform",
-                      open && "rotate-180",
-                    )}
-                    aria-hidden
-                  />
+                  {/* Collapsed, the page otherwise says nothing about how
+                      far anyone has got — the count is the size of the level,
+                      not the learner's place in it. */}
+                  <span className="ml-auto flex shrink-0 items-center gap-3">
+                    {ready && levelDone > 0 ? (
+                      <span className="font-mono text-xs font-bold tabular-nums text-ink-faint">
+                        {t("path.module.progress", {
+                          done: levelDone,
+                          total: group.modules.length,
+                        })}
+                      </span>
+                    ) : null}
+                    <ChevronDown
+                      className={cn(
+                        "size-5 text-ink-muted transition-transform",
+                        open && "rotate-180",
+                      )}
+                      aria-hidden
+                    />
+                  </span>
                 </div>
                 <p className="mt-1.5 max-w-2xl leading-relaxed text-ink-muted">
                   {t(`level.${group.level}.blurb`)}
@@ -270,7 +286,12 @@ export function CourseMap() {
                           />
                         </div>
                       </div>
-                      <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">
+                      <p
+                        className={cn(
+                          "mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted",
+                          !moduleOpen && "line-clamp-2",
+                        )}
+                      >
                         {module.description}
                       </p>
 

@@ -44,6 +44,23 @@ export default function LearningPathScreen() {
   const groups = useMemo(() => groupByLevel(modules), [modules]);
 
   /**
+   * The lesson to carry on with.
+   *
+   * With the path collapsed, the screen opens on three headings and no
+   * obvious way back in — a learner mid-course has to remember where they
+   * were and expand their way to it. The website has had a resume card since
+   * it grew a course map; the app never did, and collapsing made its absence
+   * the first thing you meet.
+   */
+  const resume = useMemo(() => {
+    for (const module of modules) {
+      const lesson = module.lessons.find((entry) => !isLessonComplete(entry.id));
+      if (lesson) return lesson;
+    }
+    return undefined;
+  }, [modules, isLessonComplete]);
+
+  /**
    * The level the learner is actually in — the first with an unfinished
    * lesson, or the last one if they have finished everything.
    *
@@ -165,6 +182,30 @@ export default function LearningPathScreen() {
         </View>
       ) : null}
 
+      {/* ---- carry on ---------------------------------------------------
+        Only once there is something to carry on *from*: on a first run this
+        would point at the first lesson of the course, which is already the
+        next thing on screen.
+      */}
+      {resume && (profile?.totalXp ?? 0) > 0 ? (
+        <Pressable
+          onPress={() =>
+            router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: resume.id } })
+          }
+          accessibilityRole="button"
+          accessibilityLabel={t('path.lesson.open', { title: resume.title })}
+          style={({ pressed }) => [styles.resume, pressed && styles.lessonCardPressed]}
+        >
+          <View style={styles.resumeIcon}>
+            <Text style={styles.lessonIconText}>{resume.icon}</Text>
+          </View>
+          <View style={styles.lessonBody}>
+            <Text style={styles.resumeEyebrow}>{t('map.resume')}</Text>
+            <Text style={styles.lessonTitle}>{resume.title}</Text>
+          </View>
+        </Pressable>
+      ) : null}
+
       {/* ---- modules ----------------------------------------------------
         One collapsible section per level. The path is 32 modules long, so a
         flat list meant scrolling past two levels to reach the one you are in;
@@ -172,6 +213,9 @@ export default function LearningPathScreen() {
       */}
       {groups.map((group) => {
         const open = isOpen(group.level);
+        const levelDone = group.modules.filter((module) =>
+          module.lessons.every((lesson) => isLessonComplete(lesson.id)),
+        ).length;
         return (
           <View key={group.level} style={styles.level}>
             <Pressable
@@ -187,10 +231,27 @@ export default function LearningPathScreen() {
                 <Text style={styles.levelCount}>
                   {t('level.count', { count: group.modules.length })}
                 </Text>
-                {/* A glyph, not a word: the lint rule that requires t() for
-                    user-visible text exempts strings with no two consecutive
-                    letters, and a chevron needs no translation. */}
-                <Text style={styles.levelChevron}>{open ? '⌃' : '⌄'}</Text>
+                {/* Collapsed, the screen otherwise says nothing about how far
+                    anyone has got — the count is the size of the level, not
+                    the learner's place in it. */}
+                {/* Grouped so the pair sits together on the right whether or
+                    not the progress figure is there — an `auto` margin on the
+                    figure alone leaves the chevron beside the pill the moment
+                    a learner has finished nothing yet. */}
+                <View style={styles.levelTrailing}>
+                  {levelDone > 0 ? (
+                    <Text style={styles.levelProgress}>
+                      {t('path.module.progress', {
+                        done: levelDone,
+                        total: group.modules.length,
+                      })}
+                    </Text>
+                  ) : null}
+                  {/* A glyph, not a word: the lint rule that requires t() for
+                      user-visible text exempts strings with no two consecutive
+                      letters, and a chevron needs no translation. */}
+                  <Text style={styles.levelChevron}>{open ? '⌃' : '⌄'}</Text>
+                </View>
               </View>
               <Text style={styles.levelBlurb}>{t(`level.${group.level}.blurb`)}</Text>
               <Text style={styles.levelUnlocks}>{t(`level.${group.level}.unlocks`)}</Text>
@@ -243,7 +304,12 @@ export default function LearningPathScreen() {
                           <Text style={styles.levelChevron}>{moduleOpen ? '⌃' : '⌄'}</Text>
                         </View>
                         <Text style={styles.moduleTitle}>{module.title}</Text>
-                        <Text style={styles.moduleDescription}>{module.description}</Text>
+                        <Text
+                          style={styles.moduleDescription}
+                          numberOfLines={moduleOpen ? undefined : 2}
+                        >
+                          {module.description}
+                        </Text>
                       </Pressable>
 
                       {moduleOpen
@@ -401,7 +467,23 @@ const styles = StyleSheet.create({
   },
   moduleProgressDone: { color: palette.mint },
   levelHeaderPressed: { opacity: 0.7 },
-  levelChevron: { ...typography.caption, color: palette.inkFaint, marginLeft: 'auto' },
+  levelChevron: {
+    fontSize: 22,
+    lineHeight: 22,
+    color: palette.inkMuted,
+    fontWeight: '700',
+  },
+  levelProgress: {
+    ...typography.caption,
+    color: palette.inkFaint,
+    fontVariant: ['tabular-nums'],
+  },
+  levelTrailing: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginLeft: 'auto',
+  },
   levelUnlocks: {
     ...typography.caption,
     color: palette.inkMuted,
@@ -452,6 +534,39 @@ const styles = StyleSheet.create({
   moduleDescription: {
     ...typography.body,
     color: palette.inkMuted,
+  },
+  /**
+   * The resume card, deliberately the one mint-filled thing on the screen.
+   * Everything else here is a container; this is the action.
+   */
+  resume: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    backgroundColor: palette.mintSoft,
+    borderWidth: 2,
+    borderBottomWidth: 5,
+    borderColor: palette.mint,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+  },
+  resumeIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: palette.surface,
+    borderWidth: 2,
+    borderColor: palette.mint,
+  },
+  resumeEyebrow: {
+    ...typography.caption,
+    color: palette.mintDark,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    marginBottom: 2,
   },
   lessonCard: {
     flexDirection: 'row',
