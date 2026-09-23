@@ -31,6 +31,11 @@ informed rather than recruited. PRs that editorialise will be asked to rewrite.
 
 ## What we are actually building
 
+The goal of the project in one place is [GOALS.md](GOALS.md): understand money
+deeply enough to run your own financial life on the best terms available to
+you, and deeply enough to run a central bank. What follows is how that goal
+shapes the work.
+
 The course is the means. These five things are the project, and a
 contribution is good to the extent that it serves them.
 
