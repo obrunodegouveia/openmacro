@@ -32,6 +32,8 @@ import {
 import { emitFeedback } from '@/feedback';
 import { useContentUpdate } from '@/providers/ContentUpdateProvider';
 import { useLocale } from '@/providers/LocaleProvider';
+import { recordLessonOutcome } from '@/services/reviewStore';
+import { getModuleForLesson } from '@openmacro/core/content/registry';
 import { useProgress } from '@/providers/ProgressProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
@@ -110,12 +112,38 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
       bestCombo: state.bestCombo,
       completed: state.status === 'complete',
     });
+
+    /**
+     * Hand the run to the review scheduler.
+     *
+     * `resolved` and `missed` have been computed on every run since the
+     * runner was written and thrown away at this line — the app knew what you
+     * got wrong and then forgot it. This is the seam where a course that
+     * teaches once becomes one that comes back.
+     *
+     * Deliberately not part of `recordResult`: that crosses into
+     * `LearningDataProvider` and can reach Supabase, and a log of every
+     * question a person got wrong is the last thing that should leave the
+     * device. See `services/reviewStore`.
+     *
+     * Failure here is silent on purpose. Losing a review schedule is a
+     * degraded next session; an exception on this line would lose the run the
+     * learner has just finished.
+     */
+    void recordLessonOutcome({
+      lessonId: lesson.id,
+      moduleId: getModuleForLesson(lesson.id)?.id ?? 'unknown',
+      resolved: state.resolved,
+      missed: state.missed,
+    }).catch(() => {});
   }, [
     state.status,
     state.xpEarned,
     state.hearts,
     state.maxHearts,
     state.bestCombo,
+    state.resolved,
+    state.missed,
     lesson.id,
     recordResult,
   ]);
