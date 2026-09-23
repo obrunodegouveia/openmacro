@@ -33,6 +33,15 @@ const firstExisting = (base) =>
 
 registerHooks({
   resolve(specifier, context, nextResolve) {
+    // `reviewStore` reaches AsyncStorage. The grading function under test is
+    // pure and never touches it, but the module-level import must still
+    // resolve under plain Node.
+    if (specifier === '@react-native-async-storage/async-storage') {
+      return {
+        url: new URL('./stub-async-storage.mjs', import.meta.url).href,
+        shortCircuit: true,
+      };
+    }
     if (specifier.startsWith('@/')) {
       const resolved = firstExisting(new URL(`src/${specifier.slice(2)}`, ROOT).href);
       if (resolved) return { url: resolved, shortCircuit: true };
@@ -48,6 +57,7 @@ registerHooks({
 const { newReviewItem, reviewed, dueItems, summarise, addDays, compareDateKeys } = await import(
   '@openmacro/core/progress/review'
 );
+const { gradesFor } = await import('@/services/reviewStore');
 
 let failures = 0;
 const check = (name, ok, detail = '') => {
@@ -64,7 +74,34 @@ const item = (grade, on = DAY0) => newReviewItem('l#c', 'l', 'm', grade, on);
 
 console.log('\nReview scheduler — self-test\n');
 
-console.log('Dates');
+console.log('Grading a finished run');
+/**
+ * The mapping from what the runner saw to what the scheduler is told. Getting
+ * this wrong is invisible — the queue simply fills with the wrong things — so
+ * it is checked against the three outcomes a run can produce, and the one it
+ * must stay silent about.
+ */
+{
+  const clean = gradesFor({ lessonId: 'l', moduleId: 'm', resolved: ['a', 'b', 'c'], missed: [] });
+  check('first-attempt answers are "known"', [...clean.values()].every((g) => g === 'known'), `${clean.size} items`);
+
+  // Fumbled then solved — what the runner's re-queueing produces on every
+  // lesson somebody finishes the hard way.
+  const fumbled = gradesFor({ lessonId: 'l', moduleId: 'm', resolved: ['a', 'b'], missed: ['b'] });
+  check('answered only after a miss is "struggled"', fumbled.get('b') === 'struggled');
+  check('…and its neighbour is still "known"', fumbled.get('a') === 'known');
+
+  // Out of hearts: 'c' was never solved.
+  const failed = gradesFor({ lessonId: 'l', moduleId: 'm', resolved: ['a'], missed: ['b', 'c'] });
+  check('never solved is "missed"', failed.get('b') === 'missed' && failed.get('c') === 'missed');
+  check(
+    'a challenge never reached is not graded at all',
+    !failed.has('d'),
+    'grading an unasked question would schedule it on the strength of nothing',
+  );
+}
+
+console.log('\nDates');
 check('addDays crosses a month boundary', addDays('2026-01-30', 3) === '2026-02-02');
 check('…and a leap day', addDays('2028-02-28', 1) === '2028-02-29', addDays('2028-02-28', 1));
 check('…and a year boundary', addDays('2026-12-31', 1) === '2027-01-01');

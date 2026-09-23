@@ -30,6 +30,7 @@ import {
   type ProgressSnapshot,
 } from '@openmacro/core/progress/rules';
 import { supabase } from '@/services/supabaseClient';
+import { clearReviewItems } from '@/services/reviewStore';
 import { readCloudSnapshot, writeCloudSnapshot } from '@/services/supabaseDataProvider';
 import {
   createSyncedDataProvider,
@@ -176,6 +177,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const reset = useCallback(async () => {
     try {
       await provider.reset();
+      /**
+       * The review schedule is stored outside the provider — see
+       * `services/reviewStore` for why — so "start over" has to clear it
+       * explicitly. Leaving it behind would greet a learner who had just
+       * wiped their progress with a queue of questions from lessons the app
+       * no longer believes they have taken.
+       */
+      await clearReviewItems();
       await load(provider);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Failed to reset your progress.');
