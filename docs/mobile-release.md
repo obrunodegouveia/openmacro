@@ -29,7 +29,7 @@ Commands:
 | `npm run preflight:store` | Version agreement, icon transparency, placeholder review contacts, secrets in public env vars |
 | `npm run build:dev:ios` / `:android` | Development client — the thing you install to iterate against native code |
 | `npm run build:preview` | Internal build for both platforms. Android is an APK you can sideload |
-| `npm run build:store` | Production build for both stores, preflight first |
+| `npm run build:store` | Production build for both stores, preflight first. **Builds on EAS, not locally** — `--local` takes one platform at a time, so use the two commands below unless you have build allowance to spend |
 | `npm run submit:ios` / `:android` | Hand the last production build to App Store Connect / Play Console |
 | `npm run metadata:push` | Push `store.config.json` to App Store Connect |
 | `npm run metadata:pull` | Overwrite `store.config.json` with what App Store Connect currently has |
