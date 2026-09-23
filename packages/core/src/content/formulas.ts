@@ -1089,6 +1089,493 @@ export const FORMULAS = {
     read(inputs, 'capitalShare') *
     read(inputs, 'capitalReturn'),
 
+
+  // -------------------------------------------------------------------------
+  // Bank capital, liquidity and stress
+  // -------------------------------------------------------------------------
+
+  /**
+   * Common equity tier 1 after a loss, as a share of risk-weighted assets.
+   *
+   * Take total assets as 100. Risk-weighted assets are `rwaDensity` × 100, and
+   * capital is `cet1Ratio` × RWA. A loss of `lossRate` falls on *assets*, not
+   * on the weighted number — so the ratio falls by `lossRate / rwaDensity`.
+   *
+   * That division is the lesson. A bank stuffed with mortgages carries low
+   * risk weights, so it holds fewer euros of capital per euro of asset, and
+   * the same percentage loss eats a larger share of its ratio. Density is the
+   * amplifier hiding inside every capital ratio.
+   *
+   * Risk weights are held fixed, which flatters the result: in a real stress
+   * they rise as exposures are downgraded, and the ratio falls further.
+   *
+   * Expects: `cet1Ratio`, `lossRate`, `rwaDensity` — decimal fractions.
+   */
+  cet1_after_shock: (inputs) => {
+    const density = read(inputs, 'rwaDensity');
+    if (density <= 0) return 0;
+    return read(inputs, 'cet1Ratio') - read(inputs, 'lossRate') / density;
+  },
+
+  /**
+   * How far the post-shock ratio sits above the 4.5% CET1 minimum.
+   *
+   * Negative means the bank is below the line and the question stops being
+   * supervisory and starts being resolution.
+   *
+   * Expects: `cet1Ratio`, `lossRate`, `rwaDensity`.
+   */
+  distance_to_minimum: (inputs) => {
+    const density = read(inputs, 'rwaDensity');
+    if (density <= 0) return 0;
+    return read(inputs, 'cet1Ratio') - read(inputs, 'lossRate') / density - 0.045;
+  },
+
+  /**
+   * The loss rate on assets that takes the bank to the minimum.
+   *
+   * The number a supervisor actually wants: not "is it solvent today" but
+   * "how far from today does it stop being".
+   *
+   * Expects: `cet1Ratio`, `rwaDensity`.
+   */
+  loss_rate_to_breach: (inputs) =>
+    (read(inputs, 'cet1Ratio') - 0.045) * read(inputs, 'rwaDensity'),
+
+  // -------------------------------------------------------------------------
+  // Collateral
+  // -------------------------------------------------------------------------
+
+  /**
+   * Cash a borrower raises against collateral, after the haircut.
+   *
+   * Expects: `collateralValue`, `haircut` — haircut as a decimal fraction.
+   */
+  collateral_cash_raised: (inputs) =>
+    read(inputs, 'collateralValue') * (1 - read(inputs, 'haircut')),
+
+  /**
+   * How much collateral must be pledged to raise a given amount of cash.
+   *
+   * The direction that matters in a crisis: a bank does not ask what its
+   * bonds are worth, it asks how many it must hand over to survive Friday.
+   *
+   * Expects: `cashNeeded`, `haircut`.
+   */
+  collateral_required: (inputs) => {
+    const haircut = read(inputs, 'haircut');
+    if (haircut >= 1) return Number.POSITIVE_INFINITY;
+    return read(inputs, 'cashNeeded') / (1 - haircut);
+  },
+
+  /**
+   * Cash still raisable after the collateral is marked down *and* the haircut
+   * is widened — the two things that happen together in a crisis.
+   *
+   * Expects: `collateralValue`, `priceFall`, `haircut`.
+   */
+  collateral_after_stress: (inputs) =>
+    read(inputs, 'collateralValue') *
+    (1 - read(inputs, 'priceFall')) *
+    (1 - read(inputs, 'haircut')),
+
+
+  // -------------------------------------------------------------------------
+  // Real-time data
+  // -------------------------------------------------------------------------
+
+  /**
+   * The Taylor prescription computed on the output gap as later revised.
+   *
+   * Same rule as `taylor_rate`, reading `revisedGap` instead of `outputGap`,
+   * so a sim can put the two side by side. Orphanides' point in one pair of
+   * readouts: the rule did not fail in the 1970s, the gap estimate did.
+   *
+   * Expects: `neutralReal`, `inflation`, `target`, `revisedGap`,
+   * `inflationWeight`, `gapWeight`.
+   */
+  taylor_rate_revised: (inputs) =>
+    read(inputs, 'neutralReal') +
+    read(inputs, 'inflation') +
+    read(inputs, 'inflationWeight') * (read(inputs, 'inflation') - read(inputs, 'target')) +
+    read(inputs, 'gapWeight') * read(inputs, 'revisedGap'),
+
+  /**
+   * How far the real-time prescription sat from the one the revised data
+   * would have given. Negative means policy was set looser than it should
+   * have been.
+   *
+   * Expects: `outputGap`, `revisedGap`, `gapWeight`.
+   */
+  real_time_policy_error: (inputs) =>
+    read(inputs, 'gapWeight') * (read(inputs, 'outputGap') - read(inputs, 'revisedGap')),
+
+
+  // -------------------------------------------------------------------------
+  // Reserves and intervention
+  // -------------------------------------------------------------------------
+
+  /**
+   * Months of imports the reserves would cover.
+   *
+   * The oldest adequacy metric and the crudest. Three months was the rule of
+   * thumb when the risk was a trade shock and capital did not move; it says
+   * nothing about a country whose danger is an investor leaving.
+   *
+   * Expects: `reserves`, `monthlyImports`.
+   */
+  reserve_import_cover: (inputs) => {
+    const imports = read(inputs, 'monthlyImports');
+    if (imports <= 0) return 0;
+    return read(inputs, 'reserves') / imports;
+  },
+
+  /**
+   * Reserves as a multiple of external debt falling due within the year.
+   *
+   * Guidotti and Greenspan's rule: a country should be able to live for a
+   * year without borrowing abroad. A ratio below one means a refusal to roll
+   * over is a crisis rather than an inconvenience.
+   *
+   * Expects: `reserves`, `shortTermDebt`.
+   */
+  reserve_debt_cover: (inputs) => {
+    const debt = read(inputs, 'shortTermDebt');
+    if (debt <= 0) return 0;
+    return read(inputs, 'reserves') / debt;
+  },
+
+  /**
+   * How many days of selling at the current rate the reserves survive.
+   *
+   * Expects: `reserves`, `dailyDrain`.
+   */
+  days_of_defence: (inputs) => {
+    const drain = read(inputs, 'dailyDrain');
+    if (drain <= 0) return Number.POSITIVE_INFINITY;
+    return read(inputs, 'reserves') / drain;
+  },
+
+  /**
+   * The annual carrying cost of sterilised intervention.
+   *
+   * Buying foreign currency creates domestic money; sterilising it means
+   * selling domestic paper to take that money back. The central bank then
+   * earns the foreign rate on the reserves and pays the domestic rate on the
+   * paper — so a country with high domestic rates pays for its own reserves
+   * every year, which is why large reserve stocks are not free.
+   *
+   * Expects: `reserves`, `domesticRate`, `foreignRate`.
+   */
+  sterilisation_cost: (inputs) =>
+    read(inputs, 'reserves') * (read(inputs, 'domesticRate') - read(inputs, 'foreignRate')),
+
+  // -------------------------------------------------------------------------
+  // Foreign-currency debt
+  // -------------------------------------------------------------------------
+
+  /**
+   * Debt-to-GDP after a depreciation, when part of the debt is in foreign
+   * currency.
+   *
+   * The domestic-currency value of the foreign slice rises by the full
+   * depreciation while GDP does not, so the ratio jumps without anybody
+   * borrowing anything. This is why a devaluation that helps an exporter can
+   * bankrupt the state that hoped it would.
+   *
+   * Expects: `debtRatio`, `fxShare`, `depreciation` — decimal fractions.
+   */
+  debt_ratio_after_depreciation: (inputs) => {
+    const ratio = read(inputs, 'debtRatio');
+    const fxShare = read(inputs, 'fxShare');
+    const depreciation = read(inputs, 'depreciation');
+    if (depreciation <= -1) return ratio;
+    return ratio * (1 - fxShare) + (ratio * fxShare) / (1 - depreciation);
+  },
+
+  /**
+   * How much of the jump was the currency rather than any new borrowing.
+   *
+   * Expects: `debtRatio`, `fxShare`, `depreciation`.
+   */
+  depreciation_debt_jump: (inputs) => {
+    const ratio = read(inputs, 'debtRatio');
+    const fxShare = read(inputs, 'fxShare');
+    const depreciation = read(inputs, 'depreciation');
+    if (depreciation <= -1) return 0;
+    return (ratio * fxShare) / (1 - depreciation) - ratio * fxShare;
+  },
+
+  // -------------------------------------------------------------------------
+  // Settlement
+  // -------------------------------------------------------------------------
+
+  /**
+   * Liquidity saved by netting: the share of gross payments that never has to
+   * be funded because it offsets.
+   *
+   * Expects: `grossPayments`, `netObligations`.
+   */
+  netting_efficiency: (inputs) => {
+    const gross = read(inputs, 'grossPayments');
+    if (gross <= 0) return 0;
+    // Net obligations cannot exceed gross flow; a learner dragging the sliders
+    // into that corner should see zero saving, not a negative percentage.
+    const net = Math.min(read(inputs, 'netObligations'), gross);
+    return (gross - net) / gross;
+  },
+
+  /**
+   * Cash a bank must find to settle gross, given how much of its outgoing
+   * payments are matched by incoming ones it can recycle.
+   *
+   * Expects: `grossPayments`, `offsetRate` — the share that can be recycled.
+   */
+  gross_settlement_need: (inputs) =>
+    read(inputs, 'grossPayments') * (1 - read(inputs, 'offsetRate')),
+
+  // -------------------------------------------------------------------------
+  // Framework design
+  // -------------------------------------------------------------------------
+
+  /**
+   * How far the policy rate can fall before it hits the floor.
+   *
+   * The neutral nominal rate is the neutral real rate plus the inflation
+   * target, so the target is not only what you aim at — it is what sets the
+   * distance between a normal policy rate and the bound. This is the single
+   * strongest argument against a lower target.
+   *
+   * Expects: `rStar`, `inflationTarget`, `lowerBound` — decimal fractions.
+   */
+  policy_space: (inputs) =>
+    read(inputs, 'rStar') + read(inputs, 'inflationTarget') - read(inputs, 'lowerBound'),
+
+  /**
+   * How much of a typical recession's required easing the framework cannot
+   * deliver with the rate alone.
+   *
+   * Positive means the balance sheet, or guidance, or something else has to
+   * cover the difference.
+   *
+   * Expects: `rStar`, `inflationTarget`, `lowerBound`, `typicalCut`.
+   */
+  easing_shortfall: (inputs) => {
+    const space = read(inputs, 'rStar') + read(inputs, 'inflationTarget') - read(inputs, 'lowerBound');
+    return Math.max(read(inputs, 'typicalCut') - space, 0);
+  },
+
+  // -------------------------------------------------------------------------
+  // Forecasting
+  // -------------------------------------------------------------------------
+
+  /**
+   * Probability that the outturn lands above a threshold, given a central
+   * forecast and its uncertainty.
+   *
+   * This is what a fan chart draws and a point forecast hides: the same
+   * central projection is a different policy problem depending on how much
+   * of the distribution sits on the wrong side of a line.
+   *
+   * Uses a logistic approximation to the normal CDF, accurate to well under
+   * a percentage point across the range these sliders cover.
+   *
+   * Expects: `centralForecast`, `uncertainty` (standard deviation),
+   * `threshold`.
+   */
+  prob_above_threshold: (inputs) => {
+    const sigma = read(inputs, 'uncertainty');
+    const z = (read(inputs, 'centralForecast') - read(inputs, 'threshold')) / (sigma > 0 ? sigma : 1e-9);
+    // Normal CDF via the standard logistic approximation.
+    return 1 / (1 + Math.exp(-1.702 * z));
+  },
+
+  // -------------------------------------------------------------------------
+  // Transmission
+  // -------------------------------------------------------------------------
+
+  /**
+   * Share of a policy rate move that reaches household mortgage payments
+   * within the first year.
+   *
+   * Floating-rate borrowers feel all of it. Fixed-rate borrowers feel it only
+   * as their deals expire, so the same decision by the same central bank does
+   * very different things in Lisbon and in Los Angeles.
+   *
+   * Expects: `floatingShare`, `resetShare` — the fraction of fixed-rate
+   * borrowers whose deal expires within the year.
+   */
+  household_rate_passthrough: (inputs) => {
+    const floating = read(inputs, 'floatingShare');
+    return floating + (1 - floating) * read(inputs, 'resetShare');
+  },
+
+  /**
+   * Share of household income absorbed by a rate rise within the year.
+   *
+   * Expects: `debtToIncome`, `rateRise`, `floatingShare`, `resetShare`.
+   */
+  income_absorbed: (inputs) => {
+    const floating = read(inputs, 'floatingShare');
+    const reach = floating + (1 - floating) * read(inputs, 'resetShare');
+    return read(inputs, 'debtToIncome') * read(inputs, 'rateRise') * reach;
+  },
+
+  // -------------------------------------------------------------------------
+  // Non-bank leverage
+  // -------------------------------------------------------------------------
+
+  /**
+   * Cash a leveraged holder must post when yields move against it.
+   *
+   * Duration is the sensitivity of value to yield, so notional x duration x
+   * move is the loss — and on a derivative or a repo it is a loss that must
+   * be settled in cash, this week, whatever the position is worth at
+   * maturity.
+   *
+   * Expects: `notional`, `duration` (years), `yieldMove` (decimal).
+   */
+  margin_call: (inputs) =>
+    read(inputs, 'notional') * read(inputs, 'duration') * read(inputs, 'yieldMove'),
+
+  /**
+   * What the margin call exceeds the holder's liquid assets by — the amount
+   * that has to be raised by selling something.
+   *
+   * Expects: `notional`, `duration`, `yieldMove`, `liquidAssets`.
+   */
+  liquidity_shortfall: (inputs) => {
+    const call = read(inputs, 'notional') * read(inputs, 'duration') * read(inputs, 'yieldMove');
+    return Math.max(call - read(inputs, 'liquidAssets'), 0);
+  },
+
+  // -------------------------------------------------------------------------
+  // Price indices and cost dynamics
+  // -------------------------------------------------------------------------
+
+  /**
+   * Headline inflation as the weighted sum of its parts.
+   *
+   * The index is an average, and an average is its weights. Whatever is not
+   * energy, food or housing is treated as the residual "everything else",
+   * which is where the underlying trend actually lives.
+   *
+   * Expects: `energyWeight`, `energyChange`, `foodWeight`, `foodChange`,
+   * `housingWeight`, `housingChange`, `coreChange` — all decimal fractions.
+   */
+  headline_from_components: (inputs) => {
+    const wEnergy = read(inputs, 'energyWeight');
+    const wFood = read(inputs, 'foodWeight');
+    const wHousing = read(inputs, 'housingWeight');
+    const wRest = Math.max(1 - wEnergy - wFood - wHousing, 0);
+    return (
+      wEnergy * read(inputs, 'energyChange') +
+      wFood * read(inputs, 'foodChange') +
+      wHousing * read(inputs, 'housingChange') +
+      wRest * read(inputs, 'coreChange')
+    );
+  },
+
+  /**
+   * The same basket with energy and food removed and the remaining weights
+   * rescaled — which is all "core" means.
+   *
+   * Expects: `energyWeight`, `foodWeight`, `housingWeight`, `housingChange`,
+   * `coreChange`.
+   */
+  core_from_components: (inputs) => {
+    const wHousing = read(inputs, 'housingWeight');
+    const wRest = Math.max(1 - read(inputs, 'energyWeight') - read(inputs, 'foodWeight') - wHousing, 0);
+    const total = wHousing + wRest;
+    if (total <= 0) return 0;
+    return (wHousing * read(inputs, 'housingChange') + wRest * read(inputs, 'coreChange')) / total;
+  },
+
+  /**
+   * Unit labour cost growth: what an hour of work costs per unit produced.
+   *
+   * Pay rising faster than output per hour raises the cost of making a thing;
+   * pay rising alongside productivity does not. This is why a wage number on
+   * its own says nothing about inflation.
+   *
+   * Expects: `wageGrowth`, `productivityGrowth`.
+   */
+  unit_labour_cost_growth: (inputs) => read(inputs, 'wageGrowth') - read(inputs, 'productivityGrowth'),
+
+  /**
+   * Price growth implied by costs and margins.
+   *
+   * Labour costs weighted by the labour share, everything else by the
+   * remainder, plus whatever firms add to or give up from their margin.
+   *
+   * Expects: `wageGrowth`, `productivityGrowth`, `labourShare`,
+   * `otherCostGrowth`, `marginChange`.
+   */
+  inflation_from_costs: (inputs) => {
+    const ulc = read(inputs, 'wageGrowth') - read(inputs, 'productivityGrowth');
+    const share = read(inputs, 'labourShare');
+    return share * ulc + (1 - share) * read(inputs, 'otherCostGrowth') + read(inputs, 'marginChange');
+  },
+
+  /**
+   * How much of a depreciation reaches consumer prices.
+   *
+   * Only the imported share of the basket is exposed, and only a fraction of
+   * the currency move is passed on — the rest is absorbed in margins, or
+   * arrives later than the horizon anyone is forecasting over.
+   *
+   * Expects: `depreciation`, `importShare`, `passThrough`.
+   */
+  fx_pass_through: (inputs) =>
+    read(inputs, 'depreciation') * read(inputs, 'importShare') * read(inputs, 'passThrough'),
+
+  /**
+   * Change in the real wage: what the pay rise was actually worth.
+   *
+   * Expects: `wageGrowth`, `inflationRate`.
+   */
+  real_wage_change: (inputs) => read(inputs, 'wageGrowth') - read(inputs, 'inflationRate'),
+
+  // -------------------------------------------------------------------------
+  // Consolidated public sector
+  // -------------------------------------------------------------------------
+
+  /**
+   * Average maturity of public debt once the central bank's holdings are
+   * consolidated away.
+   *
+   * Asset purchases do not retire debt; they swap a long bond held by the
+   * public for overnight reserves held by the public. Consolidating the two
+   * balance sheets, the state's effective funding has shortened — which is
+   * why a purchase programme and a debt office lengthening issuance can
+   * cancel each other out without either being wrong.
+   *
+   * Reserves are treated as maturing overnight, so they contribute nothing to
+   * the weighted average.
+   *
+   * Expects: `totalDebt`, `avgMaturity` (years), `cbHoldings`,
+   * `heldMaturity` (years).
+   */
+  consolidated_maturity: (inputs) => {
+    const total = read(inputs, 'totalDebt');
+    if (total <= 0) return 0;
+    const held = Math.min(read(inputs, 'cbHoldings'), total);
+    const weighted = total * read(inputs, 'avgMaturity') - held * read(inputs, 'heldMaturity');
+    return Math.max(weighted / total, 0);
+  },
+
+  /**
+   * Years of average maturity the purchase programme took out of the market.
+   *
+   * Expects: `totalDebt`, `cbHoldings`, `heldMaturity`.
+   */
+  duration_removed: (inputs) => {
+    const total = read(inputs, 'totalDebt');
+    if (total <= 0) return 0;
+    const held = Math.min(read(inputs, 'cbHoldings'), total);
+    return (held * read(inputs, 'heldMaturity')) / total;
+  },
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;

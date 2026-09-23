@@ -40,6 +40,18 @@ import { moduleBankingAndMoney } from './lessons/module-16-banking-and-money';
 import { moduleWhatGdpCounts } from './lessons/module-17-what-gdp-counts';
 import { moduleWhatCannotStop } from './lessons/module-18-what-cannot-stop';
 import { moduleSettingTheRate } from './lessons/module-19-setting-the-rate';
+import { moduleBeforeItBreaks } from './lessons/module-20-before-it-breaks';
+import { moduleWhatYouLendAgainst } from './lessons/module-21-what-you-lend-against';
+import { moduleTheDataYouHave } from './lessons/module-22-the-data-you-have';
+import { moduleReservesAndTheRate } from './lessons/module-23-reserves-and-the-rate';
+import { moduleThePlumbing } from './lessons/module-24-the-plumbing';
+import { moduleSomeoneElsesCurrency } from './lessons/module-25-someone-elses-currency';
+import { moduleTheTreasuryOnThePhone } from './lessons/module-26-the-treasury-on-the-phone';
+import { moduleWhatYouAreTargeting } from './lessons/module-27-what-you-are-targeting';
+import { moduleWhatTheTargetShouldBe } from './lessons/module-28-what-the-target-should-be';
+import { moduleTheForecastRound } from './lessons/module-29-the-forecast-round';
+import { moduleHowItReachesTheEconomy } from './lessons/module-30-how-it-reaches-the-economy';
+import { moduleWhereTheRiskWent } from './lessons/module-31-where-the-risk-went';
 
 /**
  * Ordered list of every module shipped with the app. Add yours here.
@@ -92,6 +104,18 @@ export const MODULES: readonly Module[] = [
   moduleAfricanCentralBanks,
   moduleScrutinisingCbdcs,
   moduleSettingTheRate,
+  moduleBeforeItBreaks,
+  moduleWhatYouLendAgainst,
+  moduleTheDataYouHave,
+  moduleReservesAndTheRate,
+  moduleThePlumbing,
+  moduleSomeoneElsesCurrency,
+  moduleTheTreasuryOnThePhone,
+  moduleWhatYouAreTargeting,
+  moduleWhatTheTargetShouldBe,
+  moduleTheForecastRound,
+  moduleHowItReachesTheEconomy,
+  moduleWhereTheRiskWent,
 ];
 
 export const COURSE: Course = {
