@@ -7,7 +7,7 @@
  * without a line of new UI code.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -88,15 +88,33 @@ export function InteractiveSimView({
     );
   }, [explorationDone, values, observed, onAnswerChange]);
 
+  /**
+   * Mirrors `values` so the handler can tell whether a notch actually changed
+   * without taking `values` as a dependency — which would rebuild the callback
+   * on every notch and re-render every slider mid-drag.
+   *
+   * Only this handler ever writes to `values`, so the two cannot drift.
+   */
+  const valuesRef = useRef(values);
+
   const handleSliderChange = useCallback(
     (slider: SimSlider, raw: number) => {
       if (locked) return;
       const snapped = snapToStep(raw, slider.min, slider.step);
-      setValues((current) => {
-        if (current[slider.key] === snapped) return current;
-        emitFeedback('select');
-        return { ...current, [slider.key]: snapped };
-      });
+      if (valuesRef.current[slider.key] === snapped) return;
+
+      /**
+       * The cue fires out here, not inside the `setValues` updater it used to
+       * live in. React does not promise to call an updater exactly once — it
+       * re-invokes them under StrictMode and may do so again when re-rendering
+       * — so a side effect in there can double-fire or land at a moment
+       * unrelated to the gesture. For a click tied to a slider notch that is
+       * heard directly, as a doubled or mistimed tick.
+       */
+      emitFeedback('select');
+
+      valuesRef.current = { ...valuesRef.current, [slider.key]: snapped };
+      setValues(valuesRef.current);
       setObserved((current) => {
         const key = observationKey(slider.key, snapped);
         if (current.has(key)) return current;

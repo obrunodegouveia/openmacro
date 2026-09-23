@@ -65,6 +65,14 @@ jobs:
       - name: Exam engine self-test
         run: npm run check:exam
 
+      # The one rule in src/feedback that neither the typechecker nor review
+      # will catch: playback never begins from an unknown position. seekTo is
+      # async and play is not, so the obvious spelling drops cues or restarts
+      # them mid-note depending on timing. Drives the real module against a
+      # stub player under interleavings a device produces only occasionally.
+      - name: Feedback cue self-test
+        run: npm run check:feedback
+
       # The other half of the translation guarantee. `i18n:status` proves the
       # catalogue is complete; this proves the app actually *reads* it. A
       # string typed straight into JSX is invisible to typecheck (a string is
