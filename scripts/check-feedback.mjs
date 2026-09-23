@@ -25,7 +25,7 @@
  */
 
 import { registerHooks } from 'node:module';
-import { mkdtempSync, writeFileSync, statSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, statSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
@@ -223,6 +223,56 @@ feedback.emitFeedback('select');
 await settle();
 check('no player is touched at all while sound is off', harness.calls.length === 0);
 feedback.setSoundEnabled(true);
+
+reset();
+console.log('\nSound packs');
+check('every pack is offered', feedback.SOUND_PACKS.length >= 2, feedback.SOUND_PACKS.join(', '));
+check('an unknown pack name falls back to classic', feedback.toSoundPack('nonsense') === 'classic');
+check('an absent pack name falls back to classic', feedback.toSoundPack(undefined) === 'classic');
+check('a known pack name is kept', feedback.toSoundPack('arcade') === 'arcade');
+
+const before = harness.players.length;
+feedback.setSoundPack('arcade');
+check(
+  'switching pack tears the old players down',
+  harness.calls.filter((c) => c.call === 'remove').length === 6,
+  `${harness.calls.filter((c) => c.call === 'remove').length} removed`,
+);
+check('…and rebuilds them for the new pack', harness.players.length === before + 6);
+
+reset();
+feedback.emitFeedback('correct');
+await settle();
+const afterSwitch = harness.calls.filter((c) => c.call === 'play');
+check('…and cues still play from zero afterwards', afterSwitch.length === 1 && afterSwitch[0].position === 0);
+
+reset();
+feedback.setSoundPack('arcade');
+check('switching to the pack already in use does nothing', harness.calls.length === 0);
+feedback.setSoundPack('classic');
+
+/**
+ * The clips are pulled in with `require`, which Metro resolves at bundle time.
+ * A mistyped path there does not fail the build — it ships an app with no
+ * sound and no error, which is exactly the failure the module's own docblock
+ * warns about. So check the paths against the disk.
+ */
+console.log('\nClip paths');
+const moduleSource = readFileSync(new URL('../src/feedback/index.ts', import.meta.url), 'utf8');
+const referenced = [...moduleSource.matchAll(/require\('([^']+\.wav)'\)/g)].map((m) => m[1]);
+const missing = referenced.filter(
+  (relative) => !isFile(new URL(relative.replace(/^\.\.\/\.\.\//, ''), ROOT).href),
+);
+check(
+  'every clip the module requires exists on disk',
+  referenced.length > 0 && missing.length === 0,
+  missing.length ? `missing: ${missing.join(', ')}` : `${referenced.length} clips`,
+);
+check(
+  'every cue is covered by every pack',
+  referenced.length === feedback.SOUND_PACKS.length * 6,
+  `${referenced.length} clips for ${feedback.SOUND_PACKS.length} packs`,
+);
 
 if (failures === 0) {
   console.log('\x1b[32m%s\x1b[0m', '\n✓ Feedback cues sound — every check passed.\n');

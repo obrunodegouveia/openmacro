@@ -40,6 +40,22 @@ export function setSoundEnabled(enabled: boolean): void {
   soundEnabled = enabled;
 }
 
+/**
+ * Choose which clips the cues play.
+ *
+ * Switching packs tears down the existing players, because a player is bound
+ * to the clip it was built with. They are rebuilt on the next cue, or right
+ * now if `preloadSounds` has already run — so a switch never leaves the first
+ * cue of the new pack paying a decode cost the old one had already paid.
+ */
+export function setSoundPack(next: SoundPack): void {
+  if (next === pack) return;
+  pack = next;
+  const wasPreloaded = voices.size > 0;
+  releaseSounds();
+  if (wasPreloaded) preloadSounds();
+}
+
 async function vibrate(cue: FeedbackCue): Promise<void> {
   if (!hapticsEnabled || !HAPTICS_SUPPORTED) return;
   try {
@@ -73,14 +89,46 @@ async function vibrate(cue: FeedbackCue): Promise<void> {
  * modules at bundle time, and the static form is what lets it do that. A
  * computed path here would ship an app with no sounds and no error.
  */
-const CLIPS = {
-  select: require('../../assets/audio/select.wav'),
-  correct: require('../../assets/audio/correct.wav'),
-  incorrect: require('../../assets/audio/incorrect.wav'),
-  advance: require('../../assets/audio/advance.wav'),
-  complete: require('../../assets/audio/complete.wav'),
-  fail: require('../../assets/audio/fail.wav'),
-} as const satisfies Record<FeedbackCue, unknown>;
+const PACKS = {
+  /** Tuned tones in C. The default. */
+  classic: {
+    select: require('../../assets/audio/select.wav'),
+    correct: require('../../assets/audio/correct.wav'),
+    incorrect: require('../../assets/audio/incorrect.wav'),
+    advance: require('../../assets/audio/advance.wav'),
+    complete: require('../../assets/audio/complete.wav'),
+    fail: require('../../assets/audio/fail.wav'),
+  },
+  /**
+   * Bent pitches and cartoon drops — the same six cues with a game's
+   * character. Synthesised from the same oscillator as `classic`, for the
+   * reason set out at length in `scripts/generate-sounds.mjs`: the sounds it
+   * evokes are all clips somebody owns, and this repository is MIT and
+   * expects to be forked.
+   */
+  arcade: {
+    select: require('../../assets/audio/arcade/select.wav'),
+    correct: require('../../assets/audio/arcade/correct.wav'),
+    incorrect: require('../../assets/audio/arcade/incorrect.wav'),
+    advance: require('../../assets/audio/arcade/advance.wav'),
+    complete: require('../../assets/audio/arcade/complete.wav'),
+    fail: require('../../assets/audio/arcade/fail.wav'),
+  },
+} as const satisfies Record<string, Record<FeedbackCue, unknown>>;
+
+/** Which set of clips the cues play. */
+export type SoundPack = keyof typeof PACKS;
+
+export const SOUND_PACKS = Object.keys(PACKS) as readonly SoundPack[];
+
+/** Narrow an untrusted string — an env var — to a pack, falling back safely. */
+export function toSoundPack(value: string | undefined): SoundPack {
+  return (SOUND_PACKS as readonly string[]).includes(value ?? '')
+    ? (value as SoundPack)
+    : 'classic';
+}
+
+let pack: SoundPack = 'classic';
 
 /**
  * There is deliberately no per-cue volume table here.
@@ -130,7 +178,7 @@ function configureAudio(): void {
 function voiceFor(cue: FeedbackCue): Voice {
   const existing = voices.get(cue);
   if (existing) return existing;
-  const voice: Voice = { player: createAudioPlayer(CLIPS[cue]), generation: 0 };
+  const voice: Voice = { player: createAudioPlayer(PACKS[pack][cue]), generation: 0 };
   voices.set(cue, voice);
   return voice;
 }
@@ -151,7 +199,7 @@ function voiceFor(cue: FeedbackCue): Voice {
 export function preloadSounds(): void {
   try {
     configureAudio();
-    for (const cue of Object.keys(CLIPS) as FeedbackCue[]) voiceFor(cue);
+    for (const cue of Object.keys(PACKS[pack]) as FeedbackCue[]) voiceFor(cue);
   } catch {
     // A device that cannot prepare audio simply plays none.
   }
