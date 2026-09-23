@@ -15,7 +15,8 @@
  * challenge has genuinely gone is dropped rather than shown.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 
 import { summarise, type ReviewItem, type ReviewSummary } from '@openmacro/core/progress/review';
 import {
@@ -51,9 +52,19 @@ export function useReview(limit = 20): ReviewQueue {
     }
   }, []);
 
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+  /**
+   * On focus, not on mount.
+   *
+   * The Home tab stays mounted while the review session runs on top of it, so
+   * a mount-only load leaves its card advertising questions that have just
+   * been answered — the one place a learner would notice the number is wrong.
+   * Focus covers the first render too, so this is the only load there is.
+   */
+  useFocusEffect(
+    useCallback(() => {
+      void refresh();
+    }, [refresh]),
+  );
 
   const due = resolveDue(items, lessonById, { limit });
 
