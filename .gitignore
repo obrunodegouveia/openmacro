@@ -67,3 +67,7 @@ build-*.apk
 # Rendered video. Reproducible from `video/` with `npm run render`, and a
 # couple of megabytes each — the source is the artefact worth keeping.
 video/out/
+
+# Piper voice models. 170MB, identical for everyone, fetched by
+# `node video/fetch-voices.mjs`.
+video/voices/

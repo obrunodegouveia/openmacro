@@ -35,6 +35,57 @@ from the formulas and format themselves.
 
 ## Narration
 
+Generated locally with [Piper](https://github.com/rhasspy/piper), a neural
+text-to-speech model. MIT-licensed, runs offline, no account and no API key.
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install piper-tts
+node fetch-voices.mjs        # 170MB of weights, gitignored
+node -e "import('./narration.mjs').then(m => ['en','pt-PT'].forEach(m.generate))"
+cp -r audio/* public/narration/
+```
+
+| | Voice | Quality |
+|---|---|---|
+| English | `en_GB-cori-high` | high |
+| Portuguese | `pt_PT-tugão-medium` | medium — the only `pt_PT` voice Piper has |
+
+British English because the course is written in it. European Portuguese
+because the course is: macOS offers seven Portuguese voices and six are
+Brazilian, which is the wrong accent here whatever the quality.
+
+`LENGTH_SCALE` in `narration.mjs` sets the pace, and the two numbers differ by
+more than you would expect. `tugão` reads considerably quicker than `cori`, so
+at a common pace the Portuguese cut finished each scene early and sat in
+silence while the bars were still filling. They were set by measuring both
+against the same scenes until each filled about the same share of its cut —
+roughly seventy per cent, the rest being the pauses between lines.
+
+One clip per scene rather than one long take, pinned to its `Sequence`. A
+single file slides against the picture the moment any scene length changes.
+
+`narration.mjs` measures every clip against its scene and demands half a
+second of headroom, because a line that exactly fills its scene one run clips
+the next.
+
+A recorded human voice would still be better. If one is ever swapped in, say
+where it came from in the lesson's `video.source` — the schema asks for it,
+and a viewer is owed the knowledge that a narrator is not.
+
+## The timeline
+
+`src/scenes.ts` holds it, and both the composition and the narration generator
+read from there. They used to carry separate copies of the same seven numbers,
+which is precisely how audio drifts out of sync with picture.
+
+## Adding a language
+
+`COPY` in `src/script.ts` is keyed by locale and `Root.tsx` registers one
+composition per language. Nothing else is language-aware: the numbers come
+from the formulas and format themselves.
+
+## Narration
+
 Generated locally with macOS `say` — Samantha for English, **Joana** for
 Portuguese, which is a genuine `pt_PT` voice rather than a Brazilian one. No
 API key, no account, works offline.
