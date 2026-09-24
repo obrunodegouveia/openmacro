@@ -207,6 +207,46 @@ packages/core/src/
 That separation is what makes the progression rules easy to reason about and
 new challenge types cheap to add.
 
+### The parity rule
+
+**The app and the website must always present the same exercises.** A learner
+who does a lesson on the train and finishes it at a desk must meet the same
+challenges, in the same order, with the same simulations, the same videos and
+the same explanations. Not "roughly the same" — the same.
+
+This is not an aspiration; it is the reason `packages/core` exists. Content is
+written once and both clients read the same `MODULES` registry, so nothing has
+to be kept in step by hand. The rule exists because that structural guarantee
+covers the *content* and not the *rendering*, and the gap between those two is
+where parity actually goes wrong.
+
+What that looks like in practice:
+
+- **Never fix a challenge type in one client only.** If `interactive_sim`
+  clamps a slider differently on the web, both are wrong until both agree.
+- **Never gate content on a platform.** No `Platform.OS ===` deciding which
+  challenges to show, and no lesson that renders on one and not the other.
+- **A new field in the schema is a change to two renderers**, not one. The
+  schema is a contract; adding to it without implementing it on both sides
+  creates content that silently exists for half the audience.
+- **The engine decides, the client draws.** Grading, re-queueing, hearts and
+  objectives live in `packages/core/src/engine`. A client that reimplements a
+  rule will eventually disagree with the other one.
+
+This has been broken, which is why it is written down. `module.video` was in
+the schema and rendered by the website from the day the course map was built;
+the app only ever read `lesson.video`. A module-level video was therefore
+visible to web learners and invisible in the app — for months, silently,
+because nothing fails when a client quietly ignores a field it does not know
+about. It was found by attaching a video and looking at both clients.
+
+Presentation may differ, and should. The app is a full-screen runner with a
+tab bar; the website is a page with a URL you can share. Layout, navigation,
+animation and chrome are free to diverge. **What is asked, what counts as
+correct, and what the learner is told afterwards are not.**
+
+When you change either client, open the other one and look.
+
 ## Setup
 
 Requires **Node 22.18 or newer** — `npm run lint:content` loads the real lesson
