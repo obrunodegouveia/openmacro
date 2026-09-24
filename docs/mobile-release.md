@@ -272,14 +272,31 @@ crash.
 
 ### What can and cannot ship this way
 
-| Change | OTA | Why |
+There are three categories here, not two, and collapsing the last two is what
+quietly costs reach.
+
+| Change | Ships OTA | Orphans installed builds |
 |---|---|---|
-| Lesson content, copy, styling | ✅ | It is all JavaScript and assets |
-| Engine, grading, providers | ✅ | Same bundle |
-| A new Expo module or native dependency | ❌ | The binary does not contain it |
-| Anything needing react-native-webview | ❌ | It is native; the video player depends on it |
-| Permissions, icons, splash, bundle id | ❌ | Native project configuration |
-| An SDK upgrade | ❌ | New native code throughout |
+| Lesson content, copy, styling | ✅ | no |
+| Engine, grading, providers, translations | ✅ | no |
+| Marketing version bump (1.0.0 → 1.1.0) | n/a | **no** |
+| App icon, splash image | ❌ | **no** |
+| App name, store description | ❌ | **no** |
+| App Store submit metadata in `eas.json` | n/a | **no** |
+| `.gitignore`, npm scripts | n/a | **no** |
+| A new Expo module or native dependency | ❌ | yes |
+| Anything needing react-native-webview | ❌ | yes |
+| Permissions, bundle id, URL scheme, Info.plist | ❌ | yes |
+| `eas.json` build configuration | ❌ | yes |
+| An SDK upgrade | ❌ | yes |
+
+The middle group is the one worth understanding. An icon change cannot be
+delivered over the air — it is baked into the binary — but that is no reason
+for it to also stop the old binary receiving new lessons. It keeps its old
+icon, which is the only possible outcome either way, and carries on. "Requires
+a new build to take effect" and "must orphan every existing build" are
+different claims, and `fingerprint.config.js` is where the difference is
+written down, source by source, with the reasoning for each.
 
 **You do not have to remember this table.** `runtimeVersion` is set to the
 `fingerprint` policy, which hashes the native project: add a native module and
@@ -288,9 +305,18 @@ match and the update is simply not offered to it. The failure mode this
 prevents is the ugly one — a JavaScript bundle calling into native code that
 is not in the app, which crashes on launch rather than erroring politely.
 
-The cost of that safety is that a native change makes every previously
-published update unreachable for the new binary, so a build and an update have
-to go out together. That is the correct trade.
+Nor do you have to trust the table. `npm run check:fingerprint` edits each of
+these files in the real tree and asserts the hash moves when it should and
+holds when it should not, and CI runs it on every pull request alongside a
+plain-language report of whether *this* change can still reach the build that
+is out there. Widening the skip list without adding both halves of that test is
+how a native change ships as an update and crashes on launch for everyone.
+
+The cost of that safety is that a genuinely native change makes every
+previously published update unreachable for the new binary, so a build and an
+update have to go out together. That is the correct trade — but only for
+changes that are actually native, which is the whole point of the middle group
+above.
 
 ### Channels
 

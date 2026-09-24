@@ -97,6 +97,26 @@ jobs:
       - name: Validate translations
         run: npm run i18n:status -- --strict
 
+      # What can still reach a phone without an App Store round trip.
+      #
+      # `fingerprint.config.js` claims a list of files cannot affect the native
+      # runtime, which is what lets a lesson ship in two minutes instead of two
+      # weeks. Every claim is a bet: too conservative and an update reaches
+      # nobody, too permissive and a JavaScript bundle calls into native code
+      # the binary does not have and crashes on launch, for everyone, with no
+      # review in the way. Neither shows up by reading the config, so both
+      # directions are asserted against the real tree.
+      - name: Fingerprint self-test
+        run: npm run check:fingerprint
+
+      # And the consequence, for this particular change. Reports rather than
+      # fails: a native change is a fine thing to make, and blocking it here
+      # would only teach people to ignore the step. What is expensive is not
+      # knowing — merging something that quietly moved the runtime version and
+      # discovering it when an update ships to nobody.
+      - name: Can this change ship over the air?
+        run: npm run update:check -- --report
+
       # The website, which is what learners actually play.
       - run: npm run typecheck --workspace web
       - run: npm run lint --workspace web

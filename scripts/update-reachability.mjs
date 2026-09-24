@@ -50,6 +50,17 @@ const flag = (name, fallback = null) => {
 };
 const channel = flag('channel', 'production');
 const recording = args.includes('--record');
+/**
+ * Report without failing.
+ *
+ * Publishing is the place to refuse, and it still does. On a pull request the
+ * useful thing is the opposite: a native change is a perfectly good change,
+ * and failing the build for making one would train people to ignore this. What
+ * costs reach is not knowing — merging something that quietly moved the
+ * runtime version and finding out weeks later when an update goes nowhere. So
+ * CI says which of the two this is, in words, and lets it through.
+ */
+const reporting = args.includes('--report');
 
 /** The fingerprint the current tree would publish at, per platform. */
 async function fingerprints() {
@@ -131,6 +142,10 @@ if (broken.length) {
   console.log(`  to nobody.\n`);
   console.log(`  Either make a new build and record it, or find what moved:\n`);
   console.log(`    npx expo-updates fingerprint:generate --platform ${broken[0]}\n`);
+  if (reporting) {
+    console.log(`  This is a native change. It needs a build, not an update.\n`);
+    process.exit(0);
+  }
   process.exit(1);
 }
 

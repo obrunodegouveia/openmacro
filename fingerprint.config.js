@@ -7,36 +7,144 @@
  * and a JavaScript bundle calls into native code that is not in the app, which
  * crashes on launch. That is why the default is to hash almost everything.
  *
- * One default is wrong for this project. `@expo/fingerprint` hashes the whole
- * `scripts` block of `package.json`, because a script can be a native build
- * hook — `postinstall`, `eas-build-pre-install`. Ours are not: they are
- * content tooling, linting and the i18n round trip, none of which the native
- * build ever runs.
+ * ---------------------------------------------------------------------------
+ * WHY THIS FILE IS LONGER THAN THE DEFAULT
+ * ---------------------------------------------------------------------------
  *
- * The cost of leaving it on was not theoretical. Adding `i18n:fixspelling`
- * moved the fingerprint from f010afee to b19b4646, which silently orphaned
- * TestFlight build 15: a hand-run `npm run update:store` would have published
- * cleanly, reported success and reached nobody — the failure
- * `docs/mobile-release.md` warns about in those words.
+ * The point of EAS Update here is that a lesson is data and should not need a
+ * twenty-minute build and an App Store review to reach anyone. Every source
+ * hashed that does not actually affect the native runtime works against that:
+ * it orphans every binary in the field for a change that could not possibly
+ * have broken them.
  *
- * CI would not have made that mistake. `content-update.yml` refuses to publish
- * when `package.json` changes at all, which without this file is the only
- * correct thing it could do. It stays that way: the guard fails closed, and
- * being conservative about a file that also declares dependencies is cheap.
- * What changes here is that a scripts-only edit is now genuinely safe rather
- * than something the guard has to be trusted to stop.
+ * Of the ninety-one sources in this project, eighty-five are `node_modules`
+ * directories and autolinking config — genuinely native, correctly hashed, and
+ * untouched by an ordinary working day. Only four are files anyone edits:
+ * `.gitignore`, `eas.json`, the icon and splash assets, and the resolved Expo
+ * config. Each one below is either narrowed or justified.
  *
- * The skip narrows nothing that matters: `package.json` contributes
- * no other fingerprint source, and the lockfile contributes none at all.
- * Native dependencies are tracked where they are real rather than where they
- * are declared — `expoAutolinkingConfig`, `rncoreAutolinkingConfig`, and a
- * hash of every installed module's own `ios`/`android` directory. Adding
- * expo-localization moved the fingerprint by adding
- * `node_modules/expo-localization/ios` to that list, which is the mechanism
- * working correctly. Editing a script is not that, and now does not pretend
- * to be.
+ * The rule applied throughout: skip a source only where changing it cannot
+ * make the installed binary incompatible with the new JavaScript. "Requires a
+ * new build to take effect" is not the same as "must orphan every existing
+ * build", and conflating the two is what costs reach. Changing the app icon
+ * needs a new binary for anyone to see the new icon; it does not stop the old
+ * binary running new lessons.
+ *
+ * Every claim here is asserted by `npm run check:fingerprint`, which mutates
+ * each of these files in turn and checks the hash moves when it should and
+ * holds when it should not. Do not add a skip without adding both halves of
+ * that test — a skip that is too permissive ships a crash, and it is not the
+ * kind of mistake that shows up in review.
  */
+
+const { readFileSync } = require('node:fs');
+
+/**
+ * `eas.json`, minus the parts that cannot reach a binary.
+ *
+ * The whole file is hashed by default, under the `easBuild` reason, and that
+ * is too blunt. `build` genuinely matters: `buildType`, `developmentClient`
+ * and the Node version change what gets compiled. `submit` does not — it is
+ * App Store Connect metadata, read by `eas submit` long after the binary
+ * exists, and editing an app name or a track has never changed a line of
+ * native code. `cli` is eas-cli's own behaviour and likewise compiles nothing.
+ *
+ * Store-listing work is ordinary and frequent. Letting it orphan every
+ * installed build is the exact trade this file exists to stop making.
+ */
+function easBuildConfig() {
+  const { submit, cli, ...rest } = JSON.parse(readFileSync(`${__dirname}/eas.json`, 'utf8'));
+  return JSON.stringify(rest);
+}
+
 /** @type {import('@expo/fingerprint').Config} */
 module.exports = {
-  sourceSkips: ['PackageJsonScriptsAll'],
+  sourceSkips: [
+    /**
+     * `@expo/fingerprint` hashes the whole `scripts` block of `package.json`,
+     * because a script can be a native build hook — `postinstall`,
+     * `eas-build-pre-install`. Ours are not: they are content tooling, linting
+     * and the i18n round trip, none of which the native build ever runs.
+     *
+     * The cost of leaving it on was not theoretical. Adding `i18n:fixspelling`
+     * moved the fingerprint from f010afee to b19b4646, which silently orphaned
+     * TestFlight build 15: a hand-run `npm run update:store` would have
+     * published cleanly, reported success and reached nobody — the failure
+     * `docs/mobile-release.md` warns about in those words.
+     *
+     * The skip narrows nothing that matters: `package.json` contributes no
+     * other fingerprint source, and the lockfile contributes none at all.
+     * Native dependencies are tracked where they are real rather than where
+     * they are declared — `expoAutolinkingConfig`, `rncoreAutolinkingConfig`,
+     * and a hash of every installed module's own `ios`/`android` directory.
+     * Adding expo-localization moved the fingerprint by adding
+     * `node_modules/expo-localization/ios` to that list, which is the
+     * mechanism working correctly. Editing a script is not that.
+     */
+    'PackageJsonScriptsAll',
+
+    /**
+     * `.gitignore` compiles nothing. It is hashed because a bare React Native
+     * project can have native files added or removed by ignoring them, which
+     * is not how this project is built — there is no `ios/` or `android/`
+     * directory in the tree at all, and the native projects are generated by
+     * prebuild during the build itself.
+     *
+     * Leaving this on means adding a line for a build artifact orphans every
+     * installed binary. That has no defensible reading.
+     */
+    'GitIgnore',
+
+    /**
+     * `version`, `ios.buildNumber` and `android.versionCode`.
+     *
+     * A version string is a label. It cannot change the native ABI, and the
+     * binary already knows its own version without being told by an update.
+     * Hashing it means the 1.0.0 → 1.1.0 bump that accompanies a release
+     * orphans every build made before it — precisely when there is most
+     * pending work waiting to ship.
+     *
+     * Note this project sets `appVersionSource: "remote"`, so build numbers
+     * live on EAS rather than in the tree; this covers the marketing version,
+     * which is still edited here by hand.
+     */
+    'ExpoConfigVersions',
+
+    /**
+     * The icon and splash images.
+     *
+     * Both are baked into the binary and neither can be delivered over the
+     * air — an update physically cannot change them. So the only question is
+     * whether changing them should also stop the old binary receiving new
+     * lessons, and the answer is plainly no: it keeps its old icon, which is
+     * the correct and unavoidable outcome either way, and carries on.
+     */
+    'ExpoConfigAssets',
+
+    /**
+     * `name`, `description`, and the web equivalents.
+     *
+     * `description` is store-listing copy that lives in `app.json`, so it gets
+     * edited for reasons that have nothing to do with the app itself. `name`
+     * becomes the springboard label, which again a new binary is needed to
+     * change and an old binary keeps harmlessly.
+     */
+    'ExpoConfigNames',
+  ],
+
+  /**
+   * Hashed through `extraSources` below instead, with `submit` and `cli`
+   * removed. Ignoring it outright would be wrong — the `build` block really
+   * does change what gets compiled.
+   */
+  ignorePaths: ['eas.json'],
+
+  extraSources: [
+    {
+      type: 'contents',
+      id: 'eas.json (build configuration only)',
+      contents: easBuildConfig(),
+      reasons: ['easBuild'],
+    },
+  ],
 };
