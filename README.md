@@ -40,6 +40,14 @@ The mobile app can still be run in a browser with `npm run web` for quick
 component work, but that is a debugging convenience, not a deployment target —
 the web course is the Next.js site.
 
+**The two clients always present the same exercises.** Same challenges, same
+order, same simulations, same videos, same explanations — a lesson started on
+a phone and finished in a browser is the same lesson. Content lives once in
+`packages/core`, so it cannot drift; rendering can, and keeping it from doing
+so is a rule contributors are held to. See
+[the parity rule](CONTRIBUTING.md#the-parity-rule). How the two *look* is free
+to differ; what they *ask* is not.
+
 ## Status
 
 Nineteen modules ship today — 122 lessons and 528 challenges across all five
@@ -194,6 +202,10 @@ keeps their streak. Setup, the data model and the known limits are in
 | `concept_match`   | Tap a term, tap its definition                        |
 | `order_flow`      | Build a causal chain from shuffled events             |
 | `interactive_sim` | Drive sliders, watch derived values, hit an objective |
+| `t_account_flow`  | Place double-entry postings across balance sheets     |
+
+Every type is implemented on both clients. Adding one means writing both
+renderers — see [the parity rule](CONTRIBUTING.md#the-parity-rule).
 
 ## Contributing
 
