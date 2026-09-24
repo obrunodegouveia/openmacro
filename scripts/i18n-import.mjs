@@ -175,15 +175,27 @@ export function writeUi(locale, translations) {
    */
   const lost = existingKeys(path).filter((key) => !(key in translations));
   if (lost.length > 0) {
+    /**
+     * Refuse this file and let everything else through.
+     *
+     * The first version of this guard called `process.exit(2)`, and because
+     * the interface is written before the content, a stale `ui.json` took the
+     * whole import down with it — a freshly translated module silently did
+     * not land, while the only message on screen was about the interface.
+     * That is a worse failure than the one being prevented.
+     *
+     * So the destructive write is skipped, the content still imports, and the
+     * caller exits non-zero at the end so nobody mistakes this for success.
+     */
     console.error(
-      `\n✗ Importing would delete ${lost.length} existing key(s) from ${path}:\n` +
+      `\n✗ Skipping ${path}: importing would delete ${lost.length} existing key(s):\n` +
         lost.map((key) => `    ${key}`).join('\n') +
-        `\n\n  Your translations/${locale}/ui.json is older than the dictionary — it does not\n` +
-        `  know about keys added by hand since it was generated. Refresh it first:\n\n` +
+        `\n\n  translations/${locale}/ui.json is older than the dictionary — it does not\n` +
+        `  know about keys added by hand since it was generated. Refresh it with:\n\n` +
         `    npm run i18n:extract -- ${locale} ui\n\n` +
-        `  then translate any new units and import again.\n`,
+        `  Everything else in this import has still been written.\n`,
     );
-    process.exit(2);
+    return null;
   }
 
   const body = `export const ${localeSymbol(locale)}: UiDictionary = {\n${entries(translations)}\n};\n`;

@@ -1671,6 +1671,23 @@ export const FORMULAS = {
     return (debt * (1 + read(inputs, 'interestRate'))) / denominator - 1;
   },
 
+
+  /**
+   * Total output, from the three things it is actually made of:
+   *
+   *   workers x hours each x output per hour
+   *
+   * Productivity league tables rank the last term alone, which is why small
+   * countries sit at the top of them and why that ranking answers a narrower
+   * question than most people think it does. An economy's size is the product
+   * of all three, and a country can lead the world on the total while placing
+   * well down the table on the rate.
+   *
+   * Expects: `workers`, `hoursPerWorker`, `outputPerHour`.
+   */
+  total_output: (inputs) =>
+    read(inputs, 'workers') * read(inputs, 'hoursPerWorker') * read(inputs, 'outputPerHour'),
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
