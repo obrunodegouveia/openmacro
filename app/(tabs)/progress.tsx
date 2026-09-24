@@ -11,6 +11,7 @@
  * with a bar on the next launch and nothing here has to know about it.
  */
 
+import { Fragment } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -22,12 +23,27 @@ import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { useReview } from '@/hooks/useReview';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { groupByLevel } from '@openmacro/core/content/levels';
 
 export default function ProgressScreen() {
   const insets = useSafeAreaInsets();
   const { t, modules } = useLocale();
   const { profile, progress, loading, isLessonComplete } = useProgress();
   const { summary } = useReview();
+
+  /**
+   * Grouped rather than flat, so every bar sits under the level it belongs to.
+   *
+   * A module title on its own does not say whether it assumes nothing or
+   * assumes you already know what a corridor is, which is exactly what
+   * someone reading a progress screen wants to know about the thirty-one
+   * bars below the one they just finished.
+   *
+   * Headings rather than a badge on all 32 rows: the registry is already in
+   * level order, so a per-row badge would repeat the same word down the
+   * screen. This is also the grouping Home uses, so the two agree.
+   */
+  const groups = groupByLevel(modules);
 
   const lessons = modules.flatMap((module) => module.lessons);
   const done = lessons.filter((lesson) => isLessonComplete(lesson.id)).length;
@@ -124,40 +140,53 @@ export default function ProgressScreen() {
             </View>
           ) : null}
 
-          {modules.map((module, index) => {
-            const total = module.lessons.length;
-            const complete = module.lessons.filter((lesson) =>
-              isLessonComplete(lesson.id),
-            ).length;
-            const earned = module.lessons.reduce(
-              (sum, lesson) => sum + (progress[lesson.id]?.bestXp ?? 0),
-              0,
-            );
-            return (
-              <Animated.View
-                key={module.id}
-                entering={FadeInDown.delay(index * 60).duration(240)}
-                style={styles.module}
-              >
-                <View style={styles.moduleHead}>
-                  <Text style={styles.moduleTitle} numberOfLines={2}>
-                    {module.title}
-                  </Text>
-                  <Text style={styles.moduleCount}>
-                    {t('progress.module.count', { done: complete, total })}
-                  </Text>
-                </View>
-                <ProgressBar
-                  progress={total ? complete / total : 0}
-                  height={8}
-                  fillColor={complete === total && total > 0 ? palette.gold : palette.mint}
-                />
-                {earned > 0 ? (
-                  <Text style={styles.moduleXp}>{t('path.xp', { count: earned })}</Text>
-                ) : null}
-              </Animated.View>
-            );
-          })}
+          {groups.map((group) => (
+            <Fragment key={group.level}>
+              <View style={styles.levelHeader}>
+                <Text style={styles.levelName}>{t(`level.${group.level}`)}</Text>
+                <Text style={styles.levelCount}>
+                  {t('level.count', { count: group.modules.length })}
+                </Text>
+              </View>
+              {group.modules.map((module, indexInGroup) => {
+                // Staggered against the whole course, not the group, so the
+                // cascade reads as one list rather than restarting three times.
+                const index = group.offset + indexInGroup;
+                const total = module.lessons.length;
+                const complete = module.lessons.filter((lesson) =>
+                  isLessonComplete(lesson.id),
+                ).length;
+                const earned = module.lessons.reduce(
+                  (sum, lesson) => sum + (progress[lesson.id]?.bestXp ?? 0),
+                  0,
+                );
+                return (
+                  <Animated.View
+                    key={module.id}
+                    entering={FadeInDown.delay(index * 60).duration(240)}
+                    style={styles.module}
+                  >
+                    <View style={styles.moduleHead}>
+                      <Text style={styles.moduleTitle} numberOfLines={2}>
+                        {module.title}
+                      </Text>
+                      <Text style={styles.moduleCount}>
+                        {t('progress.module.count', { done: complete, total })}
+                      </Text>
+                    </View>
+                    <ProgressBar
+                      progress={total ? complete / total : 0}
+                      height={8}
+                      fillColor={complete === total && total > 0 ? palette.gold : palette.mint}
+                    />
+                    {earned > 0 ? (
+                      <Text style={styles.moduleXp}>{t('path.xp', { count: earned })}</Text>
+                    ) : null}
+                  </Animated.View>
+                );
+              })}
+            </Fragment>
+          ))}
         </>
       )}
     </ScrollView>
@@ -203,6 +232,15 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   weakestItem: { ...typography.body, color: palette.ink },
+  levelHeader: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  levelName: { ...typography.heading, color: palette.ink },
+  levelCount: { ...typography.caption, color: palette.inkFaint },
   module: { gap: spacing.sm },
   moduleHead: {
     flexDirection: 'row',

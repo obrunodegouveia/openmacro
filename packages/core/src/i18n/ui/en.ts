@@ -200,6 +200,7 @@ export const en = {
   'map.finished': '{done, number} of {total, number} finished',
   'map.live': '{count, plural, one {# lesson} other {# lessons}} live · more shipping',
   'map.resume': 'Pick up where you left off',
+  'path.resume.context': '{level} · {module}',
   'map.best': 'Best {best, number} / {total, number} XP',
   'map.runs': '{count, plural, one {# run} other {# runs}}',
   'level.count': '{count, plural, one {# module} other {# modules}}',
