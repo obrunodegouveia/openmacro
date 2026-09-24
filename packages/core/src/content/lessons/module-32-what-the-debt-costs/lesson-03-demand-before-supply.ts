@@ -14,11 +14,6 @@ export const demandBeforeSupplyLesson = defineLesson({
   icon: '🚧',
   difficulty: 'advanced',
   estimatedMinutes: 13,
-  video: {
-    url: 'https://www.youtube.com/watch?v=yrPrzY3rmQM',
-    minutes: 5,
-    source: 'Khan Academy — The aggregate production function and growth (CC BY-NC-SA)',
-  },
   challenges: [
     {
       id: 'mc-sign-flip',
@@ -87,6 +82,42 @@ export const demandBeforeSupplyLesson = defineLesson({
       ],
       explanation:
         'These are not interchangeable and the argument usually treats them as if they were. The early estimates of enormous returns to public capital came from countries that did not yet have the network; in a country with an interstate system, the marginal road is worth much less than the first one. Hospitals are the sharpest case: they are unambiguously worth building and they are a poor instrument for this particular job, because healthcare is the classic sector where productivity cannot rise much and costs therefore rise faster than everything else. Building more of a cost-disease sector does not lower a price index.',
+    },
+    {
+      id: 'mc-level-not-growth',
+      type: 'multiple_choice',
+      tags: ['investment', 'productivity', 'growth'],
+      xp: 45,
+      prompt:
+        'A country doubles its infrastructure and keeps it there. What happens to its growth rate in the long run?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'level',
+          label: 'It returns to where it was — output is higher, growth is not faster',
+        },
+        {
+          id: 'permanently-faster',
+          label: 'It is permanently higher, because the capital is permanently there',
+          feedback:
+            'Output is permanently higher. The *rate* is not: once the new capital is in place and being maintained, the economy grows at whatever rate it grew before. A level and a rate are different things and the argument usually conflates them.',
+        },
+        {
+          id: 'falls',
+          label: 'It falls, because maintaining the stock costs more',
+          feedback:
+            'Depreciation does eat a larger absolute amount when the stock is larger, and that is exactly what caps the level rather than reversing it.',
+        },
+        {
+          id: 'doubles',
+          label: 'It doubles, in proportion to the capital',
+          feedback:
+            'Output does not even double — the second road through the same valley carries less traffic than the first. Diminishing returns are the whole content of the result.',
+        },
+      ],
+      correctOptionId: 'level',
+      explanation:
+        'This is the Solow result and it is the single most useful thing to know about building your way to prosperity. Accumulating capital raises the level of output and cannot raise the growth rate, because each additional unit adds less than the one before while depreciation grows with the stock. Eventually maintenance absorbs everything new investment can provide, and the economy sits still at a higher level. Only better *use* of capital and labour — the residual, technological progress — raises the rate indefinitely. That is why the argument in this module rests on innovation rather than on construction, and why a government that wants faster growth rather than a one-off gain has to care about what gets invented and adopted, not only about what gets built.',
     },
     {
       id: 'mc-bottleneck',
@@ -222,6 +253,7 @@ export const demandBeforeSupplyLesson = defineLesson({
   ],
   keyTakeaways: [
     'Investment adds demand immediately and supply years later — the sign flips.',
+    'Accumulating capital raises the level of output, never the growth rate.',
     'Grids and fibre, roads, housing and hospitals do very different things to productivity.',
     'Relieving the heaviest constrained component — shelter — is the direct disinflation.',
     'The gain cannot be spent twice: the debt needs the real growth, not the disinflation.',

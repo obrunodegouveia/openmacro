@@ -25,6 +25,7 @@ import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated'
 import { router } from 'expo-router';
 
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
+import { LessonVideo } from '@/components/ui/LessonVideo';
 import { UpdateBanner } from '@/components/ui/UpdateBanner';
 import { StreakBadge } from '@/components/ui/StatusPills';
 import { interpolate } from '@/i18n/interpolate';
@@ -350,6 +351,25 @@ export default function LearningPathScreen() {
                         </Text>
                       </Pressable>
 
+                      {/* A module-level video, where one exists.
+                          `module.video` has been in the schema and rendered by
+                          the website since the course map was built; the app
+                          only ever read `lesson.video`, so a module video was
+                          invisible on the platform most people use. Placed
+                          above the lessons because it frames them, and inside
+                          the expansion because a collapsed module should stay
+                          one line. Nothing contacts YouTube until pressed. */}
+                      {moduleOpen && module.video ? (
+                        <View style={styles.moduleVideo}>
+                          <LessonVideo
+                            url={module.video.url}
+                            title={module.title}
+                            minutes={module.video.minutes}
+                            source={module.video.source}
+                          />
+                        </View>
+                      ) : null}
+
                       {moduleOpen
                         ? module.lessons.map((lesson) => (
                             <LessonCard
@@ -569,6 +589,7 @@ const styles = StyleSheet.create({
     ...typography.title,
     color: palette.ink,
   },
+  moduleVideo: { marginBottom: spacing.md },
   moduleDescription: {
     ...typography.body,
     color: palette.inkMuted,

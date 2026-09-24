@@ -34,6 +34,27 @@ export const moduleWhatTheDebtCosts = defineModule({
   description:
     'Why a country that issues its own currency cannot be bankrupted, what the debt costs instead, and why productivity is the only lever that helps twice.',
   accent: 'azure',
+  /**
+   * The full Solow treatment, for anyone who wants the derivation rather
+   * than the result.
+   *
+   * At the module rather than on a lesson, and deliberately. Fifty minutes
+   * attached to a thirteen-minute lesson makes that lesson advertise an hour
+   * on the path, which is untrue for the great majority who will not watch
+   * it — `audit:content` said so, in those terms. Here it is what it
+   * actually is: optional depth for the whole module, with nothing loading
+   * from YouTube until somebody presses play.
+   *
+   * `demand-before-supply` carries the short Khan Academy companion and
+   * `mc-level-not-growth` examines this lecture's central result — that
+   * accumulating capital moves the level of output and never the growth
+   * rate.
+   */
+  video: {
+    url: 'https://www.youtube.com/watch?v=VE4whF07w08',
+    minutes: 50,
+    source: 'MIT 14.02 Lecture 14 — Saving, Capital Accumulation and Output (CC BY-NC-SA)',
+  },
   level: 'advanced',
   lessons: [
     whatBankruptcyWouldMeanLesson,
