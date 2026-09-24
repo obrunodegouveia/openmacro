@@ -9,9 +9,10 @@
  * this screen is only the course.
  */
 
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Share,
   Image,
   LayoutAnimation,
   Pressable,
@@ -35,16 +36,44 @@ import { useReview } from '@/hooks/useReview';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import type { Lesson, ModuleLevel } from '@openmacro/core/content/schema';
 import { currentLevel, groupByLevel } from '@openmacro/core/content/levels';
+import { moduleUrl } from '@openmacro/core/content/links';
 
 export default function LearningPathScreen() {
   const insets = useSafeAreaInsets();
   const { profile, progress, loading, error, isLessonComplete } = useProgress();
   // The course arrives already translated; nothing below knows which language
   // it is in, which is what keeps the screen free of `locale ===` branches.
-  const { t, course, modules } = useLocale();
+  const { t, locale, course, modules } = useLocale();
   const { due: reviewDue } = useReview();
 
   const groups = useMemo(() => groupByLevel(modules), [modules]);
+
+  /**
+   * Hand a module's public link to the system share sheet.
+   *
+   * `Share` is React Native's own, so this needs no new dependency — which
+   * matters more than it looks: a native module would change the fingerprint
+   * and this feature could only reach anyone through a new build and an App
+   * Store review, rather than over the air like the rest of the course.
+   *
+   * A dismissed sheet rejects on some platforms and resolves on others.
+   * Neither is a failure worth telling anyone about.
+   */
+  const shareModule = useCallback(
+    async (moduleId: string, title: string) => {
+      const url = moduleUrl(moduleId, locale);
+      try {
+        await Share.share({
+          message: t('path.module.shareMessage', { title, url }),
+          url,
+          title,
+        });
+      } catch {
+        // Cancelled, or no share sheet on this platform.
+      }
+    },
+    [locale, t],
+  );
 
   /**
    * The lesson to carry on with.
@@ -370,6 +399,34 @@ export default function LearningPathScreen() {
                         </View>
                       ) : null}
 
+                      {/* Somewhere to send it.
+                          A learner who wants to show someone a module cannot
+                          send them an app. The website runs the same content
+                          from the same registry, so this link is the same
+                          exercise in a form anyone can open — no install, no
+                          account. Inside the expansion, under the lessons,
+                          because it is what you reach for after looking
+                          rather than before. */}
+                      {moduleOpen ? (
+                        <Pressable
+                          onPress={() => void shareModule(module.id, module.title)}
+                          accessibilityRole="button"
+                          accessibilityLabel={t('path.module.shareA11y', { title: module.title })}
+                          hitSlop={8}
+                          style={({ pressed }) => [styles.share, pressed && styles.sharePressed]}
+                        >
+                          <Text style={styles.shareIcon}>🔗</Text>
+                          <View style={styles.shareBody}>
+                            <Text style={styles.shareLabel}>{t('path.module.share')}</Text>
+                            {/* The URL itself, readable. Somebody who would
+                                rather type it than tap a share sheet can. */}
+                            <Text style={styles.shareUrl} numberOfLines={1}>
+                              {moduleUrl(module.id, locale).replace('https://', '')}
+                            </Text>
+                          </View>
+                        </Pressable>
+                      ) : null}
+
                       {moduleOpen
                         ? module.lessons.map((lesson) => (
                             <LessonCard
@@ -590,6 +647,23 @@ const styles = StyleSheet.create({
     color: palette.ink,
   },
   moduleVideo: { marginBottom: spacing.md },
+  share: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginBottom: spacing.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: palette.border,
+    backgroundColor: palette.surface,
+  },
+  sharePressed: { backgroundColor: palette.canvas },
+  shareIcon: { fontSize: 18 },
+  shareBody: { flex: 1, minWidth: 0 },
+  shareLabel: { ...typography.bodyStrong, color: palette.ink },
+  shareUrl: { ...typography.caption, color: palette.inkFaint, marginTop: 1 },
   moduleDescription: {
     ...typography.body,
     color: palette.inkMuted,

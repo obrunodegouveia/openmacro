@@ -79,6 +79,9 @@ export const en = {
    */
   'path.module.progress': '{done, number} / {total, number}',
   'path.module.done': 'Finished',
+  'path.module.share': 'Share this module',
+  'path.module.shareA11y': 'Share a link to {title} that works without the app',
+  'path.module.shareMessage': '{title} — {url}',
 
   /**
    * The review queue.
