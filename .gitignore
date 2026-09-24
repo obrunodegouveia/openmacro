@@ -55,3 +55,11 @@ credentials.json
 google-play-service-account*.json
 *.keystore
 translations/
+
+# Local build artifacts. `eas build --local` writes the signed binary here,
+# and `requireCommit` means an untracked one blocks the next build. They are
+# 20MB+ and reproducible from the commit they were built at, so they are
+# never worth committing.
+build-*.ipa
+build-*.aab
+build-*.apk
