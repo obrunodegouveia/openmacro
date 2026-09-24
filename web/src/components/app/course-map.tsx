@@ -108,26 +108,93 @@ export function CourseMap() {
   }, [groups]);
 
   /**
-   * Scroll to the linked module once it is actually on screen.
+   * Hold the module in place, rather than scrolling once and hoping.
    *
-   * This used to happen in the handler above, inside a single
-   * `requestAnimationFrame`. That frame can arrive before React has committed
-   * the state which un-hides the section, and a `hidden` element has no
-   * layout box, so `scrollIntoView` silently does nothing and the reader
-   * lands at the top of a very long page — precisely the "looks broken to
-   * whoever followed it" failure the comment above warns about.
+   * One `scrollIntoView` is not enough on a phone, and the reason is a
+   * browser difference rather than a timing one. Chrome implements scroll
+   * anchoring: when content above the viewport changes height it adjusts the
+   * scroll offset so what you are looking at stays still. Safari does not. On
+   * this page — eight thousand pixels, a web font, a video placeholder and a
+   * level panel that expands during hydration — the desktop silently absorbs
+   * every late shift while iOS lets each one push the module further down.
    *
-   * It looked fine whenever the render happened to win the race, which it
-   * usually does on a warm page. It lost reliably on a cold one.
+   * That is why this looked right in Chrome and left an iPhone reader above
+   * the module when they followed a shared link. Measured with anchoring
+   * turned off: a 900px shift above the target moved it from 88px to 1020px,
+   * off the bottom of a phone screen, and nothing put it back.
    *
-   * An effect runs after the commit, so by here the section exists and has a
-   * position. `linkArrival` is in the dependencies so that following the same
-   * link twice still scrolls, which a plain `linkedModule` dependency would
-   * not — the value would not have changed.
+   * So for a short while after arriving, the module goes back whenever it
+   * drifts. `resting` is where it settles once — not zero, because
+   * `scroll-padding-top` holds it clear of the fixed header — and only a
+   * departure from there counts as drift.
+   *
+   * A timer rather than `requestAnimationFrame`, which does not run at all in
+   * a hidden tab and is throttled under load; this has to survive a link
+   * handed over by another app while the browser is still coming forward. The
+   * window restarts when the page becomes visible, for the same reason. One
+   * `getBoundingClientRect` every hundred milliseconds is nothing.
+   *
+   * Any deliberate scroll ends it immediately. Correcting a reader who has
+   * started reading would be worse than the bug.
+   *
+   * Two earlier shapes of this were wrong and are worth not repeating. The
+   * handler above used to scroll inside a `requestAnimationFrame`, which can
+   * fire before React has committed the state that un-hides the section — and
+   * a `hidden` element has no layout box, so the scroll silently did nothing.
+   * An effect fixed that, by running after the commit. `linkArrival` is in
+   * the dependencies because following the same link twice leaves
+   * `linkedModule` unchanged, and the effect would not re-run.
    */
   useEffect(() => {
     if (!linkedModule) return;
-    document.getElementById(linkedModule)?.scrollIntoView({ block: "start" });
+    if (!document.getElementById(linkedModule)) return;
+
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let deadline = Date.now() + 2500;
+    let resting: number | null = null;
+
+    const stop = () => {
+      stopped = true;
+      clearTimeout(timer);
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchstart", stop);
+      window.removeEventListener("keydown", stop);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+
+    const hold = () => {
+      if (stopped) return;
+      const node = document.getElementById(linkedModule);
+      if (node) {
+        const top = node.getBoundingClientRect().top;
+        if (resting === null) {
+          node.scrollIntoView({ block: "start" });
+          resting = node.getBoundingClientRect().top;
+        } else if (Math.abs(top - resting) > 2) {
+          node.scrollIntoView({ block: "start" });
+        }
+      }
+      if (Date.now() < deadline) timer = setTimeout(hold, 100);
+      else stop();
+    };
+
+    /** Becoming visible restarts the window: nothing may have laid out yet. */
+    function refresh() {
+      if (stopped || document.hidden) return;
+      deadline = Date.now() + 2500;
+      resting = null;
+      clearTimeout(timer);
+      hold();
+    }
+
+    window.addEventListener("wheel", stop, { passive: true });
+    window.addEventListener("touchstart", stop, { passive: true });
+    window.addEventListener("keydown", stop);
+    document.addEventListener("visibilitychange", refresh);
+
+    hold();
+    return stop;
   }, [linkedModule, linkArrival]);
 
   const isOpen = useCallback(
