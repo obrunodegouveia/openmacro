@@ -57,6 +57,7 @@
     "check:feedback": "node ./scripts/check-feedback.mjs",
     "check:review": "node ./scripts/check-review.mjs",
     "check:fingerprint": "node ./scripts/check-fingerprint.mjs",
+    "check:objectives": "node ./scripts/check-objectives.mjs",
     "build:web": "expo export --platform web",
     "doctor": "npx expo-doctor@latest",
     "native:prebuild": "expo prebuild --clean --no-install",

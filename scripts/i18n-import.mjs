@@ -145,8 +145,47 @@ const CONTENT_HEADER = (locale, moduleId) => `import type { ContentDictionary } 
 
 `;
 
+/**
+ * Keys already present in a generated dictionary on disk.
+ *
+ * Crude on purpose — a regex over a file this module generated itself, used
+ * only to notice that something is about to disappear.
+ */
+function existingKeys(path) {
+  if (!existsSync(path)) return [];
+  return [...readFileSync(path, 'utf8').matchAll(/^\s*'([^']+)':/gm)].map((match) => match[1]);
+}
+
 export function writeUi(locale, translations) {
   const path = join('packages/core/src/i18n/ui', `${locale}.ts`);
+
+  /**
+   * Refuse to shrink the dictionary.
+   *
+   * `translations/` is gitignored — it is a scratch directory for the round
+   * trip, so its contents differ per machine and go stale the moment anyone
+   * adds a key to the dictionary by hand, which is how most UI strings have
+   * actually been added. Importing from a stale file then silently deleted
+   * every key it did not know about: thirty lines of already-merged
+   * Portuguese vanished this way, and the only symptom was the interface
+   * quietly reverting to English for those strings.
+   *
+   * Nothing downstream catches that, because a missing key is a legal state
+   * that renders the English source. So the destructive case stops here.
+   */
+  const lost = existingKeys(path).filter((key) => !(key in translations));
+  if (lost.length > 0) {
+    console.error(
+      `\n✗ Importing would delete ${lost.length} existing key(s) from ${path}:\n` +
+        lost.map((key) => `    ${key}`).join('\n') +
+        `\n\n  Your translations/${locale}/ui.json is older than the dictionary — it does not\n` +
+        `  know about keys added by hand since it was generated. Refresh it first:\n\n` +
+        `    npm run i18n:extract -- ${locale} ui\n\n` +
+        `  then translate any new units and import again.\n`,
+    );
+    process.exit(2);
+  }
+
   const body = `export const ${localeSymbol(locale)}: UiDictionary = {\n${entries(translations)}\n};\n`;
   writeGenerated(path, UI_HEADER(locale), body);
   return path;

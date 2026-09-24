@@ -52,6 +52,7 @@ import { moduleWhatTheTargetShouldBe } from './lessons/module-28-what-the-target
 import { moduleTheForecastRound } from './lessons/module-29-the-forecast-round';
 import { moduleHowItReachesTheEconomy } from './lessons/module-30-how-it-reaches-the-economy';
 import { moduleWhereTheRiskWent } from './lessons/module-31-where-the-risk-went';
+import { moduleWhatTheDebtCosts } from './lessons/module-32-what-the-debt-costs';
 
 /**
  * Ordered list of every module shipped with the app. Add yours here.
@@ -116,6 +117,7 @@ export const MODULES: readonly Module[] = [
   moduleTheForecastRound,
   moduleHowItReachesTheEconomy,
   moduleWhereTheRiskWent,
+  moduleWhatTheDebtCosts,
 ];
 
 export const COURSE: Course = {
