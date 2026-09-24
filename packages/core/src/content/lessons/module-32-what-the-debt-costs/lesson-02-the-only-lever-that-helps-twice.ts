@@ -13,6 +13,17 @@ export const theOnlyLeverThatHelpsTwiceLesson = defineLesson({
   icon: '⚙️',
   difficulty: 'advanced',
   estimatedMinutes: 14,
+  /**
+   * The decomposition this lesson turns on — output per hour as capital,
+   * human capital and the residual — done once, slowly, before the
+   * challenges ask anything about it. `match-growth-sources` is the same
+   * split.
+   */
+  video: {
+    url: 'https://www.youtube.com/watch?v=yrPrzY3rmQM',
+    minutes: 5,
+    source: 'Khan Academy — The aggregate production function and growth (CC BY-NC-SA)',
+  },
   challenges: [
     {
       id: 'mc-why-twice',
