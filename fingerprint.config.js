@@ -132,12 +132,34 @@ module.exports = {
     'ExpoConfigNames',
   ],
 
-  /**
-   * Hashed through `extraSources` below instead, with `submit` and `cli`
-   * removed. Ignoring it outright would be wrong — the `build` block really
-   * does change what gets compiled.
-   */
-  ignorePaths: ['eas.json'],
+  ignorePaths: [
+    /**
+     * Hashed through `extraSources` below instead, with `submit` and `cli`
+     * removed. Ignoring it outright would be wrong — the `build` block really
+     * does change what gets compiled.
+     */
+    'eas.json',
+
+    /**
+     * Brand imagery, which `ExpoConfigAssets` does not fully cover.
+     *
+     * That skip drops assets named by the Expo config itself — `expo.icon`,
+     * `expo.android.adaptiveIcon` — and this project's icon and adaptive
+     * icons do disappear with it. The splash does not: it is configured
+     * through the `expo-splash-screen` *plugin*, and a plugin's referenced
+     * file is collected as an `expoConfigExternalFile` that the skip never
+     * sees. So redrawing the splash still moved the runtime version on both
+     * platforms, and the table in docs/mobile-release.md said it did not.
+     *
+     * The directory rather than that one filename, because the next brand
+     * asset a plugin picks up would land in the same hole. Everything here
+     * is imagery baked into the binary by prebuild — none of it can be
+     * delivered over the air, so none of it should cost an installed build
+     * its updates. Images the JavaScript bundle requires are not fingerprint
+     * sources at all and are unaffected by this.
+     */
+    'assets/brand/**',
+  ],
 
   extraSources: [
     {

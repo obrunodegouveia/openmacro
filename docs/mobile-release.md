@@ -306,11 +306,30 @@ prevents is the ugly one — a JavaScript bundle calling into native code that
 is not in the app, which crashes on launch rather than erroring politely.
 
 Nor do you have to trust the table. `npm run check:fingerprint` edits each of
-these files in the real tree and asserts the hash moves when it should and
-holds when it should not, and CI runs it on every pull request alongside a
-plain-language report of whether *this* change can still reach the build that
-is out there. Widening the skip list without adding both halves of that test is
-how a native change ships as an update and crashes on launch for everyone.
+these files in the real tree — including Swift and Kotlin inside an autolinked
+module, which is the mechanism that actually prevents a launch crash — and
+asserts the hash moves when it should and holds when it should not. It hashes
+both platforms together, because a skip can behave differently on each: the
+Android adaptive icons only exist on one side, and a test that measured iOS
+alone would not have noticed.
+
+It also refuses to pass if `package.json` grows a build lifecycle hook
+(`postinstall`, `eas-build-pre-install` and the rest). Those genuinely change
+the native build, and `PackageJsonScriptsAll` makes them invisible; that is the
+one hole the skip opens and it is otherwise unguarded.
+
+CI runs all of it on every pull request, alongside a plain-language report of
+whether *this* change can still reach the build that is out there. Widening the
+skip list without adding both halves of that test is how a native change ships
+as an update and crashes on launch for everyone.
+
+One trap worth knowing, because the table above was wrong about it until the
+test caught it: `ExpoConfigAssets` skips assets the Expo config names directly,
+but **not** a file referenced by a config plugin. This project's splash image
+is configured through the `expo-splash-screen` plugin, so it arrived as an
+`expoConfigExternalFile` the skip never saw, and redrawing it went on orphaning
+every build while the icon — named directly — did not. `fingerprint.config.js`
+ignores the brand asset directory for exactly this reason.
 
 The cost of that safety is that a genuinely native change makes every
 previously published update unreachable for the new binary, so a build and an
