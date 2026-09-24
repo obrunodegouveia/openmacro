@@ -1,7 +1,8 @@
 import React from 'react';
-import { AbsoluteFill, Sequence, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Audio, Sequence, staticFile, useVideoConfig } from 'remotion';
 import { Outcome, Title } from './parts';
 import { BASELINE, COPY, GIVEN_AWAY, KEPT, compute, type Locale } from './script';
+import { SCENES, lengthOf, startOf, type SceneId } from './scenes';
 import { font, palette } from './theme';
 
 /**
@@ -37,32 +38,47 @@ export const SpendItTwice: React.FC<{ locale: Locale }> = ({ locale }) => {
 
   return (
     <AbsoluteFill style={{ background: palette.canvas }}>
-      <Sequence durationInFrames={s(4)}>
+      {/* Narration, one clip per scene rather than one long take.
+          A single file would slide against the picture the moment any scene
+          length changed; pinning each line to its own `Sequence` means the
+          timeline in `scenes.ts` is the only thing that decides when anything
+          happens, sound and image alike. */}
+      {SCENES.map((scene, index) => (
+        <Sequence
+          key={scene.id}
+          from={s(startOf(scene.id as SceneId))}
+          durationInFrames={s(scene.seconds)}
+        >
+          <Audio src={staticFile(`narration/${locale}/${index}.m4a`)} />
+        </Sequence>
+      ))}
+
+      <Sequence durationInFrames={s(lengthOf('hook'))}>
         <Stage>
           <Title text={t.hook} sub={t.hookSub} accent={palette.coral} />
         </Stage>
       </Sequence>
 
-      <Sequence from={s(4)} durationInFrames={s(8)}>
+      <Sequence from={s(startOf('race'))} durationInFrames={s(lengthOf('race'))}>
         <Stage>
           <Title text={t.race} sub={t.raceSub} accent={palette.gold} />
         </Stage>
       </Sequence>
 
-      <Sequence from={s(12)} durationInFrames={s(8)}>
+      <Sequence from={s(startOf('lever'))} durationInFrames={s(lengthOf('lever'))}>
         <Stage>
           <Title text={t.lever} sub={t.leverSub} />
         </Stage>
       </Sequence>
 
-      <Sequence from={s(20)} durationInFrames={s(8)}>
+      <Sequence from={s(startOf('twist'))} durationInFrames={s(lengthOf('twist'))}>
         <Stage>
           <Title text={t.twist} sub={t.twistSub} accent={palette.gold} />
         </Stage>
       </Sequence>
 
       {/* The two outcomes, side by side and sharing a scale. */}
-      <Sequence from={s(28)} durationInFrames={s(28)}>
+      <Sequence from={s(startOf('outcomes'))} durationInFrames={s(lengthOf('outcomes'))}>
         <Stage>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 64 }}>
             {/* The question the two columns answer, kept on screen the whole
@@ -107,13 +123,13 @@ export const SpendItTwice: React.FC<{ locale: Locale }> = ({ locale }) => {
         </Stage>
       </Sequence>
 
-      <Sequence from={s(56)} durationInFrames={s(12)}>
+      <Sequence from={s(startOf('punch'))} durationInFrames={s(lengthOf('punch'))}>
         <Stage>
           <Title text={t.punch} sub={t.punchSub} accent={palette.mint} />
         </Stage>
       </Sequence>
 
-      <Sequence from={s(68)} durationInFrames={s(7)}>
+      <Sequence from={s(startOf('outro'))} durationInFrames={s(lengthOf('outro'))}>
         <Stage>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: font, fontSize: 92, fontWeight: 800, color: palette.mint }}>
