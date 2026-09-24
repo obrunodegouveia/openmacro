@@ -63,3 +63,7 @@ translations/
 build-*.ipa
 build-*.aab
 build-*.apk
+
+# Rendered video. Reproducible from `video/` with `npm run render`, and a
+# couple of megabytes each — the source is the artefact worth keeping.
+video/out/

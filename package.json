@@ -103,6 +103,7 @@
   },
   "workspaces": [
     "packages/*",
-    "web"
+    "web",
+    "video"
   ]
 }
