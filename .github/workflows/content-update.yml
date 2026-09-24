@@ -21,7 +21,18 @@ on:
   push:
     branches: [main]
     paths:
-      - 'packages/core/src/content/**'
+      # Everything here is JavaScript that ships inside the update bundle, so
+      # all of it can travel over the air.
+      #
+      # This used to name `packages/core/src/content/**` alone, which quietly
+      # excluded most of the package: the scheduler in `progress/`, the exam
+      # and grading engines, and the entire `i18n/` catalogue. A translation
+      # fix landing on main did not publish, and neither did a bug fix in the
+      # code that grades an answer — the two things most worth getting to
+      # people quickly. The guards inside the job are what make this safe to
+      # widen; they check the change is not native regardless of which file
+      # triggered the run.
+      - 'packages/core/**'
       - 'src/**'
       - 'app/**'
       - 'assets/**'
