@@ -75,6 +75,8 @@ export function CourseMap() {
   const [moduleTouched, setModuleTouched] = useState(false);
   /** A module a link asked for — opened alongside its level. */
   const [linkedModule, setLinkedModule] = useState<string | null>(null);
+  /** Bumped on every hash arrival, so the same link followed twice re-scrolls. */
+  const [linkArrival, setLinkArrival] = useState(0);
 
   /**
    * Every module is a link target — `/learn#the-plumbing`, and the Permalink
@@ -97,15 +99,36 @@ export function CourseMap() {
       // lands on a heading with nothing under it, which is not what the
       // person who followed it was promised.
       setLinkedModule(id);
-      // The section mounts this render; scroll on the next frame, once it has.
-      requestAnimationFrame(() => {
-        document.getElementById(id)?.scrollIntoView({ block: "start" });
-      });
+      // Scrolling happens in the effect below, not here — see why there.
+      setLinkArrival((n) => n + 1);
     };
     open();
     window.addEventListener("hashchange", open);
     return () => window.removeEventListener("hashchange", open);
   }, [groups]);
+
+  /**
+   * Scroll to the linked module once it is actually on screen.
+   *
+   * This used to happen in the handler above, inside a single
+   * `requestAnimationFrame`. That frame can arrive before React has committed
+   * the state which un-hides the section, and a `hidden` element has no
+   * layout box, so `scrollIntoView` silently does nothing and the reader
+   * lands at the top of a very long page — precisely the "looks broken to
+   * whoever followed it" failure the comment above warns about.
+   *
+   * It looked fine whenever the render happened to win the race, which it
+   * usually does on a warm page. It lost reliably on a cold one.
+   *
+   * An effect runs after the commit, so by here the section exists and has a
+   * position. `linkArrival` is in the dependencies so that following the same
+   * link twice still scrolls, which a plain `linkedModule` dependency would
+   * not — the value would not have changed.
+   */
+  useEffect(() => {
+    if (!linkedModule) return;
+    document.getElementById(linkedModule)?.scrollIntoView({ block: "start" });
+  }, [linkedModule, linkArrival]);
 
   const isOpen = useCallback(
     (level: ModuleLevel) =>
