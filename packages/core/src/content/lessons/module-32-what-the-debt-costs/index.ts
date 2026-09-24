@@ -24,8 +24,9 @@
 import { defineModule } from '../../schema';
 import { whatBankruptcyWouldMeanLesson } from './lesson-01-what-bankruptcy-would-mean';
 import { theOnlyLeverThatHelpsTwiceLesson } from './lesson-02-the-only-lever-that-helps-twice';
-import { theSameRiseTwiceLesson } from './lesson-03-the-same-rise-twice';
-import { findingTheBalanceLesson } from './lesson-04-finding-the-balance';
+import { demandBeforeSupplyLesson } from './lesson-03-demand-before-supply';
+import { theSameRiseTwiceLesson } from './lesson-04-the-same-rise-twice';
+import { findingTheBalanceLesson } from './lesson-05-finding-the-balance';
 
 export const moduleWhatTheDebtCosts = defineModule({
   id: 'what-the-debt-costs',
@@ -37,6 +38,7 @@ export const moduleWhatTheDebtCosts = defineModule({
   lessons: [
     whatBankruptcyWouldMeanLesson,
     theOnlyLeverThatHelpsTwiceLesson,
+    demandBeforeSupplyLesson,
     theSameRiseTwiceLesson,
     findingTheBalanceLesson,
   ],
