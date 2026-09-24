@@ -274,8 +274,13 @@ if (command === 'import') {
   );
   const written = [];
 
+  /** Set when a write was refused, so the run can fail after finishing. */
+  let refused = false;
+
   if (Object.keys(uiTranslations).length > 0) {
-    written.push([writeUi(locale, uiTranslations), Object.keys(uiTranslations).length]);
+    const uiPath = writeUi(locale, uiTranslations);
+    if (uiPath) written.push([uiPath, Object.keys(uiTranslations).length]);
+    else refused = true;
   }
 
   const courseTranslations = Object.fromEntries(
@@ -337,7 +342,9 @@ if (command === 'import') {
   console.log('');
   console.log('Now run:  npm run typecheck:core && npm run i18n:status');
   console.log('');
-  process.exit(0);
+  // Everything that could be written has been. A refused write still fails
+  // the run, so a skipped dictionary cannot be mistaken for a clean import.
+  process.exit(refused ? 2 : 0);
 }
 
 if (command !== 'status') {
