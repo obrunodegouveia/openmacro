@@ -97,6 +97,15 @@ jobs:
       - name: Validate translations
         run: npm run i18n:status -- --strict
 
+      # An objective no combination of sliders can satisfy typechecks,
+      # validates and renders perfectly. The learner simply cannot finish it
+      # and cannot tell whether that is the puzzle or a bug — a failure
+      # indistinguishable from being bad at it, which is the worst property a
+      # teaching tool can have. lint:content checks the target names a real
+      # readout; only this checks the target is reachable.
+      - name: Simulation objectives self-test
+        run: npm run check:objectives
+
       # What can still reach a phone without an App Store round trip.
       #
       # `fingerprint.config.js` claims a list of files cannot affect the native

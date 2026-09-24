@@ -1576,6 +1576,101 @@ export const FORMULAS = {
     return (held * read(inputs, 'heldMaturity')) / total;
   },
 
+
+  // -------------------------------------------------------------------------
+  // What a sovereign debt actually costs
+  // -------------------------------------------------------------------------
+
+  /**
+   * Nominal GDP growth assembled from its parts:
+   *
+   *   (1 + productivity)(1 + labour force)(1 + inflation) - 1
+   *
+   * Worth a formula of its own because `r - g` is usually argued about as
+   * though g were a mood. It is not. It is how many more hours get worked,
+   * how much more each hour produces, and what the price level does.
+   * Productivity is the only one of the three a rich country can move much,
+   * and the only one that helps the debt without hurting somebody.
+   *
+   * Expects: `productivityGrowth`, `labourForceGrowth`, `inflationRate`.
+   */
+  nominal_growth_from_productivity: (inputs) =>
+    (1 + read(inputs, 'productivityGrowth')) *
+      (1 + read(inputs, 'labourForceGrowth')) *
+      (1 + read(inputs, 'inflationRate')) -
+    1,
+
+  /**
+   * The average rate on a debt stock some years after the policy rate moves.
+   *
+   * A rate rise does not hit a government the way it hits a floating-rate
+   * mortgage. Only debt that matures gets refinanced at the new rate, so with
+   * a weighted average maturity of M years roughly 1/M of the stock reprices
+   * each year:
+   *
+   *   effective = old + (new - old) x min(1, years / M)
+   *
+   * The straight line is an approximation — real maturity ladders are lumpy —
+   * but it captures what people get wrong, which is the speed rather than the
+   * shape. The gap between the first year and full pass-through is the whole
+   * point: a government feels a hike for a decade after the hike is over.
+   *
+   * Expects: `oldRate`, `newRate`, `maturityYears`, `years`.
+   */
+  effective_rate_after_years: (inputs) => {
+    const previous = read(inputs, 'oldRate');
+    const next = read(inputs, 'newRate');
+    const maturity = read(inputs, 'maturityYears');
+    if (maturity <= 0) return next;
+    const repriced = Math.min(1, Math.max(0, read(inputs, 'years') / maturity));
+    return previous + (next - previous) * repriced;
+  },
+
+  /**
+   * The interest bill in money, rather than as a share of anything.
+   *
+   * Expects: `debtStock`, `effectiveRate`.
+   */
+  interest_bill: (inputs) => read(inputs, 'debtStock') * read(inputs, 'effectiveRate'),
+
+  /**
+   * Interest as a share of government revenue.
+   *
+   * This is the number that decides whether a debt is a background fact or
+   * the main event in a budget, and it is the one a finance ministry watches
+   * rather than debt-to-GDP: GDP does not pay coupons, taxes do.
+   *
+   * Expects: `interestBill` (usually chained from `interest_bill`), `revenue`.
+   */
+  interest_share_of_revenue: (inputs) => {
+    const revenue = read(inputs, 'revenue');
+    if (revenue <= 0) return 0;
+    return read(inputs, 'interestBill') / revenue;
+  },
+
+  /**
+   * The nominal growth rate at which a debt ratio stops rising.
+   *
+   * Setting d(1 + r)/(1 + g) - pb = d and solving for g:
+   *
+   *   g* = d(1 + r) / (d + pb) - 1
+   *
+   * Below it the ratio climbs, above it the ratio falls. `primaryBalance` is
+   * a share of GDP and negative for a deficit, which is the usual case.
+   *
+   * Returns 0 in the degenerate case where the primary deficit is larger than
+   * the entire debt stock, because no growth rate stabilises that and a
+   * formula may not throw.
+   *
+   * Expects: `debtRatio`, `interestRate`, `primaryBalance`.
+   */
+  growth_needed_for_stability: (inputs) => {
+    const debt = read(inputs, 'debtRatio');
+    const denominator = debt + read(inputs, 'primaryBalance');
+    if (denominator <= 0) return 0;
+    return (debt * (1 + read(inputs, 'interestRate'))) / denominator - 1;
+  },
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;

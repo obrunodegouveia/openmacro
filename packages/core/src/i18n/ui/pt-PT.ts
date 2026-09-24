@@ -68,8 +68,7 @@ export const ptPT: UiDictionary = {
   'progress.stat.streak': 'Dias seguidos',
   'progress.module.count': '{done, number} / {total, number}',
   'progress.memory.title': 'Memória',
-  'progress.memory.blurb':
-    'O que o curso te viu errar, e quando tenciona voltar a perguntar. Isto nunca sai do teu dispositivo.',
+  'progress.memory.blurb': 'O que o curso te viu errar, e quando tenciona voltar a perguntar. Isto nunca sai do teu dispositivo.',
   'progress.memory.tracked': 'a acompanhar',
   'progress.memory.week': 'esta semana',
   'progress.memory.lapsed': 'ganharam ferrugem',
@@ -80,18 +79,15 @@ export const ptPT: UiDictionary = {
   'path.module': 'Módulo {number, number}',
   'path.module.progress': '{done, number} / {total, number}',
   'path.module.done': 'Concluído',
-
   'review.title': 'Revisão',
   'review.due': '{count, plural, one {# coisa para rever} other {# coisas para rever}}',
   'review.blurb': 'Perguntas que estás prestes a esquecer, de todo o curso.',
   'review.empty': 'Nada para rever hoje',
-  'review.empty.blurb':
-    'Acaba uma lição e aquilo em que erraste volta aqui, espaçado no tempo para ficar.',
+  'review.empty.blurb': 'Acaba uma lição e aquilo em que erraste volta aqui, espaçado no tempo para ficar.',
   'review.start': 'Começar revisão',
   'review.from': 'De {lesson}',
   'review.done.title': 'Revisão concluída',
-  'review.done.body':
-    '{count, plural, one {# pergunta revista} other {# perguntas revistas}}. Cada uma volta mais tarde, e mais cedo se te custou.',
+  'review.done.body': '{count, plural, one {# pergunta revista} other {# perguntas revistas}}. Cada uma volta mais tarde, e mais cedo se te custou.',
   'review.done.close': 'Voltar ao percurso',
   'path.streak': '{count, plural, one {sequência de # dia} other {sequência de # dias}}',
   'path.lesson.minutes': '{count, number} min',
@@ -187,13 +183,9 @@ export const ptPT: UiDictionary = {
   'level.intermediate.blurb': 'Pressupõe que sabes o que é um depósito',
   'level.advanced': 'Avançado',
   'level.advanced.blurb': 'Pressupõe a interface e as alavancas',
-
-  'level.beginner.unlocks':
-    'Ler o saldo da tua conta pelo que ele é — uma promessa de um banco — e acompanhar uma decisão de taxas nas notícias sem acreditar na palavra de ninguém sobre o que significa.',
-  'level.intermediate.unlocks':
-    'Avaliar um crédito à habitação, um empréstimo ou uma obrigação pelo que te custam na realidade, ler uma curva de rendimentos e julgar a compra de uma casa pela aritmética e não pela vontade.',
-  'level.advanced.unlocks':
-    'Ler os balanços da Fed e do BCE linha a linha, fixar uma taxa diretora e defendê-la com os dados que tinhas no momento, e dirigir a instituição.',
+  'level.beginner.unlocks': 'Ler o saldo da tua conta pelo que ele é — uma promessa de um banco — e acompanhar uma decisão de taxas nas notícias sem acreditar na palavra de ninguém sobre o que significa.',
+  'level.intermediate.unlocks': 'Avaliar um crédito à habitação, um empréstimo ou uma obrigação pelo que te custam na realidade, ler uma curva de rendimentos e julgar a compra de uma casa pela aritmética e não pela vontade.',
+  'level.advanced.unlocks': 'Ler os balanços da Fed e do BCE linha a linha, fixar uma taxa diretora e defendê-la com os dados que tinhas no momento, e dirigir a instituição.',
   'difficulty.intro': 'Introdução',
   'difficulty.core': 'Base',
   'difficulty.advanced': 'Avançado',
