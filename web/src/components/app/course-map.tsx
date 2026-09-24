@@ -35,7 +35,22 @@ export function CourseMap() {
   const done = snapshot
     ? all.filter((lesson) => snapshot.progress[lesson.id]).length
     : 0;
-  const resume = all.find((lesson) => !snapshot?.progress[lesson.id]);
+  /**
+   * The lesson to carry on with, and the module it lives in.
+   *
+   * Found by walking modules rather than the flattened lesson list, so the
+   * module comes back with it. A title alone says nothing about where in a
+   * 32-module course you are, which is the one thing the card is for.
+   */
+  const resume = (() => {
+    // Not named `module`: Next forbids declaring that identifier, because it
+    // shadows the CommonJS global.
+    for (const courseModule of modules) {
+      const lesson = courseModule.lessons.find((entry) => !snapshot?.progress[entry.id]);
+      if (lesson) return { lesson, module: courseModule };
+    }
+    return undefined;
+  })();
   const ready = state === "ready" && Boolean(snapshot);
 
   const groups = useMemo(() => groupByLevel(modules), [modules]);
@@ -145,18 +160,24 @@ export function CourseMap() {
       {/* Resume ---------------------------------------------------------- */}
       {ready && done > 0 && resume ? (
         <LocaleLink
-          href={`/learn/${resume.id}`}
+          href={`/learn/${resume.lesson.id}`}
           className="group mt-5 flex items-center gap-4 rounded-card border border-mint/30 bg-mint/[0.06] p-4 transition-colors hover:border-mint/60 hover:bg-mint/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
         >
           <span aria-hidden className="text-2xl">
-            {resume.icon}
+            {resume.lesson.icon}
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-xs font-extrabold uppercase tracking-wider text-mint-bright">
               {t("map.resume")}
             </span>
             <span className="mt-0.5 block truncate font-display font-extrabold text-ink">
-              {resume.title}
+              {resume.lesson.title}
+            </span>
+            <span className="mt-0.5 block truncate text-sm font-semibold text-mint-bright">
+              {t("path.resume.context", {
+                level: t(`level.${resume.module.level}`),
+                module: resume.module.title,
+              })}
             </span>
           </span>
           <ArrowRight

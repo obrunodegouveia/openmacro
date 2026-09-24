@@ -177,6 +177,7 @@ export const ptPT: UiDictionary = {
   'map.finished': '{done, number} de {total, number} concluídas',
   'map.live': '{count, plural, one {# lição disponível} other {# lições disponíveis}} · vêm mais a caminho',
   'map.resume': 'Retoma onde ficaste',
+  'path.resume.context': '{level} · {module}',
   'map.best': 'Melhor {best, number} / {total, number} XP',
   'map.runs': '{count, plural, one {# tentativa} other {# tentativas}}',
   'level.count': '{count, plural, one {# módulo} other {# módulos}}',

@@ -57,7 +57,10 @@ export default function LearningPathScreen() {
   const resume = useMemo(() => {
     for (const module of modules) {
       const lesson = module.lessons.find((entry) => !isLessonComplete(entry.id));
-      if (lesson) return lesson;
+      // The module comes back with the lesson rather than being looked up
+      // again later: this loop already holds it, and it is the *localised*
+      // module, which a lookup through the registry would not be.
+      if (lesson) return { lesson, module };
     }
     return undefined;
   }, [modules, isLessonComplete]);
@@ -192,18 +195,27 @@ export default function LearningPathScreen() {
       {resume && (profile?.totalXp ?? 0) > 0 ? (
         <Pressable
           onPress={() =>
-            router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: resume.id } })
+            router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: resume.lesson.id } })
           }
           accessibilityRole="button"
-          accessibilityLabel={t('path.lesson.open', { title: resume.title })}
+          accessibilityLabel={t('path.lesson.open', { title: resume.lesson.title })}
           style={({ pressed }) => [styles.resume, pressed && styles.lessonCardPressed]}
         >
           <View style={styles.resumeIcon}>
-            <Text style={styles.lessonIconText}>{resume.icon}</Text>
+            <Text style={styles.lessonIconText}>{resume.lesson.icon}</Text>
           </View>
           <View style={styles.lessonBody}>
             <Text style={styles.resumeEyebrow}>{t('map.resume')}</Text>
-            <Text style={styles.lessonTitle}>{resume.title}</Text>
+            <Text style={styles.lessonTitle}>{resume.lesson.title}</Text>
+            {/* Where this lesson sits. A title alone — "The Forecast Round" —
+                says nothing about where in a 32-module course you are, which
+                is the one thing the card is for once the path is collapsed. */}
+            <Text style={styles.resumeContext} numberOfLines={1}>
+              {t('path.resume.context', {
+                level: t(`level.${resume.module.level}`),
+                module: resume.module.title,
+              })}
+            </Text>
           </View>
         </Pressable>
       ) : null}
@@ -616,6 +628,11 @@ const styles = StyleSheet.create({
     backgroundColor: palette.surface,
     borderWidth: 2,
     borderColor: palette.mint,
+  },
+  resumeContext: {
+    ...typography.caption,
+    color: palette.mintDark,
+    marginTop: 2,
   },
   resumeEyebrow: {
     ...typography.caption,
