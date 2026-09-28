@@ -8,7 +8,7 @@
       "FINANCE"
     ],
     "release": {
-      "automaticRelease": false
+      "automaticRelease": true
     },
     "info": {
       "en-US": {
