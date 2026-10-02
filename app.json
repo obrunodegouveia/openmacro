@@ -12,6 +12,7 @@
     "ios": {
       "icon": "./assets/brand/v3/OpenMacro.icon",
       "supportsTablet": true,
+      "usesAppleSignIn": true,
       "bundleIdentifier": "org.openmacro.app",
       "config": {
         "usesNonExemptEncryption": false
@@ -46,6 +47,7 @@
       "expo-router",
       "expo-status-bar",
       "expo-web-browser",
+      "expo-apple-authentication",
       "expo-localization",
       [
         "expo-splash-screen",
