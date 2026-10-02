@@ -374,11 +374,11 @@ export const ptPT = {
     'Esta é uma tradução de cortesia. Em caso de divergência, prevalece a versão inglesa.',
   'privacy.short.title': 'A versão curta',
   'privacy.short.body':
-    'Podes ler todas as páginas, jogar todas as simulações e acabar todas as lições deste sítio sem conta, e não usamos analítica, publicidade nem scripts de rastreio de terceiros. Se escolheres iniciar sessão — com a Apple ou com a Google — guardamos os teus XP e a tua sequência de dias para que te sigam entre dispositivos; é essa a única razão para existir uma conta, e os únicos dados pessoais que detemos.',
+    'Podes ler todas as páginas, jogar todas as simulações e acabar todas as lições deste sítio sem conta, e não usamos analítica, publicidade nem scripts de rastreio de terceiros. Se escolheres iniciar sessão — com a Google, ou com a Apple na aplicação para iOS — guardamos os teus XP e a tua sequência de dias para que te sigam entre dispositivos; é essa a única razão para existir uma conta, e os únicos dados pessoais que detemos.',
   'privacy.collect.title': 'O que recolhemos',
   'privacy.collect.signin.label': 'Se iniciares sessão.',
   'privacy.collect.signin.body':
-    'Pedimos à Apple ou à Google um nome e um endereço de email, e mais nada. A Google envia também uma fotografia de perfil, que aparece na tua própria linha de conta e em mais nenhum sítio. O Iniciar sessão com a Apple permite-te esconder o teu endereço verdadeiro e, se o fizeres, só vemos o endereço de reencaminhamento — nada aqui precisa de te chegar por email. Guardamos o nome associado ao teu progresso, e o endereço fica com o nosso fornecedor de autenticação para que possas voltar a entrar.',
+    'Pedimos à Apple ou à Google um nome e um endereço de email, e mais nada. A Google envia também uma fotografia de perfil, que aparece na tua própria linha de conta e em mais nenhum sítio. O Iniciar sessão com a Apple permite-te esconder o teu endereço verdadeiro e, se o fizeres, só vemos o endereço de reencaminhamento — nada aqui precisa de te chegar por email. O Iniciar sessão com a Apple só existe na aplicação para iOS, por isso uma conta criada com ele não pode ser aberta no sítio. Guardamos o nome associado ao teu progresso, e o endereço fica com o nosso fornecedor de autenticação para que possas voltar a entrar.',
   'privacy.collect.progress.label': 'O teu progresso, depois de iniciares sessão.',
   'privacy.collect.progress.body':
     'O total de XP, a tua sequência de dias, a data da última lição concluída e, para cada lição, a tua melhor pontuação, quantas vezes a acabaste e quando. Sem respostas, sem tempos, nada sobre como jogaste.',

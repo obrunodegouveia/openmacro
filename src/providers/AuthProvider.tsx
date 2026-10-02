@@ -219,7 +219,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (name) {
         // Best effort. A failure here costs a display name, not a session, so
         // it must not surface as a sign-in error.
-        await supabase.auth.updateUser({ data: { full_name: name } });
+        try {
+          await supabase.auth.updateUser({ data: { full_name: name } });
+        } catch {
+          // Signed in regardless; the learner shows as their email instead.
+        }
       }
     } catch (cause) {
       // Tapping Cancel on the sheet is a decision, not a failure.
