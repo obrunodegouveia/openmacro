@@ -1576,6 +1576,70 @@ export const FORMULAS = {
     return (held * read(inputs, 'heldMaturity')) / total;
   },
 
+  /**
+   * Interest-rate risk the private sector has to hold, in 10-year-bond
+   * equivalents: the face value of 10-year bonds that would carry the same
+   * sensitivity to a move in yields (the same DV01) as the debt actually held.
+   * This is the unit the Fed and the Treasury's advisers use when they size
+   * duration supply.
+   *
+   * Each bucket is weighted by its modified duration. For a bond trading at
+   * par with an annual coupon equal to the yield y, that is the annuity
+   * factor (1 − (1 + y)^−M) / y. Coupon debt of average maturity
+   * `longMaturity` is priced as a single par bond of that maturity — a ladder
+   * has a little less duration than its average bond, so this slightly
+   * overstates the long side, the same way on both sides of any comparison.
+   * Bills outstanding have about three months left on average.
+   *
+   * A buyback of `buyback` retires coupon debt and replaces it, one for one,
+   * with new bills: the amount owed is unchanged and only its duration moves.
+   *
+   * Expects: `totalDebt`, `billShare` (decimal), `longMaturity` (years),
+   * `buyback`, and optionally `parYield` (decimal, default 4%).
+   */
+  ten_year_equivalents: (inputs) => {
+    const total = read(inputs, 'totalDebt');
+    if (total <= 0) return 0;
+    const y = read(inputs, 'parYield') > 0 ? read(inputs, 'parYield') : 0.04;
+    const duration = (years: number) => (1 - Math.pow(1 + y, -Math.max(years, 0))) / y;
+    const bills = Math.min(total * read(inputs, 'billShare') + read(inputs, 'buyback'), total);
+    const coupon = total - bills;
+    return (coupon * duration(read(inputs, 'longMaturity')) + bills * 0.25) / duration(10);
+  },
+
+  /**
+   * Share of the debt that matures — and so is refinanced at whatever the
+   * rate is then — within the next twelve months.
+   *
+   * All bills, plus the slice of coupon debt that comes due in a year, which
+   * for a ladder of average maturity M is roughly 1/M of it.
+   *
+   * Expects: `totalDebt`, `billShare` (decimal), `longMaturity` (years),
+   * `buyback`.
+   */
+  rollover_share: (inputs) => {
+    const total = read(inputs, 'totalDebt');
+    if (total <= 0) return 0;
+    const bills = Math.min(total * read(inputs, 'billShare') + read(inputs, 'buyback'), total);
+    const coupon = total - bills;
+    const maturity = Math.max(read(inputs, 'longMaturity'), 1);
+    return Math.min((bills + coupon / maturity) / total, 1);
+  },
+
+  /**
+   * Extra interest per year, once a one-point rise in short rates has reached
+   * the debt that is refinanced within twelve months: that debt, times one
+   * per cent. (In the first calendar year it is roughly half this, because
+   * the debt rolls over across the year rather than on day one.)
+   *
+   * This is the number that ties a debt office's maturity choice to the
+   * central bank's rate decision — the shorter the debt, the sooner every
+   * rise lands on the budget.
+   *
+   * Expects: `totalDebt` and the `rollover_share` readout as `rollover`.
+   */
+  cost_of_one_point: (inputs) => read(inputs, 'totalDebt') * read(inputs, 'rollover') * 0.01,
+
 
   // -------------------------------------------------------------------------
   // What a sovereign debt actually costs
