@@ -5,8 +5,10 @@ straight to their Coinbase account. This is the setup, the design, and the
 parts that can lose money if you get them wrong.
 
 The whole scheme is capped by construction: one claim per learner per module,
-so a person can ever earn `number of modules × the reward`. At sixteen modules
-and €1 that is sixteen euros, and no bug or cheat raises it.
+so a person can ever earn `number of modules × the reward`. At thirty-three
+modules and €1 that is thirty-three euros, and no bug or cheat raises it. The
+ceiling grows by one reward with every module published, so check it again
+when the course grows.
 
 ---
 
@@ -133,7 +135,7 @@ changed it" after the fact.
 
 Nothing needs wiring into the course. A module is finished when every lesson in
 it has a completion in `lesson_progress`, which the app already writes, and
-`ModuleRewards` on `/dashboard` shows the state of all sixteen.
+`ModuleRewards` on `/dashboard` shows the state of every module.
 
 The request names **one** thing — which module. It does not name a recipient,
 an address, or an amount:
@@ -159,9 +161,9 @@ completions they did not earn and claim the reward. Fixing it properly means
 grading server-side, which means moving the engine off the device and giving up
 offline play.
 
-What makes it acceptable is the cap rather than the check: sixteen euros a
-person, ever. If the reward ever grows past what you would hand over on trust,
-this is the assumption to revisit first.
+What makes it acceptable is the cap rather than the check: one reward per
+module per person, ever. If the reward ever grows past what you would hand
+over on trust, this is the assumption to revisit first.
 
 ---
 
@@ -219,9 +221,10 @@ compromised server is exactly what is in the drawer.
 anonymised — but a learner who deletes and signs up again with the same email
 has no claims and can earn every module a second time. Closing that means
 keeping a hash of the deleted email precisely to recognise someone who asked to
-be forgotten, which is not a trade worth making for a household with a
-sixteen-euro ceiling. If this ever pays strangers, the fix is not a hash: it is
-that claims should not hang off an account you can delete at will.
+be forgotten, which is not a trade worth making for a handful of known
+learners with a ceiling of a few tens of euros. If this ever pays strangers,
+the fix is not a hash: it is that claims should not hang off an account you
+can delete at will.
 
 **Nonce serialisation is per-instance.** `payout.ts` queues sends within one
 process. Cloud Run running two containers has two queues and could collide on a

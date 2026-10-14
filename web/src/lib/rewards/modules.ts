@@ -28,9 +28,9 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
  *
  * What makes it acceptable here is the cap, not the check: one claim per
  * learner per module, so the entire scheme is bounded at
- * `MODULES.length × the reward`. At sixteen modules and €1 that is sixteen
- * euros per person, ever. If the reward ever grows past what you would hand
- * over on trust, this is the assumption to revisit first.
+ * `MODULES.length × the reward` per person, ever. If the reward ever grows
+ * past what you would hand over on trust, this is the assumption to revisit
+ * first.
  */
 
 export interface ModuleCompletion {
