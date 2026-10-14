@@ -58,6 +58,15 @@ export NEXT_PUBLIC_GOOGLE_CLIENT_ID="${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-30877906586
 export NEXT_PUBLIC_SUPABASE_URL="${NEXT_PUBLIC_SUPABASE_URL:-https://wvbgylwducipwpxzcgzh.supabase.co}"
 export NEXT_PUBLIC_SUPABASE_ANON_KEY="${NEXT_PUBLIC_SUPABASE_ANON_KEY:-sb_publishable_79IMEg597PKTlukVnPDhhQ_dDG_EHAF}"
 
+# --- Rewards (docs/rewards.md) ---------------------------------------------
+# Non-secret reward settings, passed to Cloud Run as runtime env vars. They live
+# here for the same reason as the Supabase values above: a deploy from a shell
+# that forgot them would ship a treasury dashboard nobody can open, and nothing
+# else would notice. The two secrets are mounted from Secret Manager instead.
+export REWARDS_ADMIN_EMAILS="${REWARDS_ADMIN_EMAILS:-brunogouveiarodrigues@gmail.com}"
+export BASE_RPC_URL="${BASE_RPC_URL:-https://mainnet.base.org}"
+export REWARD_AMOUNT_DEFAULT="${REWARD_AMOUNT_DEFAULT:-1.00}"
+
 # --- Guard rails ------------------------------------------------------------
 # Every script runs with these; a failed command must never be ignored.
 set -euo pipefail
