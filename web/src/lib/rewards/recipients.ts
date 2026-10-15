@@ -24,13 +24,26 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 export type RecipientStatus = "pending" | "active" | "disabled";
 
+/**
+ * How a recipient is rewarded. 'module' pays a fixed amount per finished
+ * module; 'earnings' keeps a balance from XP and active time that the learner
+ * withdraws themselves (lib/rewards/earnings.ts).
+ */
+export type RewardScheme = "module" | "earnings";
+
 export interface Recipient {
   id: string;
   key: string;
   label: string;
-  address: Address;
+  /** Null only for an 'earnings' recipient who has not set one yet. */
+  address: Address | null;
   status: RecipientStatus;
+  scheme: RewardScheme;
   amountEuros: string | null;
+  /** Euros per XP for an 'earnings' recipient; null means the default. */
+  xpRateEuros: string | null;
+  /** Euros per active hour for an 'earnings' recipient; null means the default. */
+  hourRateEuros: string | null;
   /** The signed-in account allowed to claim into this wallet, if any. */
   claimantEmail: string | null;
   note: string | null;
@@ -42,9 +55,12 @@ interface RecipientRow {
   id: string;
   key: string;
   label: string;
-  address: string;
+  address: string | null;
   status: RecipientStatus;
+  scheme: RewardScheme;
   amount_euros: string | null;
+  xp_rate_euros: string | null;
+  hour_rate_euros: string | null;
   claimant_email: string | null;
   note: string | null;
   created_at: string;
@@ -56,9 +72,12 @@ function toRecipient(row: RecipientRow): Recipient {
     id: row.id,
     key: row.key,
     label: row.label,
-    address: getAddress(row.address),
+    address: row.address ? getAddress(row.address) : null,
     status: row.status,
+    scheme: row.scheme,
     amountEuros: row.amount_euros,
+    xpRateEuros: row.xp_rate_euros,
+    hourRateEuros: row.hour_rate_euros,
     claimantEmail: row.claimant_email,
     note: row.note,
     createdAt: row.created_at,
@@ -157,7 +176,9 @@ export async function getRecipientById(id: string): Promise<Recipient | null> {
 export async function addRecipient(input: {
   key: string;
   label: string;
-  address: Address;
+  /** Required for 'module'; optional for 'earnings', where the learner sets it. */
+  address: Address | null;
+  scheme?: RewardScheme;
   amountEuros?: string | null;
   claimantEmail?: string | null;
   note?: string | null;
@@ -168,7 +189,8 @@ export async function addRecipient(input: {
       key: input.key.trim().toLowerCase(),
       label: input.label.trim(),
       // Stored lowercase; checksummed on read.
-      address: input.address.toLowerCase(),
+      address: input.address?.toLowerCase() ?? null,
+      scheme: input.scheme ?? "module",
       amount_euros: input.amountEuros?.trim() || null,
       claimant_email: input.claimantEmail?.trim().toLowerCase() || null,
       note: input.note?.trim() || null,
@@ -191,6 +213,40 @@ export async function addRecipient(input: {
     return { error: "Could not save that recipient." };
   }
   return { recipient: toRecipient(data as RecipientRow) };
+}
+
+/**
+ * Set the payout address of an 'earnings' recipient, from the learner's own
+ * dashboard. Takes effect immediately and keeps the recipient's status.
+ *
+ * This is the one place a learner decides where money goes, and it is
+ * restricted twice: the row is found by the signed-in email, never by an id
+ * from the request, and only an active 'earnings' row matches. A 'module'
+ * recipient's address can only ever be changed by an admin.
+ */
+export async function setClaimantAddress(
+  email: string,
+  address: Address,
+): Promise<{ recipient: Recipient; previous: Address | null } | { error: string }> {
+  const current = await resolveRecipientForClaimant(email);
+  if (!current || current.scheme !== "earnings") {
+    return { error: "There is no reward wallet set up for this account." };
+  }
+
+  const { data, error } = await getSupabaseAdmin()
+    .from("reward_recipients")
+    .update({ address: address.toLowerCase(), updated_at: new Date().toISOString() })
+    .eq("id", current.id)
+    .eq("scheme", "earnings")
+    .eq("status", "active")
+    .select("*")
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("[rewards] claimant address change failed", error);
+    return { error: "Could not save that address." };
+  }
+  return { recipient: toRecipient(data as RecipientRow), previous: current.address };
 }
 
 /**

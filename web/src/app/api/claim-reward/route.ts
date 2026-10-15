@@ -71,7 +71,10 @@ export async function POST(request: Request) {
   // bound to it simply has nothing to claim into, which is also what someone
   // signing in out of curiosity should see.
   const payee = await resolveRecipientForClaimant(learner.email);
-  if (!payee) {
+  // An 'earnings' recipient is paid from a balance, not per module, and is
+  // refused here so nobody is paid twice for the same work.
+  const payeeAddress = payee?.scheme === "module" ? payee.address : null;
+  if (!payee || !payeeAddress) {
     return NextResponse.json(
       { error: "There is no reward wallet set up for this account." },
       { status: 403 },
@@ -163,7 +166,7 @@ export async function POST(request: Request) {
   // pay twice. See lib/rewards/pay-claim.ts.
   const outcome = await payClaim({
     claimId,
-    toAddress: payee.address,
+    toAddress: payeeAddress,
     amountBaseUnits,
     retryableStatus: "UNCLAIMED",
     logPrefix: "[claim-reward]",
@@ -221,7 +224,11 @@ export async function GET(request: Request) {
   return NextResponse.json({
     // Null tells the UI to show nothing at all rather than a button that
     // cannot work — a learner with no wallet bound should not be offered money.
-    reward: payee ? { label: payee.label, amountEuros: payee.amountEuros ?? "1.00" } : null,
+    // Earnings recipients see their balance instead (components/app/earnings.tsx).
+    reward:
+      payee?.scheme === "module"
+        ? { label: payee.label, amountEuros: payee.amountEuros ?? "1.00" }
+        : null,
     modules: modules.map((module) => {
       const claim = byKey.get(moduleClaimKey(module.moduleId));
       return {

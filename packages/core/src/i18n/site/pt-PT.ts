@@ -487,6 +487,9 @@ export const ptPT = {
   'treasury.field.note': 'Nota (opcional)',
   'treasury.addedPending':
     'Adicionado como pendente. Não pode receber recompensa enquanto não enviares um teste e o ativares.',
+  'treasury.field.earnings': 'Pagar por XP e tempo ativo em vez de por módulo (o aluno define o próprio endereço)',
+  'treasury.scheme.earnings': 'XP e tempo · {xp} €/XP · {hour} €/hora',
+  'treasury.noAddress': 'ainda sem endereço — o aluno define-o',
   'treasury.add': 'Adicionar',
   'treasury.cancel': 'Cancelar',
 
@@ -532,6 +535,33 @@ export const ptPT = {
   'moduleRewards.paid': 'Pago',
   'moduleRewards.sending': 'A enviar…',
   'moduleRewards.claim': 'Reclamar {amount} €',
+
+  // ---- ganhos (XP e tempo ativo) -----------------------------------------
+  'earnings.title': 'Os teus ganhos',
+  'earnings.rates': '{xpCents} cêntimos por XP · {hour} por hora ativa',
+  'earnings.balance': 'Saldo',
+  'earnings.alreadyWithdrawn': '{amount} já levantados',
+  'earnings.fromXp': 'Por XP',
+  'earnings.xpCount': '{xp, number} de {max, number} XP',
+  'earnings.fromTime': 'Por tempo',
+  'earnings.today': '{minutes, number} min hoje',
+  'earnings.timeRule':
+    'O tempo conta enquanto este site está aberto à tua frente e o usaste nos últimos dois minutos.',
+  'earnings.address': 'O teu endereço EURC',
+  'earnings.networkWarning':
+    'Usa o teu endereço de depósito EURC na rede Base. EURC enviado noutra rede perde-se.',
+  'earnings.saveAddress': 'Guardar endereço',
+  'earnings.changeAddress': 'Alterar',
+  'earnings.cancel': 'Cancelar',
+  'earnings.addressSaved': 'Endereço guardado.',
+  'earnings.withdraw': 'Levantar {amount}',
+  'earnings.sending': 'A enviar…',
+  'earnings.withdrawn': 'Enviados {amount} EURC.',
+  'earnings.needAddress': 'Adiciona o teu endereço para levantar.',
+  'earnings.minimum': 'Podes levantar a partir de {amount}.',
+  'earnings.paidLink': 'Pago ↗',
+  'earnings.failed': 'Não funcionou.',
+  'earnings.offline': 'Não foi possível contactar o servidor.',
 
   // ---- challenge widgets --------------------------------------------------
   'sim.try': 'Experimenta {value}',

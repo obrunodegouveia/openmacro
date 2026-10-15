@@ -9,6 +9,7 @@ import { alternates, localeUrl, serverLocale } from "@/lib/locale-server";
 import { getSiteText } from "@/lib/site-text";
 import { localisedCopy } from "@/lib/seo-copy";
 import { SmoothAnchors } from "@/components/site/smooth-anchors";
+import { ActivityHeartbeat } from "@/components/app/activity-heartbeat";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -110,7 +111,11 @@ export default async function RootLayout({
         <SmoothAnchors />
         <LocaleProvider initialLocale={locale}>
           {/* Inert when no Supabase project is configured — see lib/supabase.ts. */}
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            {/* Silent unless this account is paid for active time. */}
+            <ActivityHeartbeat />
+          </AuthProvider>
         </LocaleProvider>
       </body>
     </html>
