@@ -74,7 +74,8 @@ function toRecipient(row: RecipientRow): Recipient {
     label: row.label,
     address: row.address ? getAddress(row.address) : null,
     status: row.status,
-    scheme: row.scheme,
+    // Before migration 0006 the column does not exist; every row was 'module'.
+    scheme: row.scheme ?? "module",
     amountEuros: row.amount_euros,
     xpRateEuros: row.xp_rate_euros,
     hourRateEuros: row.hour_rate_euros,
@@ -105,18 +106,32 @@ export function normaliseAddress(input: string): { address: Address } | { error:
  * account. Null covers unbound, pending and disabled alike.
  */
 export async function resolveRecipientForClaimant(email: string): Promise<Recipient | null> {
+  // Compared here, exactly, rather than with `ilike`. In a LIKE pattern `%`
+  // and `_` are wildcards — and PostgREST adds `*` — and all three are legal in
+  // an email address, so `p%@gmail.com` would have matched somebody else's
+  // row. Active, bound recipients are a handful of rows; reading them all is
+  // cheaper than getting the escaping right.
   const { data, error } = await getSupabaseAdmin()
     .from("reward_recipients")
     .select("*")
-    .ilike("claimant_email", email)
     .eq("status", "active")
-    .maybeSingle();
+    .not("claimant_email", "is", null);
 
   if (error) {
     console.error("[rewards] claimant lookup failed", error);
     return null;
   }
-  return data ? toRecipient(data as RecipientRow) : null;
+  const wanted = email.trim().toLowerCase();
+  const matches = (data as RecipientRow[]).filter(
+    (row) => row.claimant_email?.trim().toLowerCase() === wanted,
+  );
+  // Two active rows for one account is a configuration error; paying either
+  // would be a guess, so neither is used. (maybeSingle refused it the same way.)
+  if (matches.length !== 1) {
+    if (matches.length > 1) console.error("[rewards] more than one active recipient for a claimant");
+    return null;
+  }
+  return toRecipient(matches[0]!);
 }
 
 /**

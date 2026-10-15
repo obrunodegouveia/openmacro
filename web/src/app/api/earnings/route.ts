@@ -80,6 +80,11 @@ async function enrolled(request: Request) {
 }
 
 export async function GET(request: Request) {
+  // Every signed-in page view asks this once (components/app/activity-heartbeat).
+  // A deployment without reward credentials answers "not enrolled" quietly
+  // instead of failing for every learner on every page.
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return NextResponse.json({ earnings: null });
+
   const { learner, recipient } = await enrolled(request);
   if (!learner) {
     return NextResponse.json({ error: "Sign in to view earnings." }, { status: 401 });

@@ -54,6 +54,7 @@ export function getSupabaseAdmin(): SupabaseClient {
 
 export interface Learner {
   id: string;
+  /** Only an address Supabase has confirmed; null otherwise. */
   email: string | null;
 }
 
@@ -80,5 +81,11 @@ export async function getLearnerFromRequest(
   const { data, error } = await getSupabaseAdmin().auth.getUser(token);
   if (error || !data.user) return null;
 
-  return { id: data.user.id, email: data.user.email ?? null };
+  // The email decides whose reward wallet this caller reaches, so only a
+  // confirmed one counts. Google and Apple sign-ins arrive confirmed. The
+  // project also has email/password sign-up switched on at the API (the site
+  // never offers it); today an unconfirmed account cannot get a session at
+  // all, and this keeps that true even if autoconfirm is ever turned on.
+  const email = data.user.email_confirmed_at ? (data.user.email ?? null) : null;
+  return { id: data.user.id, email };
 }
