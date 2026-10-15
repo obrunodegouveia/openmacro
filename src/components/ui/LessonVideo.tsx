@@ -56,7 +56,12 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { WebView } from 'react-native-webview';
 
 import { useLocale } from '@/providers/LocaleProvider';
-import { useVideosCollapsed } from '@/services/videoPreference';
+import {
+  nextCaptions,
+  resolveCaptions,
+  useVideoCaptions,
+  useVideosCollapsed,
+} from '@/services/videoPreference';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 export interface LessonVideoProps {
@@ -72,7 +77,8 @@ export interface LessonVideoProps {
 export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
   const [playing, setPlaying] = useState(false);
   const [collapsed, setCollapsed] = useVideosCollapsed();
-  const { t } = useLocale();
+  const [captions, setCaptions] = useVideoCaptions();
+  const { t, locale } = useLocale();
   const id = youTubeId(url);
   if (!id) return null;
 
@@ -90,7 +96,9 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
         <View style={styles.frame}>
           {playing ? (
             <WebView
-              source={{ uri: `${SITE_ORIGIN}/embed/${id}` }}
+              // `cc` carries the subtitle choice; the embed page's player picks
+              // the best matching track, exactly as the website does.
+              source={{ uri: `${SITE_ORIGIN}/embed/${id}?cc=${resolveCaptions(captions, locale)}` }}
               originWhitelist={['*']}
               style={styles.web}
               // The player needs its own JS, and on iOS inline playback has to be
@@ -151,6 +159,21 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
           {collapsed ? t('lesson.video.show') : t('lesson.video.hide')}
         </Text>
       </Pressable>
+
+      {collapsed ? null : (
+        // One press cycles Auto → Português → English → Off, remembered for
+        // every video — the same control the website shows beside its player.
+        // Changing it reloads the embed with the new choice.
+        <Pressable
+          accessibilityRole="button"
+          style={styles.captions}
+          onPress={() => setCaptions(nextCaptions(captions))}
+        >
+          <Text style={styles.toggle}>
+            {t('lesson.video.captions', { choice: t(`lesson.video.captions.${captions}`) })}
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -248,6 +271,11 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+  },
+  captions: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
+    alignSelf: 'flex-start',
   },
   metaLines: {
     flex: 1,

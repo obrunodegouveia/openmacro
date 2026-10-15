@@ -71,3 +71,76 @@ export function useVideosCollapsed(): [boolean, (next: boolean) => void] {
 
   return [value, setVideosCollapsed];
 }
+
+// ---------------------------------------------------------------------------
+// Subtitles
+// ---------------------------------------------------------------------------
+//
+// The same kind of preference, for the same reason: somebody who needs
+// Portuguese subtitles to follow an English video needs them on every video,
+// and should choose that once. 'auto' follows the site's language —
+// Portuguese subtitles on the Portuguese site, none on the English one — so
+// most people never touch it. The app keeps the identical choice in
+// src/services/videoPreference.ts.
+
+export type CaptionPreference = "auto" | "pt" | "en" | "off";
+
+const CAPTIONS_KEY = "openmacro.videoCaptions.v1";
+const CAPTION_VALUES: readonly CaptionPreference[] = ["auto", "pt", "en", "off"];
+
+let captions: CaptionPreference = "auto";
+const captionListeners = new Set<() => void>();
+
+function subscribeCaptions(listener: () => void) {
+  captionListeners.add(listener);
+  return () => {
+    captionListeners.delete(listener);
+  };
+}
+
+const getCaptions = () => captions;
+const getServerCaptions = (): CaptionPreference => "auto";
+
+export function setVideoCaptions(next: CaptionPreference) {
+  if (next === captions) return;
+  captions = next;
+  for (const listener of captionListeners) listener();
+  try {
+    window.localStorage.setItem(CAPTIONS_KEY, next);
+  } catch {
+    // Holds for this session only.
+  }
+}
+
+/** `[preference, setPreference]`, shared by every card on the page. */
+export function useVideoCaptions(): [CaptionPreference, (next: CaptionPreference) => void] {
+  const value = React.useSyncExternalStore(subscribeCaptions, getCaptions, getServerCaptions);
+
+  React.useEffect(() => {
+    let stored: string | null = null;
+    try {
+      stored = window.localStorage.getItem(CAPTIONS_KEY);
+    } catch {
+      return;
+    }
+    if (stored && CAPTION_VALUES.includes(stored as CaptionPreference)) {
+      setVideoCaptions(stored as CaptionPreference);
+    }
+  }, []);
+
+  return [value, setVideoCaptions];
+}
+
+/** What 'auto' means in a given site language. */
+export function resolveCaptions(
+  preference: CaptionPreference,
+  locale: string,
+): "pt" | "en" | "off" {
+  if (preference !== "auto") return preference;
+  return locale.startsWith("pt") ? "pt" : "off";
+}
+
+/** The next choice when the learner taps the subtitles control. */
+export function nextCaptions(preference: CaptionPreference): CaptionPreference {
+  return CAPTION_VALUES[(CAPTION_VALUES.indexOf(preference) + 1) % CAPTION_VALUES.length];
+}

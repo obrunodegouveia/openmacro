@@ -128,6 +128,11 @@ export const en = {
   'lesson.video.privacy': 'Nothing loads until you press play',
   'lesson.video.hide': 'Hide',
   'lesson.video.show': 'Show',
+  'lesson.video.captions': 'Subtitles: {choice}',
+  'lesson.video.captions.auto': 'Auto',
+  'lesson.video.captions.pt': 'Português',
+  'lesson.video.captions.en': 'English',
+  'lesson.video.captions.off': 'Off',
 
   // ---- the challenge types -----------------------------------------------
   'challenge.order.dragHint': 'Press and hold a step, then drag to reorder',

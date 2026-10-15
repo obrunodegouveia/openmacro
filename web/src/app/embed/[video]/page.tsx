@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getSiteText } from "@/lib/site-text";
+import { YouTubePlayer, type CaptionChoice } from "@/components/app/youtube-player";
 
 /**
  * ============================================================================
@@ -46,19 +47,23 @@ export const metadata: Metadata = {
 
 export default async function EmbedPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ video: string }>;
+  searchParams: Promise<{ cc?: string }>;
 }) {
   const { video } = await params;
+  const { cc } = await searchParams;
   const s = await getSiteText();
 
   // Validated, not trusted: this id is interpolated into a URL, and the app is
   // not the only thing that can request this route.
   if (!VIDEO_ID.test(video)) notFound();
 
-  const src =
-    `https://www.youtube-nocookie.com/embed/${video}` +
-    `?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+  // The app passes the learner's subtitle choice, already resolved from its
+  // own language setting. Anything unrecognised means no subtitles, which is
+  // what this page did before the parameter existed.
+  const captions: CaptionChoice = cc === "pt" || cc === "en" ? cc : "off";
 
   return (
     <div
@@ -71,13 +76,10 @@ export default async function EmbedPage({
         zIndex: 50,
       }}
     >
-      <iframe
-        src={src}
-        title={s("embed.frameTitle")}
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-        allowFullScreen
-        style={{ display: "block", border: 0, width: "100%", height: "100%" }}
-      />
+      {/* The same player as the site's own video cards, so subtitles choose
+          the same track in the app as in the browser. It also posts
+          play/pause to the app through window.ReactNativeWebView. */}
+      <YouTubePlayer videoId={video} captions={captions} title={s("embed.frameTitle")} />
     </div>
   );
 }

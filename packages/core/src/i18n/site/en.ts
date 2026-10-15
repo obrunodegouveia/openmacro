@@ -548,7 +548,7 @@ export const en = {
   'earnings.fromTime': 'From time',
   'earnings.today': '{minutes, number} min today',
   'earnings.timeRule':
-    'Time counts while this site is open in front of you and you have used it in the last two minutes.',
+    'Time counts while this site is open in front of you and a lesson video is playing, or you have used the site in the last two minutes.',
   'earnings.address': 'Your EURC address',
   'earnings.networkWarning':
     'Use your EURC deposit address on the Base network. EURC sent on another network is lost.',

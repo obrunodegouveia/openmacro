@@ -197,8 +197,10 @@ Nothing is stored. Every read recomputes:
   million XP counts for the lesson's real maximum. The whole course is worth
   21,470 XP today, which is €42.94 at the default rate.
 - **Time** is the number of rows in `activity_minutes`. The browser pings every
-  thirty seconds while the tab is visible and the learner has interacted in the
-  last two minutes; the server stamps the minute from its own clock, so nothing
+  thirty seconds while the tab is visible and either a lesson video is playing
+  or the learner has interacted in the last two minutes — watching counts even
+  with hands off the screen, which matters because taps inside the YouTube
+  frame never reach the page; the server stamps the minute from its own clock, so nothing
   can be backfilled and a day holds at most 24 hours. Only enrolled learners
   ever ping — nobody else's time is recorded.
 - **Withdrawn** is every withdrawal claim that is in flight, paid, or `FAILED`.

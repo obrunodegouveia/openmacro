@@ -87,3 +87,84 @@ export function useVideosCollapsed(): [boolean, (next: boolean) => void] {
   const value = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   return [value, setVideosCollapsed];
 }
+
+// ---------------------------------------------------------------------------
+// Subtitles
+// ---------------------------------------------------------------------------
+//
+// The same choice the website keeps in web/src/components/app/video-preference.ts,
+// with the same values and the same meaning of 'auto': Portuguese subtitles
+// when the app is in Portuguese, none in English. The resolved value is handed
+// to the /embed page, whose player picks the actual track.
+
+export type CaptionPreference = 'auto' | 'pt' | 'en' | 'off';
+
+const CAPTIONS_KEY = 'openmacro.videoCaptions.v1';
+const CAPTIONS_VERSION = 1;
+const CAPTION_VALUES: readonly CaptionPreference[] = ['auto', 'pt', 'en', 'off'];
+
+interface StoredCaptions {
+  captions: CaptionPreference;
+}
+
+function isStoredCaptions(value: unknown): value is StoredCaptions {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    CAPTION_VALUES.includes((value as StoredCaptions).captions)
+  );
+}
+
+let captions: CaptionPreference = 'auto';
+const captionListeners = new Set<() => void>();
+
+function emitCaptions(): void {
+  for (const listener of captionListeners) listener();
+}
+
+async function hydrateCaptions(): Promise<void> {
+  const stored = await readVersioned(CAPTIONS_KEY, CAPTIONS_VERSION, isStoredCaptions);
+  if (stored && stored.captions !== captions) {
+    captions = stored.captions;
+    emitCaptions();
+  }
+}
+
+// At import, for the same reason as the collapsed preference above.
+void hydrateCaptions();
+
+function subscribeCaptions(listener: () => void): () => void {
+  captionListeners.add(listener);
+  return () => {
+    captionListeners.delete(listener);
+  };
+}
+
+function getCaptions(): CaptionPreference {
+  return captions;
+}
+
+/** Choose subtitles for every video. Persisted; failure to persist is survivable. */
+export function setVideoCaptions(next: CaptionPreference): void {
+  if (next === captions) return;
+  captions = next;
+  emitCaptions();
+  writeVersioned(CAPTIONS_KEY, CAPTIONS_VERSION, { captions: next }).catch(() => {});
+}
+
+/** `[preference, setPreference]`, shared by every card on screen. */
+export function useVideoCaptions(): [CaptionPreference, (next: CaptionPreference) => void] {
+  const value = useSyncExternalStore(subscribeCaptions, getCaptions, getCaptions);
+  return [value, setVideoCaptions];
+}
+
+/** What 'auto' means in a given app language. */
+export function resolveCaptions(preference: CaptionPreference, locale: string): 'pt' | 'en' | 'off' {
+  if (preference !== 'auto') return preference;
+  return locale.startsWith('pt') ? 'pt' : 'off';
+}
+
+/** The next choice when the learner taps the subtitles control. */
+export function nextCaptions(preference: CaptionPreference): CaptionPreference {
+  return CAPTION_VALUES[(CAPTION_VALUES.indexOf(preference) + 1) % CAPTION_VALUES.length] ?? 'auto';
+}

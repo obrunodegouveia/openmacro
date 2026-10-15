@@ -546,7 +546,7 @@ export const ptPT = {
   'earnings.fromTime': 'Por tempo',
   'earnings.today': '{minutes, number} min hoje',
   'earnings.timeRule':
-    'O tempo conta enquanto este site está aberto à tua frente e o usaste nos últimos dois minutos.',
+    'O tempo conta enquanto este site está aberto à tua frente e um vídeo de lição está a tocar, ou usaste o site nos últimos dois minutos.',
   'earnings.address': 'O teu endereço EURC',
   'earnings.networkWarning':
     'Usa o teu endereço de depósito EURC na rede Base. EURC enviado noutra rede perde-se.',

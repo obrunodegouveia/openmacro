@@ -5,9 +5,10 @@
  * Is the learner actively here?
  * ============================================================================
  *
- * "Active" means the tab is visible and the learner touched, clicked, typed or
- * scrolled within the last two minutes. An open tab in the background, or a
- * phone left on the table with the page up, stops counting after that window.
+ * "Active" means the tab is visible and either a lesson video is playing or
+ * the learner touched, clicked, typed or scrolled within the last two minutes.
+ * Watching is learning even with hands off the screen; an open tab in the
+ * background, or a paused video on a phone left on the table, stops counting.
  *
  * One module-level tracker so the heartbeat and the earnings timer agree on
  * the same answer. Listeners are attached once, passively, on first use.
@@ -19,6 +20,7 @@ const EVENTS = ["pointerdown", "keydown", "wheel", "touchstart", "scroll"] as co
 
 let lastInteraction = 0;
 let attached = false;
+let watching = 0;
 
 function touch() {
   lastInteraction = Date.now();
@@ -35,8 +37,19 @@ export function startActivityTracking(): void {
   }
 }
 
+/**
+ * A video started or stopped playing. Counted rather than a flag, so two
+ * players on one page cannot switch each other off.
+ */
+export function setWatching(playing: boolean): void {
+  watching = Math.max(0, watching + (playing ? 1 : -1));
+  // Stopping is an interaction too: the idle window starts from here, not
+  // from whenever the learner last touched the screen before pressing play.
+  touch();
+}
+
 export function isActiveNow(): boolean {
   if (typeof document === "undefined") return false;
   if (document.visibilityState !== "visible") return false;
-  return Date.now() - lastInteraction < IDLE_AFTER_MS;
+  return watching > 0 || Date.now() - lastInteraction < IDLE_AFTER_MS;
 }
