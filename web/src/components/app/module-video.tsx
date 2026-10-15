@@ -6,7 +6,14 @@ import { ChevronDown, ChevronRight, Play } from "lucide-react";
 import type { ModuleVideo as ModuleVideoData } from "@openmacro/core/content/schema";
 
 import { useLocale } from "@/components/site/locale-provider";
-import { useVideosCollapsed } from "@/components/app/video-preference";
+import {
+  nextCaptions,
+  resolveCaptions,
+  useVideoCaptions,
+  useVideosCollapsed,
+} from "@/components/app/video-preference";
+import { YouTubePlayer } from "@/components/app/youtube-player";
+import { setWatching } from "@/lib/activity";
 
 /**
  * Watch-first overview for a module.
@@ -31,7 +38,15 @@ export function ModuleVideo({
 }) {
   const [playing, setPlaying] = React.useState(false);
   const [collapsed, setCollapsed] = useVideosCollapsed();
-  const { t } = useLocale();
+  const [captions, setCaptions] = useVideoCaptions();
+  const { t, locale } = useLocale();
+  // Track only this card's contribution, so unmounting mid-play releases it.
+  const watchingRef = React.useRef(false);
+  const onPlayingChange = React.useCallback((next: boolean) => {
+    if (next === watchingRef.current) return;
+    watchingRef.current = next;
+    setWatching(next);
+  }, []);
   const site = useSiteText();
   const id = youTubeId(video.url);
   if (!id) return null;
@@ -50,14 +65,11 @@ export function ModuleVideo({
       {collapsed ? null : (
         <div className="relative aspect-video w-full bg-abyss">
           {playing ? (
-            <iframe
-              // youtube-nocookie serves the same player without setting
-              // advertising cookies on people who never come back.
-              src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`}
+            <YouTubePlayer
+              videoId={id}
+              captions={resolveCaptions(captions, locale)}
               title={site("video.overview", { title: moduleTitle })}
-              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 size-full"
+              onPlayingChange={onPlayingChange}
             />
           ) : (
             <button
@@ -83,11 +95,12 @@ export function ModuleVideo({
         </div>
       )}
 
+      <div className="flex items-center">
       <button
         type="button"
         onClick={toggle}
         aria-expanded={!collapsed}
-        className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left"
+        className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 py-3 pl-4 pr-2 text-left"
       >
         <Chevron className="size-4 shrink-0 text-mint" aria-hidden />
         <span className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-ink-faint">
@@ -104,6 +117,18 @@ export function ModuleVideo({
           {collapsed ? t("lesson.video.show") : t("lesson.video.hide")}
         </span>
       </button>
+      {collapsed ? null : (
+        // Its own button, beside the row rather than inside it: one press
+        // cycles Auto → Português → English → Off, remembered for every video.
+        <button
+          type="button"
+          onClick={() => setCaptions(nextCaptions(captions))}
+          className="shrink-0 cursor-pointer px-4 py-3 text-xs font-bold text-mint"
+        >
+          {t("lesson.video.captions", { choice: t(`lesson.video.captions.${captions}`) })}
+        </button>
+      )}
+      </div>
     </div>
   );
 }

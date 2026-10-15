@@ -489,6 +489,9 @@ export const en = {
   'treasury.field.note': 'Note (optional)',
   'treasury.addedPending':
     'Added as pending. It cannot receive a reward until you send a test and activate it.',
+  'treasury.field.earnings': 'Pay by XP and active time instead of per module (the learner sets their own address)',
+  'treasury.scheme.earnings': 'XP and time · €{xp}/XP · €{hour}/hour',
+  'treasury.noAddress': 'no address yet — the learner sets it',
   'treasury.add': 'Add',
   'treasury.cancel': 'Cancel',
 
@@ -534,6 +537,33 @@ export const en = {
   'moduleRewards.paid': 'Paid',
   'moduleRewards.sending': 'Sending…',
   'moduleRewards.claim': 'Claim €{amount}',
+
+  // ---- earnings (XP and active time) -------------------------------------
+  'earnings.title': 'Your earnings',
+  'earnings.rates': '{xpCents} cents per XP · {hour} per active hour',
+  'earnings.balance': 'Balance',
+  'earnings.alreadyWithdrawn': '{amount} already withdrawn',
+  'earnings.fromXp': 'From XP',
+  'earnings.xpCount': '{xp, number} of {max, number} XP',
+  'earnings.fromTime': 'From time',
+  'earnings.today': '{minutes, number} min today',
+  'earnings.timeRule':
+    'Time counts while this site is open in front of you and a lesson video is playing, or you have used the site in the last two minutes.',
+  'earnings.address': 'Your EURC address',
+  'earnings.networkWarning':
+    'Use your EURC deposit address on the Base network. EURC sent on another network is lost.',
+  'earnings.saveAddress': 'Save address',
+  'earnings.changeAddress': 'Change',
+  'earnings.cancel': 'Cancel',
+  'earnings.addressSaved': 'Address saved.',
+  'earnings.withdraw': 'Withdraw {amount}',
+  'earnings.sending': 'Sending…',
+  'earnings.withdrawn': 'Sent {amount} EURC.',
+  'earnings.needAddress': 'Add your address to withdraw.',
+  'earnings.minimum': 'You can withdraw from {amount}.',
+  'earnings.paidLink': 'Paid ↗',
+  'earnings.failed': 'That did not work.',
+  'earnings.offline': 'Could not reach the server.',
 
   // ---- challenge widgets --------------------------------------------------
   'sim.try': 'Try {value}',

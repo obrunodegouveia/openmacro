@@ -28,6 +28,12 @@ when the course grows.
 | `web/src/app/api/claim-reward/route.ts` | Authenticates, verifies, claims, pays, records |
 | `web/src/app/api/admin/rewards/route.ts` | Everything the dashboard reads and does |
 | `web/src/components/app/treasury.tsx` | The dashboard at `/dashboard/treasury` |
+| `supabase/migrations/0006_earnings.sql` | The `earnings` scheme, `activity_minutes`, and the `VOID` claim status |
+| `web/src/lib/rewards/earnings.ts` | The balance: capped XP, active minutes, withdrawals. `server-only` |
+| `web/src/lib/rewards/pay-claim.ts` | Lock, send, record — shared by module claims and withdrawals. `server-only` |
+| `web/src/app/api/earnings/route.ts` | Balance, heartbeat, the learner's own address, withdraw |
+| `web/src/components/app/earnings.tsx` | The balance panel on `/dashboard` |
+| `web/src/components/app/activity-heartbeat.tsx` | Pings while an earnings learner is active, on every page |
 
 ---
 
@@ -167,6 +173,86 @@ over on trust, this is the assumption to revisit first.
 
 ---
 
+## Earnings: paying by XP and active time
+
+A recipient is on one of two schemes, chosen when it is added in the treasury
+dashboard:
+
+- **`module`**, the original: a fixed amount for each finished module, paid to
+  an address only an admin can set.
+- **`earnings`**: a running balance the learner withdraws when they like.
+  Defaults are **€0.002 per XP** and **€0.20 per active hour**, overridable per
+  recipient in `xp_rate_euros` and `hour_rate_euros`.
+
+The two never overlap. An earnings recipient cannot claim module rewards, and
+a module recipient cannot use the earnings endpoint, so nobody is paid twice
+for the same work.
+
+### How the balance is computed
+
+Nothing is stored. Every read recomputes:
+
+- **XP** is the sum of `best_xp` per lesson, each capped at the most that
+  lesson can award according to the content registry. A forged row of a
+  million XP counts for the lesson's real maximum. The whole course is worth
+  21,470 XP today, which is €42.94 at the default rate.
+- **Time** is the number of rows in `activity_minutes`. The browser pings every
+  thirty seconds while the tab is visible and either a lesson video is playing
+  or the learner has interacted in the last two minutes — watching counts even
+  with hands off the screen, which matters because taps inside the YouTube
+  frame never reach the page; the server stamps the minute from its own clock, so nothing
+  can be backfilled and a day holds at most 24 hours. Only enrolled learners
+  ever ping — nobody else's time is recorded.
+- **Withdrawn** is every withdrawal claim that is in flight, paid, or `FAILED`.
+  A `FAILED` withdrawal may still have been mined, so it keeps counting. If
+  BaseScan shows its `broadcast_nonce` never did anything, set the row to
+  `VOID` by hand and the amount returns to the balance. The same applies to a
+  withdrawal left `UNCLAIMED` by a process that died before taking the lock.
+
+### Withdrawals
+
+A withdrawal sends the whole balance, rounded down to the cent, with a €1.00
+minimum. It is a `reward_claims` row with `claim_key = 'withdrawal:<n>'`.
+Two concurrent withdrawals read the same count, try to insert the same `<n>`,
+and the unique index lets one in. After that it goes through the same
+lock → send → record path as module claims (`pay-claim.ts`).
+
+One difference from module claims: a withdrawal that fails *before*
+broadcasting becomes **`VOID`** rather than `UNCLAIMED`. Its amount was the
+balance at one moment, so a retry must recompute it. `VOID` stops counting as
+withdrawn.
+
+### The learner sets their own address
+
+This is the deliberate exception to "only an admin decides where money goes".
+For an earnings recipient, the address the learner enters on their dashboard
+takes effect **immediately**, with no pending state and no test send. That was
+the treasury owner's call, and the cost is real: anyone who gets into that
+learner's account can redirect the balance. What bounds it is the balance
+itself. Every change is written to `reward_admin_events` as
+`recipient.address-set-by-claimant`, with the old and new address.
+
+The row is always found from the signed-in email, never from an id in the
+request, and only an active earnings row matches.
+
+### Setting someone up
+
+In `/dashboard/treasury`, add the recipient with their **claimant email**, tick
+**Pay by XP and active time**, and leave the address empty. Activate it — there
+is no address to test yet. The learner then sees the panel on `/dashboard`,
+enters their EURC address on Base, and can withdraw once they reach €1.
+
+This exists on the website only. App Store guideline 3.1.5, item (v), says
+"cryptocurrency apps may not offer currency for completing tasks", and paying
+EURC for XP and time spent is close enough to that to put the app at risk.
+Guideline 2.3.1 also rules out the workaround of reporting time from the app
+without showing money there: hidden or undocumented features are themselves
+grounds for rejection, and shipping them by OTA update sidesteps review. Time
+in the iPhone app is therefore not counted; XP earned there is, because it
+syncs to `lesson_progress`.
+
+---
+
 ## How double payment is prevented
 
 Three mechanisms, and all three are needed:
@@ -181,6 +267,11 @@ Three mechanisms, and all three are needed:
    it is not. Postgres locks the row for the update, so of two callers exactly
    one proceeds. Reading a status in application code and then writing it is
    the time-of-check-to-time-of-use bug, and here it pays twice.
+
+   The caller must check the returned row's **id**, not whether something came
+   back. The function returns a single composite, so a caller that lost gets a
+   row of nulls — `{ id: null, … }` through PostgREST — which is truthy. An
+   earlier `Boolean(result)` check let both callers of a double tap pay.
 
 3. **Service-role writes only.** RLS gives the learner `SELECT` and nothing
    else, so claim state cannot be edited from a browser at all.

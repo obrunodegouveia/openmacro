@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Address } from "viem";
 
 import { getAdminFromRequest, recordAdminEvent } from "@/lib/rewards/admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
@@ -109,9 +110,17 @@ export async function POST(request: Request) {
   switch (body.action) {
     // -----------------------------------------------------------------------
     case "add-recipient": {
-      const parsed = normaliseAddress(str("address"));
-      if ("error" in parsed) {
-        return NextResponse.json({ error: parsed.error }, { status: 400 });
+      const scheme = str("scheme") === "earnings" ? "earnings" : "module";
+
+      // An 'earnings' recipient may start without an address: the learner sets
+      // it from their own dashboard. A 'module' recipient never may.
+      let address: Address | null = null;
+      if (str("address") || scheme === "module") {
+        const parsed = normaliseAddress(str("address"));
+        if ("error" in parsed) {
+          return NextResponse.json({ error: parsed.error }, { status: 400 });
+        }
+        address = parsed.address;
       }
       const key = str("key").toLowerCase();
       const label = str("label");
@@ -122,7 +131,8 @@ export async function POST(request: Request) {
       const result = await addRecipient({
         key,
         label,
-        address: parsed.address,
+        address,
+        scheme,
         amountEuros: str("amountEuros") || null,
         // Which signed-in account may claim into this wallet. Without it the
         // wallet exists but nobody can earn into it.
@@ -136,7 +146,8 @@ export async function POST(request: Request) {
       await recordAdminEvent(admin.email, "recipient.added", {
         key,
         label,
-        address: parsed.address,
+        scheme,
+        address,
         claimantEmail: str("claimantEmail") || null,
       });
       return NextResponse.json({ recipient: result.recipient });
@@ -182,6 +193,13 @@ export async function POST(request: Request) {
       if (recipient.status === "disabled") {
         return NextResponse.json({ error: "That recipient is disabled." }, { status: 400 });
       }
+      if (!recipient.address) {
+        return NextResponse.json(
+          { error: "That recipient has not set an address yet." },
+          { status: 400 },
+        );
+      }
+      const toAddress = recipient.address;
 
       const euros = str("amountEuros") || "1.00";
       let amountBaseUnits: string;
@@ -193,7 +211,7 @@ export async function POST(request: Request) {
 
       try {
         const payout = await sendEurcReward({
-          toAddress: recipient.address,
+          toAddress,
           amountBaseUnits,
         });
         await recordAdminEvent(admin.email, "recipient.test-send", {

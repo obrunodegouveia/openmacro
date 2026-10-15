@@ -45,18 +45,47 @@
  * nothing is requested until then — and then it is this site and
  * youtube-nocookie.com, which is what it always was.
  *
+ * SUBTITLES SURVIVE FULL SCREEN BECAUSE THE FULL SCREEN IS OURS. YouTube draws
+ * its subtitles in the page, over the video. Its own full-screen button, on an
+ * iPhone, hands the bare <video> to Apple's native player, and the subtitles
+ * stay behind on the page — the learner who needs them most loses them the
+ * moment the video is big enough to watch. So the embed is asked to hide that
+ * button (`app=1`), and the button here opens the same page in a modal turned
+ * on its side to fill the screen. It is still the page, so the subtitles come
+ * with it. The app is locked to portrait and that lock is native, so the turn
+ * is a transform: changing it would need a new build, and this ships as an
+ * update.
+ *
+ * Going full screen reloads the page larger, at the second it had reached —
+ * the embed reports its position as it plays. Changing the subtitles does not
+ * reload anything: the choice is handed to the running player.
+ *
  * COLLAPSING IS A PREFERENCE, NOT CARD STATE. A 16:9 frame is the tallest
  * thing on the screen, and a learner who has already watched a module's
  * videos elsewhere — or who simply reads faster than anyone talks — should be
  * able to put them away and have them stay away. See `videoPreference`.
  */
 
-import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
 import { useLocale } from '@/providers/LocaleProvider';
-import { useVideosCollapsed } from '@/services/videoPreference';
+import {
+  nextCaptions,
+  resolveCaptions,
+  useVideoCaptions,
+  useVideosCollapsed,
+} from '@/services/videoPreference';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 export interface LessonVideoProps {
@@ -69,49 +98,118 @@ export interface LessonVideoProps {
   source?: string;
 }
 
+/**
+ * The page a WebView loads. Fixed for the life of that WebView: a new subtitle
+ * choice goes to the running player instead, so the address never changes
+ * under it and the video never restarts.
+ */
+interface EmbedLoad {
+  cc: 'pt' | 'en' | 'off';
+  start: number;
+}
+
 export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
-  const [playing, setPlaying] = useState(false);
+  const [load, setLoad] = useState<EmbedLoad | null>(null);
+  const [fullscreen, setFullscreen] = useState(false);
   const [collapsed, setCollapsed] = useVideosCollapsed();
-  const { t } = useLocale();
+  const [captions, setCaptions] = useVideoCaptions();
+  const { t, locale } = useLocale();
+  const screen = useWindowDimensions();
+  const web = useRef<WebView>(null);
+  // The second the embed last reported, for reopening at the same moment.
+  const position = useRef(0);
   const id = youTubeId(url);
+  const playing = load !== null;
+  const cc = resolveCaptions(captions, locale);
+
+  // Hand a changed choice to whichever player is on screen.
+  useEffect(() => {
+    web.current?.injectJavaScript(
+      `window.openmacro && window.openmacro.setCaptions(${JSON.stringify(cc)}); true;`,
+    );
+  }, [cc]);
+
   if (!id) return null;
 
   const toggle = () => {
     // Collapsing unmounts the player, which stops it. Re-expanding therefore
     // comes back to the placeholder rather than resuming — the same press is
     // still required to contact Google, which is the promise this card makes.
-    if (!collapsed) setPlaying(false);
+    if (!collapsed) setLoad(null);
     setCollapsed(!collapsed);
   };
+
+  // Entering or leaving full screen swaps one WebView for another, so the new
+  // one starts where the old one was.
+  const setFull = (next: boolean) => {
+    setLoad({ cc, start: position.current });
+    setFullscreen(next);
+  };
+
+  const onMessage = (event: WebViewMessageEvent) => {
+    try {
+      const message = JSON.parse(event.nativeEvent.data) as { type?: string; time?: unknown };
+      if (message.type === 'video' && typeof message.time === 'number') {
+        position.current = message.time;
+      }
+    } catch {
+      // Not ours.
+    }
+  };
+
+  const player = load ? (
+    <WebView
+      ref={web}
+      source={{
+        uri: `${SITE_ORIGIN}/embed/${id}?cc=${load.cc}&app=1${load.start > 0 ? `&t=${load.start}` : ''}`,
+      }}
+      originWhitelist={['*']}
+      style={styles.web}
+      onMessage={onMessage}
+      // The player needs its own JS, and on iOS inline playback has to be
+      // allowed or tapping play throws it into the native fullscreen overlay —
+      // which, like YouTube's own full-screen button, drops the subtitles.
+      javaScriptEnabled
+      allowsInlineMediaPlayback
+      mediaPlaybackRequiresUserAction={false}
+      allowsFullscreenVideo={false}
+      startInLoadingState
+      renderLoading={() => (
+        <View style={styles.loading}>
+          <ActivityIndicator color={palette.inkFaint} />
+        </View>
+      )}
+    />
+  ) : null;
+
+  // Turned a quarter so the long side of the video runs along the long side of
+  // the phone. Already landscape (a tablet), it simply fills the screen.
+  const portrait = screen.height > screen.width;
+  const fullFrame = portrait
+    ? {
+        width: screen.height,
+        height: screen.width,
+        transform: [{ rotate: '90deg' }],
+      }
+    : { width: screen.width, height: screen.height };
 
   return (
     <View style={styles.card}>
       {collapsed ? null : (
         <View style={styles.frame}>
           {playing ? (
-            <WebView
-              source={{ uri: `${SITE_ORIGIN}/embed/${id}` }}
-              originWhitelist={['*']}
-              style={styles.web}
-              // The player needs its own JS, and on iOS inline playback has to be
-              // allowed or tapping play throws it into the fullscreen overlay.
-              javaScriptEnabled
-              allowsInlineMediaPlayback
-              mediaPlaybackRequiresUserAction={false}
-              allowsFullscreenVideo
-              startInLoadingState
-              renderLoading={() => (
-                <View style={styles.loading}>
-                  <ActivityIndicator color={palette.inkFaint} />
-                </View>
-              )}
-            />
+            // One player at a time: while the full-screen one plays, this
+            // frame stays black rather than playing the same video twice.
+            fullscreen ? null : player
           ) : (
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={t('lesson.video.play', { title })}
               style={styles.placeholder}
-              onPress={() => setPlaying(true)}
+              onPress={() => {
+                position.current = 0;
+                setLoad({ cc, start: 0 });
+              }}
             >
               <View style={styles.playButton}>
                 <Text style={styles.playGlyph}>▶︎</Text>
@@ -151,6 +249,57 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
           {collapsed ? t('lesson.video.show') : t('lesson.video.hide')}
         </Text>
       </Pressable>
+
+      {collapsed ? null : (
+        <View style={styles.controls}>
+          {/* One press cycles Auto → Português → English → Off, remembered for
+              every video — the same control the website shows beside its
+              player. A playing video switches without restarting. */}
+          <Pressable
+            accessibilityRole="button"
+            style={styles.control}
+            onPress={() => setCaptions(nextCaptions(captions))}
+          >
+            <Text style={styles.toggle}>
+              {t('lesson.video.captions', { choice: t(`lesson.video.captions.${captions}`) })}
+            </Text>
+          </Pressable>
+          {playing ? (
+            <Pressable
+              accessibilityRole="button"
+              style={styles.control}
+              onPress={() => setFull(true)}
+            >
+              <Text style={styles.toggle}>{t('lesson.video.fullscreen')}</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      )}
+
+      <Modal
+        visible={fullscreen && playing}
+        animationType="fade"
+        // Android's back gesture closes it, back to the card.
+        onRequestClose={() => setFull(false)}
+        statusBarTranslucent
+        supportedOrientations={['portrait', 'landscape']}
+      >
+        <StatusBar hidden />
+        <View style={styles.fullscreen}>
+          <View style={fullFrame}>
+            {fullscreen ? player : null}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('lesson.video.exitFullscreen')}
+              hitSlop={12}
+              style={styles.close}
+              onPress={() => setFull(false)}
+            >
+              <Text style={styles.closeGlyph}>✕</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -248,6 +397,36 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+  },
+  controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
+  },
+  control: {
+    paddingVertical: spacing.xs,
+  },
+  fullscreen: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000',
+  },
+  close: {
+    position: 'absolute',
+    top: spacing.lg,
+    right: spacing.lg,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.55)',
+  },
+  closeGlyph: {
+    fontSize: 18,
+    color: '#fff',
   },
   metaLines: {
     flex: 1,

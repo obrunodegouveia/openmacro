@@ -24,9 +24,12 @@ interface Recipient {
   id: string;
   key: string;
   label: string;
-  address: string;
+  address: string | null;
   status: "pending" | "active" | "disabled";
+  scheme: "module" | "earnings";
   amountEuros: string | null;
+  xpRateEuros: string | null;
+  hourRateEuros: string | null;
   claimantEmail: string | null;
   note: string | null;
   activatedAt: string | null;
@@ -299,13 +302,18 @@ export function Treasury() {
                 </p>
                 <StatusPill status={r.status} />
               </div>
-              <p className="mt-1 font-mono text-xs text-neutral-500 break-all" title={r.address}>
-                {short(r.address)}
+              <p className="mt-1 font-mono text-xs text-neutral-500 break-all" title={r.address ?? ""}>
+                {r.address ? short(r.address) : s("treasury.noAddress")}
               </p>
               <p className="mt-1 text-xs text-neutral-500">
-                {r.amountEuros
-                  ? s("treasury.perModule", { amount: r.amountEuros })
-                  : s("treasury.defaultAmount")}
+                {r.scheme === "earnings"
+                  ? s("treasury.scheme.earnings", {
+                      xp: r.xpRateEuros ?? "0.002",
+                      hour: r.hourRateEuros ?? "0.20",
+                    })
+                  : r.amountEuros
+                    ? s("treasury.perModule", { amount: r.amountEuros })
+                    : s("treasury.defaultAmount")}
                 {r.note ? ` · ${r.note}` : ""}
               </p>
               <p className="mt-1 text-xs text-neutral-500">
@@ -317,7 +325,7 @@ export function Treasury() {
               <div className="mt-3 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  disabled={busy !== null || r.status === "disabled"}
+                  disabled={busy !== null || r.status === "disabled" || !r.address}
                   onClick={() => void act("test-send", { id: r.id, amountEuros: "1.00" }, r.id)}
                   className="rounded-lg border border-black/15 px-3 py-1.5 text-xs disabled:opacity-50 dark:border-white/20"
                 >
@@ -328,7 +336,8 @@ export function Treasury() {
                     type="button"
                     disabled={busy !== null}
                     onClick={() => {
-                      if (window.confirm(`Make ${r.label} payable at ${r.address}?`)) {
+                      const where = r.address ?? "the address they choose themselves";
+                      if (window.confirm(`Make ${r.label} payable at ${where}?`)) {
                         void act("set-status", { id: r.id, status: "active" }, r.id);
                       }
                     }}
@@ -436,9 +445,11 @@ function AddRecipient({
 }) {
   const s = useSiteText();
   const [open, setOpen] = React.useState(false);
-  const [form, setForm] = React.useState({
+  const empty = {
     key: "", label: "", address: "", amountEuros: "", claimantEmail: "", note: "",
-  });
+    scheme: "module" as "module" | "earnings",
+  };
+  const [form, setForm] = React.useState(empty);
 
   if (!open) {
     return (
@@ -459,7 +470,7 @@ function AddRecipient({
         event.preventDefault();
         onAdd(form);
         setOpen(false);
-        setForm({ key: "", label: "", address: "", amountEuros: "", claimantEmail: "", note: "" });
+        setForm(empty);
       }}
     >
       <Field label={s("treasury.field.key")} value={form.key} placeholder={s("treasury.field.keyPlaceholder")}
@@ -474,6 +485,17 @@ function AddRecipient({
         onChange={(v) => setForm((f) => ({ ...f, claimantEmail: v }))} />
       <Field label={s("treasury.field.note")} value={form.note} placeholder=""
         onChange={(v) => setForm((f) => ({ ...f, note: v }))} />
+      <label className="flex items-start gap-2 text-xs text-neutral-600 dark:text-neutral-300">
+        <input
+          type="checkbox"
+          checked={form.scheme === "earnings"}
+          onChange={(event) =>
+            setForm((f) => ({ ...f, scheme: event.target.checked ? "earnings" : "module" }))
+          }
+          className="mt-0.5"
+        />
+        <span>{s("treasury.field.earnings")}</span>
+      </label>
 
       <p className="text-xs text-neutral-500">
         {s("treasury.addedPending")}
