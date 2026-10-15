@@ -50,10 +50,10 @@ export default async function EmbedPage({
   searchParams,
 }: {
   params: Promise<{ video: string }>;
-  searchParams: Promise<{ cc?: string }>;
+  searchParams: Promise<{ cc?: string; t?: string; app?: string }>;
 }) {
   const { video } = await params;
-  const { cc } = await searchParams;
+  const { cc, t, app } = await searchParams;
   const s = await getSiteText();
 
   // Validated, not trusted: this id is interpolated into a URL, and the app is
@@ -64,6 +64,9 @@ export default async function EmbedPage({
   // own language setting. Anything unrecognised means no subtitles, which is
   // what this page did before the parameter existed.
   const captions: CaptionChoice = cc === "pt" || cc === "en" ? cc : "off";
+  // Where to resume, when the app reopens the video full screen or back again.
+  const seconds = Number.parseInt(t ?? "", 10);
+  const start = Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds, 24 * 3600) : 0;
 
   return (
     <div
@@ -79,7 +82,15 @@ export default async function EmbedPage({
       {/* The same player as the site's own video cards, so subtitles choose
           the same track in the app as in the browser. It also posts
           play/pause to the app through window.ReactNativeWebView. */}
-      <YouTubePlayer videoId={video} captions={captions} title={s("embed.frameTitle")} />
+      {/* `app=1` is sent by app builds that draw their own full screen. Older
+          builds omit it and keep YouTube's button, which is all they have. */}
+      <YouTubePlayer
+        videoId={video}
+        captions={captions}
+        title={s("embed.frameTitle")}
+        inApp={app === "1"}
+        start={start}
+      />
     </div>
   );
 }

@@ -30,6 +30,18 @@ import * as React from "react";
  * It also reports whether the video is playing, so time spent watching counts
  * as active time for a learner paid by time (lib/activity.ts). Inside the
  * app's WebView the same state is posted to React Native.
+ *
+ * INSIDE THE APP (`inApp`) THREE MORE THINGS HOLD, all for the subtitles:
+ *
+ *   - YouTube's own full-screen button is hidden (`fs: 0`). On an iPhone it
+ *     hands the <video> to Apple's native player, which knows nothing about
+ *     YouTube's subtitles — they are drawn by the page, not carried in the
+ *     stream — so they vanish the moment the learner goes full screen. The app
+ *     offers its own full screen instead, which is this same page made large.
+ *   - The app can change the subtitles of the running video through
+ *     `window.openmacro.setCaptions`, so switching does not restart it.
+ *   - The playback position is posted with play/pause and every few seconds,
+ *     so the app can reopen the video at the same moment (`start`).
  */
 
 /** 'off', or a language whose subtitles to show. */
@@ -43,7 +55,9 @@ interface CaptionTrack {
 }
 interface YTPlayer {
   getOption(module: "captions", option: "tracklist"): CaptionTrack[] | undefined;
+  getCurrentTime(): number;
   setOption(module: "captions", option: "track", value: Partial<CaptionTrack>): void;
+  setOption(module: "captions", option: "fontSize", value: number): void;
   loadModule(module: "captions"): void;
   unloadModule(module: "captions"): void;
   destroy(): void;
@@ -70,6 +84,8 @@ declare global {
     YT?: YTNamespace;
     onYouTubeIframeAPIReady?: () => void;
     ReactNativeWebView?: { postMessage(message: string): void };
+    /** Installed in app mode only, for the app's injected JavaScript. */
+    openmacro?: { setCaptions(choice: string): void };
   }
 }
 
@@ -132,22 +148,32 @@ export function pickTrack(
 
 export function YouTubePlayer({
   videoId,
-  captions,
+  captions: captionsProp,
   title,
   onPlayingChange,
+  inApp = false,
+  start = 0,
 }: {
   videoId: string;
   captions: CaptionChoice;
   title: string;
   onPlayingChange?: (playing: boolean) => void;
+  /** Rendered by /embed for the mobile app. See the header. */
+  inApp?: boolean;
+  /** Whole seconds to start from. */
+  start?: number;
 }) {
   const mount = React.useRef<HTMLDivElement>(null);
   const player = React.useRef<YTPlayer | null>(null);
   const [failed, setFailed] = React.useState(false);
+  // What the app asked for after load, which wins over the prop it loaded with.
+  const [remoteCaptions, setRemoteCaptions] = React.useState<CaptionChoice | null>(null);
+  const captions = remoteCaptions ?? captionsProp;
 
   // Kept in refs so changing the subtitle choice re-applies it to the running
   // player instead of tearing the video down and starting again.
   const captionsRef = React.useRef(captions);
+  const inAppRef = React.useRef(inApp);
   const playingRef = React.useRef(onPlayingChange);
   React.useEffect(() => {
     playingRef.current = onPlayingChange;
@@ -170,6 +196,11 @@ export function YouTubePlayer({
       const tracks = p.getOption("captions", "tracklist") ?? [];
       const track = pickTrack(tracks, choice);
       if (track) p.setOption("captions", "track", track);
+      // A phone-sized player draws subtitles at a size meant for a desk. One
+      // step up (the scale runs -1 to 3) keeps two lines legible at arm's
+      // length without covering the picture; full screen scales it further.
+      // iOS's player ignores it and draws its own size, which is harmless.
+      if (inAppRef.current) p.setOption("captions", "fontSize", 1);
     } catch {
       // The captions module is not ready yet; onApiChange calls this again
       // once it is.
@@ -181,11 +212,42 @@ export function YouTubePlayer({
     applyCaptions();
   }, [captions, applyCaptions]);
 
+  // The app's handle on the running player. Only in app mode: on the site the
+  // choice comes from the card's own button, and nothing else should drive it.
+  React.useEffect(() => {
+    if (!inApp) return;
+    window.openmacro = {
+      setCaptions: (choice) => {
+        if (choice === "pt" || choice === "en" || choice === "off") setRemoteCaptions(choice);
+      },
+    };
+    return () => {
+      delete window.openmacro;
+    };
+  }, [inApp]);
+
   React.useEffect(() => {
     let cancelled = false;
+    let ticker: ReturnType<typeof setInterval> | null = null;
+    const position = () => {
+      try {
+        return Math.floor(player.current?.getCurrentTime() ?? 0);
+      } catch {
+        return 0;
+      }
+    };
+    const post = (playing: boolean) =>
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "video", playing, time: position() }),
+      );
     const report = (playing: boolean) => {
       playingRef.current?.(playing);
-      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: "video", playing }));
+      post(playing);
+      if (ticker) clearInterval(ticker);
+      ticker = null;
+      // While playing, keep the app's idea of the position fresh, so going full
+      // screen (which reloads this page larger) resumes where the learner was.
+      if (playing && window.ReactNativeWebView) ticker = setInterval(() => post(true), 2000);
     };
 
     loadApi()
@@ -204,6 +266,9 @@ export function YouTubePlayer({
             rel: 0,
             playsinline: 1,
             modestbranding: 1,
+            ...(start > 0 ? { start: Math.floor(start) } : {}),
+            // In the app, no YouTube full screen: see the header.
+            ...(inApp ? { fs: 0 } : {}),
             // Ask for captions from the first frame; the track is then
             // corrected from the real list in onApiChange.
             cc_load_policy: captionsRef.current === "off" ? 0 : 1,
@@ -224,15 +289,21 @@ export function YouTubePlayer({
     return () => {
       cancelled = true;
       report(false);
+      if (ticker) clearInterval(ticker);
       player.current?.destroy();
       player.current = null;
     };
+    // `start` and `inApp` are read once, when the player is created; a change
+    // to either arrives as a fresh page load, never as a prop update.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoId, applyCaptions]);
 
   if (failed) {
     // The API script was blocked (an extension, a strict network). Fall back to
     // the plain embed so the video still plays, with captions requested by URL.
     const params = new URLSearchParams({ autoplay: "1", rel: "0", playsinline: "1" });
+    if (start > 0) params.set("start", String(Math.floor(start)));
+    if (inApp) params.set("fs", "0");
     if (captions !== "off") {
       params.set("cc_load_policy", "1");
       params.set("cc_lang_pref", captions);

@@ -133,6 +133,8 @@ export const en = {
   'lesson.video.captions.pt': 'Português',
   'lesson.video.captions.en': 'English',
   'lesson.video.captions.off': 'Off',
+  'lesson.video.fullscreen': 'Full screen',
+  'lesson.video.exitFullscreen': 'Close full screen',
 
   // ---- the challenge types -----------------------------------------------
   'challenge.order.dragHint': 'Press and hold a step, then drag to reorder',

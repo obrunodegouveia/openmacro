@@ -120,6 +120,8 @@ export const ptPT: UiDictionary = {
   'lesson.video.captions.pt': 'Português',
   'lesson.video.captions.en': 'Inglês',
   'lesson.video.captions.off': 'Desligadas',
+  'lesson.video.fullscreen': 'Ecrã inteiro',
+  'lesson.video.exitFullscreen': 'Fechar ecrã inteiro',
   'challenge.order.dragHint': 'Mantém um passo premido e arrasta para reordenar',
   'challenge.order.position': 'Passo {number, number} de {total, number}: {label}',
   'challenge.order.moveUp': 'Mover para cima',
