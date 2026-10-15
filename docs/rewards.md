@@ -242,9 +242,13 @@ In `/dashboard/treasury`, add the recipient with their **claimant email**, tick
 is no address to test yet. The learner then sees the panel on `/dashboard`,
 enters their EURC address on Base, and can withdraw once they reach €1.
 
-This exists on the website only. Real-money rewards inside the iOS app run into
-App Store guideline 3.1.5(iii), and adding them by OTA update would sidestep
-review. Time in the iPhone app is not counted; XP earned there is, because it
+This exists on the website only. App Store guideline 3.1.5, item (v), says
+"cryptocurrency apps may not offer currency for completing tasks", and paying
+EURC for XP and time spent is close enough to that to put the app at risk.
+Guideline 2.3.1 also rules out the workaround of reporting time from the app
+without showing money there: hidden or undocumented features are themselves
+grounds for rejection, and shipping them by OTA update sidesteps review. Time
+in the iPhone app is therefore not counted; XP earned there is, because it
 syncs to `lesson_progress`.
 
 ---
