@@ -14,10 +14,15 @@
  * timing, which is why it was reported as sounds being *sometimes* out of
  * sync rather than always.
  *
+ * The module now keeps a small pool of players per cue, each parked at
+ * position 0, so a cue plays at once with no seek in front of it, and a player
+ * rewinds itself after its clip ends. The rule still holds, by a different
+ * route: a player is only "ready" once its rewind has resolved.
+ *
  * Nothing about that is caught by a typechecker or a linter, and it needs a
  * device to hear. So this drives the real module against a stub player that
  * records every call, under interleavings a device would only produce
- * occasionally: cues fired faster than seeks resolve, a cue fired the instant
+ * occasionally: cues fired faster than any clip ends, a cue fired the instant
  * the previous clip ends, and sound switched off while a rewind is in flight.
  *
  * `react-native`, `expo-haptics` and `expo-audio` are stubbed through a
@@ -57,7 +62,8 @@ writeFileSync(
   [
     'import { record, deferSeek, players } from ' + HARNESS_URL + ';',
     'class StubPlayer {',
-    '  constructor(id) { this.id = id; this.position = 0; this.playing = false; }',
+    '  constructor(id) { this.id = id; this.position = 0; this.playing = false; this.isLoaded = true; this.listeners = []; }',
+    '  addListener(event, fn) { if (event === "playbackStatusUpdate") this.listeners.push(fn); return { remove() {} }; }',
     "  play() { record({ player: this.id, call: 'play', position: this.position }); this.playing = true; }",
     "  pause() { record({ player: this.id, call: 'pause' }); this.playing = false; }",
     "  remove() { record({ player: this.id, call: 'remove' }); }",
@@ -67,7 +73,10 @@ writeFileSync(
     '  }',
     '  // Only the harness calls this: a clip reaching its natural end leaves a',
     '  // real player parked at the end position, which is where play() is a no-op.',
-    '  finish(duration) { this.position = duration; this.playing = false; }',
+    '  finish(duration) {',
+    '    this.position = duration; this.playing = false;',
+    '    for (const fn of this.listeners) fn({ didJustFinish: true });',
+    '  }',
     '}',
     'let next = 0;',
     "export function createAudioPlayer() { const p = new StubPlayer('p' + next++); players.push(p); return p; }",
@@ -154,25 +163,24 @@ reset();
 
 console.log('The invariant');
 feedback.emitFeedback('correct');
+const immediate = harness.calls.filter((c) => c.call === 'play');
+check('a single cue plays at once, before any rewind is awaited', immediate.length === 1);
+check('…from position zero', immediate.every((c) => c.position === 0), `positions: ${immediate.map((c) => c.position)}`);
+check('…with no seek in front of it', harness.calls.findIndex((c) => c.call === 'seekTo') === -1);
 await settle();
-const plays = harness.calls.filter((c) => c.call === 'play');
-check('a single cue plays', plays.length === 1);
-check('…from position zero', plays.every((c) => c.position === 0), `positions: ${plays.map((c) => c.position)}`);
-check(
-  '…and only after its rewind resolved',
-  harness.calls.findIndex((c) => c.call === 'seekTo') < harness.calls.findIndex((c) => c.call === 'play'),
-);
 
 reset();
-console.log('\nCues faster than the rewinds resolve (dragging a slider)');
+console.log('\nCues faster than any clip ends (dragging a slider)');
 for (let i = 0; i < 12; i++) feedback.emitFeedback('select');
 await settle();
 const burst = harness.calls.filter((c) => c.call === 'play');
+const burstPlayers = new Set(burst.map((c) => c.player));
 check('12 rapid cues never play from a stale position', burst.every((c) => c.position === 0), `positions: ${[...new Set(burst.map((c) => c.position))]}`);
-check('…and collapse to one sound rather than stacking up', burst.length === 1, `${burst.length} play(s) for 12 fires`);
+check('…every fire is heard rather than dropped', burst.length === 12, `${burst.length} play(s) for 12 fires`);
+check('…and at most three voices sound at once', burstPlayers.size <= 3, `${burstPlayers.size} player(s) used`);
 
 reset();
-console.log('\nCues at a realistic pace (each rewind lands before the next)');
+console.log('\nCues at a realistic pace');
 let playedInSequence = 0;
 for (let i = 0; i < 6; i++) {
   feedback.emitFeedback('select');
@@ -180,32 +188,54 @@ for (let i = 0; i < 6; i++) {
   playedInSequence += harness.calls.filter((c) => c.call === 'play').length;
   reset();
 }
-check(
-  'six separated cues play six times — collapsing only applies to a burst',
-  playedInSequence === 6,
-  `${playedInSequence} play(s) for 6 fires`,
-);
+check('six separated cues play six times', playedInSequence === 6, `${playedInSequence} play(s) for 6 fires`);
 
 reset();
 console.log('\nA cue fired the instant the previous clip ended');
 feedback.emitFeedback('correct');
 await settle();
-// Simulate the clip running to its end: a real player is left sitting at the
-// end position, which is where `play()` does nothing at all.
+// Every clip runs to its end: a real player is left at the end position, where
+// play() does nothing, and announces it with didJustFinish.
 for (const player of harness.players) player.finish(0.4);
 reset();
+// Fire before those rewinds land.
 feedback.emitFeedback('correct');
 await settle();
 const afterEnd = harness.calls.filter((c) => c.call === 'play');
 check(
-  'it is rewound before playing, not played from the end',
+  'it never plays a player parked at the end',
   afterEnd.length > 0 && afterEnd.every((c) => c.position === 0),
   `positions: ${afterEnd.map((c) => c.position)}`,
 );
 check('…so the cue is not silently dropped', afterEnd.length === 1);
 
 reset();
+console.log('\nA player restarted while its post-clip rewind is in flight');
+// Saturate 'advance', let every clip end (rewinds pending), then restart all
+// three before those rewinds land.
+for (let i = 0; i < 3; i++) feedback.emitFeedback('advance');
+await settle();
+const advancePlayers = [...new Set(harness.calls.filter((c) => c.call === 'play').map((c) => c.player))];
+for (const player of harness.players.filter((p) => advancePlayers.includes(p.id))) player.finish(0.16);
+for (let i = 0; i < 3; i++) feedback.emitFeedback('advance');
+await settle();
+reset();
+// Those three are sounding again; none may be handed out as ready.
+feedback.emitFeedback('advance');
+const handedOut = harness.calls.filter((c) => c.call === 'play' && c.position !== 0);
+await settle();
+check(
+  'a sounding player is never treated as ready',
+  handedOut.length === 0 && harness.calls.some((c) => c.call === 'seekTo'),
+  `${harness.calls.filter((c) => c.call === 'play').length} play(s) after a seek`,
+);
+
+reset();
 console.log('\nSound switched off while a rewind is in flight');
+// Make every 'complete' player busy, so the next cue has to rewind one first.
+for (let i = 0; i < 3; i++) feedback.emitFeedback('complete');
+await settle();
+reset();
 feedback.emitFeedback('complete');
 feedback.setSoundEnabled(false);
 await settle();
@@ -232,13 +262,15 @@ check('an absent pack name falls back to classic', feedback.toSoundPack(undefine
 check('a known pack name is kept', feedback.toSoundPack('arcade') === 'arcade');
 
 const before = harness.players.length;
+// Every player in use belongs to the current pack: six cues, a pool each.
+const perPack = before;
 feedback.setSoundPack('arcade');
 check(
   'switching pack tears the old players down',
-  harness.calls.filter((c) => c.call === 'remove').length === 6,
-  `${harness.calls.filter((c) => c.call === 'remove').length} removed`,
+  harness.calls.filter((c) => c.call === 'remove').length === perPack,
+  `${harness.calls.filter((c) => c.call === 'remove').length} removed of ${perPack}`,
 );
-check('…and rebuilds them for the new pack', harness.players.length === before + 6);
+check('…and rebuilds them for the new pack', harness.players.length === before + perPack);
 
 reset();
 feedback.emitFeedback('correct');
@@ -251,7 +283,7 @@ feedback.setSoundPack('arcade');
 check('switching to the pack already in use does nothing', harness.calls.length === 0);
 feedback.setSoundPack('classic');
 
-console.log('\nSeek timing instrumentation');
+console.log('\nStart timing instrumentation');
 feedback.setAudioTimingEnabled(false);
 reset();
 feedback.emitFeedback('correct');
