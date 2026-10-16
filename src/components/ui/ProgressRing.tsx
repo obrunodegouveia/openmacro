@@ -17,7 +17,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type ColorValue } from 'react-native';
 
 import { palette } from '@/theme/tokens';
 
@@ -26,8 +26,8 @@ export interface ProgressRingProps {
   progress: number;
   size?: number;
   stroke?: number;
-  color?: string;
-  track?: string;
+  color?: ColorValue;
+  track?: ColorValue;
   /** Rendered in the centre. */
   children?: ReactNode;
 }

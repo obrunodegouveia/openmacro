@@ -10,7 +10,7 @@
  */
 
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View, type ColorValue } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -509,7 +509,7 @@ function LessonNotFound({ lessonId }: { lessonId?: string }) {
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: string; tone: string }) {
+function Stat({ label, value, tone }: { label: string; value: string; tone: ColorValue }) {
   return (
     <View style={[styles.stat, { borderColor: tone }]}>
       <Text style={styles.statLabel}>{label}</Text>

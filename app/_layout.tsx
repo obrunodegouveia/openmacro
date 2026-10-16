@@ -5,11 +5,12 @@
  * files under `app/` are the only place navigation is declared.
  */
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Stack } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 
 import { env } from '@/config/env';
 import { MODULES } from '@openmacro/core/content/registry';
@@ -25,9 +26,30 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { LocaleProvider } from '@/providers/LocaleProvider';
 import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';
-import { palette } from '@/theme/tokens';
+import { palette, resolvePalette } from '@/theme/tokens';
 
 export default function RootLayout() {
+  /*
+   * The navigation theme, from the same tokens. Without it React Navigation
+   * assumes light, and the native header resolves its blur as light over a
+   * dark page. Theme colours must be strings, hence resolvePalette.
+   */
+  const scheme = useColorScheme();
+  const navigationTheme = useMemo(() => {
+    const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
+    const colors = resolvePalette(scheme);
+    return {
+      ...base,
+      colors: {
+        ...base.colors,
+        primary: colors.mintDark,
+        background: colors.canvas,
+        card: colors.surface,
+        text: colors.ink,
+        border: colors.border,
+      },
+    };
+  }, [scheme]);
   // Apply the feedback switches from .env once, at boot.
   useEffect(() => {
     setHapticsEnabled(env.hapticsEnabled);
@@ -68,7 +90,8 @@ export default function RootLayout() {
         <AuthProvider>
           <ContentUpdateProvider>
           <ProgressProvider>
-            <StatusBar style="dark" />
+            <StatusBar style="auto" />
+            <ThemeProvider value={navigationTheme}>
             <Stack
               screenOptions={{
                 headerShown: false,
@@ -105,6 +128,7 @@ export default function RootLayout() {
                 options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
               />
             </Stack>
+            </ThemeProvider>
           </ProgressProvider>
           </ContentUpdateProvider>
         </AuthProvider>

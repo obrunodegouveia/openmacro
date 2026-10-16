@@ -7,7 +7,7 @@
  */
 
 import { memo, useCallback } from 'react';
-import { Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type ViewStyle, type ColorValue } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -20,16 +20,16 @@ import { palette, radius, spacing, typography } from '@/theme/tokens';
 export type ActionButtonTone = 'primary' | 'danger' | 'neutral' | 'ghost';
 
 interface ToneStyle {
-  face: string;
-  shadow: string;
-  label: string;
-  border?: string;
+  face: ColorValue;
+  shadow: ColorValue;
+  label: ColorValue;
+  border?: ColorValue;
 }
 
 const TONES: Record<ActionButtonTone, ToneStyle> = {
-  primary: { face: palette.mint, shadow: palette.mintDark, label: '#FFFFFF' },
-  danger: { face: palette.coral, shadow: palette.coralDark, label: '#FFFFFF' },
-  neutral: { face: palette.blue, shadow: palette.blueDark, label: '#FFFFFF' },
+  primary: { face: palette.mint, shadow: palette.mintBevel, label: '#FFFFFF' },
+  danger: { face: palette.coral, shadow: palette.coralBevel, label: '#FFFFFF' },
+  neutral: { face: palette.blue, shadow: palette.blueBevel, label: '#FFFFFF' },
   ghost: {
     face: palette.surface,
     shadow: palette.border,

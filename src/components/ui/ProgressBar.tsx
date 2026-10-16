@@ -7,7 +7,7 @@
  */
 
 import { memo, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type ColorValue } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -21,8 +21,8 @@ export interface ProgressBarProps {
   /** 0..1 */
   progress: number;
   height?: number;
-  trackColor?: string;
-  fillColor?: string;
+  trackColor?: ColorValue;
+  fillColor?: ColorValue;
 }
 
 function ProgressBarComponent({

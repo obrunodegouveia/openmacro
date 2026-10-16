@@ -6,7 +6,7 @@
  */
 
 import { memo } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 import { useAuth } from '@/providers/AuthProvider';
@@ -17,6 +17,7 @@ import type { Translator } from '@openmacro/core/i18n';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 function AccountBarComponent() {
+  const scheme = useColorScheme();
   const {
     enabled,
     loading,
@@ -106,7 +107,15 @@ function AccountBarComponent() {
       {appleAvailable ? (
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+          // Black on light, white on dark, as Apple's guidelines ask. The
+          // native button does not adapt on its own.
+          buttonStyle={
+            scheme === 'dark'
+              ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+              : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+          }
+          // Remount on change: the native button reads its style once.
+          key={scheme ?? 'light'}
           cornerRadius={radius.lg}
           style={styles.appleButton}
           onPress={() => void signInWithApple()}
