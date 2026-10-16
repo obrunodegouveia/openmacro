@@ -121,7 +121,7 @@ const TRACKS: Omit<Track, "lessonCount">[] = [
   {
     id: "start-here",
     index: 1,
-    title: "Start Here",
+    title: "Everyday Money",
     promise:
       "Understand the number in your banking app, and why a decision in Frankfurt reaches your mortgage.",
     concepts: [

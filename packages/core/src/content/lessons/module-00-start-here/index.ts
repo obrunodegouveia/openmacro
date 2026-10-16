@@ -1,5 +1,5 @@
 /**
- * Module 0 — Start Here
+ * Module 0 — Everyday Money (id `start-here`)
  *
  * The on-ramp. Written because the course had three genuinely beginner lessons
  * — about eighteen minutes — before it reached "Pegs, and Why They Break", and
@@ -40,7 +40,10 @@ import { readingOneHeadlineLesson } from './lesson-06-reading-one-headline';
 
 export const moduleStartHere = defineModule({
   id: 'start-here',
-  title: 'Start Here',
+  // Was "Start Here". It is the second module now that Banking and Money
+  // leads, so the name described a position it no longer had. The id stays
+  // `start-here`: saved progress and shared links are keyed on it.
+  title: 'Everyday Money',
   description:
     'No background needed. What the number in your banking app actually is, what a bank does with it, what an interest rate is for, and why a decision in Frankfurt reaches your mortgage.',
   accent: 'mint',
