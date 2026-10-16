@@ -14,7 +14,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 
 import { ReminderScheduler } from '@/components/system/ReminderScheduler';
-
+import { WidgetSync } from '@/components/system/WidgetSync';
 import { env } from '@/config/env';
 import { MODULES } from '@openmacro/core/content/registry';
 import { validateModules } from '@openmacro/core/content/validate';
@@ -109,6 +109,7 @@ export default function RootLayout() {
           <ProgressProvider>
             <StatusBar style="auto" />
             <ReminderScheduler />
+            <WidgetSync />
             <ThemeProvider value={navigationTheme}>
             <Stack
               screenOptions={{
