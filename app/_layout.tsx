@@ -11,6 +11,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import * as Notifications from 'expo-notifications';
+
+import { ReminderScheduler } from '@/components/system/ReminderScheduler';
 
 import { env } from '@/config/env';
 import { MODULES } from '@openmacro/core/content/registry';
@@ -27,6 +30,20 @@ import { LocaleProvider } from '@/providers/LocaleProvider';
 import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';
 import { palette, resolvePalette } from '@/theme/tokens';
+
+/*
+ * The streak reminder is for when the app is closed. If it fires while the
+ * learner is already in it, keep it in the notification list but do not
+ * cover the lesson with a banner.
+ */
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: false,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function RootLayout() {
   /*
@@ -91,6 +108,7 @@ export default function RootLayout() {
           <ContentUpdateProvider>
           <ProgressProvider>
             <StatusBar style="auto" />
+            <ReminderScheduler />
             <ThemeProvider value={navigationTheme}>
             <Stack
               screenOptions={{

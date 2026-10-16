@@ -22,6 +22,7 @@ import { Chevron } from '@/components/ui/CourseRows';
 import { DeleteAccount } from '@/components/ui/DeleteAccount';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
+import { ReminderSetting } from '@/components/ui/ReminderSetting';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { StreakBadge } from '@/components/ui/StatusPills';
 import { TopScrim } from '@/components/ui/TopScrim';
@@ -139,6 +140,10 @@ export default function ProfileScreen() {
 
         <View style={styles.card}>
           <LanguagePicker />
+        </View>
+
+        <View style={styles.card}>
+          <ReminderSetting />
         </View>
 
         {/* ---- about ----------------------------------------------------
