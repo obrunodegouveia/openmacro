@@ -202,6 +202,9 @@ export default function TodayScreen() {
             >
               <View style={styles.reviewIcon}>
                 <SymbolView
+                  // Decorative: the control around it carries the label.
+                  accessible={false}
+                  accessibilityElementsHidden
                   name={{ ios: 'arrow.triangle.2.circlepath', android: 'autorenew', web: 'autorenew' }}
                   size={20}
                   tintColor={palette.blueDark}
@@ -252,6 +255,7 @@ export default function TodayScreen() {
         <Animated.View entering={enter(3)}>
           <Pressable
             accessibilityRole="button"
+            accessibilityLabel={t('today.browse', { count: statuses.length })}
             onPress={() => {
               emitFeedback('select');
               router.navigate('/course');
@@ -259,6 +263,9 @@ export default function TodayScreen() {
             style={({ pressed }) => [styles.browse, pressed && styles.pressed]}
           >
             <SymbolView
+              // Decorative: the control around it carries the label.
+              accessible={false}
+              accessibilityElementsHidden
               name={{ ios: 'map', android: 'map', web: 'map' }}
               size={20}
               tintColor={palette.mintDark}

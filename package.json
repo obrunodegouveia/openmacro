@@ -56,6 +56,7 @@
     "lint:content": "node ./scripts/validate-content.mjs",
     "check:exam": "node ./scripts/check-exam.mjs",
     "check:feedback": "node ./scripts/check-feedback.mjs",
+    "test:e2e": "maestro test .maestro",
     "check:review": "node ./scripts/check-review.mjs",
     "check:fingerprint": "node ./scripts/check-fingerprint.mjs",
     "check:objectives": "node ./scripts/check-objectives.mjs",

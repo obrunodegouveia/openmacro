@@ -138,6 +138,9 @@ function TabItem({ routeName, label, focused, onPress }: TabItemProps) {
       <View style={[styles.itemInner, focused && styles.itemInnerFocused]}>
         {icons ? (
           <SymbolView
+            // Decorative: the control around it carries the label.
+            accessible={false}
+            accessibilityElementsHidden
             name={focused ? icons.selected : icons.default}
             size={24}
             tintColor={tint}

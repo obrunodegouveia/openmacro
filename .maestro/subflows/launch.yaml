@@ -1,0 +1,8 @@
+# Shared start: a fresh app, loaded from the local bundler.
+appId: org.openmacro.app
+---
+- stopApp
+- openLink: "exp+openmacro://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081"
+- extendedWaitUntil:
+    visible: "Today"
+    timeout: 60000

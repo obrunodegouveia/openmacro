@@ -95,6 +95,9 @@ export default function ModuleScreen() {
               onPress={() => void share()}
             >
               <SymbolView
+                // Decorative: the control around it carries the label.
+                accessible={false}
+                accessibilityElementsHidden
                 name={{ ios: 'square.and.arrow.up', android: 'share', web: 'share' }}
                 size={20}
                 tintColor={palette.mintDark}
