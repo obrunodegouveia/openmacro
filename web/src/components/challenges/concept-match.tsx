@@ -28,8 +28,13 @@ export function ConceptMatchView({
   locked,
 }: ChallengeComponentProps<"concept_match">) {
   const s = useSiteText();
+  // Both columns in the same order as the app, from the same seeds.
+  const terms = React.useMemo(
+    () => seededShuffle(challenge.pairs, `${challenge.id}:terms`),
+    [challenge.pairs, challenge.id],
+  );
   const definitions = React.useMemo(
-    () => seededShuffle(challenge.pairs, challenge.id),
+    () => seededShuffle(challenge.pairs, `${challenge.id}:definitions`),
     [challenge.pairs, challenge.id],
   );
 
@@ -113,7 +118,7 @@ export function ConceptMatchView({
             activeTerm && !locked ? "hidden sm:flex" : "flex",
           )}
         >
-          {challenge.pairs.map((pair) => {
+          {terms.map((pair) => {
             const matched = pairings[pair.id];
             const verdict = verdictFor(pair.id);
             return (
