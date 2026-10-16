@@ -85,6 +85,9 @@ export default function CourseScreen() {
         <View style={styles.sticky}>
           <View style={styles.search}>
             <SymbolView
+              // Decorative: the control around it carries the label.
+              accessible={false}
+              accessibilityElementsHidden
               name={{ ios: 'magnifyingglass', android: 'search', web: 'search' }}
               size={16}
               tintColor={palette.inkMuted}
@@ -109,6 +112,9 @@ export default function CourseScreen() {
                 onPress={() => setQuery('')}
               >
                 <SymbolView
+                  // Decorative: the control around it carries the label.
+                  accessible={false}
+                  accessibilityElementsHidden
                   name={{ ios: 'xmark.circle.fill', android: 'cancel', web: 'cancel' }}
                   size={18}
                   tintColor={palette.inkFaint}

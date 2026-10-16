@@ -1,0 +1,16 @@
+appId: org.openmacro.app
+name: Tabs and a module page
+---
+- runFlow: subflows/launch.yaml
+- scrollUntilVisible:
+    element: "Browse all.*modules"
+- tapOn: "Profile"
+- assertVisible: "Free and open source"
+- tapOn: "Today"
+- assertVisible: "Next in this module|Start the course|Continue"
+# Last, because the module page is a push without the tab bar, and Maestro's
+# `back` is Android-only.
+- tapOn: "Course"
+- assertVisible: "Beginner"
+- tapOn: ".*Banking and Money.*"
+- assertVisible: "Lessons"

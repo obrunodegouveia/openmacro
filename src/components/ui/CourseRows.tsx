@@ -59,6 +59,9 @@ export function ModuleRow({
       >
         {finished ? (
           <SymbolView
+            // Decorative: the control around it carries the label.
+            accessible={false}
+            accessibilityElementsHidden
             name={{ ios: 'checkmark', android: 'check', web: 'check' }}
             size={16}
             tintColor={palette.goldDark}
@@ -124,6 +127,9 @@ export function LessonRow({
         >
           {state === 'done' ? (
             <SymbolView
+              // Decorative: the control around it carries the label.
+              accessible={false}
+              accessibilityElementsHidden
               name={{ ios: 'checkmark', android: 'check', web: 'check' }}
               size={13}
               tintColor={palette.surface}
@@ -157,6 +163,9 @@ export function LessonRow({
 export function Chevron() {
   return (
     <SymbolView
+      // Decorative: the control around it carries the label.
+      accessible={false}
+      accessibilityElementsHidden
       name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
       size={14}
       tintColor={palette.inkFaint}

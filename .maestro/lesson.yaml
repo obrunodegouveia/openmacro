@@ -1,0 +1,16 @@
+appId: org.openmacro.app
+name: Answer, check, read the explanation, continue
+---
+- runFlow: subflows/launch.yaml
+- openLink: "openmacro://lesson/who-pays-for-it"
+- extendedWaitUntil:
+    visible: "An economy at full employment.*"
+    timeout: 20000
+# The lesson title is shown under the progress bar.
+- assertVisible: "The Bill Arrives in One of Three Ways"
+- tapOn: "From civilian production.*"
+- tapOn: "Check"
+# The feedback sheet carries the explanation and the app's button label.
+- assertVisible: "The real constraint is capacity.*"
+- tapOn: "Continue"
+- assertVisible: "Match each way of paying.*"
