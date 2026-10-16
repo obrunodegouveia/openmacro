@@ -206,10 +206,16 @@ function poolFor(cue: FeedbackCue): PooledPlayer[] {
     // it at the start and can play with no seek in between.
     entry.player.addListener('playbackStatusUpdate', (status) => {
       if (!status.didJustFinish) return;
+      // Parked at the end now, where play() does nothing, until the rewind lands.
+      entry.ready = false;
+      const finishedRun = entry.startedAt;
       void entry.player
         .seekTo(0)
         .then(() => {
-          entry.ready = true;
+          // Restarted while this rewind was in flight: it is playing again,
+          // and calling it "ready" would let the next cue play() a sounding
+          // player — a no-op, so a dropped sound.
+          if (entry.startedAt === finishedRun) entry.ready = true;
         })
         .catch(() => {});
     });
