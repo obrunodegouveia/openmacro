@@ -63,6 +63,13 @@ const light = {
   /** Drop shadows. Dark in both appearances: a light shadow reads as a glow. */
   shadow: '#0B1220',
 
+  /**
+   * Text on the bright fills (mint, coral, gold), in both appearances. White
+   * on mint measured 2.4:1 and on coral 2.8:1, below even the 3:1 allowed for
+   * large bold labels; this dark ink is 8.8:1 and 6.4:1.
+   */
+  onFill: '#0B1220',
+
   /*
    * Text. inkMuted and inkFaint used to be #7B8794 and #B4BEC9, which
    * measured 3.5:1 and 1.8:1 on the canvas: secondary text failed WCAG AA
@@ -161,6 +168,25 @@ export const typography = {
  */
 export const elevation = {
   buttonOffset: 4,
+} as const;
+
+/**
+ * Caps on Dynamic Type, for `maxFontSizeMultiplier`.
+ *
+ * Body text scales all the way, as iOS intends. These are for what Apple's own
+ * text styles also hold back: large titles grow far less than body text, and
+ * bar chrome (tab labels, the hearts and streak counters) barely grows, because
+ * at the largest accessibility sizes an uncapped 23pt title broke words in
+ * half ("employm-ent") and the lesson header squeezed its progress bar to a
+ * sliver.
+ */
+export const fontScale = {
+  /** Tab labels, counters in a header bar. */
+  chrome: 1.3,
+  /** Screen titles and question prompts. */
+  title: 1.7,
+  /** Very large numerals, such as a simulation readout. */
+  display: 1.4,
 } as const;
 
 export const theme = { palette, spacing, radius, typography, elevation } as const;

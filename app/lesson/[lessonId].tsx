@@ -36,7 +36,7 @@ import { recordLessonOutcome } from '@/services/reviewStore';
 import { getModuleForLesson } from '@openmacro/core/content/registry';
 import { useProgress } from '@/providers/ProgressProvider';
 import { useCourse } from '@/hooks/useCourse';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 export default function LessonRunnerRoute() {
   const { lessonId, __preview } = useLocalSearchParams<{ lessonId: string; __preview?: string }>(); // TEMP-PREVIEW
@@ -254,6 +254,12 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
         />
         <HeartsIndicator hearts={state.hearts} maxHearts={state.maxHearts} />
       </View>
+
+      {/* Which lesson this is. The website shows it in its top bar too; without
+          it, a learner back from a notification had no way to tell. */}
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.lessonTitle} numberOfLines={1} accessibilityRole="header">
+        {lesson.title}
+      </Text>
 
       <ComboPill combo={state.combo} />
 
@@ -548,6 +554,13 @@ const styles = StyleSheet.create({
   },
   progressWrap: {
     flex: 1,
+  },
+  lessonTitle: {
+    ...typography.caption,
+    color: palette.inkMuted,
+    paddingHorizontal: spacing.lg,
+    marginTop: -spacing.xs,
+    paddingBottom: spacing.sm,
   },
   videoWrap: {
     paddingHorizontal: spacing.lg,

@@ -48,7 +48,7 @@ import { openLesson, openModule } from '@/navigation/routes';
 import { useReview } from '@/hooks/useReview';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import type { Lesson } from '@openmacro/core/content/schema';
 
 export default function TodayScreen() {
@@ -97,7 +97,7 @@ export default function TodayScreen() {
               accessibilityRole="image"
               accessibilityLabel="OpenMacro"
             />
-            <Text style={styles.tagline}>{course.description}</Text>
+            <Text maxFontSizeMultiplier={fontScale.title} style={styles.tagline}>{course.description}</Text>
           </View>
           <View style={styles.headerStats}>
             {loading ? (
@@ -109,7 +109,7 @@ export default function TodayScreen() {
                   active={profile?.streakActiveToday ?? false}
                 />
                 <View style={styles.xpPill}>
-                  <Text style={styles.xpText}>{t('path.xp', { count: profile?.totalXp ?? 0 })}</Text>
+                  <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.xpText}>{t('path.xp', { count: profile?.totalXp ?? 0 })}</Text>
                 </View>
               </Fragment>
             )}
@@ -129,16 +129,16 @@ export default function TodayScreen() {
           <Animated.View entering={enter(0)} style={styles.hero}>
             <View style={styles.heroTop}>
               <View style={styles.heroWhere}>
-                <Text style={styles.heroEyebrow}>
+                <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroEyebrow}>
                   {started ? t('today.eyebrowContinue') : t('today.eyebrowStart')}
                 </Text>
-                <Text style={styles.heroContext} numberOfLines={1}>
+                <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroContext} numberOfLines={1}>
                   {t('today.where', {
                     level: t(`level.${next.status.level}`),
                     number: next.status.number,
                   })}
                 </Text>
-                <Text style={styles.heroModule} numberOfLines={2}>
+                <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroModule} numberOfLines={2}>
                   {next.status.module.title}
                 </Text>
               </View>
@@ -147,7 +147,7 @@ export default function TodayScreen() {
                 size={56}
                 stroke={5}
               >
-                <Text style={styles.heroRingText}>
+                <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.heroRingText}>
                   {next.status.done}/{next.status.total}
                 </Text>
               </ProgressRing>
@@ -158,8 +158,8 @@ export default function TodayScreen() {
                 <Text style={styles.heroIconText}>{next.lesson.icon}</Text>
               </View>
               <View style={styles.heroLessonBody}>
-                <Text style={styles.heroLessonTitle}>{next.lesson.title}</Text>
-                <Text style={styles.heroLessonMeta}>
+                <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroLessonTitle}>{next.lesson.title}</Text>
+                <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroLessonMeta}>
                   {t('path.lesson.minutes', { count: next.lesson.estimatedMinutes })}
                   {' · '}
                   {t('path.lesson.steps', { count: next.lesson.challenges.length })}
@@ -179,7 +179,7 @@ export default function TodayScreen() {
               hitSlop={8}
               style={({ pressed }) => [styles.heroLink, pressed && styles.pressed]}
             >
-              <Text style={styles.heroLinkText}>{t('today.openModule')}</Text>
+              <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroLinkText}>{t('today.openModule')}</Text>
               <Chevron />
             </Pressable>
           </Animated.View>
@@ -187,7 +187,7 @@ export default function TodayScreen() {
           <Animated.View entering={enter(0)} style={styles.hero}>
             <Text style={styles.doneEmoji}>🏆</Text>
             <Text style={styles.heroModule}>{t('today.allDone')}</Text>
-            <Text style={styles.heroLessonMeta}>{t('today.allDoneBody')}</Text>
+            <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroLessonMeta}>{t('today.allDoneBody')}</Text>
           </Animated.View>
         )}
 
@@ -220,7 +220,7 @@ export default function TodayScreen() {
         {/* ---- what comes after ----------------------------------------- */}
         {upNext.length > 0 ? (
           <Animated.View entering={enter(2)} style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('today.upNext')}</Text>
+            <Text maxFontSizeMultiplier={fontScale.title} style={styles.sectionTitle}>{t('today.upNext')}</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -263,7 +263,7 @@ export default function TodayScreen() {
               size={20}
               tintColor={palette.mintDark}
             />
-            <Text style={styles.browseText}>{t('today.browse', { count: statuses.length })}</Text>
+            <Text maxFontSizeMultiplier={fontScale.title} style={styles.browseText}>{t('today.browse', { count: statuses.length })}</Text>
             <Chevron />
           </Pressable>
         </Animated.View>

@@ -29,7 +29,7 @@ import { emitFeedback } from '@/feedback';
 import { useCourse, type ModuleStatus } from '@/hooks/useCourse';
 import { openLesson, openModule } from '@/navigation/routes';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import type { Lesson, ModuleLevel } from '@openmacro/core/content/schema';
 
 /** Lower-case, without accents, so Portuguese matches however it is typed. */
@@ -80,7 +80,7 @@ export default function CourseScreen() {
         // The title scrolls away; search and the level switch stay.
         stickyHeaderIndices={[1]}
       >
-        <Text style={styles.title}>{t('course.title')}</Text>
+        <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{t('course.title')}</Text>
 
         <View style={styles.sticky}>
           <View style={styles.search}>
@@ -90,6 +90,7 @@ export default function CourseScreen() {
               tintColor={palette.inkMuted}
             />
             <TextInput
+              maxFontSizeMultiplier={fontScale.chrome}
               value={query}
               onChangeText={setQuery}
               placeholder={t('course.search')}
@@ -131,7 +132,10 @@ export default function CourseScreen() {
                     }}
                     style={[styles.segment, selected && styles.segmentSelected]}
                   >
-                    <Text style={[styles.segmentText, selected && styles.segmentTextSelected]}>
+                    <Text
+                      maxFontSizeMultiplier={fontScale.chrome}
+                      style={[styles.segmentText, selected && styles.segmentTextSelected]}
+                    >
                       {t(`level.${entry.level}`)}
                     </Text>
                   </Pressable>

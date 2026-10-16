@@ -164,6 +164,8 @@ export const en = {
   // ---- a lesson in progress ----------------------------------------------
   'lesson.exit': 'Exit lesson',
   'lesson.check': 'Check',
+  'challenge.mc.a11yCorrect': 'correct answer',
+  'challenge.mc.a11yWrong': 'your answer, incorrect',
   'lesson.continue': 'Continue',
   'lesson.gotIt': 'Got it',
   'lesson.outOfHearts': 'Out of hearts',

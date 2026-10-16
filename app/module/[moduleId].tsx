@@ -37,7 +37,7 @@ import { useCourse } from '@/hooks/useCourse';
 import { openLesson } from '@/navigation/routes';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import { moduleUrl } from '@openmacro/core/content/links';
 
 /** Room for the pinned button, so the last lesson is not hidden behind it. */
@@ -114,7 +114,7 @@ export default function ModuleScreen() {
           <Text style={styles.eyebrow}>
             {t('today.where', { level: t(`level.${level}`), number })}
           </Text>
-          <Text style={styles.title}>{module.title}</Text>
+          <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{module.title}</Text>
           <Text style={styles.description}>{module.description}</Text>
         </View>
 
