@@ -481,6 +481,8 @@ export const ptPT = {
   'treasury.field.name': 'Nome',
   'treasury.field.namePlaceholder': 'Sofia',
   'treasury.field.address': 'Endereço de depósito Coinbase na Base',
+  'treasury.field.keyHint': 'Letras minúsculas, dígitos, - ou _, 2–31 caracteres. Sem pontos nem espaços.',
+  'treasury.field.addressOptional': 'Endereço de depósito na Base (opcional — o aluno pode defini-lo)',
   'treasury.field.amount': 'Recompensa por módulo em euros (opcional)',
   'treasury.field.claimant': 'Conta que reclama para ele',
   'treasury.field.claimantPlaceholder': 'ela@email.com',
@@ -491,6 +493,11 @@ export const ptPT = {
   'treasury.scheme.earnings': 'XP e tempo · {xp} €/XP · {hour} €/hora',
   'treasury.noAddress': 'ainda sem endereço — o aluno define-o',
   'treasury.add': 'Adicionar',
+  'treasury.rates.edit': 'Editar valores',
+  'treasury.rates.xp': 'Euros por XP (vazio = 0,002)',
+  'treasury.rates.hour': 'Euros por hora ativa (vazio = 0,20)',
+  'treasury.rates.note': 'Aplica-se a tudo o que já foi ganho, não só a partir de agora. O tempo ativo só conta no site, não na app de iPhone.',
+  'treasury.rates.save': 'Guardar valores',
   'treasury.cancel': 'Cancelar',
 
   // ---- dashboard ----------------------------------------------------------

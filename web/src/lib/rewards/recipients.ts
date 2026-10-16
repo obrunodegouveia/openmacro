@@ -299,3 +299,42 @@ export async function setRecipientStatus(
   if (!data) return { error: "No such recipient." };
   return { recipient: toRecipient(data as RecipientRow) };
 }
+
+/**
+ * Change what an earnings recipient is paid per XP and per active hour.
+ *
+ * Null restores the default from lib/rewards/earnings.ts. The balance is
+ * recomputed from these rates on every read, so a change applies to
+ * everything earned so far, not only to what is earned next.
+ *
+ * @param id     The recipient row.
+ * @param rates  Euros as decimal strings (at most 6 decimals), or null.
+ * @return The updated recipient, or why it was refused.
+ */
+export async function setRecipientRates(
+  id: string,
+  rates: { xpRateEuros: string | null; hourRateEuros: string | null },
+): Promise<{ recipient: Recipient } | { error: string }> {
+  const { data, error } = await getSupabaseAdmin()
+    .from("reward_recipients")
+    .update({
+      xp_rate_euros: rates.xpRateEuros,
+      hour_rate_euros: rates.hourRateEuros,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    // Rates mean nothing to a per-module recipient; refuse rather than store them.
+    .eq("scheme", "earnings")
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    if (error.code === "23514") {
+      return { error: "A rate must be a number of euros with at most 6 decimals, like 0.002." };
+    }
+    console.error("[rewards] rate change failed", error);
+    return { error: "Could not change those rates." };
+  }
+  if (!data) return { error: "No such recipient on XP and active time." };
+  return { recipient: toRecipient(data as RecipientRow) };
+}
