@@ -29,7 +29,7 @@ import type { ContentDictionary } from '../../localise';
 // ─── generated below · `npm run i18n:import` rewrites from here ───────────
 
 export const startHerePtPT: ContentDictionary = {
-  'module.title': 'Começa Aqui',
+  'module.title': 'O Dinheiro do Dia a Dia',
   'module.description': 'Não é preciso saber nada de antemão. O que é realmente o número na tua app do banco, o que o banco faz com ele, para que serve uma taxa de juro, e porque é que uma decisão em Frankfurt chega ao teu crédito à habitação.',
   'your-money-is-a-promise.title': 'O Número na Tua App do Banco',
   'your-money-is-a-promise.subtitle': 'Abres a app e vês 2400 €. O que é aquilo exatamente? Não são notas, e não estão numa caixa com o teu nome.',
