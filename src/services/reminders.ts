@@ -26,6 +26,7 @@
  */
 
 import { useSyncExternalStore } from 'react';
+import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 
 import { readVersioned, writeVersioned } from '@/services/localStore';
@@ -34,6 +35,12 @@ const STORAGE_KEY = 'openmacro.streakReminder.v1';
 const STORAGE_VERSION = 1;
 const ID_PREFIX = 'streak-reminder-';
 const DAYS_AHEAD = 14;
+/**
+ * The Android notification channel reminders post to. Android 8+ needs one
+ * for anything to show, and on Android 13+ the permission prompt does not
+ * appear at all until a channel exists.
+ */
+const ANDROID_CHANNEL = 'streak-reminder';
 
 /** The times offered, as hour and minute. A short list beats a time picker. */
 export const REMINDER_TIMES = [
@@ -109,11 +116,19 @@ async function save(next: ReminderSetting): Promise<void> {
 /**
  * Switch the reminder on, asking for permission first.
  *
+ * @param channelName What Android shows for the reminder channel in the
+ *   app's notification settings, in the learner's language.
  * @return `'enabled'`, or `'denied'` when the system said no. A denial leaves
  *   the setting off, so the switch does not claim something that cannot happen.
  */
-export async function enableReminder(): Promise<'enabled' | 'denied'> {
+export async function enableReminder(channelName: string): Promise<'enabled' | 'denied'> {
   try {
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync(ANDROID_CHANNEL, {
+        name: channelName,
+        importance: Notifications.AndroidImportance.DEFAULT,
+      });
+    }
     const { ios, granted } = await Notifications.requestPermissionsAsync({
       ios: { allowAlert: true, allowSound: true, allowBadge: false },
     });
@@ -178,7 +193,11 @@ export async function rescheduleReminders(input: {
       await Notifications.scheduleNotificationAsync({
         identifier: `${ID_PREFIX}${day}`,
         content: { title: input.content.title, body: input.content.body },
-        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: at },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: at,
+          channelId: ANDROID_CHANNEL,
+        },
       });
     } catch {
       // A reminder that cannot be scheduled is not worth failing anything for.

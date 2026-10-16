@@ -37,6 +37,8 @@ writeFileSync(
   join(STUBS, 'expo-notifications.mjs'),
   `import { scheduled, state } from ${JSON.stringify(HARNESS)};
    export const IosAuthorizationStatus = { AUTHORIZED: 2, DENIED: 1, PROVISIONAL: 3 };
+   export const AndroidImportance = { DEFAULT: 3 };
+   export async function setNotificationChannelAsync() {}
    export const SchedulableTriggerInputTypes = { DATE: 'date' };
    export async function requestPermissionsAsync() {
      const granted = state.permission === 'granted';
@@ -65,7 +67,10 @@ writeFileSync(
   `export function useSyncExternalStore(_s, get) { return get(); }\nexport default {};\n`,
 );
 
+writeFileSync(join(STUBS, 'react-native.mjs'), `export const Platform = { OS: 'ios' };\nexport default { Platform };\n`);
+
 const STUB_FOR = {
+  'react-native': join(STUBS, 'react-native.mjs'),
   'expo-notifications': join(STUBS, 'expo-notifications.mjs'),
   '@react-native-async-storage/async-storage': join(STUBS, 'async-storage.mjs'),
   react: join(STUBS, 'react.mjs'),
@@ -119,11 +124,11 @@ check('nothing is scheduled before the learner opts in', ours().length === 0);
 
 console.log('\nPermission');
 harness.state.permission = 'denied';
-check('a refusal is reported', (await reminders.enableReminder()) === 'denied');
+check('a refusal is reported', (await reminders.enableReminder('Daily reminder')) === 'denied');
 await reminders.rescheduleReminders({ keptToday: false, content });
 check('…and nothing is scheduled', ours().length === 0);
 harness.state.permission = 'granted';
-check('a grant switches it on', (await reminders.enableReminder()) === 'enabled');
+check('a grant switches it on', (await reminders.enableReminder('Daily reminder')) === 'enabled');
 
 console.log('\nScheduling');
 // A time that is always still ahead today, so today counts.

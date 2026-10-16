@@ -37,7 +37,7 @@ export function ReminderSetting() {
     setBusy(true);
     try {
       if (next) {
-        const result = await enableReminder();
+        const result = await enableReminder(t('reminder.settingTitle'));
         setDenied(result === 'denied');
       } else {
         setDenied(false);
@@ -56,6 +56,7 @@ export function ReminderSetting() {
           <Text style={styles.body}>{t('reminder.settingBody')}</Text>
         </View>
         <Switch
+          testID="reminder-switch"
           value={reminder.enabled}
           onValueChange={(next) => void toggle(next)}
           disabled={busy || !reminder.hydrated}
