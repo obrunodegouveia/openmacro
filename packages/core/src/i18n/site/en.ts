@@ -42,6 +42,9 @@ export const en = {
   'hero.start': 'Start learning',
   'hero.continue': 'Continue learning',
   'hero.signInA11y': 'Sign in to start learning',
+  'hero.startFirst': 'Start the first lesson',
+  'hero.haveAccount': 'Already learning?',
+  'hero.signIn': 'Sign in',
   'hero.or': 'Or',
   'hero.browse': 'browse all {count, number} lessons',
   'hero.noAccount': '— no account needed.',
@@ -56,13 +59,13 @@ export const en = {
   'footer.mit': 'MIT',
   'footer.mitLicensed': 'MIT licensed',
   'footer.coppa': 'COPPA-conscious by design',
-  'footer.rewards': 'Non-custodial rewards',
+  'footer.rewards': 'Rewards funded by people you know',
   'footer.mitBody':
     'Code and lessons are free to use, fork, translate and teach from — commercially included.',
   'footer.coppaBody':
     'No account is required to learn, no behavioural ads, and no personal data collected from children under 13.',
   'footer.rewardsBody':
-    'MacroXP and MintBucks are a learning score, kept on-device unless you sign in to sync it. Prize pools are funded and awarded by their sponsor — we never hold the money.',
+    'MacroXP and MintBucks are a learning score that nobody can buy or trade. A parent or teacher can choose to pay a learner in euros (EURC) for it. That is set up and withdrawn on the website, never in the app.',
   'footer.disclaimer': 'nothing here is financial advice.',
   'footer.githubA11y': 'OpenMacro on GitHub',
   'footer.chatA11y': 'OpenMacro community chat',
@@ -100,9 +103,9 @@ export const en = {
   'features.educator.prizes.title': 'Sponsored prize pools',
   'features.educator.prizes.body':
     'Fund a bounty for your class or your kid — books, hardware, or privileges. You set the goal and award it directly.',
-  'features.educator.ledger.title': 'Non-custodial ledger',
+  'features.educator.ledger.title': 'Real rewards, if you choose',
   'features.educator.ledger.body':
-    'The reward ledger lives on the learner’s device. No wallet, no real money, nothing to cash out.',
+    'A parent or teacher can reward a learner in euros (EURC) for the XP and active time they earn. The money is theirs, and it is withdrawn on the website only. The app shows XP, never money.',
 
   // ---- the four-tier model ------------------------------------------------
   'tiers.overline': 'The model',
@@ -228,9 +231,9 @@ export const en = {
   'rewards.prizes.title': 'Prize Pools & Bounties',
   'rewards.prizes.body':
     'Sponsored by parents, educators and the community: books (Mehrling, Bagehot, Stigum), hardware, or family-set privileges. Sponsors fund and award them directly — never the platform.',
-  'rewards.notTitle': 'What points are not',
+  'rewards.notTitle': 'Points and money are separate',
   'rewards.notBody':
-    'MacroXP and MintBucks are a learning score. They are not currency, not a token you can buy or sell, and there is no exchange, wallet or cash-out path anywhere in the product. Prize pools are funded and awarded by the sponsor who created them — a parent, a school, a community — and OpenMacro never takes custody of the money. Nothing here is a wager, and nothing costs a learner anything to enter.',
+    'MacroXP and MintBucks are a learning score. Nobody can buy, sell or trade them. Separately, a parent or teacher can choose to pay a learner in euros (EURC) for the XP and active time they earn. That money comes from the person who set it up, is withdrawn on the website only, and never appears in the app. Nothing here is a wager, and nothing costs a learner anything.',
 
   // ---- footer link groups -------------------------------------------------
   'footer.group.learn': 'Learn',
@@ -372,7 +375,7 @@ export const en = {
   // ---- privacy & COPPA notice ---------------------------------------------
   'privacy.back': 'Back to openmacro.org',
   'privacy.title': 'Privacy & children’s privacy notice',
-  'privacy.updated': 'Last updated 5 September 2026. Covers {domain} and the OpenMacro mobile app.',
+  'privacy.updated': 'Last updated 16 October 2026. Covers {domain} and the OpenMacro mobile app.',
   'privacy.authoritative': '',
   'privacy.short.title': 'The short version',
   'privacy.short.body':
@@ -394,7 +397,7 @@ export const en = {
   'privacy.notCollect.1': 'No cookies for advertising, profiling or cross-site tracking.',
   'privacy.notCollect.2': 'No analytics or session-recording services.',
   'privacy.notCollect.3':
-    'No addresses, phone numbers or payment details. We never ask for a password: Apple and Google handle sign-in, so there is none for us to hold.',
+    'No home addresses, phone numbers or card details. We never ask for a password: Apple and Google handle sign-in, so there is none for us to hold.',
   'privacy.notCollect.4': 'No selling, renting or trading of any data, ever.',
   'privacy.coppa.title': 'Children under 13 (COPPA)',
   'privacy.coppa.intro':
@@ -407,11 +410,11 @@ export const en = {
     'We do not knowingly collect personal information from children under 13. If you believe a child has signed in, write to',
   'privacy.coppa.3.tail': 'and we will delete the account and everything attached to it.',
   'privacy.coppa.4':
-    'MacroXP and MintBucks are a learning score. They are not currency, not a wallet, and cannot be exchanged, transferred or cashed out. There is no purchase path anywhere in the product.',
+    'MacroXP and MintBucks are a learning score. They are not currency and cannot be bought, exchanged or transferred. There is no purchase path anywhere in the product.',
   'privacy.coppa.5':
     'Skill credentials are issued only when a learner asks for one, and for anyone under 13 only with a parent or guardian. We do not publish a child’s attainment, name or identifier to any public ledger or third-party registry.',
   'privacy.coppa.6':
-    'Prize pools are created, funded and awarded by the sponsor — a parent, a school or a community group. OpenMacro never takes custody of the money and never handles a payout. Entry is always free, and nothing in the product is a wager.',
+    'A parent or teacher can choose to pay a learner in euros (EURC) for the XP and active time they earn. Only for those learners do we record the minutes they were active on the website and the payout address they enter, and we send each withdrawal from the wallet that funds it. Payments on the blockchain are public. All of this happens on the website only, entry is always free, and nothing in the product is a wager.',
   'privacy.coppa.7':
     'There is no advertising, no in-app purchasing, and no chat or other child-to-stranger communication anywhere in the product.',
   'privacy.coppa.8':

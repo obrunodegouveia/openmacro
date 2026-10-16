@@ -8,7 +8,7 @@ import {
   ArrowRight,
   Check,
   Clock,
-  Coins,
+  Zap,
   Flame,
   Heart,
   PartyPopper,
@@ -185,7 +185,7 @@ export function LessonPlayer({
                 {s("player.min", { count: lesson.estimatedMinutes })}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Coins className="size-3.5" aria-hidden />
+                <Zap className="size-3.5" aria-hidden />
                 {s("player.xpAvailable", { count: xpAvailable })}
               </span>
               <span>
@@ -383,7 +383,7 @@ function SessionBar({
           className="inline-flex shrink-0 items-center gap-1.5 text-xs font-extrabold text-gold"
           aria-label={t("lesson.xpEarnedA11y", { count: state.xpEarned })}
         >
-          <Coins className="size-3.5" aria-hidden />
+          <Zap className="size-3.5" aria-hidden />
           <span aria-hidden>{s("player.xp", { count: state.xpEarned })}</span>
         </span>
       </div>
@@ -529,7 +529,7 @@ function LessonComplete({
 
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-extrabold text-gold">
-          <Coins className="size-4" aria-hidden />
+          <Zap className="size-4" aria-hidden />
           {s("player.xpEarned", { count: xpEarned })}
         </span>
         {perfect ? (

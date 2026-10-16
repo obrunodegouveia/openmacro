@@ -71,6 +71,26 @@ export function MultipleChoiceView({
     if (!locked) choose(challenge.options[next].id);
   }
 
+  /*
+   * Number keys pick an option directly on a keyboard, the way the option's
+   * position reads. Ignored while typing in a field, once graded, and with a
+   * modifier held so browser shortcuts keep working.
+   */
+  React.useEffect(() => {
+    function onDigit(event: KeyboardEvent) {
+      if (locked || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      const index = Number(event.key) - 1;
+      if (!Number.isInteger(index) || index < 0 || index >= challenge.options.length) return;
+      event.preventDefault();
+      buttons.current[index]?.focus();
+      choose(challenge.options[index].id);
+    }
+    window.addEventListener("keydown", onDigit);
+    return () => window.removeEventListener("keydown", onDigit);
+  });
+
   // Exactly one tab stop into the group, landing on the current choice.
   const activeIndex = Math.max(
     0,
@@ -121,20 +141,23 @@ export function MultipleChoiceView({
             <span
               aria-hidden
               className={cn(
-                "grid size-6 shrink-0 place-items-center rounded-lg border",
+                // Round, because one answer is picked: a square reads as "tick all that apply".
+                "grid size-6 shrink-0 place-items-center rounded-full border-2",
                 isCorrect
                   ? "border-mint bg-mint text-abyss"
                   : isWrongPick
                     ? "border-coral bg-coral text-abyss"
                     : isSelected
-                      ? "border-mint bg-mint text-abyss"
-                      : "border-white/20 bg-white/5",
+                      ? "border-mint"
+                      : "border-white/25",
               )}
             >
               {isCorrect ? (
                 <Check className="size-4" strokeWidth={3} />
               ) : isWrongPick ? (
                 <X className="size-4" strokeWidth={3} />
+              ) : isSelected ? (
+                <span className="size-2.5 rounded-full bg-mint" />
               ) : null}
             </span>
             <span

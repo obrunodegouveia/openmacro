@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { LocaleLink } from "@/components/site/locale-link";
 import { useSiteText } from "@/lib/use-site-text";
-import { ArrowRight, Check, Clock, Coins, Play, RotateCcw, Trophy } from "lucide-react";
+import { ArrowRight, Check, Clock, Zap, Play, RotateCcw, Trophy } from "lucide-react";
 import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content";
 import { useLocale } from "@/components/site/locale-provider";
 import type { Lesson, ModuleLevel } from "@openmacro/core/content/schema";
@@ -506,7 +506,7 @@ function LessonCard({
                 {t("path.lesson.minutes", { count: lesson.estimatedMinutes })}
               </span>
               <span className="inline-flex items-center gap-1">
-                <Coins className="size-3" aria-hidden />
+                <Zap className="size-3" aria-hidden />
                 {t("path.xp", { count: xp })}
               </span>
               <span>{t(`difficulty.${lesson.difficulty}`)}</span>

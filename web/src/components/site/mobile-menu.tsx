@@ -44,6 +44,7 @@
  */
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Check, ChevronRight, LayoutDashboard } from "lucide-react";
@@ -94,6 +95,11 @@ const ROW =
   "flex min-h-[52px] items-center gap-3 px-4 text-[0.95rem] font-bold text-ink " +
   "transition-colors active:bg-white/[0.07] " +
   "[&+&]:border-t [&+&]:border-hairline/70";
+
+/** useSyncExternalStore needs a subscribe; being mounted never changes. */
+function subscribeNever(): () => void {
+  return () => {};
+}
 
 export function MobileMenu({
   open,
@@ -178,11 +184,27 @@ export function MobileMenu({
     wasOpen.current = open;
   }, [open, triggerRef]);
 
+  // False on the server and during hydration, true afterwards, without an
+  // effect: the portal target only exists in the browser.
+  const mounted = React.useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
+
   const spring = reduceMotion
     ? { duration: 0 }
     : { type: "spring" as const, stiffness: 420, damping: 34, mass: 0.9 };
 
-  return (
+  // Rendered at the end of <body>, not inside the header. The header gets its
+  // own backdrop-filter once the page scrolls, and an element with a filter
+  // becomes both the containing block for `fixed` children and the only thing
+  // their backdrop-filter can see. Inside it, the sheet's blur did nothing and
+  // the page read straight through the menu. Nothing renders while closed, so
+  // there is nothing to lose by waiting for the client before portalling.
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open ? (
         <>
@@ -283,7 +305,9 @@ export function MobileMenu({
           </motion.div>
         </>
       ) : null}
-    </AnimatePresence>
+
+    </AnimatePresence>,
+    document.body,
   );
 }
 

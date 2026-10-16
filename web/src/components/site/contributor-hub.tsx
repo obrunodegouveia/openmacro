@@ -16,6 +16,12 @@ import {
 } from "@/lib/site";
 
 /**
+ * Below this many stars the counters read as an empty room rather than as
+ * proof, so the card shows the repository and the ways in without them.
+ */
+const SHOW_COUNTERS_FROM_STARS = 25;
+
+/**
  * Contributor hub. A Server Component so the GitHub call happens once per
  * cache window on the server rather than once per visitor in the browser.
  */
@@ -23,6 +29,7 @@ export async function ContributorHub() {
   const s = await getSiteText();
   const stats = await getRepoStats();
 
+  const showCounters = stats.live && stats.stars >= SHOW_COUNTERS_FROM_STARS;
   const tiles = [
     { label: s("contribute.stars"), value: stats.stars, icon: <Star className="size-4" aria-hidden /> },
     { label: s("contribute.prs"), value: stats.openPullRequests, icon: <GitPullRequest className="size-4" aria-hidden /> },
@@ -67,11 +74,14 @@ export async function ContributorHub() {
               <h3 className="font-display text-lg font-extrabold">
                 {SITE.githubRepo}
               </h3>
-              <span className="text-[0.7rem] font-bold uppercase tracking-wider text-ink-faint">
-                {stats.live ? s("contribute.live") : s("contribute.awaiting")}
-              </span>
+              {showCounters ? (
+                <span className="text-[0.7rem] font-bold uppercase tracking-wider text-ink-faint">
+                  {s("contribute.live")}
+                </span>
+              ) : null}
             </div>
 
+            {showCounters ? (
             <dl className="mt-5 grid grid-cols-2 gap-3">
               {tiles.map((tile) => (
                 <div
@@ -83,11 +93,12 @@ export async function ContributorHub() {
                     {tile.label}
                   </dt>
                   <dd className="tabular mt-1 font-mono text-2xl font-extrabold text-ink">
-                    {stats.live ? tile.value.toLocaleString("en-US") : "—"}
+                    {tile.value.toLocaleString("en-US")}
                   </dd>
                 </div>
               ))}
             </dl>
+            ) : null}
 
             {!stats.live ? (
               <p className="mt-4 text-xs leading-relaxed text-ink-faint">

@@ -39,8 +39,8 @@ export function Features() {
 
       <div className="mt-14 grid gap-6 lg:grid-cols-3">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
           viewport={viewport}
           transition={{ duration: 0.5 }}
           className="lg:col-span-2"
@@ -79,8 +79,8 @@ export function Features() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
           viewport={viewport}
           transition={{ duration: 0.5, delay: 0.08 }}
         >
@@ -112,8 +112,8 @@ export function Features() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
           viewport={viewport}
           transition={{ duration: 0.5, delay: 0.16 }}
           className="lg:col-span-3"

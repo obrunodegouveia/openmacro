@@ -6,7 +6,7 @@ import { LocaleLink } from "@/components/site/locale-link";
 import {
   ArrowRight,
   Check,
-  Coins,
+  Zap,
   Flame,
   LogOut,
   RotateCcw,
@@ -127,7 +127,7 @@ export function DashboardView({
       {/* How far --------------------------------------------------------- */}
       <section aria-label={s("dash.progressAria")} className="grid gap-4 sm:grid-cols-3">
         <Stat
-          icon={<Coins className="size-4" aria-hidden />}
+          icon={<Zap className="size-4" aria-hidden />}
           label={s("dash.totalXp")}
           value={state === "loading" ? "—" : String(progress.totalXp)}
           tone="gold"

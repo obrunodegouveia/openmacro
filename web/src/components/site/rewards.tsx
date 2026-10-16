@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import type { SiteKey } from "@openmacro/core/i18n/site";
 import { useSiteText } from "@/lib/use-site-text";
-import { Award, Coins, Gift, ShieldCheck, Target } from "lucide-react";
+import { Award, Zap, Gift, ShieldCheck, Target } from "lucide-react";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { Card } from "@/components/ui/card";
 
@@ -29,7 +29,7 @@ const MECHANISMS: {
     body: "rewards.competency.body",
   },
   {
-    icon: <Coins className="size-5" aria-hidden />,
+    icon: <Zap className="size-5" aria-hidden />,
     tone: "gold" as const,
     title: "rewards.points.title",
     body: "rewards.points.body",
@@ -76,8 +76,8 @@ export function Rewards() {
         {MECHANISMS.map((mechanism, index) => (
           <motion.div
             key={mechanism.title}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 20 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.45, delay: index * 0.07 }}
           >
