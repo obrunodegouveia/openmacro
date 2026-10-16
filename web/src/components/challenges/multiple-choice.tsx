@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Check, X } from "lucide-react";
+import { seededShuffle } from "@openmacro/core/format";
 import type { ChallengeComponentProps } from "./types";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,16 @@ export function MultipleChoiceView({
   locked,
 }: ChallengeComponentProps<"multiple_choice">) {
   const [selected, setSelected] = React.useState<string | null>(null);
+  /*
+   * The same order the app shows: shuffled with the challenge id as the seed,
+   * so it is stable for a given question and identical on both clients.
+   * Authored order put the right answer first more often than not, which on
+   * the web gave it away.
+   */
+  const options = React.useMemo(
+    () => seededShuffle(challenge.options, challenge.id),
+    [challenge.options, challenge.id],
+  );
   const buttons = React.useRef<(HTMLButtonElement | null)[]>([]);
 
   function choose(optionId: string) {
@@ -39,10 +50,10 @@ export function MultipleChoiceView({
    * but they no longer change the choice.
    */
   function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    const count = challenge.options.length;
+    const count = options.length;
     const current = Math.max(
       0,
-      challenge.options.findIndex((option) => option.id === selected),
+      options.findIndex((option) => option.id === selected),
     );
 
     let next: number;
@@ -67,7 +78,7 @@ export function MultipleChoiceView({
 
     event.preventDefault();
     buttons.current[next]?.focus();
-    if (!locked) choose(challenge.options[next].id);
+    if (!locked) choose(options[next].id);
   }
 
   /*
@@ -81,10 +92,10 @@ export function MultipleChoiceView({
       const target = event.target as HTMLElement | null;
       if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
       const index = Number(event.key) - 1;
-      if (!Number.isInteger(index) || index < 0 || index >= challenge.options.length) return;
+      if (!Number.isInteger(index) || index < 0 || index >= options.length) return;
       event.preventDefault();
       buttons.current[index]?.focus();
-      choose(challenge.options[index].id);
+      choose(options[index].id);
     }
     window.addEventListener("keydown", onDigit);
     return () => window.removeEventListener("keydown", onDigit);
@@ -93,7 +104,7 @@ export function MultipleChoiceView({
   // Exactly one tab stop into the group, landing on the current choice.
   const activeIndex = Math.max(
     0,
-    challenge.options.findIndex((option) => option.id === selected),
+    options.findIndex((option) => option.id === selected),
   );
 
   return (
@@ -103,7 +114,7 @@ export function MultipleChoiceView({
       onKeyDown={onKeyDown}
       className="flex flex-col gap-3"
     >
-      {challenge.options.map((option, index) => {
+      {options.map((option, index) => {
         const isSelected = selected === option.id;
         // After grading, show the truth: mark the right answer even when the
         // learner did not pick it, so a wrong guess still teaches something.
