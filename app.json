@@ -7,7 +7,7 @@
     "description": "Duolingo-style micro-learning for macroeconomics, monetary policy and fractional-reserve banking. Five minutes a day, no account needed.",
     "orientation": "portrait",
     "icon": "./assets/brand/v3/openmacro-icon-light.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "primaryColor": "#2FBF71",
     "ios": {
       "icon": "./assets/brand/v3/OpenMacro.icon",
@@ -55,7 +55,11 @@
           "image": "./assets/brand/v3/openmacro-splash.png",
           "imageWidth": 180,
           "resizeMode": "contain",
-          "backgroundColor": "#F7F9FB"
+          "backgroundColor": "#F7F9FB",
+          "dark": {
+            "image": "./assets/brand/v3/openmacro-splash.png",
+            "backgroundColor": "#0B0F14"
+          }
         }
       ],
       [
