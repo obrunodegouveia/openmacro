@@ -12,6 +12,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 
+import { WidgetSync } from '@/components/system/WidgetSync';
+
 import { env } from '@/config/env';
 import { MODULES } from '@openmacro/core/content/registry';
 import { validateModules } from '@openmacro/core/content/validate';
@@ -91,6 +93,7 @@ export default function RootLayout() {
           <ContentUpdateProvider>
           <ProgressProvider>
             <StatusBar style="auto" />
+            <WidgetSync />
             <ThemeProvider value={navigationTheme}>
             <Stack
               screenOptions={{
