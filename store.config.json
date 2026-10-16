@@ -1,7 +1,7 @@
 {
   "configVersion": 0,
   "apple": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "copyright": "2026 OpenMacro contributors",
     "categories": [
       "EDUCATION",
@@ -27,7 +27,7 @@
           "study",
           "education"
         ],
-        "releaseNotes": "First release. Seventeen modules and 108 lessons, from what money is through to reading a central bank's balance sheet and diagnosing a crisis while it happens. In English and European Portuguese.",
+        "releaseNotes": "A new home: Today shows your next lesson, Course is the full map, Profile holds your progress. Dark mode that follows your iPhone. An optional daily reminder, only on days you have not done a lesson yet. A home-screen widget with your streak and the next lesson. Clearer text and buttons, better VoiceOver and large-text support, and sound effects that land on time.",
         "promoText": "Five minutes a day on how money is created, what central banks actually do, and why prices rise. Free, offline, no account.",
         "marketingUrl": "https://openmacro.org",
         "supportUrl": "https://openmacro.org/teach",
@@ -57,7 +57,7 @@
           "estudar",
           "euribor"
         ],
-        "releaseNotes": "Primeira versão. Dezassete módulos e 108 lições, do que é o dinheiro até ler o balanço de um banco central e diagnosticar uma crise enquanto ela acontece. Em português europeu e em inglês.",
+        "releaseNotes": "Um novo início: Hoje mostra a próxima lição, Curso é o mapa completo, Perfil guarda o teu progresso. Modo escuro que segue o iPhone. Um lembrete diário opcional, só nos dias em que ainda não fizeste uma lição. Um widget no ecrã principal com a tua série e a próxima lição. Texto e botões mais claros, melhor suporte para VoiceOver e texto grande, e efeitos sonoros que chegam a tempo.",
         "promoText": "Cinco minutos por dia sobre como o dinheiro é criado, o que fazem os bancos centrais e porque sobem os preços. Gratuito, offline, sem conta.",
         "marketingUrl": "https://openmacro.org/pt",
         "supportUrl": "https://openmacro.org/pt/teach",
