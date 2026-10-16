@@ -83,7 +83,7 @@ export function Tiers() {
                   <span className="min-w-0">
                     <span
                       className={cn(
-                        "block text-[0.65rem] font-extrabold uppercase tracking-[0.14em]",
+                        "block text-xs font-extrabold uppercase tracking-[0.14em]",
                         accent.text,
                       )}
                     >
@@ -174,7 +174,7 @@ function Column({
         <h4 className="font-display text-xs font-extrabold uppercase tracking-wider">
           {title}
         </h4>
-        <span className="text-[0.65rem] font-semibold text-ink-faint">{hint}</span>
+        <span className="text-xs font-semibold text-ink-faint">{hint}</span>
       </div>
       <ul className="flex flex-col gap-2">
         {items.map((item) => (

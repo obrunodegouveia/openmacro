@@ -58,7 +58,7 @@ export function CodeSnippet({
         </button>
       </div>
 
-      <pre className="max-h-[26rem] overflow-auto p-4 font-mono text-[0.78rem] leading-relaxed">
+      <pre className="max-h-[26rem] overflow-auto p-4 font-mono text-xs leading-relaxed">
         <code>
           {code.split("\n").map((line, index) => (
             <span key={index} className="block">

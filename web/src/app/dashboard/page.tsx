@@ -10,9 +10,9 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Your progress",
+    title: "Today",
     description:
-      "Your XP, day streak and where you left off in the OpenMacro course.",
+      "Where you left off, your streak and your progress in the OpenMacro course.",
     path: "/dashboard",
   }),
   // Personal to the signed-in learner, and empty to anyone else — there is
@@ -35,11 +35,15 @@ export default function DashboardPage() {
       <main id="main">
         <Section className="pt-28 sm:pt-32">
           <div className="mx-auto max-w-3xl">
-            <Dashboard />
-            {/* Renders nothing unless this account has a reward wallet bound. */}
-            <ModuleRewards />
-            {/* Renders nothing unless this account is paid by XP and time. */}
-            <EarningsPanel />
+            <Dashboard
+              money={
+                <>
+                  {/* Each renders nothing unless this account is paid. */}
+                  <ModuleRewards />
+                  <EarningsPanel />
+                </>
+              }
+            />
             <DeleteAccount />
           </div>
         </Section>

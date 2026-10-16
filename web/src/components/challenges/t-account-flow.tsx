@@ -257,7 +257,7 @@ function EntitySheet({
         {touched ? (
           <span
             className={cn(
-              "shrink-0 rounded-full border px-2 py-0.5 text-[0.65rem] font-extrabold uppercase tracking-wider",
+              "shrink-0 rounded-full border px-2 py-0.5 text-xs font-extrabold uppercase tracking-wider",
               balance.balanced
                 ? "border-mint/40 bg-mint/10 text-mint-bright"
                 : "border-coral/40 bg-coral/10 text-coral",
@@ -318,10 +318,10 @@ function SheetColumn({
 
   return (
     <div className="rounded-xl border border-hairline bg-white/[0.03] p-3">
-      <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-ink">
+      <p className="text-xs font-extrabold uppercase tracking-wider text-ink">
         {side === "asset" ? s("tflow.assets") : s("tflow.liabilities")}
       </p>
-      <p className="text-[0.65rem] text-ink-faint">
+      <p className="text-xs text-ink-faint">
         {side === "asset" ? s("tflow.assetsHint") : s("tflow.liabilitiesHint")}
       </p>
 
@@ -330,7 +330,7 @@ function SheetColumn({
           {openingLines.map((line) => (
             <li
               key={line.account}
-              className="flex items-baseline justify-between gap-2 text-[0.7rem] text-ink-faint"
+              className="flex items-baseline justify-between gap-2 text-xs text-ink-faint"
             >
               <span className="min-w-0 truncate">{line.account}</span>
               <span className="shrink-0 font-mono">
@@ -351,12 +351,12 @@ function SheetColumn({
               aria-label={s("tflow.removeA11y", { account: posting.shift.account, entity: entity.label, side: sideNoun })}
               className="flex w-full items-baseline justify-between gap-2 rounded-lg border border-mint/40 bg-mint/10 px-2 py-1.5 text-left disabled:cursor-default"
             >
-              <span className="min-w-0 truncate text-[0.7rem] font-bold text-ink">
+              <span className="min-w-0 truncate text-xs font-bold text-ink">
                 {posting.shift.account}
               </span>
               <span
                 className={cn(
-                  "shrink-0 font-mono text-[0.7rem] font-bold",
+                  "shrink-0 font-mono text-xs font-bold",
                   posting.shift.delta >= 0 ? "text-mint-bright" : "text-coral",
                 )}
               >
@@ -373,7 +373,7 @@ function SheetColumn({
         onClick={() => onDrop(entity.id, side)}
         aria-label={s("tflow.placeA11y", { entity: entity.label, side: sideNoun })}
         className={cn(
-          "mt-2 w-full rounded-lg border border-dashed px-2 py-2 text-[0.7rem] font-bold transition-colors",
+          "mt-2 w-full rounded-lg border border-dashed px-2 py-2 text-xs font-bold transition-colors",
           armed
             ? "border-mint/60 bg-mint/5 text-mint-bright hover:bg-mint/15"
             : "border-white/10 text-ink-faint",

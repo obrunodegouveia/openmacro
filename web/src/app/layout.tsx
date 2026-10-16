@@ -93,6 +93,21 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
+/**
+ * Signed-in visitors to the home page go to Today.
+ *
+ * The home page is a static marketing page for search engines and first
+ * visits; someone who already learns here opens the site to resume. This runs
+ * inline in <body> before anything paints. It only checks that a Supabase
+ * session is stored (supabase-js keeps it in localStorage as
+ * `sb-<project>-auth-token`); an expired one is refreshed or cleared by the
+ * dashboard itself, which shows the signed-out state if needed.
+ *
+ * Skipped for any link to a section (`/#demo`), and for `?landing`, so the
+ * page stays reachable on purpose. Crawlers have no stored session.
+ */
+const TODAY_REDIRECT = `(function(){try{var p=location.pathname;if((p!=="/"&&p!=="/pt"&&p!=="/pt/")||location.hash||/[?&]landing(=|&|$)/.test(location.search))return;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&/^sb-.+-auth-token$/.test(k)){location.replace(p.indexOf("/pt")===0?"/pt/dashboard":"/dashboard");return}}}catch(e){}})();`;
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -103,6 +118,9 @@ export default async function RootLayout({
   return (
     <html lang={LOCALE_TAGS[locale]} className={`${jakarta.variable} ${jetbrains.variable}`}>
       <body className="font-sans antialiased">
+        {/* Before first paint, so a signed-in learner never sees the
+            marketing page flash on the way to Today. See TODAY_REDIRECT. */}
+        <script dangerouslySetInnerHTML={{ __html: TODAY_REDIRECT }} />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-mint focus:px-4 focus:py-2 focus:font-bold focus:text-abyss"

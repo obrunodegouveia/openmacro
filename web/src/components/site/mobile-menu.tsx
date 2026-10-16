@@ -75,7 +75,7 @@ function Group({
 }) {
   return (
     <section className="mt-5 first:mt-0">
-      <h2 className="px-4 pb-2 text-[0.7rem] font-extrabold uppercase tracking-[0.08em] text-ink-faint">
+      <h2 className="px-4 pb-2 text-xs font-extrabold uppercase tracking-[0.08em] text-ink-faint">
         {title}
       </h2>
       <div className="overflow-hidden rounded-2xl border border-hairline bg-white/[0.04]">
@@ -322,7 +322,7 @@ function AccountSection({ onClose, title }: { onClose: () => void; title: string
   if (!enabled) return null;
   return (
     <section className="mt-5">
-      <h2 className="px-4 pb-2 text-[0.7rem] font-extrabold uppercase tracking-[0.08em] text-ink-faint">
+      <h2 className="px-4 pb-2 text-xs font-extrabold uppercase tracking-[0.08em] text-ink-faint">
         {title}
       </h2>
       <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-hairline bg-white/[0.04] p-3">

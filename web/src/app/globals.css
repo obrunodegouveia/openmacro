@@ -24,10 +24,10 @@
   /* Ink */
   --color-ink: #f2f6fc;
   --color-ink-muted: #97a5bd;
-  /* Lightened from #64748b, which measured 3.9-4.2:1 on these backgrounds and
-     failed WCAG AA for the small, bold labels it is used on. This clears
-     4.9:1 everywhere it appears. */
-  --color-ink-faint: #74869e;
+  /* Lightened twice: #64748b measured 3.9-4.2:1 on these backgrounds and
+     failed WCAG AA; #74869e cleared AA only just and read as disabled
+     outdoors. This measures 6.9:1 on the canvas and 6.0:1 on raised surfaces. */
+  --color-ink-faint: #8a9bb3;
 
   /* Growth / correctness */
   --color-mint: #2fbf71;
@@ -49,6 +49,18 @@
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-code), ui-monospace, "SFMono-Regular", monospace;
+
+  /*
+   * Type floor. Running text never goes below 15px and labels below 13px,
+   * which is where Apple's own text styles stop (Subheadline and Caption 1
+   * are 15 and 12pt, and a web pixel is slightly smaller than a point). The
+   * Tailwind defaults were 12 and 14px, and the site used them for almost
+   * all secondary copy.
+   */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.375rem;
 
   --radius-card: 1.25rem;
 
@@ -226,4 +238,15 @@ body::before {
   outline: 2px solid var(--color-mint-bright);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/*
+ * The phone tab bar (nav.tsx) is fixed to the bottom for signed-in learners.
+ * Reserve its height plus the home-indicator inset, only while it exists and
+ * only below `md`, where it is shown.
+ */
+@media (max-width: 47.999rem) {
+  body:has([data-tabbar]) {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
+  }
 }

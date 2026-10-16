@@ -6,12 +6,14 @@ import { LocaleLink } from "@/components/site/locale-link";
 import {
   ArrowRight,
   Check,
-  Zap,
+  ChevronDown,
+  Clock,
   Flame,
   LogOut,
   RotateCcw,
   Trophy,
   User,
+  Zap,
 } from "lucide-react";
 import { DEFAULT_CHALLENGE_XP, MODULES } from "@openmacro/core/content";
 import type { Lesson, Module } from "@openmacro/core/content/schema";
@@ -34,7 +36,7 @@ import { cn } from "@/lib/utils";
  * All reads go through the browser Supabase client under row-level security,
  * so this component can only ever see the signed-in learner's own rows.
  */
-export function Dashboard() {
+export function Dashboard({ money }: { money?: React.ReactNode }) {
   const s = useSiteText();
   const { signOut, learner } = useAuth();
   const { snapshot, state, signedIn, enabled, restoring } = useProgressSnapshot();
@@ -64,13 +66,19 @@ export function Dashboard() {
       state={state}
       signedIn={signedIn}
       onSignOut={() => void signOut()}
+      money={money}
     />
   );
 }
 
 
 /**
- * The dashboard itself, with no data fetching in it.
+ * Today: the signed-in home.
+ *
+ * Answers, in this order, the only questions people open it with: what do I
+ * do now, how am I doing, is there money for me, and what could I do better.
+ * The full course is last and collapsed, open only at the module in progress,
+ * because a wall of 180 equal tiles answers none of those questions.
  *
  * Separated from the container so it can be rendered from fixtures — a page
  * that only ever appears for a signed-in learner is otherwise impossible to
@@ -82,6 +90,7 @@ export function DashboardView({
   state,
   signedIn = true,
   onSignOut,
+  money,
 }: {
   learner: { name: string; avatarUrl: string | null };
   snapshot: ProgressSnapshot | null;
@@ -89,33 +98,37 @@ export function DashboardView({
   /** Signed out, the same view shows this device's progress instead. */
   signedIn?: boolean;
   onSignOut: () => void;
+  /** Reward panels; each renders nothing unless this account is paid. */
+  money?: React.ReactNode;
 }) {
   const s = useSiteText();
   const progress = summarise(snapshot);
+  const loading = state === "loading";
+  const firstName = learner.name.trim().split(/\s+/)[0] ?? "";
 
   return (
-    <div className="flex flex-col gap-10">
-      {/* Who ------------------------------------------------------------- */}
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Avatar learner={learner} />
-          <div>
-            <h1 className="font-display text-2xl font-extrabold tracking-tight">
-              {learner.name}
-            </h1>
-            <p className="text-xs font-semibold text-ink-faint">
-              {progress.completed === 0
-                ? s("dash.nothingYet")
-                : s("dash.finished", { done: progress.completed, total: progress.total })}
-            </p>
-          </div>
+    <div className="flex flex-col gap-8">
+      {/* Who and the streak ------------------------------------------------ */}
+      <header className="flex items-center gap-4">
+        <Avatar learner={learner} />
+        <div className="min-w-0">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-balance">
+            {signedIn && firstName ? s("today.hello", { name: firstName }) : s("today.helloAnon")}
+          </h1>
+          <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-ink-muted">
+            <Flame
+              className={cn("size-4", progress.streakActiveToday ? "text-gold" : "text-ink-faint")}
+              aria-hidden
+            />
+            {loading
+              ? " "
+              : progress.dayStreak === 0
+                ? s("today.streak.none")
+                : progress.streakActiveToday
+                  ? s("today.streak.kept", { count: progress.dayStreak })
+                  : s("today.streak.atRisk", { count: progress.dayStreak })}
+          </p>
         </div>
-        {signedIn ? (
-          <Button variant="ghost" size="sm" onClick={onSignOut}>
-            <LogOut className="size-4" aria-hidden />
-            {s("dash.signOut")}
-          </Button>
-        ) : null}
       </header>
 
       {state === "failed" ? (
@@ -124,141 +137,199 @@ export function DashboardView({
         </p>
       ) : null}
 
-      {/* How far --------------------------------------------------------- */}
-      <section aria-label={s("dash.progressAria")} className="grid gap-4 sm:grid-cols-3">
-        <Stat
-          icon={<Zap className="size-4" aria-hidden />}
-          label={s("dash.totalXp")}
-          value={state === "loading" ? "—" : String(progress.totalXp)}
-          tone="gold"
-        />
-        <Stat
-          icon={<Flame className="size-4" aria-hidden />}
-          label={s("dash.dayStreak")}
-          value={state === "loading" ? "—" : String(progress.dayStreak)}
-          tone={progress.streakActiveToday ? "mint" : "muted"}
-          note={
-            progress.dayStreak === 0
-              ? "Finish a lesson to start one"
-              : progress.streakActiveToday
-                ? "Kept up today"
-                : "Finish a lesson today to keep it"
-          }
-        />
-        <Stat
-          icon={<Trophy className="size-4" aria-hidden />}
-          label={s("dash.courseComplete")}
-          value={state === "loading" ? "—" : `${progress.percent}%`}
-          tone="mint"
-          note={s("dash.lessonsOf", { done: progress.completed, total: progress.total })}
-        />
-      </section>
-
-      {/* What next ------------------------------------------------------- */}
+      {/* What next: the one thing this page is for ------------------------ */}
       {progress.next ? (
-        <section aria-label={s("dash.continueAria")}>
-          <LocaleLink
-            href={`/learn/${progress.next.lesson.id}`}
-            className="group flex items-center gap-4 rounded-card border border-mint/30 bg-mint/[0.06] p-5 transition-colors hover:border-mint/60 hover:bg-mint/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
-          >
-            <span aria-hidden className="text-3xl">
+        <section
+          aria-label={s("dash.continueAria")}
+          className="rounded-card border border-mint/30 bg-mint/[0.06] p-5 sm:p-6"
+        >
+          <p className="text-sm font-bold text-mint-bright">
+            {progress.completed === 0 ? s("dash.startHere") : s("dash.pickUp")}
+            <span className="font-semibold text-ink-muted"> · {progress.next.module.title}</span>
+          </p>
+          <div className="mt-3 flex items-start gap-4">
+            <span aria-hidden className="text-4xl leading-none">
               {progress.next.lesson.icon}
             </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-xs font-extrabold uppercase tracking-wider text-mint-bright">
-                {progress.completed === 0 ? s("dash.startHere") : s("dash.pickUp")}
-              </span>
-              <span className="mt-1 block font-display text-lg font-extrabold tracking-tight text-ink">
+            <div className="min-w-0">
+              <h2 className="font-display text-xl font-extrabold tracking-tight text-ink text-balance">
                 {progress.next.lesson.title}
-              </span>
-              <span className="mt-0.5 block text-sm text-ink-muted">
-                {progress.next.module.title}
-              </span>
-            </span>
-            <ArrowRight
-              className="size-5 shrink-0 text-mint-bright transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </LocaleLink>
+              </h2>
+              <p className="mt-1 flex flex-wrap gap-x-3 text-sm text-ink-muted">
+                <span className="inline-flex items-center gap-1">
+                  <Clock className="size-3.5" aria-hidden />
+                  {s("today.minutes", { count: progress.next.lesson.estimatedMinutes })}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Zap className="size-3.5" aria-hidden />
+                  {s("dash.xpAvailable", { max: maxXpOf(progress.next.lesson) })}
+                </span>
+              </p>
+            </div>
+          </div>
+          <Button asChild size="lg" className="mt-5 w-full sm:w-auto">
+            <LocaleLink href={`/learn/${progress.next.lesson.id}`}>
+              {progress.completed === 0 ? s("today.start") : s("today.continue")}
+              <ArrowRight className="size-4" aria-hidden />
+            </LocaleLink>
+          </Button>
         </section>
       ) : state === "ready" ? (
         <section className="rounded-card border border-gold/30 bg-gold/[0.06] p-5 text-center">
           <Trophy className="mx-auto size-6 text-gold" aria-hidden />
-          <p className="mt-2 font-display text-lg font-extrabold">
-            {s("dash.allDone")}
-          </p>
-          <p className="mt-1 text-sm text-ink-muted">
-            {s("dash.allDoneBody")}
-          </p>
+          <p className="mt-2 font-display text-lg font-extrabold">{s("dash.allDone")}</p>
+          <p className="mt-1 text-sm text-ink-muted">{s("dash.allDoneBody")}</p>
         </section>
       ) : null}
 
+      {/* How far, in one glance ------------------------------------------- */}
+      <section
+        aria-label={s("dash.progressAria")}
+        className="flex items-center gap-5 rounded-card border border-hairline bg-white/[0.03] p-5"
+      >
+        <ProgressRing ratio={loading ? 0 : progress.percent / 100} size={72} stroke={8}>
+          <span className="font-display text-base font-extrabold tabular-nums">
+            {loading ? "—" : `${progress.percent}%`}
+          </span>
+        </ProgressRing>
+        <div className="grid min-w-0 gap-1">
+          <p className="font-display text-lg font-extrabold tracking-tight">
+            {s("dash.lessonsOf", { done: progress.completed, total: progress.total })}
+          </p>
+          <p className="flex items-center gap-1.5 text-sm font-semibold text-ink-muted">
+            <Zap className="size-4 text-gold" aria-hidden />
+            {loading ? "—" : s("today.xp", { xp: progress.totalXp })}
+          </p>
+        </div>
+      </section>
+
+      {/* Money, when there is any: right under progress, not after the course. */}
+      {money}
+
       {!signedIn ? (
         <section className="rounded-card border border-hairline bg-white/[0.03] p-5">
-          <h2 className="font-display text-lg font-extrabold tracking-tight">
-            {s("dash.onDevice")}
-          </h2>
-          <p className="mt-1 max-w-md text-sm leading-relaxed text-ink-muted">
-            {s("dash.onDeviceBody")}
-          </p>
+          <h2 className="font-display text-lg font-extrabold tracking-tight">{s("dash.onDevice")}</h2>
+          <p className="mt-1 max-w-md text-sm leading-relaxed text-ink-muted">{s("dash.onDeviceBody")}</p>
           <AccountPanel className="mt-5" redirectTo="/dashboard" />
         </section>
       ) : null}
 
-      {/* What is done ----------------------------------------------------- */}
-      <section aria-label={s("dash.allModulesAria")} className="flex flex-col gap-8">
-        {MODULES.map((module) => (
-          <ModuleRow key={module.id} module={module} snapshot={snapshot} />
-        ))}
+      {/* Sharpen up: the replay offer, once, instead of a score on every tile. */}
+      {progress.sharpen.length > 0 ? (
+        <section aria-labelledby="sharpen-title" className="grid grid-cols-[minmax(0,1fr)] gap-3">
+          <div>
+            <h2 id="sharpen-title" className="font-display text-lg font-extrabold tracking-tight">
+              {s("today.sharpen.title")}
+            </h2>
+            <p className="text-sm text-ink-muted">{s("today.sharpen.body")}</p>
+          </div>
+          <ul className="grid grid-cols-[minmax(0,1fr)] gap-2">
+            {progress.sharpen.map(({ lesson, best, max }) => (
+              <li key={lesson.id}>
+                <LocaleLink
+                  href={`/learn/${lesson.id}`}
+                  className="flex min-h-14 items-center gap-3 rounded-xl border border-hairline bg-white/[0.03] px-4 py-3 transition-colors hover:border-white/25 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
+                >
+                  <span aria-hidden className="text-xl">{lesson.icon}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[0.95rem] font-bold text-ink">{lesson.title}</span>
+                    <span className="block text-sm text-ink-muted">
+                      {s("dash.best", { best, max })}
+                    </span>
+                  </span>
+                  <span className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-mint-bright">
+                    <RotateCcw className="size-4" aria-hidden />
+                    {s("today.sharpen.redo")}
+                  </span>
+                </LocaleLink>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {/* The course, collapsed, in course order ---------------------------- */}
+      <section aria-labelledby="course-title" className="grid grid-cols-[minmax(0,1fr)] gap-3">
+        <h2 id="course-title" className="font-display text-lg font-extrabold tracking-tight">
+          {s("today.course.title")}
+        </h2>
+        {/* minmax(0,1fr) on these grids: an `auto` track grows to the longest
+            lesson title and pushed the page wider than a phone. */}
+        <ul className="grid grid-cols-[minmax(0,1fr)] gap-2" aria-label={s("dash.allModulesAria")}>
+          {MODULES.map((module) => (
+            <li key={module.id}>
+              <ModuleRow
+                module={module}
+                snapshot={snapshot}
+                current={progress.next?.module.id === module.id}
+              />
+            </li>
+          ))}
+        </ul>
       </section>
+
+      {/* Account, last ----------------------------------------------------- */}
+      {signedIn ? (
+        <section className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-6">
+          <p className="text-sm text-ink-muted">{s("today.signedInAs", { name: learner.name })}</p>
+          <Button variant="ghost" size="sm" onClick={onSignOut}>
+            <LogOut className="size-4" aria-hidden />
+            {s("dash.signOut")}
+          </Button>
+        </section>
+      ) : null}
     </div>
   );
 }
 
-/** One module, with its lessons and how many are done. */
+/**
+ * One module as a disclosure row: a small ring, the title and the count.
+ * Open by default only for the module the learner is in.
+ */
 function ModuleRow({
   module,
   snapshot,
+  current,
 }: {
   module: Module;
   snapshot: ProgressSnapshot | null;
+  current: boolean;
 }) {
   const s = useSiteText();
   const done = module.lessons.filter((lesson) => snapshot?.progress[lesson.id]).length;
-  const ratio = module.lessons.length ? done / module.lessons.length : 0;
+  const total = module.lessons.length;
+  const complete = total > 0 && done === total;
 
   return (
-    <div>
-      <div className="flex items-baseline justify-between gap-4">
-        <h2 className="font-display text-base font-extrabold tracking-tight">
-          {module.title}
-        </h2>
-        <p className="shrink-0 text-xs font-bold text-ink-faint">
-          {done} / {module.lessons.length}
-        </p>
-      </div>
-
-      <div
-        className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(ratio * 100)}
-        aria-label={s("dash.moduleProgressAria", { title: module.title })}
-      >
-        {ratio > 0 ? (
-          <div className="h-full rounded-full bg-mint" style={{ width: `${ratio * 100}%` }} />
-        ) : null}
-      </div>
-
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+    <details
+      open={current}
+      className="group rounded-card border border-hairline bg-white/[0.03] open:bg-white/[0.045]"
+    >
+      <summary className="flex min-h-16 cursor-pointer list-none items-center gap-4 px-4 py-3 [&::-webkit-details-marker]:hidden">
+        <ProgressRing ratio={total ? done / total : 0} size={36} stroke={4}>
+          {complete ? <Check className="size-4 text-mint-bright" strokeWidth={3} aria-hidden /> : null}
+        </ProgressRing>
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-[0.95rem] font-extrabold tracking-tight text-ink">
+            {module.title}
+          </span>
+          <span className="block text-sm text-ink-muted">
+            {s("dash.lessonsOf", { done, total })}
+          </span>
+        </span>
+        <ChevronDown
+          className="size-5 shrink-0 text-ink-faint transition-transform group-open:rotate-180"
+          aria-hidden
+        />
+      </summary>
+      <ul className="grid grid-cols-[minmax(0,1fr)] gap-1 px-2 pb-2">
         {module.lessons.map((lesson) => (
           <li key={lesson.id}>
             <LessonRow lesson={lesson} record={snapshot?.progress[lesson.id]} />
           </li>
         ))}
       </ul>
-    </div>
+    </details>
   );
 }
 
@@ -270,80 +341,87 @@ function LessonRow({
   record?: { bestXp: number; completions: number };
 }) {
   const s = useSiteText();
-  const maxXp = lesson.challenges.reduce(
-    (sum, challenge) => sum + (challenge.xp ?? DEFAULT_CHALLENGE_XP),
-    0,
-  );
+  const maxXp = maxXpOf(lesson);
   const perfect = record ? record.bestXp >= maxXp : false;
 
   return (
     <LocaleLink
       href={`/learn/${lesson.id}`}
-      className={cn(
-        "flex items-center gap-3 rounded-xl border p-3 transition-colors",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
-        record
-          ? "border-mint/25 bg-mint/[0.05] hover:border-mint/50"
-          : "border-hairline bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]",
-      )}
+      className="flex min-h-12 items-center gap-3 rounded-xl px-3 py-2 transition-colors hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
     >
       <span
         aria-hidden
         className={cn(
-          "grid size-8 shrink-0 place-items-center rounded-lg border text-base",
-          record ? "border-mint/40 bg-mint/10" : "border-hairline bg-white/5",
+          "grid size-8 shrink-0 place-items-center rounded-full text-base",
+          record ? "bg-mint/15" : "bg-white/5",
         )}
       >
         {record ? <Check className="size-4 text-mint-bright" strokeWidth={3} /> : lesson.icon}
       </span>
-
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-bold text-ink">{lesson.title}</span>
-        <span className="block text-xs text-ink-faint">
-          {record
-            ? `${s("dash.best", { best: record.bestXp, max: maxXp })}${
-                record.completions > 1 ? ` ${s("dash.runs", { count: record.completions })}` : ""
-              }`
-            : s("dash.xpAvailable", { max: maxXp })}
-        </span>
+      <span className="min-w-0 flex-1 truncate text-[0.95rem] font-semibold text-ink">
+        {lesson.title}
       </span>
-
       {perfect ? (
         <Trophy className="size-4 shrink-0 text-gold" aria-label={s("dash.fullMarks")} />
-      ) : record ? (
-        <RotateCcw className="size-3.5 shrink-0 text-ink-faint" aria-label={s("dash.replay")} />
-      ) : null}
+      ) : record ? null : (
+        <span className="shrink-0 text-sm text-ink-muted">
+          {s("today.minutes", { count: lesson.estimatedMinutes })}
+        </span>
+      )}
     </LocaleLink>
   );
 }
 
-function Stat({
-  icon,
-  label,
-  value,
-  note,
-  tone,
+/**
+ * A progress ring. Decorative: every ring sits beside the same number in text.
+ *
+ * @param ratio    Filled share, 0 to 1.
+ * @param size     Diameter in px.
+ * @param stroke   Ring thickness in px.
+ * @param children What sits in the middle.
+ */
+function ProgressRing({
+  ratio,
+  size,
+  stroke,
+  children,
 }: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  note?: string;
-  tone: "gold" | "mint" | "muted";
+  ratio: number;
+  size: number;
+  stroke: number;
+  children?: React.ReactNode;
 }) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const filled = Math.max(0, Math.min(1, ratio));
   return (
-    <div className="rounded-card border border-hairline bg-white/[0.03] p-5">
-      <p
-        className={cn(
-          "flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider",
-          tone === "gold" ? "text-gold" : tone === "mint" ? "text-mint-bright" : "text-ink-faint",
-        )}
-      >
-        {icon}
-        {label}
-      </p>
-      <p className="mt-1 font-display text-3xl font-extrabold tabular-nums">{value}</p>
-      {note ? <p className="mt-1 text-xs text-ink-faint">{note}</p> : null}
-    </div>
+    <span className="relative grid shrink-0 place-items-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden className="absolute inset-0 -rotate-90">
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-white/10" />
+        {filled > 0 ? (
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={r}
+            fill="none"
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={c}
+            strokeDashoffset={c * (1 - filled)}
+            className="stroke-mint transition-[stroke-dashoffset] duration-700 ease-out motion-reduce:transition-none"
+          />
+        ) : null}
+      </svg>
+      <span className="relative">{children}</span>
+    </span>
+  );
+}
+
+/** The most XP a lesson can award, read from its challenges. */
+function maxXpOf(lesson: Lesson): number {
+  return lesson.challenges.reduce(
+    (sum, challenge) => sum + (challenge.xp ?? DEFAULT_CHALLENGE_XP),
+    0,
   );
 }
 
@@ -395,5 +473,15 @@ function summarise(snapshot: ProgressSnapshot | null) {
     total: all.length,
     percent: all.length ? Math.round((completed / all.length) * 100) : 0,
     next: all.find(({ lesson }) => !snapshot?.progress[lesson.id]) ?? null,
+    // Finished but not perfect, weakest share first; three is a session, not a backlog.
+    sharpen: all
+      .flatMap(({ lesson }) => {
+        const record = snapshot?.progress[lesson.id];
+        if (!record) return [];
+        const max = maxXpOf(lesson);
+        return record.bestXp < max ? [{ lesson, best: record.bestXp, max }] : [];
+      })
+      .sort((a, b) => a.best / a.max - b.best / b.max)
+      .slice(0, 3),
   };
 }

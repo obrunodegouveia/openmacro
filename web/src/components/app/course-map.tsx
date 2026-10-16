@@ -484,7 +484,7 @@ function LessonCard({
           {lesson.subtitle}
         </span>
 
-        <span className="mt-3 flex flex-wrap items-center gap-3 text-[0.7rem] font-bold text-ink-faint">
+        <span className="mt-3 flex flex-wrap items-center gap-3 text-xs font-bold text-ink-faint">
           {record ? (
             <>
               <span className="inline-flex items-center gap-1 text-mint-bright">

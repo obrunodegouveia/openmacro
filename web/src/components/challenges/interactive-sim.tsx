@@ -121,7 +121,7 @@ export function InteractiveSimView({
                   {formatValue(readouts[readout.key] ?? 0, readout.format, currency, locale)}
                 </dd>
                 {readout.caption ? (
-                  <p className="mt-0.5 font-mono text-[0.7rem] text-ink-faint">
+                  <p className="mt-0.5 font-mono text-xs text-ink-faint">
                     {readout.caption}
                   </p>
                 ) : null}
