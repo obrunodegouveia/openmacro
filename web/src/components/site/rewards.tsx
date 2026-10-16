@@ -49,7 +49,7 @@ const MECHANISMS: {
 ];
 
 const TONES = {
-  azure: "border-azure/30 bg-azure/10 text-[#8ab0ff]",
+  azure: "border-azure/30 bg-azure/10 text-azure-text",
   gold: "border-gold/30 bg-gold/10 text-gold",
   mint: "border-mint/30 bg-mint/10 text-mint-bright",
   violet: "border-violet/30 bg-violet/10 text-violet",

@@ -22,6 +22,8 @@ steps:
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${_SUPABASE_ANON_KEY}
       - --build-arg
       - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID}
+      - --build-arg
+      - NEXT_PUBLIC_APPLE_WEB_SIGN_IN=${_APPLE_WEB_SIGN_IN}
       # Reuse the previous image's layers when the lockfile has not changed.
       # Built from the workspace root, so the Dockerfile has to be named.
       - -f
@@ -48,6 +50,7 @@ substitutions:
   _SUPABASE_URL: ''
   _SUPABASE_ANON_KEY: ''
   _GOOGLE_CLIENT_ID: ''
+  _APPLE_WEB_SIGN_IN: ''
 
 options:
   machineType: E2_HIGHCPU_8

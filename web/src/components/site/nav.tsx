@@ -140,8 +140,8 @@ export function Nav() {
                     className={cn(
                       "rounded-lg px-3 py-2 text-[0.95rem] font-bold transition-colors",
                       active
-                        ? "bg-white/[0.08] text-ink"
-                        : "text-ink-muted hover:bg-white/5 hover:text-ink",
+                        ? "bg-veil/[0.08] text-ink"
+                        : "text-ink-muted hover:bg-veil/5 hover:text-ink",
                     )}
                   >
                     {s(link.key)}
@@ -164,7 +164,7 @@ export function Nav() {
             ref={menuButton}
             type="button"
             className={cn(
-              "-mr-2 size-11 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-white/5 hover:text-ink active:bg-white/10 lg:hidden",
+              "-mr-2 size-11 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-veil/5 hover:text-ink active:bg-veil/10 lg:hidden",
               // Signed in on a phone, the tab bar's More opens the same sheet.
               learner ? "hidden md:grid" : "grid",
             )}

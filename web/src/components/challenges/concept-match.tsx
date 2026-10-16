@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
-import { Check } from "lucide-react";
 import { seededShuffle } from "@openmacro/core/format";
 import type { ChallengeComponentProps } from "./types";
 import { cn } from "@/lib/utils";
@@ -27,7 +26,6 @@ export function ConceptMatchView({
   challenge,
   onAnswerChange,
   locked,
-  result,
 }: ChallengeComponentProps<"concept_match">) {
   const s = useSiteText();
   const definitions = React.useMemo(
@@ -135,8 +133,8 @@ export function ConceptMatchView({
                         : activeTerm === pair.id
                           ? "border-mint bg-mint/15 text-ink"
                           : matched
-                            ? "border-white/20 bg-white/[0.07] text-ink"
-                            : "border-hairline bg-white/[0.03] text-ink-muted hover:text-ink",
+                            ? "border-veil/20 bg-veil/[0.07] text-ink"
+                            : "border-hairline bg-veil/[0.03] text-ink-muted hover:text-ink",
                   )}
                 >
                   {pair.term}
@@ -171,10 +169,10 @@ export function ConceptMatchView({
                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
                     "aria-disabled:cursor-default",
                     takenBy
-                      ? "border-white/20 bg-white/[0.07] text-ink-faint line-through"
+                      ? "border-veil/20 bg-veil/[0.07] text-ink-faint line-through"
                       : activeTerm
-                        ? "border-mint/40 bg-white/[0.04] text-ink hover:border-mint hover:bg-mint/10"
-                        : "border-hairline bg-white/[0.03] text-ink-muted",
+                        ? "border-mint/40 bg-veil/[0.04] text-ink hover:border-mint hover:bg-mint/10"
+                        : "border-hairline bg-veil/[0.03] text-ink-muted",
                   )}
                 >
                   {pair.definition}
@@ -185,21 +183,6 @@ export function ConceptMatchView({
         </ul>
       </div>
 
-      {locked && result ? (
-        <p
-          className={cn(
-            "flex items-start gap-2 rounded-xl border px-4 py-3 text-sm leading-relaxed",
-            result.correct
-              ? "border-mint/30 bg-mint/[0.07] text-mint-bright"
-              : "border-coral/30 bg-coral/[0.07] text-ink-muted",
-          )}
-        >
-          {result.correct ? (
-            <Check className="mt-0.5 size-4 shrink-0" aria-hidden />
-          ) : null}
-          {result.detail ?? result.explanation}
-        </p>
-      ) : null}
     </div>
   );
 }

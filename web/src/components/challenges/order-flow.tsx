@@ -20,7 +20,6 @@ export function OrderFlowView({
   challenge,
   onAnswerChange,
   locked,
-  result,
 }: ChallengeComponentProps<"order_flow">) {
   const s = useSiteText();
   const [order, setOrder] = React.useState<FlowEvent[]>(() =>
@@ -74,12 +73,12 @@ export function OrderFlowView({
                     ? "border-mint/60 bg-mint/10"
                     : verdict === "wrong"
                       ? "border-coral/60 bg-coral/10"
-                      : "border-hairline bg-white/[0.03]",
+                      : "border-hairline bg-veil/[0.03]",
                 )}
               >
                 <span
                   aria-hidden
-                  className="grid size-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/5 font-mono text-xs font-bold text-ink-muted"
+                  className="grid size-7 shrink-0 place-items-center rounded-lg border border-veil/15 bg-veil/5 font-mono text-xs font-bold text-ink-muted"
                 >
                   {index + 1}
                 </span>
@@ -102,7 +101,7 @@ export function OrderFlowView({
                       onClick={() => move(index, -1)}
                       disabled={index === 0}
                       aria-label={s("order.moveEarlier", { label: event.label })}
-                      className="rounded-md p-1 text-ink-muted hover:bg-white/10 hover:text-ink disabled:pointer-events-none disabled:opacity-25"
+                      className="rounded-md p-1 text-ink-muted hover:bg-veil/10 hover:text-ink disabled:pointer-events-none disabled:opacity-25"
                     >
                       <ChevronUp className="size-4" aria-hidden />
                     </button>
@@ -111,7 +110,7 @@ export function OrderFlowView({
                       onClick={() => move(index, 1)}
                       disabled={index === order.length - 1}
                       aria-label={s("order.moveLater", { label: event.label })}
-                      className="rounded-md p-1 text-ink-muted hover:bg-white/10 hover:text-ink disabled:pointer-events-none disabled:opacity-25"
+                      className="rounded-md p-1 text-ink-muted hover:bg-veil/10 hover:text-ink disabled:pointer-events-none disabled:opacity-25"
                     >
                       <ChevronDown className="size-4" aria-hidden />
                     </button>
@@ -130,18 +129,6 @@ export function OrderFlowView({
         })}
       </ol>
 
-      {locked && result ? (
-        <p
-          className={cn(
-            "rounded-xl border px-4 py-3 text-sm leading-relaxed",
-            result.correct
-              ? "border-mint/30 bg-mint/[0.07] text-mint-bright"
-              : "border-coral/30 bg-coral/[0.07] text-ink-muted",
-          )}
-        >
-          {result.detail ?? result.explanation}
-        </p>
-      ) : null}
     </div>
   );
 }

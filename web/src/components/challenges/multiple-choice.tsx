@@ -23,7 +23,6 @@ export function MultipleChoiceView({
   challenge,
   onAnswerChange,
   locked,
-  result,
 }: ChallengeComponentProps<"multiple_choice">) {
   const [selected, setSelected] = React.useState<string | null>(null);
   const buttons = React.useRef<(HTMLButtonElement | null)[]>([]);
@@ -131,10 +130,10 @@ export function MultipleChoiceView({
                 : isWrongPick
                   ? "border-coral/60 bg-coral/10"
                   : isSelected
-                    ? "border-mint/50 bg-white/[0.06]"
+                    ? "border-mint/50 bg-veil/[0.06]"
                     : locked
-                      ? "border-hairline bg-white/[0.03]"
-                      : "border-hairline bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]",
+                      ? "border-hairline bg-veil/[0.03]"
+                      : "border-hairline bg-veil/[0.03] hover:border-veil/20 hover:bg-veil/[0.06]",
               locked && !isCorrect && !isWrongPick && "opacity-60",
             )}
           >
@@ -149,7 +148,7 @@ export function MultipleChoiceView({
                     ? "border-coral bg-coral text-abyss"
                     : isSelected
                       ? "border-mint"
-                      : "border-white/25",
+                      : "border-veil/25",
               )}
             >
               {isCorrect ? (
@@ -172,16 +171,6 @@ export function MultipleChoiceView({
         );
       })}
 
-      {/*
-        The targeted rebuttal for the option actually picked. The engine already
-        puts this in `result.detail`; rendering it beside the option it belongs
-        to is what makes it land.
-      */}
-      {locked && result && !result.correct ? (
-        <p className="rounded-xl border border-coral/30 bg-coral/[0.07] px-4 py-3 text-sm leading-relaxed text-ink-muted">
-          {result.detail ?? result.explanation}
-        </p>
-      ) : null}
     </div>
   );
 }

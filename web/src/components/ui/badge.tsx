@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 const TONES = {
   mint: "border-mint/30 bg-mint/10 text-mint-bright",
   gold: "border-gold/30 bg-gold/10 text-gold",
-  azure: "border-azure/30 bg-azure/10 text-[#8ab0ff]",
+  azure: "border-azure/30 bg-azure/10 text-azure-text",
   violet: "border-violet/30 bg-violet/10 text-violet",
-  neutral: "border-hairline bg-white/5 text-ink-muted",
+  neutral: "border-hairline bg-veil/5 text-ink-muted",
 } as const;
 
 export type BadgeTone = keyof typeof TONES;

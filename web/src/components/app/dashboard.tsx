@@ -56,7 +56,7 @@ export function Dashboard({ money }: { money?: React.ReactNode }) {
   // Hold the layout while the stored session is restored, rather than flashing
   // a sign-in prompt at somebody who is already signed in.
   if (restoring) {
-    return <div className="h-64 animate-pulse rounded-card bg-white/5" aria-hidden />;
+    return <div className="h-64 animate-pulse rounded-card bg-veil/5" aria-hidden />;
   }
 
   return (
@@ -185,7 +185,7 @@ export function DashboardView({
       {/* How far, in one glance ------------------------------------------- */}
       <section
         aria-label={s("dash.progressAria")}
-        className="flex items-center gap-5 rounded-card border border-hairline bg-white/[0.03] p-5"
+        className="flex items-center gap-5 rounded-card border border-hairline bg-veil/[0.03] p-5"
       >
         <ProgressRing ratio={loading ? 0 : progress.percent / 100} size={72} stroke={8}>
           <span className="font-display text-base font-extrabold tabular-nums">
@@ -207,7 +207,7 @@ export function DashboardView({
       {money}
 
       {!signedIn ? (
-        <section className="rounded-card border border-hairline bg-white/[0.03] p-5">
+        <section className="rounded-card border border-hairline bg-veil/[0.03] p-5">
           <h2 className="font-display text-lg font-extrabold tracking-tight">{s("dash.onDevice")}</h2>
           <p className="mt-1 max-w-md text-sm leading-relaxed text-ink-muted">{s("dash.onDeviceBody")}</p>
           <AccountPanel className="mt-5" redirectTo="/dashboard" />
@@ -228,7 +228,7 @@ export function DashboardView({
               <li key={lesson.id}>
                 <LocaleLink
                   href={`/learn/${lesson.id}`}
-                  className="flex min-h-14 items-center gap-3 rounded-xl border border-hairline bg-white/[0.03] px-4 py-3 transition-colors hover:border-white/25 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
+                  className="flex min-h-14 items-center gap-3 rounded-xl border border-hairline bg-veil/[0.03] px-4 py-3 transition-colors hover:border-veil/25 hover:bg-veil/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
                 >
                   <span aria-hidden className="text-xl">{lesson.icon}</span>
                   <span className="min-w-0 flex-1">
@@ -303,7 +303,7 @@ function ModuleRow({
   return (
     <details
       open={current}
-      className="group rounded-card border border-hairline bg-white/[0.03] open:bg-white/[0.045]"
+      className="group rounded-card border border-hairline bg-veil/[0.03] open:bg-veil/[0.045]"
     >
       <summary className="flex min-h-16 cursor-pointer list-none items-center gap-4 px-4 py-3 [&::-webkit-details-marker]:hidden">
         <ProgressRing ratio={total ? done / total : 0} size={36} stroke={4}>
@@ -347,13 +347,13 @@ function LessonRow({
   return (
     <LocaleLink
       href={`/learn/${lesson.id}`}
-      className="flex min-h-12 items-center gap-3 rounded-xl px-3 py-2 transition-colors hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
+      className="flex min-h-12 items-center gap-3 rounded-xl px-3 py-2 transition-colors hover:bg-veil/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright"
     >
       <span
         aria-hidden
         className={cn(
           "grid size-8 shrink-0 place-items-center rounded-full text-base",
-          record ? "bg-mint/15" : "bg-white/5",
+          record ? "bg-mint/15" : "bg-veil/5",
         )}
       >
         {record ? <Check className="size-4 text-mint-bright" strokeWidth={3} /> : lesson.icon}
@@ -397,7 +397,7 @@ function ProgressRing({
   return (
     <span className="relative grid shrink-0 place-items-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden className="absolute inset-0 -rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-white/10" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-veil/10" />
         {filled > 0 ? (
           <circle
             cx={size / 2}
@@ -429,7 +429,7 @@ function Avatar({ learner }: { learner: { name: string; avatarUrl: string | null
   if (!learner.avatarUrl) {
     return (
       <span
-        className="grid size-12 shrink-0 place-items-center rounded-full border border-hairline bg-white/5"
+        className="grid size-12 shrink-0 place-items-center rounded-full border border-hairline bg-veil/5"
         aria-hidden
       >
         <User className="size-5 text-ink-muted" />

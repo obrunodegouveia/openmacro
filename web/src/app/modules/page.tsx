@@ -49,7 +49,7 @@ export default async function ModuleBriefsPage() {
             {MODULES.map((module, index) => (
               <li
                 key={module.id}
-                className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-hairline bg-white/[0.03] p-4"
+                className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-hairline bg-veil/[0.03] p-4"
               >
                 <span className="font-mono text-xs font-bold text-ink-faint">
                   {String(index + 1).padStart(2, "0")}
@@ -90,7 +90,7 @@ export default async function ModuleBriefsPage() {
             ))}
           </ol>
 
-          <div className="mt-10 rounded-card border border-hairline bg-white/[0.02] p-6">
+          <div className="mt-10 rounded-card border border-hairline bg-veil/[0.02] p-6">
             <h2 className="font-display text-lg font-extrabold">{s("briefs.howTitle")}</h2>
             <ol className="mt-3 flex flex-col gap-2 text-sm leading-relaxed text-ink-muted">
               <li>{s("briefs.step.1")}</li>

@@ -85,7 +85,7 @@ export function CentralBankBalanceSheet() {
           className={`rounded-full border px-3 py-1 text-xs font-extrabold uppercase tracking-wider ${
             easing
               ? "border-mint/40 bg-mint/15 text-mint-bright"
-              : "border-hairline bg-white/5 text-ink-muted"
+              : "border-hairline bg-veil/5 text-ink-muted"
           }`}
         >
           {easing ? s("sheet.qeOn") : s("sheet.qeOff")}
@@ -135,7 +135,7 @@ function Column({
 }) {
   const s = useSiteText();
   return (
-    <div className="rounded-2xl border border-hairline bg-abyss/50 p-4">
+    <div className="rounded-2xl border border-hairline bg-well/50 p-4">
       <div className="mb-3 flex items-baseline justify-between">
         {/* A label inside a decorative widget, not a document section — using
             a heading here breaks the h1 -> h3 order on the page. */}
@@ -158,7 +158,7 @@ function Column({
                   {formatCurrency(amount)}B
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-white/5">
+              <div className="h-2 overflow-hidden rounded-full bg-veil/5">
                 <motion.div
                   className="h-full rounded-full"
                   style={{ backgroundColor: position.color }}

@@ -34,7 +34,7 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
   // Hold the space during the session check rather than flashing "Sign in" at
   // someone who is already signed in.
   if (loading) {
-    return <span className="h-9 w-24 animate-pulse rounded-xl bg-white/5" aria-hidden />;
+    return <span className="h-9 w-24 animate-pulse rounded-xl bg-veil/5" aria-hidden />;
   }
 
   if (!learner) {
@@ -68,7 +68,7 @@ export function AccountButton({ onNavigate }: { onNavigate?: () => void }) {
         href="/dashboard"
         onClick={onNavigate}
         aria-label={s("account.openProgressA11y", { name: learner.name })}
-        className="flex items-center gap-2 rounded-xl border border-hairline bg-white/5 py-1.5 pl-3 pr-2 transition-colors hover:border-mint/50 hover:bg-white/10"
+        className="flex items-center gap-2 rounded-xl border border-hairline bg-veil/5 py-1.5 pl-3 pr-2 transition-colors hover:border-mint/50 hover:bg-veil/10"
       >
         <Avatar learner={learner} />
         <span className="max-w-[10rem] truncate text-sm font-bold text-ink">
@@ -174,7 +174,7 @@ function Avatar({ learner }: { learner: { name: string; avatarUrl: string | null
   if (!learner.avatarUrl) {
     return (
       <span
-        className="grid size-6 shrink-0 place-items-center rounded-full border border-hairline bg-white/5"
+        className="grid size-6 shrink-0 place-items-center rounded-full border border-hairline bg-veil/5"
         aria-hidden
       >
         <User className="size-3.5 text-ink-muted" />

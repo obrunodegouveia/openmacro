@@ -3,7 +3,18 @@
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
 import { Button } from "@/components/ui/button";
-import { GoogleIcon } from "@/components/ui/icons";
+import { AppleIcon, GoogleIcon } from "@/components/ui/icons";
+
+/**
+ * Whether to offer Sign in with Apple on the website.
+ *
+ * Off until the Supabase Apple provider has a web Services ID and its client
+ * secret: until then Supabase answers "missing OAuth secret" and the button
+ * would be a dead end. The app signs in with Apple natively and does not need
+ * this. Set NEXT_PUBLIC_APPLE_WEB_SIGN_IN=1 at build time (web/deploy/config.sh)
+ * once it is configured.
+ */
+const APPLE_WEB_SIGN_IN = process.env.NEXT_PUBLIC_APPLE_WEB_SIGN_IN === "1";
 import { useAuth } from "@/components/site/auth-provider";
 
 /**
@@ -36,10 +47,25 @@ export function GoogleSignIn({
 
   return (
     <div className={className}>
-      <Button size="lg" disabled={signingIn} onClick={() => void signIn(redirectTo)}>
-        <GoogleIcon className="size-4" aria-hidden />
-        {signingIn ? s("google.opening") : label}
-      </Button>
+      <div className="flex flex-col items-start gap-3">
+        {APPLE_WEB_SIGN_IN ? (
+          // Black on white per Apple's guidelines, and listed first: on an
+          // iPhone it is the one-tap path.
+          <button
+            type="button"
+            disabled={signingIn}
+            onClick={() => void signIn(redirectTo, "apple")}
+            className="inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-white px-7 text-base font-extrabold text-black transition-transform active:scale-[0.98] disabled:opacity-50"
+          >
+            <AppleIcon className="size-5" />
+            {s("apple.continue")}
+          </button>
+        ) : null}
+        <Button size="lg" disabled={signingIn} onClick={() => void signIn(redirectTo)}>
+          <GoogleIcon className="size-4" aria-hidden />
+          {signingIn ? s("google.opening") : label}
+        </Button>
+      </div>
 
       {error ? (
         <p role="alert" className="mt-3 max-w-sm text-sm leading-relaxed text-coral">

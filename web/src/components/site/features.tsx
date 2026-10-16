@@ -145,7 +145,7 @@ export function Features() {
               ].map((feature) => (
                 <div
                   key={feature.title}
-                  className="rounded-2xl border border-hairline bg-abyss/50 p-5"
+                  className="rounded-2xl border border-hairline bg-well/50 p-5"
                 >
                   <h4 className="flex items-center gap-2 font-display text-sm font-extrabold">
                     {feature.icon}
@@ -204,7 +204,7 @@ function Compare({
   return (
     <div
       className={`rounded-2xl border p-5 ${
-        isMint ? "border-mint/25 bg-mint/[0.06]" : "border-hairline bg-abyss/50"
+        isMint ? "border-mint/25 bg-mint/[0.06]" : "border-hairline bg-well/50"
       }`}
     >
       <p

@@ -76,7 +76,7 @@ export function TAccountFlowView({
       ) : null}
 
       {/* Entries to post ------------------------------------------------ */}
-      <div className="rounded-2xl border border-hairline bg-white/[0.03] p-4">
+      <div className="rounded-2xl border border-hairline bg-veil/[0.03] p-4">
         <div className="flex items-baseline justify-between gap-3">
           <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
             {s("tflow.entries")}
@@ -101,7 +101,7 @@ export function TAccountFlowView({
                   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
                   activeOption === option.id
                     ? "border-mint bg-mint/15"
-                    : "border-hairline bg-white/5 hover:border-white/25",
+                    : "border-hairline bg-veil/5 hover:border-veil/25",
                 )}
               >
                 <span
@@ -162,8 +162,9 @@ export function TAccountFlowView({
         </div>
       ) : null}
 
-      {/* Verdict + what actually moved ----------------------------------- */}
-      {locked && result ? (
+      {/* What actually moved. The verdict and explanation are in the
+          lesson's feedback sheet, as in the app. -------------------------- */}
+      {locked && result?.correct && challenge.aggregateEffects?.length ? (
         <div
           className={cn(
             "rounded-xl border px-4 py-3",
@@ -172,16 +173,12 @@ export function TAccountFlowView({
               : "border-coral/30 bg-coral/[0.07]",
           )}
         >
-          <p className="text-sm leading-relaxed text-ink-muted">
-            {result.detail ?? result.explanation}
-          </p>
-
           {result.correct && challenge.aggregateEffects?.length ? (
-            <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+            <ul className="grid gap-3 sm:grid-cols-3">
               {challenge.aggregateEffects.map((effect) => (
                 <li
                   key={effect.aggregate}
-                  className="rounded-lg border border-hairline bg-white/[0.04] p-3"
+                  className="rounded-lg border border-hairline bg-veil/[0.04] p-3"
                 >
                   <p className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider">
                     <AggregateIcon direction={effect.direction} />
@@ -244,7 +241,7 @@ function EntitySheet({
   const touched = balance.assetDelta !== 0 || balance.liabilityDelta !== 0;
 
   return (
-    <section className="rounded-2xl border border-hairline bg-white/[0.02] p-4">
+    <section className="rounded-2xl border border-hairline bg-veil/[0.02] p-4">
       <header className="flex items-start justify-between gap-3">
         <div>
           <h3 className="font-display text-base font-extrabold tracking-tight">
@@ -317,7 +314,7 @@ function SheetColumn({
   const sideNoun = side === "asset" ? "assets" : "liabilities";
 
   return (
-    <div className="rounded-xl border border-hairline bg-white/[0.03] p-3">
+    <div className="rounded-xl border border-hairline bg-veil/[0.03] p-3">
       <p className="text-xs font-extrabold uppercase tracking-wider text-ink">
         {side === "asset" ? s("tflow.assets") : s("tflow.liabilities")}
       </p>
@@ -376,7 +373,7 @@ function SheetColumn({
           "mt-2 w-full rounded-lg border border-dashed px-2 py-2 text-xs font-bold transition-colors",
           armed
             ? "border-mint/60 bg-mint/5 text-mint-bright hover:bg-mint/15"
-            : "border-white/10 text-ink-faint",
+            : "border-veil/10 text-ink-faint",
         )}
       >
         {armed

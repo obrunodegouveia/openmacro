@@ -61,7 +61,7 @@ export function ModuleVideo({
   const Chevron = collapsed ? ChevronRight : ChevronDown;
 
   return (
-    <div className="mt-4 overflow-hidden rounded-card border border-hairline bg-white/[0.03]">
+    <div className="mt-4 overflow-hidden rounded-card border border-hairline bg-veil/[0.03]">
       {collapsed ? null : (
         <div className="relative aspect-video w-full bg-abyss">
           {playing ? (
@@ -86,7 +86,7 @@ export function ModuleVideo({
                 {moduleTitle}
               </span>
               <span className="absolute inset-0 grid place-items-center">
-                <span className="grid size-16 place-items-center rounded-full border border-mint/40 bg-abyss/80 backdrop-blur transition-transform group-hover:scale-110">
+                <span className="grid size-16 place-items-center rounded-full border border-mint/40 bg-well/80 backdrop-blur transition-transform group-hover:scale-110">
                   <Play className="size-7 translate-x-0.5 fill-mint-bright text-mint-bright" aria-hidden />
                 </span>
               </span>

@@ -48,7 +48,7 @@ export default async function NotFound() {
               </LocaleLink>
               <LocaleLink
                 href="/glossary"
-                className="inline-flex h-12 items-center justify-center rounded-xl border border-hairline bg-white/5 px-6 font-extrabold text-ink transition-colors hover:border-mint/60 hover:bg-white/10"
+                className="inline-flex h-12 items-center justify-center rounded-xl border border-hairline bg-veil/5 px-6 font-extrabold text-ink transition-colors hover:border-mint/60 hover:bg-veil/10"
               >
                 {s("notFound.glossary")}
               </LocaleLink>

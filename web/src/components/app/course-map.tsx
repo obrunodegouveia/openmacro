@@ -459,14 +459,14 @@ function LessonCard({
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
         record
           ? "border-mint/25 bg-mint/[0.05] hover:border-mint/50"
-          : "border-hairline bg-white/[0.03] hover:border-mint/50 hover:bg-white/[0.06]",
+          : "border-hairline bg-veil/[0.03] hover:border-mint/50 hover:bg-veil/[0.06]",
       )}
     >
       <span
         aria-hidden
         className={cn(
           "grid size-11 shrink-0 place-items-center rounded-xl border text-xl",
-          record ? "border-mint/40 bg-mint/10" : "border-hairline bg-white/5",
+          record ? "border-mint/40 bg-mint/10" : "border-hairline bg-veil/5",
         )}
       >
         {record ? (

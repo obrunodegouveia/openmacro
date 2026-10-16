@@ -70,7 +70,7 @@ export function Permalink({
         "inline-flex shrink-0 items-center justify-center rounded-lg align-middle transition-colors",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-bright",
         size === "sm" ? "size-6" : "size-7",
-        copied ? "text-mint-bright" : "text-ink-faint hover:bg-white/5 hover:text-mint-bright",
+        copied ? "text-mint-bright" : "text-ink-faint hover:bg-veil/5 hover:text-mint-bright",
         className,
       )}
     >

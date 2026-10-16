@@ -28,7 +28,6 @@ export function InteractiveSimView({
   challenge,
   onAnswerChange,
   locked,
-  result,
 }: ChallengeComponentProps<"interactive_sim">) {
   const s = useSiteText();
   const { locale } = useLocale();
@@ -90,7 +89,7 @@ export function InteractiveSimView({
       ) : null}
 
       {/* Readouts ------------------------------------------------------- */}
-      <div className="rounded-2xl border border-hairline bg-white/[0.03] p-5">
+      <div className="rounded-2xl border border-hairline bg-veil/[0.03] p-5">
         {hero ? (
           <div className="text-center">
             <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
@@ -168,7 +167,7 @@ export function InteractiveSimView({
       </div>
 
       {/* Objective ------------------------------------------------------ */}
-      <div className="rounded-2xl border border-hairline bg-white/[0.03] p-4">
+      <div className="rounded-2xl border border-hairline bg-veil/[0.03] p-4">
         <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
           {challenge.objective.description}
         </p>
@@ -181,7 +180,7 @@ export function InteractiveSimView({
                   "grid size-5 shrink-0 place-items-center rounded-md border",
                   step.done
                     ? "border-mint bg-mint text-abyss"
-                    : "border-white/20 bg-white/5",
+                    : "border-veil/20 bg-veil/5",
                 )}
               >
                 {step.done ? <Check className="size-3" strokeWidth={3} /> : null}
@@ -195,18 +194,6 @@ export function InteractiveSimView({
         </ul>
       </div>
 
-      {locked && result ? (
-        <p
-          className={cn(
-            "rounded-xl border px-4 py-3 text-sm leading-relaxed",
-            result.correct
-              ? "border-mint/30 bg-mint/[0.07] text-mint-bright"
-              : "border-coral/30 bg-coral/[0.07] text-ink-muted",
-          )}
-        >
-          {result.detail ?? result.explanation}
-        </p>
-      ) : null}
     </div>
   );
 }
