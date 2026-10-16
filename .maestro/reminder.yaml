@@ -1,0 +1,17 @@
+appId: org.openmacro.app
+name: Daily reminder asks for permission, then offers times
+---
+- runFlow: subflows/launch.yaml
+- tapOn: "Profile"
+- scrollUntilVisible:
+    element: "Daily reminder"
+- tapOn:
+    id: "reminder-switch"
+- runFlow:
+    when:
+      visible: "Allow"
+    commands:
+      - tapOn: "Allow"
+- extendedWaitUntil:
+    visible: ".*(19:00|7:00).*"
+    timeout: 10000
