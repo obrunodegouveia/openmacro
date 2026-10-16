@@ -48,7 +48,7 @@ export async function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-hairline bg-abyss/60">
+    <footer className="relative border-t border-hairline bg-well/60">
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
           <AccountPanel />
@@ -165,7 +165,7 @@ function Disclosure({
   body: string;
 }) {
   return (
-    <div className="rounded-2xl border border-hairline bg-white/[0.03] p-4">
+    <div className="rounded-2xl border border-hairline bg-veil/[0.03] p-4">
       <h5 className="flex items-center gap-2 text-sm font-extrabold">
         {icon}
         {title}
@@ -187,7 +187,7 @@ export async function FooterMinimal() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-hairline bg-abyss/60">
+    <footer className="border-t border-hairline bg-well/60">
       <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-6 text-xs text-ink-faint sm:px-8">
         <p>
           <LocaleLink

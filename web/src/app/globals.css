@@ -20,6 +20,11 @@
   --color-surface: #0d1424;
   --color-surface-raised: #131c30;
   --color-hairline: #1e2a42;
+  /* Recessed wells: inputs, slider tracks. The deepest surface in either theme. */
+  --color-well: #05080f;
+  /* The tint for hover states and quiet fills: white over the dark theme, ink
+     over the light one. Always used with an opacity, never solid. */
+  --color-veil: #ffffff;
 
   /* Ink */
   --color-ink: #f2f6fc;
@@ -41,9 +46,16 @@
   /* Policy / information */
   --color-azure: #3d7eff;
   --color-azure-deep: #2a5fd0;
+  /* Azure as text, lightened for the dark canvas. */
+  --color-azure-text: #8ab0ff;
+
+  /* The feedback sheet after an answer (lesson-player.tsx). */
+  --color-sheet-correct: #0c2a1d;
+  --color-sheet-wrong: #2e1215;
 
   /* Contraction / incorrect */
   --color-coral: #ff5a5f;
+  --color-coral-deep: #c9373c;
   --color-violet: #a78bfa;
 
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
@@ -141,6 +153,45 @@ html {
   color-scheme: dark;
 }
 
+/*
+ * Light appearance, following the system setting.
+ *
+ * Only the tokens change. Components never name a colour for one theme; the
+ * overlays that used to be `white/5` are `veil/5`, which turns from a white
+ * tint into an ink tint here. `abyss` stays dark on purpose: it is also the
+ * text colour on mint and gold buttons, and those keep their dark label.
+ * Accents are darkened where they are used as text, so they clear AA on white.
+ */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-canvas: #f4f6fa;
+    --color-surface: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-hairline: #dbe2ec;
+    --color-well: #e9edf3;
+    --color-veil: #0b1220;
+
+    --color-ink: #0b1220;
+    --color-ink-muted: #3f4d63;
+    --color-ink-faint: #56647a;
+
+    --color-mint-bright: #11804e;
+    --color-gold: #c98a00;
+    --color-gold-deep: #9a6a00;
+    --color-coral: #d33a40;
+    --color-azure-text: #2457c5;
+
+    --color-sheet-correct: #e3f6ec;
+    --color-sheet-wrong: #fde8e8;
+
+    --glass-from: rgba(255, 255, 255, 0.9);
+    --glass-to: rgba(255, 255, 255, 0.7);
+  }
+  html {
+    color-scheme: light;
+  }
+}
+
 body {
   background-color: var(--color-canvas);
   color: var(--color-ink);
@@ -188,11 +239,30 @@ body::before {
   .glass {
     background: linear-gradient(
       160deg,
-      rgba(255, 255, 255, 0.07),
-      rgba(255, 255, 255, 0.02)
+      var(--glass-from, rgba(255, 255, 255, 0.07)),
+      var(--glass-to, rgba(255, 255, 255, 0.02))
     );
     border: 1px solid var(--color-hairline);
     backdrop-filter: blur(14px);
+  }
+
+  /*
+   * A surface that stays dark in both themes (code, a video frame). Light
+   * mode darkens ink and the accents for white backgrounds; inside this
+   * scope they keep their dark-theme values, so text stays readable.
+   */
+  .on-dark {
+    --color-ink: #f2f6fc;
+    --color-ink-muted: #97a5bd;
+    --color-ink-faint: #8a9bb3;
+    --color-hairline: #1e2a42;
+    --color-veil: #ffffff;
+    --color-well: #05080f;
+    --color-mint-bright: #3ee08a;
+    --color-gold: #ffc94a;
+    --color-coral: #ff5a5f;
+    --color-azure-text: #8ab0ff;
+    color: var(--color-ink);
   }
 
   /* Subtle grid, used behind the hero and the balance-sheet visual. */

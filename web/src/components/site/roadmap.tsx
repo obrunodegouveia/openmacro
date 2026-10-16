@@ -97,7 +97,7 @@ export function Roadmap() {
                     "group flex w-full flex-col items-center gap-3 rounded-2xl border p-4 text-center transition-colors",
                     selected
                       ? "border-mint/40 bg-mint/[0.08]"
-                      : "border-transparent hover:bg-white/[0.04]",
+                      : "border-transparent hover:bg-veil/[0.04]",
                   )}
                 >
                   <span
@@ -161,7 +161,7 @@ export function Roadmap() {
             {active.concepts.map((concept) => (
               <li
                 key={concept}
-                className="flex items-center gap-1.5 rounded-lg border border-hairline bg-abyss/60 px-3 py-1.5 text-xs font-bold text-ink-muted"
+                className="flex items-center gap-1.5 rounded-lg border border-hairline bg-well/60 px-3 py-1.5 text-xs font-bold text-ink-muted"
               >
                 <ChevronRight className="size-3 text-mint" aria-hidden />
                 {concept}

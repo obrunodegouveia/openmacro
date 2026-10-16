@@ -166,7 +166,7 @@ export default async function GlossaryTermPage({
                 {entry.mechanics.map((item) => (
                   <div
                     key={item.label}
-                    className="rounded-2xl border border-hairline bg-abyss/50 p-4"
+                    className="rounded-2xl border border-hairline bg-well/50 p-4"
                   >
                     <dt className="text-xs font-extrabold uppercase tracking-wider text-mint-bright">
                       {item.label}
@@ -210,7 +210,7 @@ export default async function GlossaryTermPage({
                     <li key={item.slug}>
                       <LocaleLink
                         href={`/glossary/${item.slug}`}
-                        className="flex h-full flex-col rounded-2xl border border-hairline bg-white/[0.02] p-4 transition-colors hover:border-mint/40 hover:bg-white/[0.05]"
+                        className="flex h-full flex-col rounded-2xl border border-hairline bg-veil/[0.02] p-4 transition-colors hover:border-mint/40 hover:bg-veil/[0.05]"
                       >
                         <span className="font-display text-sm font-extrabold text-ink">
                           {item.term}

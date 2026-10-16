@@ -86,7 +86,7 @@ export async function ContributorHub() {
               {tiles.map((tile) => (
                 <div
                   key={tile.label}
-                  className="rounded-2xl border border-hairline bg-abyss/60 p-4"
+                  className="rounded-2xl border border-hairline bg-well/60 p-4"
                 >
                   <dt className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-ink-faint">
                     {tile.icon}

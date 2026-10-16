@@ -105,39 +105,39 @@ export function ModuleRewards() {
   const earned = data.modules.filter((m) => m.claimStatus === "PAID").length;
 
   return (
-    <section className="rounded-2xl border border-black/10 p-5 dark:border-white/15">
+    <section className="rounded-2xl border border-hairline p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-lg font-medium">{s("moduleRewards.title")}</h2>
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-ink-faint">
           {s("moduleRewards.rate", { amount: `€${reward.amountEuros}`, earned: earned * Number(reward.amountEuros) })}
         </p>
       </div>
 
-      <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
+      <p className="mt-1 text-sm text-ink-muted">
         {s("moduleRewards.body")}
       </p>
 
       {error ? (
         <p
           role="status"
-          className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
+          className="mt-3 rounded-lg bg-coral/10 px-3 py-2 text-sm text-coral"
         >
           {error}
         </p>
       ) : null}
 
       {unclaimed.length > 0 ? (
-        <p className="mt-3 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+        <p className="mt-3 text-sm font-medium text-mint-bright">
           {s("moduleRewards.ready", { count: unclaimed.length })}
         </p>
       ) : null}
 
-      <ul className="mt-4 divide-y divide-black/5 dark:divide-white/10">
+      <ul className="mt-4 divide-y divide-hairline">
         {data.modules.map((row) => (
           <li key={row.moduleId} className="flex flex-wrap items-center gap-3 py-3">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{row.title}</p>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-ink-faint">
                 {s("moduleRewards.lessons", { done: row.completedCount, total: row.lessonCount })}
               </p>
             </div>
@@ -153,21 +153,21 @@ export function ModuleRewards() {
                   {s("moduleRewards.paidLink")}
                 </a>
               ) : (
-                <span className="text-xs text-neutral-500">{s("moduleRewards.paid")}</span>
+                <span className="text-xs text-ink-faint">{s("moduleRewards.paid")}</span>
               )
             ) : row.complete ? (
               <button
                 type="button"
                 disabled={claiming !== null || row.claimStatus === "CLAIM_PENDING"}
                 onClick={() => void claim(row.moduleId)}
-                className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+                className="rounded-lg bg-mint px-3 py-1.5 text-xs font-medium text-abyss disabled:opacity-50"
               >
                 {claiming === row.moduleId || row.claimStatus === "CLAIM_PENDING"
                   ? s("moduleRewards.sending")
                   : s("moduleRewards.claim", { amount: reward.amountEuros })}
               </button>
             ) : (
-              <span className="text-xs text-neutral-400" aria-hidden="true">
+              <span className="text-xs text-ink-faint" aria-hidden="true">
                 —
               </span>
             )}

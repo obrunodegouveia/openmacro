@@ -208,8 +208,6 @@ export const ptPT: UiDictionary = {
   'lesson.progress': 'Progresso da lição',
   'lesson.xpEarnedA11y': '{count, number} XP ganhos',
   'lesson.permalink': 'esta pergunta',
-  'lesson.hint.correct': 'Boa — continua.',
-  'lesson.hint.incorrect': 'Voltamos a esta mais à frente.',
   'lesson.hint.ready': 'Quando quiseres.',
   'lesson.hint.answer': 'Responde para continuar.',
   'lesson.announceCorrect': 'Certo.',

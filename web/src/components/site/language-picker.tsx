@@ -101,7 +101,7 @@ export function LanguagePicker({
           block ? "min-h-11 text-sm" : "min-h-9 px-3 text-xs",
           current
             ? "bg-mint/15 text-mint-bright"
-            : "text-ink-faint hover:bg-white/5 hover:text-ink",
+            : "text-ink-faint hover:bg-veil/5 hover:text-ink",
         )}
       >
         {names[candidate]}

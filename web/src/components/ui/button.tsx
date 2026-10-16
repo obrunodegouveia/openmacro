@@ -16,11 +16,12 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "border-b-4 border-mint-deep bg-mint text-abyss hover:bg-mint-bright",
+          "border-b-4 border-mint-deep bg-mint text-abyss hover:brightness-110",
         gold: "border-b-4 border-gold-deep bg-gold text-abyss hover:brightness-110",
+        danger: "border-b-4 border-coral-deep bg-coral text-abyss hover:brightness-110",
         outline:
-          "border border-hairline bg-white/5 text-ink backdrop-blur hover:border-mint/60 hover:bg-white/10 active:translate-y-0",
-        ghost: "text-ink-muted hover:bg-white/5 hover:text-ink active:translate-y-0",
+          "border border-hairline bg-veil/5 text-ink backdrop-blur hover:border-mint/60 hover:bg-veil/10 active:translate-y-0",
+        ghost: "text-ink-muted hover:bg-veil/5 hover:text-ink active:translate-y-0",
       },
       size: {
         sm: "h-9 px-4 text-sm",
@@ -37,6 +38,8 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   /** Render the child element instead of a `<button>` (e.g. an `<a>`). */
   asChild?: boolean;
+  /** React 19 passes `ref` as a prop; it reaches the element through `...props`. */
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 export function Button({

@@ -114,7 +114,7 @@ export default async function GlossaryIndexPage() {
             {byTier.map(({ tier, entries }) => (
               <section key={tier.id} aria-labelledby={`tier-${tier.id}`}>
                 <div className="mb-5 flex flex-wrap items-center gap-3">
-                  <span className="grid size-9 place-items-center rounded-xl border border-hairline bg-white/5 text-lg">
+                  <span className="grid size-9 place-items-center rounded-xl border border-hairline bg-veil/5 text-lg">
                     {tier.icon}
                   </span>
                   <h2
@@ -133,7 +133,7 @@ export default async function GlossaryIndexPage() {
                     <li key={entry.slug}>
                       <LocaleLink
                         href={`/glossary/${entry.slug}`}
-                        className="group flex h-full flex-col rounded-2xl border border-hairline bg-white/[0.02] p-5 transition-colors hover:border-mint/40 hover:bg-white/[0.05]"
+                        className="group flex h-full flex-col rounded-2xl border border-hairline bg-veil/[0.02] p-5 transition-colors hover:border-mint/40 hover:bg-veil/[0.05]"
                       >
                         <span className="flex flex-wrap items-center gap-2">
                           <span className="font-display font-extrabold text-ink">

@@ -81,6 +81,7 @@ export function Treasury() {
   const [data, setData] = React.useState<Overview | null>(null);
   const [state, setState] = React.useState<"loading" | "ready" | "denied" | "error">("loading");
   const [busy, setBusy] = React.useState<string | null>(null);
+  const [confirming, setConfirming] = React.useState<string | null>(null);
   const [message, setMessage] = React.useState<{ tone: "ok" | "bad"; text: string } | null>(null);
 
   const token = React.useCallback(async () => {
@@ -168,19 +169,19 @@ export function Treasury() {
     }
   }
 
-  if (state === "loading") return <p className="text-sm text-neutral-500">{s("treasury.loading")}</p>;
+  if (state === "loading") return <p className="text-sm text-ink-faint">{s("treasury.loading")}</p>;
   if (state === "denied") {
     return (
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">{s("treasury.notFound")}</h1>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+        <p className="mt-2 text-sm text-ink-muted">
           {s("treasury.denied")}
         </p>
       </div>
     );
   }
   if (state === "error" || !data) {
-    return <p className="text-sm text-red-600">{s("treasury.loadError")}</p>;
+    return <p className="text-sm text-coral">{s("treasury.loadError")}</p>;
   }
 
   const stuck = data.claims.filter((c) => c.status === "CLAIM_PENDING");
@@ -189,7 +190,7 @@ export function Treasury() {
     <div className="space-y-10">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">{s("treasury.title")}</h1>
-        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
+        <p className="mt-1 text-sm text-ink-muted">
           {s("treasury.signedInAs", { email: data.admin.email })}
         </p>
       </header>
@@ -199,8 +200,8 @@ export function Treasury() {
           role="status"
           className={`rounded-lg px-3 py-2 text-sm break-all ${
             message.tone === "ok"
-              ? "bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
-              : "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300"
+              ? "bg-mint/10 text-mint-bright"
+              : "bg-coral/10 text-coral"
           }`}
         >
           {message.text}
@@ -211,7 +212,7 @@ export function Treasury() {
       <section>
         <h2 className="text-lg font-medium">{s("treasury.funds")}</h2>
         {"error" in data.treasury ? (
-          <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+          <p className="mt-2 rounded-lg bg-coral/10 px-3 py-2 text-sm text-coral">
             {data.treasury.error}
           </p>
         ) : (
@@ -221,8 +222,8 @@ export function Treasury() {
               <Stat label={s("treasury.eth")} value={data.treasury.eth} />
             </div>
 
-            <div className="rounded-xl border border-black/10 p-4 dark:border-white/15">
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+            <div className="rounded-xl border border-hairline p-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-ink-faint">
                 {s("treasury.topUp")}
               </p>
               <p className="mt-1 font-mono text-sm break-all">{data.treasury.address}</p>
@@ -239,7 +240,7 @@ export function Treasury() {
                 The single most expensive mistake available on this page, so it
                 is stated where the address is copied rather than in a doc.
               */}
-              <p className="mt-3 text-xs text-amber-700 dark:text-amber-400">
+              <p className="mt-3 text-xs text-gold">
                 {s("treasury.networkWarning.lead")} <strong>Base</strong>
                 {s("treasury.networkWarning.tail")}
               </p>
@@ -251,17 +252,17 @@ export function Treasury() {
       {/* ---- stuck claims ----------------------------------------------- */}
       {stuck.length > 0 ? (
         <section>
-          <h2 className="text-lg font-medium text-amber-700 dark:text-amber-400">
+          <h2 className="text-lg font-medium text-gold">
             {s("treasury.attention")}
           </h2>
-          <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
+          <p className="mt-1 text-sm text-ink-muted">
             {s("treasury.attentionBody")}
           </p>
           <ul className="mt-3 space-y-3">
             {stuck.map((claim) => (
               <li
                 key={claim.id}
-                className="rounded-xl border border-amber-300 p-4 text-sm dark:border-amber-800"
+                className="rounded-xl border border-gold/40 p-4 text-sm"
               >
                 <p>
                   <strong>{claim.recipient_key}</strong> · €{euros(claim.amount_base_units)} · {s("treasury.nonce")}{" "}
@@ -275,7 +276,7 @@ export function Treasury() {
                       const hash = window.prompt("Transaction hash that paid this claim:");
                       if (hash) void act("resolve-claim", { id: claim.id, outcome: "paid", txHash: hash.trim() }, claim.id);
                     }}
-                    className="rounded-lg border border-black/15 px-3 py-1.5 text-xs dark:border-white/20"
+                    className="rounded-lg border border-hairline px-3 py-1.5 text-xs"
                   >
                     {s("treasury.wasPaid")}
                   </button>
@@ -283,7 +284,7 @@ export function Treasury() {
                     type="button"
                     disabled={busy !== null}
                     onClick={() => void act("resolve-claim", { id: claim.id, outcome: "failed" }, claim.id)}
-                    className="rounded-lg border border-black/15 px-3 py-1.5 text-xs dark:border-white/20"
+                    className="rounded-lg border border-hairline px-3 py-1.5 text-xs"
                   >
                     {s("treasury.neverSent")}
                   </button>
@@ -297,25 +298,25 @@ export function Treasury() {
       {/* ---- recipients -------------------------------------------------- */}
       <section>
         <h2 className="text-lg font-medium">{s("treasury.recipients")}</h2>
-        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
+        <p className="mt-1 text-sm text-ink-muted">
           {s("treasury.recipientsBody.lead")} <em>{s("treasury.recipientsBody.pending")}</em>{" "}
           {s("treasury.recipientsBody.tail")}
         </p>
 
         <ul className="mt-4 space-y-3">
           {data.recipients.map((r) => (
-            <li key={r.id} className="rounded-xl border border-black/10 p-4 dark:border-white/15">
+            <li key={r.id} className="rounded-xl border border-hairline p-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <p className="font-medium">
                   {r.label}{" "}
-                  <span className="font-mono text-xs text-neutral-500">{r.key}</span>
+                  <span className="font-mono text-xs text-ink-faint">{r.key}</span>
                 </p>
                 <StatusPill status={r.status} />
               </div>
-              <p className="mt-1 font-mono text-xs text-neutral-500 break-all" title={r.address ?? ""}>
+              <p className="mt-1 font-mono text-xs text-ink-faint break-all" title={r.address ?? ""}>
                 {r.address ? short(r.address) : s("treasury.noAddress")}
               </p>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs text-ink-faint">
                 {r.scheme === "earnings"
                   ? s("treasury.scheme.earnings", {
                       xp: r.xpRateEuros ?? "0.002",
@@ -326,7 +327,7 @@ export function Treasury() {
                     : s("treasury.defaultAmount")}
                 {r.note ? ` · ${r.note}` : ""}
               </p>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs text-ink-faint">
                 {r.claimantEmail
                   ? s("treasury.claimedBy", { email: r.claimantEmail })
                   : s("treasury.unbound")}
@@ -337,7 +338,7 @@ export function Treasury() {
                   type="button"
                   disabled={busy !== null || r.status === "disabled" || !r.address}
                   onClick={() => void act("test-send", { id: r.id, amountEuros: "1.00" }, r.id)}
-                  className="rounded-lg border border-black/15 px-3 py-1.5 text-xs disabled:opacity-50 dark:border-white/20"
+                  className="rounded-lg border border-hairline px-3 py-1.5 text-xs disabled:opacity-50"
                 >
                   {busy === r.id ? s("treasury.sending") : s("treasury.testSend")}
                 </button>
@@ -345,13 +346,10 @@ export function Treasury() {
                   <button
                     type="button"
                     disabled={busy !== null}
-                    onClick={() => {
-                      const where = r.address ?? "the address they choose themselves";
-                      if (window.confirm(`Make ${r.label} payable at ${where}?`)) {
-                        void act("set-status", { id: r.id, status: "active" }, r.id);
-                      }
-                    }}
-                    className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+                    // Confirmed in the page: a browser dialog is easy to wave
+                    // through, and this is the step that makes an address payable.
+                    onClick={() => setConfirming(r.id)}
+                    className="rounded-lg bg-mint px-3 py-1.5 text-xs text-abyss disabled:opacity-50"
                   >
                     {s("treasury.activate")}
                   </button>
@@ -360,12 +358,48 @@ export function Treasury() {
                     type="button"
                     disabled={busy !== null}
                     onClick={() => void act("set-status", { id: r.id, status: "disabled" }, r.id)}
-                    className="rounded-lg border border-black/15 px-3 py-1.5 text-xs disabled:opacity-50 dark:border-white/20"
+                    className="rounded-lg border border-hairline px-3 py-1.5 text-xs disabled:opacity-50"
                   >
                     {s("treasury.disable")}
                   </button>
                 )}
               </div>
+
+              {confirming === r.id ? (
+                <div
+                  role="alertdialog"
+                  aria-label={s("treasury.activate")}
+                  className="mt-3 grid gap-3 rounded-xl border border-gold/40 bg-gold/[0.07] p-3"
+                >
+                  <p className="text-sm text-ink">
+                    {s("treasury.confirmActivate", {
+                      name: r.label,
+                      where: r.address ?? s("treasury.ownAddress"),
+                    })}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      autoFocus
+                      disabled={busy !== null}
+                      onClick={() => {
+                        setConfirming(null);
+                        void act("set-status", { id: r.id, status: "active" }, r.id);
+                      }}
+                      className="rounded-lg bg-mint px-3 py-1.5 text-sm font-bold text-abyss disabled:opacity-50"
+                    >
+                      {s("treasury.activate")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirming(null)}
+                      className="rounded-lg border border-hairline px-3 py-1.5 text-sm"
+                    >
+                      {s("treasury.cancel")}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
 
               {r.scheme === "earnings" ? (
                 <RatesEditor
@@ -377,7 +411,7 @@ export function Treasury() {
             </li>
           ))}
           {data.recipients.length === 0 ? (
-            <li className="text-sm text-neutral-500">{s("treasury.nobody")}</li>
+            <li className="text-sm text-ink-faint">{s("treasury.nobody")}</li>
           ) : null}
         </ul>
 
@@ -390,15 +424,15 @@ export function Treasury() {
       {/* ---- claims ------------------------------------------------------ */}
       <section>
         <h2 className="text-lg font-medium">{s("treasury.payouts")}</h2>
-        <ul className="mt-3 divide-y divide-black/5 text-sm dark:divide-white/10">
+        <ul className="mt-3 divide-y divide-hairline text-sm">
           {data.claims.map((claim) => (
             <li key={claim.id} className="flex flex-wrap items-baseline justify-between gap-2 py-2">
               <span>
                 {claim.recipient_key} · €{euros(claim.amount_base_units)}{" "}
-                <span className="text-xs text-neutral-500">{claim.claim_key}</span>
+                <span className="text-xs text-ink-faint">{claim.claim_key}</span>
               </span>
               <span className="flex items-center gap-3">
-                <span className="text-xs text-neutral-500">{claim.status}</span>
+                <span className="text-xs text-ink-faint">{claim.status}</span>
                 {claim.explorerUrl ? (
                   <a
                     href={claim.explorerUrl}
@@ -413,7 +447,7 @@ export function Treasury() {
             </li>
           ))}
           {data.claims.length === 0 ? (
-            <li className="py-2 text-neutral-500">{s("treasury.noPayouts")}</li>
+            <li className="py-2 text-ink-faint">{s("treasury.noPayouts")}</li>
           ) : null}
         </ul>
       </section>
@@ -421,7 +455,7 @@ export function Treasury() {
       {/* ---- audit ------------------------------------------------------- */}
       <section>
         <h2 className="text-lg font-medium">{s("treasury.adminLog")}</h2>
-        <ul className="mt-3 space-y-1 font-mono text-xs text-neutral-500">
+        <ul className="mt-3 space-y-1 font-mono text-xs text-ink-faint">
           {data.events.map((event, i) => (
             <li key={i}>
               {new Date(event.created_at).toLocaleString()} · {event.action} ·{" "}
@@ -437,8 +471,8 @@ export function Treasury() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-black/10 p-4 dark:border-white/15">
-      <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">{label}</p>
+    <div className="rounded-xl border border-hairline p-4">
+      <p className="text-xs font-medium uppercase tracking-wide text-ink-faint">{label}</p>
       <p className="mt-1 text-xl font-semibold tabular-nums">{value}</p>
     </div>
   );
@@ -447,10 +481,10 @@ function Stat({ label, value }: { label: string; value: string }) {
 function StatusPill({ status }: { status: Recipient["status"] }) {
   const tone =
     status === "active"
-      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
+      ? "bg-mint/15 text-mint-bright"
       : status === "pending"
-        ? "bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300"
-        : "bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300";
+        ? "bg-gold/15 text-gold"
+        : "bg-veil/10 text-ink-muted";
   return <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${tone}`}>{status}</span>;
 }
 
@@ -477,7 +511,7 @@ function AddRecipient({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-4 rounded-lg border border-black/15 px-3 py-2 text-sm dark:border-white/20"
+        className="mt-4 rounded-lg border border-hairline px-3 py-2 text-sm"
       >
         {s("treasury.addRecipient")}
       </button>
@@ -486,7 +520,7 @@ function AddRecipient({
 
   return (
     <form
-      className="mt-4 space-y-3 rounded-xl border border-black/10 p-4 dark:border-white/15"
+      className="mt-4 space-y-3 rounded-xl border border-hairline p-4"
       onSubmit={async (event) => {
         event.preventDefault();
         setError(null);
@@ -502,7 +536,7 @@ function AddRecipient({
       }}
     >
       {/* First, because it decides which of the fields below are required. */}
-      <label className="flex items-start gap-2 text-xs text-neutral-600 dark:text-neutral-300">
+      <label className="flex items-start gap-2 text-xs text-ink-muted">
         <input
           type="checkbox"
           checked={earnings}
@@ -533,12 +567,12 @@ function AddRecipient({
       <Field label={s("treasury.field.note")} value={form.note} placeholder=""
         onChange={(v) => setForm((f) => ({ ...f, note: v }))} />
 
-      <p className="text-xs text-neutral-500">
+      <p className="text-xs text-ink-faint">
         {s("treasury.addedPending")}
       </p>
 
       {error ? (
-        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+        <p role="alert" className="rounded-lg bg-coral/10 px-3 py-2 text-sm text-coral">
           {error}
         </p>
       ) : null}
@@ -547,7 +581,7 @@ function AddRecipient({
         <button
           type="submit"
           disabled={busy}
-          className="rounded-lg bg-neutral-900 px-3 py-2 text-sm text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          className="rounded-lg bg-mint px-3 py-2 text-sm text-abyss disabled:opacity-50"
         >
           {s("treasury.add")}
         </button>
@@ -557,7 +591,7 @@ function AddRecipient({
             setOpen(false);
             setError(null);
           }}
-          className="rounded-lg border border-black/15 px-3 py-2 text-sm dark:border-white/20"
+          className="rounded-lg border border-hairline px-3 py-2 text-sm"
         >
           {s("treasury.cancel")}
         </button>
@@ -602,7 +636,7 @@ function RatesEditor({
           setError(null);
           setOpen(true);
         }}
-        className="mt-2 text-xs underline underline-offset-2 text-neutral-600 disabled:opacity-50 dark:text-neutral-300"
+        className="mt-2 text-xs underline underline-offset-2 text-ink-muted disabled:opacity-50"
       >
         {s("treasury.rates.edit")}
       </button>
@@ -611,7 +645,7 @@ function RatesEditor({
 
   return (
     <form
-      className="mt-3 space-y-3 rounded-lg border border-black/10 p-3 dark:border-white/15"
+      className="mt-3 space-y-3 rounded-lg border border-hairline p-3"
       onSubmit={async (event) => {
         event.preventDefault();
         setError(null);
@@ -629,10 +663,10 @@ function RatesEditor({
         <Field label={s("treasury.rates.hour")} value={hour} placeholder="0.20" mono
           pattern="\d+([.,]\d{1,6})?" onChange={setHour} />
       </div>
-      <p className="text-xs text-neutral-500">{s("treasury.rates.note")}</p>
+      <p className="text-xs text-ink-faint">{s("treasury.rates.note")}</p>
 
       {error ? (
-        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+        <p role="alert" className="rounded-lg bg-coral/10 px-3 py-2 text-sm text-coral">
           {error}
         </p>
       ) : null}
@@ -641,14 +675,14 @@ function RatesEditor({
         <button
           type="submit"
           disabled={busy}
-          className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          className="rounded-lg bg-mint px-3 py-1.5 text-xs text-abyss disabled:opacity-50"
         >
           {s("treasury.rates.save")}
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-lg border border-black/15 px-3 py-1.5 text-xs dark:border-white/20"
+          className="rounded-lg border border-hairline px-3 py-1.5 text-xs"
         >
           {s("treasury.cancel")}
         </button>
@@ -682,7 +716,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-xs font-medium text-neutral-600 dark:text-neutral-300">{label}</span>
+      <span className="text-xs font-medium text-ink-muted">{label}</span>
       <input
         type={type}
         value={value}
@@ -690,11 +724,11 @@ function Field({
         required={required}
         pattern={pattern}
         onChange={(event) => onChange(event.target.value)}
-        className={`mt-1 w-full rounded-lg border border-black/15 bg-transparent px-3 py-2 text-sm dark:border-white/20 ${
+        className={`mt-1 w-full rounded-lg border border-hairline bg-transparent px-3 py-2 text-sm ${
           mono ? "font-mono" : ""
         }`}
       />
-      {hint ? <span className="mt-1 block text-xs text-neutral-500">{hint}</span> : null}
+      {hint ? <span className="mt-1 block text-xs text-ink-faint">{hint}</span> : null}
     </label>
   );
 }

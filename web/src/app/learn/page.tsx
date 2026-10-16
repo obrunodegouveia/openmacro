@@ -136,7 +136,7 @@ export default async function LearnPage() {
               ].map((step, index) => (
                 <li
                   key={step.title}
-                  className="flex flex-col gap-3 rounded-card border border-hairline bg-white/[0.02] p-6 sm:flex-row sm:gap-5"
+                  className="flex flex-col gap-3 rounded-card border border-hairline bg-veil/[0.02] p-6 sm:flex-row sm:gap-5"
                 >
                   <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-mint/30 bg-mint/10 text-mint-bright">
                     {step.icon}

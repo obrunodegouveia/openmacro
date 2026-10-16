@@ -78,7 +78,7 @@ function Group({
       <h2 className="px-4 pb-2 text-xs font-extrabold uppercase tracking-[0.08em] text-ink-faint">
         {title}
       </h2>
-      <div className="overflow-hidden rounded-2xl border border-hairline bg-white/[0.04]">
+      <div className="overflow-hidden rounded-2xl border border-hairline bg-veil/[0.04]">
         {children}
       </div>
     </section>
@@ -93,7 +93,7 @@ function Group({
  */
 const ROW =
   "flex min-h-[52px] items-center gap-3 px-4 text-[0.95rem] font-bold text-ink " +
-  "transition-colors active:bg-white/[0.07] " +
+  "transition-colors active:bg-veil/[0.07] " +
   "[&+&]:border-t [&+&]:border-hairline/70";
 
 /** useSyncExternalStore needs a subscribe; being mounted never changes. */
@@ -219,7 +219,7 @@ export function MobileMenu({
             // keyboard equivalent (Escape) and a visible one (the X), so the
             // scrim itself is decoration as far as assistive tech is concerned.
             aria-hidden
-            className="fixed inset-0 top-[var(--header-total)] z-40 bg-abyss/60 backdrop-blur-[2px] xl:hidden"
+            className="fixed inset-0 top-[var(--header-total)] z-40 bg-well/60 backdrop-blur-[2px] xl:hidden"
           />
 
           <motion.div
@@ -325,7 +325,7 @@ function AccountSection({ onClose, title }: { onClose: () => void; title: string
       <h2 className="px-4 pb-2 text-xs font-extrabold uppercase tracking-[0.08em] text-ink-faint">
         {title}
       </h2>
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-hairline bg-white/[0.04] p-3">
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-hairline bg-veil/[0.04] p-3">
         <AccountButton onNavigate={onClose} />
       </div>
     </section>

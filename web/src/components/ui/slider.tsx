@@ -23,7 +23,7 @@ export function Slider({
       )}
       {...props}
     >
-      <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full border border-hairline bg-abyss">
+      <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full border border-hairline bg-well">
         <SliderPrimitive.Range className="absolute h-full bg-gradient-to-r from-mint-deep via-mint to-mint-bright" />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb

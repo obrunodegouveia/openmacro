@@ -137,7 +137,7 @@ export default async function TeachPage() {
               {STAGES.map((stage) => (
                 <li
                   key={s(stage.age)}
-                  className="rounded-card border border-hairline bg-white/[0.02] p-6"
+                  className="rounded-card border border-hairline bg-veil/[0.02] p-6"
                 >
                   <div className="flex items-center gap-3">
                     <span className="grid size-10 place-items-center rounded-xl border border-mint/30 bg-mint/10 text-mint-bright">
@@ -216,7 +216,7 @@ export default async function TeachPage() {
             </LocaleLink>
             <LocaleLink
               href="/learn"
-              className="inline-flex h-12 items-center justify-center rounded-xl border border-hairline bg-white/5 px-6 font-extrabold text-ink transition-colors hover:border-mint/60 hover:bg-white/10"
+              className="inline-flex h-12 items-center justify-center rounded-xl border border-hairline bg-veil/5 px-6 font-extrabold text-ink transition-colors hover:border-mint/60 hover:bg-veil/10"
             >
               {s("teach.learnYourself")}
             </LocaleLink>

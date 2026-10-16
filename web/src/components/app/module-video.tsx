@@ -61,9 +61,9 @@ export function ModuleVideo({
   const Chevron = collapsed ? ChevronRight : ChevronDown;
 
   return (
-    <div className="mt-4 overflow-hidden rounded-card border border-hairline bg-white/[0.03]">
+    <div className="mt-4 overflow-hidden rounded-card border border-hairline bg-veil/[0.03]">
       {collapsed ? null : (
-        <div className="relative aspect-video w-full bg-abyss">
+        <div className="on-dark relative aspect-video w-full bg-abyss">
           {playing ? (
             <YouTubePlayer
               videoId={id}
@@ -86,7 +86,7 @@ export function ModuleVideo({
                 {moduleTitle}
               </span>
               <span className="absolute inset-0 grid place-items-center">
-                <span className="grid size-16 place-items-center rounded-full border border-mint/40 bg-abyss/80 backdrop-blur transition-transform group-hover:scale-110">
+                <span className="grid size-16 place-items-center rounded-full border border-mint/40 bg-well/80 backdrop-blur transition-transform group-hover:scale-110">
                   <Play className="size-7 translate-x-0.5 fill-mint-bright text-mint-bright" aria-hidden />
                 </span>
               </span>
@@ -102,7 +102,7 @@ export function ModuleVideo({
         aria-expanded={!collapsed}
         className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 py-3 pl-4 pr-2 text-left"
       >
-        <Chevron className="size-4 shrink-0 text-mint" aria-hidden />
+        <Chevron className="size-4 shrink-0 text-mint-bright" aria-hidden />
         <span className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-ink-faint">
           {/* Collapsed, this row is the whole card, so it carries the title
               the frame was showing. */}
@@ -113,7 +113,7 @@ export function ModuleVideo({
             <span className="text-ink-faint">{t("lesson.video.privacy")}</span>
           ) : null}
         </span>
-        <span className="shrink-0 text-xs font-bold text-mint">
+        <span className="shrink-0 text-xs font-bold text-mint-bright">
           {collapsed ? t("lesson.video.show") : t("lesson.video.hide")}
         </span>
       </button>
@@ -123,7 +123,7 @@ export function ModuleVideo({
         <button
           type="button"
           onClick={() => setCaptions(nextCaptions(captions))}
-          className="shrink-0 cursor-pointer px-4 py-3 text-xs font-bold text-mint"
+          className="shrink-0 cursor-pointer px-4 py-3 text-xs font-bold text-mint-bright"
         >
           {t("lesson.video.captions", { choice: t(`lesson.video.captions.${captions}`) })}
         </button>

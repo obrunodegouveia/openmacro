@@ -137,6 +137,37 @@ export function LessonPlayer({
     dispatch({ kind: "submit", answer, t });
   }
 
+  /*
+   * Return checks the answer and then continues, from anywhere on the page.
+   *
+   * Cases it does not act on:
+   *   - a held key (`repeat`) does nothing, and is swallowed while the sheet
+   *     is up so it cannot press the Continue button the sheet just focused;
+   *   - nothing to do yet: on an option with no answer chosen, the native
+   *     click is what selects it;
+   *   - a focused link, field or button other than an answer option.
+   */
+  React.useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.key !== "Enter") return;
+      // A held key: swallow it while the sheet is up, or the repeat presses the
+      // Continue button the sheet just focused and the feedback is skipped.
+      if (event.repeat) {
+        if (state.feedback) event.preventDefault();
+        return;
+      }
+      if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+      if (!playing || (!state.feedback && !answer)) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("a, input, textarea, select, [contenteditable='true'], button:not([role='radio'])")) return;
+      event.preventDefault();
+      if (state.feedback) dispatch({ kind: "continue" });
+      else submit();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   /**
    * Once the run is under way, the title block goes.
    *
@@ -265,32 +296,30 @@ export function LessonPlayer({
               state.feedback.correct
                 ? t("lesson.announceCorrect")
                 : t("lesson.announceIncorrect")
-            } ${state.feedback.detail ?? state.feedback.explanation ?? ""}`
+            } ${[state.feedback.detail, state.feedback.explanation].filter(Boolean).join(" ")}`
           : ""}
       </p>
 
-      {playing ? (
-        <ActionBar
-          hint={
-            state.feedback
-              ? state.feedback.correct
-                ? t("lesson.hint.correct")
-                : t("lesson.hint.incorrect")
-              : answer
-                ? t("lesson.hint.ready")
-                : t("lesson.hint.answer")
+      {playing && state.feedback ? (
+        <FeedbackSheet
+          correct={state.feedback.correct}
+          title={state.feedback.title}
+          explanation={state.feedback.explanation}
+          detail={state.feedback.detail}
+          continueLabel={
+            state.feedback.correct
+              ? t("lesson.continue")
+              : state.hearts > 0
+                ? t("lesson.gotIt")
+                : t("lesson.outOfHearts")
           }
-        >
-          {state.feedback ? (
-            <Button size="lg" onClick={() => dispatch({ kind: "continue" })}>
-              {t("lesson.continue")}
-              <ArrowRight className="size-4" aria-hidden />
-            </Button>
-          ) : (
-            <Button size="lg" onClick={submit} disabled={!answer}>
-              {t("lesson.check")}
-            </Button>
-          )}
+          onContinue={() => dispatch({ kind: "continue" })}
+        />
+      ) : playing ? (
+        <ActionBar hint={answer ? t("lesson.hint.ready") : t("lesson.hint.answer")}>
+          <Button size="lg" onClick={submit} disabled={!answer}>
+            {t("lesson.check")}
+          </Button>
         </ActionBar>
       ) : null}
     </div>
@@ -325,13 +354,13 @@ function SessionBar({
         <LocaleLink
           href="/learn"
           aria-label={t("lesson.leave")}
-          className="grid size-9 shrink-0 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-white/5 hover:text-ink"
+          className="grid size-9 shrink-0 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-veil/5 hover:text-ink"
         >
           <X className="size-5" aria-hidden />
         </LocaleLink>
 
         <div
-          className="h-3 min-w-0 flex-1 overflow-hidden rounded-full bg-white/10"
+          className="h-3 min-w-0 flex-1 overflow-hidden rounded-full bg-veil/10"
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={100}
@@ -363,7 +392,7 @@ function SessionBar({
               aria-hidden
               className={cn(
                 "size-4",
-                index < state.hearts ? "fill-coral text-coral" : "text-white/15",
+                index < state.hearts ? "fill-coral text-coral" : "text-veil/15",
               )}
             />
           ))}
@@ -422,6 +451,94 @@ function ActionBar({
         {children}
       </div>
     </div>
+  );
+}
+
+/**
+ * The sheet that slides up after every graded answer, as in the app
+ * (src/components/ui/FeedbackSheet.tsx).
+ *
+ * Green or red, the engine's title, the answer-specific line when there is
+ * one, and the mechanical explanation every time. Before this, the site
+ * showed the explanation only after a wrong answer, and then only when the
+ * option had no rebuttal of its own: what a learner was told afterwards
+ * differed between the app and the site, which the parity rule forbids.
+ *
+ * It takes the action bar's place, so the button stays under the thumb. The
+ * Continue button takes focus when the sheet appears, so Return or Space
+ * moves on; the hidden status line announces the same verdict and text.
+ */
+function FeedbackSheet({
+  correct,
+  title,
+  explanation,
+  detail,
+  continueLabel,
+  onContinue,
+}: {
+  correct: boolean;
+  title: string;
+  explanation: string;
+  detail?: string;
+  continueLabel: string;
+  onContinue: () => void;
+}) {
+  const button = React.useRef<HTMLButtonElement>(null);
+  React.useEffect(() => {
+    button.current?.focus({ preventScroll: true });
+  }, []);
+
+  return (
+    <motion.div
+      // Announced once, by the status line above; this is the visible copy.
+      role="region"
+      aria-label={title}
+      initial={{ y: "100%" }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", stiffness: 260, damping: 26, mass: 0.9 }}
+      className={cn(
+        "sticky bottom-0 z-40 rounded-t-3xl border-t shadow-[0_-12px_40px_-12px_rgba(0,0,0,0.6)] backdrop-blur-xl",
+        correct ? "border-mint/40 bg-sheet-correct/95" : "border-coral/40 bg-sheet-wrong/95",
+      )}
+    >
+      <div className="mx-auto grid w-full max-w-3xl gap-3 px-5 pt-5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-8">
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className={cn(
+              "grid size-9 shrink-0 place-items-center rounded-full text-abyss",
+              correct ? "bg-mint" : "bg-coral",
+            )}
+          >
+            {correct ? <Check className="size-5" strokeWidth={3} /> : <X className="size-5" strokeWidth={3} />}
+          </span>
+          <p
+            className={cn(
+              "font-display text-xl font-extrabold tracking-tight",
+              correct ? "text-mint-bright" : "text-coral",
+            )}
+          >
+            {title}
+          </p>
+        </div>
+        {detail ? (
+          <p className={cn("font-bold leading-relaxed", correct ? "text-mint-bright" : "text-coral")}>
+            {detail}
+          </p>
+        ) : null}
+        <p className="max-h-[38svh] overflow-y-auto leading-relaxed text-ink">{explanation}</p>
+        <Button
+          ref={button}
+          size="lg"
+          variant={correct ? "primary" : "danger"}
+          onClick={onContinue}
+          className="mt-1 w-full sm:ml-auto sm:w-auto"
+        >
+          {continueLabel}
+          <ArrowRight className="size-4" aria-hidden />
+        </Button>
+      </div>
+    </motion.div>
   );
 }
 

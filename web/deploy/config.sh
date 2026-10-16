@@ -45,6 +45,9 @@ export NEXT_PUBLIC_DISCORD_URL="${NEXT_PUBLIC_DISCORD_URL:-https://discord.gg/op
 # held by Google. A fork should set its own, or leave it empty and get the
 # redirect fallback.
 export NEXT_PUBLIC_GOOGLE_CLIENT_ID="${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-308779065866-9ri4v6221r7umloq22mnr2nevn41asfj.apps.googleusercontent.com}"
+# "1" offers Sign in with Apple on the website. Leave empty until the Supabase
+# Apple provider has a web Services ID and client secret, or the button fails.
+export NEXT_PUBLIC_APPLE_WEB_SIGN_IN="${NEXT_PUBLIC_APPLE_WEB_SIGN_IN:-}"
 
 # Supabase project for openmacro.org. Both values are public by design and are
 # already served in the client bundle to every visitor: the publishable key

@@ -19,7 +19,7 @@ import { useSiteText } from "@/lib/use-site-text";
  */
 
 const ACCENT: Record<Tier["accent"], { ring: string; text: string; glow: string }> = {
-  azure: { ring: "border-azure/50 bg-azure/10", text: "text-[#8ab0ff]", glow: "shadow-azure/20" },
+  azure: { ring: "border-azure/50 bg-azure/10", text: "text-azure-text", glow: "shadow-azure/20" },
   emerald: { ring: "border-mint/50 bg-mint/10", text: "text-mint-bright", glow: "shadow-mint/20" },
   violet: { ring: "border-violet/50 bg-violet/10", text: "text-violet", glow: "shadow-violet/20" },
   gold: { ring: "border-gold/50 bg-gold/10", text: "text-gold", glow: "shadow-gold/20" },
@@ -67,8 +67,8 @@ export function Tiers() {
                   className={cn(
                     "flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-colors",
                     selected
-                      ? "border-mint/40 bg-white/[0.06]"
-                      : "border-hairline bg-white/[0.02] hover:bg-white/[0.05]",
+                      ? "border-mint/40 bg-veil/[0.06]"
+                      : "border-hairline bg-veil/[0.02] hover:bg-veil/[0.05]",
                   )}
                 >
                   <span
@@ -146,7 +146,7 @@ export function Tiers() {
               {active.levers.map((lever) => (
                 <li
                   key={lever}
-                  className="rounded-lg border border-hairline bg-abyss/60 px-3 py-1.5 text-xs font-bold text-ink-muted"
+                  className="rounded-lg border border-hairline bg-well/60 px-3 py-1.5 text-xs font-bold text-ink-muted"
                 >
                   {lever}
                 </li>
@@ -169,7 +169,7 @@ function Column({
   items: string[];
 }) {
   return (
-    <div className="rounded-2xl border border-hairline bg-abyss/60 p-4">
+    <div className="rounded-2xl border border-hairline bg-well/60 p-4">
       <div className="mb-3 flex items-baseline justify-between">
         <h4 className="font-display text-xs font-extrabold uppercase tracking-wider">
           {title}

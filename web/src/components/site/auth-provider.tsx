@@ -20,8 +20,12 @@ interface AuthValue {
   learner: Learner | null;
   signingIn: boolean;
   error: string | null;
-  /** Optional path to land on afterwards; defaults to the current page. */
-  signIn: (redirectTo?: string) => Promise<void>;
+  /**
+   * Optional path to land on afterwards; defaults to the current page.
+   * Google unless asked for Apple, which only works once the Apple provider
+   * has its web secret in Supabase (see APPLE_WEB_SIGN_IN).
+   */
+  signIn: (redirectTo?: string, provider?: "google" | "apple") => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -63,14 +67,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, []);
 
-  const signIn = React.useCallback(async (redirectTo?: string) => {
+  const signIn = React.useCallback(async (redirectTo?: string, provider: "google" | "apple" = "google") => {
     const supabase = getSupabase();
     if (!supabase) return;
     setSigningIn(true);
     setError(null);
     try {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider,
         options: {
           /**
            * Default to the page they were on, so signing in mid-lesson does not
