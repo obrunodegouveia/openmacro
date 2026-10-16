@@ -28,9 +28,10 @@ export default function TabLayout() {
         sceneStyle: { backgroundColor: 'transparent' },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: t('tabs.home') }} />
-      <Tabs.Screen name="progress" options={{ title: t('tabs.progress') }} />
-      <Tabs.Screen name="account" options={{ title: t('tabs.account') }} />
+      {/* Today answers "what next?", Course is the map, Profile is you. */}
+      <Tabs.Screen name="index" options={{ title: t('tabs.today') }} />
+      <Tabs.Screen name="course" options={{ title: t('tabs.course') }} />
+      <Tabs.Screen name="profile" options={{ title: t('tabs.profile') }} />
     </Tabs>
   );
 }

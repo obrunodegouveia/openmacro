@@ -9,12 +9,13 @@
 export const palette = {
   /** Brand / "correct" green. */
   mint: '#2FBF71',
-  mintDark: '#249A5A',
+  /** Text and the button's bevel. 4.6:1 or better on every surface below. */
+  mintDark: '#1C7D48',
   mintSoft: '#E4F7ED',
 
   /** "Incorrect" red. */
   coral: '#FF5A5F',
-  coralDark: '#D93B40',
+  coralDark: '#C8343A',
   coralSoft: '#FFE9EA',
 
   /** Informational / interactive blue. */
@@ -24,15 +25,21 @@ export const palette = {
 
   /** Streak / XP gold. */
   gold: '#FFC94A',
-  goldDark: '#D9A423',
+  goldDark: '#946300',
   goldSoft: '#FFF6E0',
 
   /** Hearts. */
   heart: '#FF4B6E',
 
+  /*
+   * Text. inkMuted and inkFaint used to be #7B8794 and #B4BEC9, which
+   * measured 3.5:1 and 1.8:1 on the canvas: secondary text failed WCAG AA
+   * and "faint" text was barely there. Now 6.1:1 and 5.1:1. The hierarchy
+   * between them comes from size and weight, not from being hard to read.
+   */
   ink: '#1F2933',
-  inkMuted: '#7B8794',
-  inkFaint: '#B4BEC9',
+  inkMuted: '#52606D',
+  inkFaint: '#5F6C7E',
 
   border: '#E4E7EB',
   borderStrong: '#CBD2D9',

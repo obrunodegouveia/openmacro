@@ -52,12 +52,6 @@ export default [
           allow: [
             // The product's name is the same word in every language.
             'OpenMacro',
-            // Code identifiers rendered in monospace. A file path is not
-            // prose, and translating one would break the instruction it is
-            // part of — the sentence around these two *is* translated, and
-            // they are substituted into it as nodes by `interpolate`.
-            'src/content/lessons/',
-            'src/content/registry.ts',
           ],
         },
       ],

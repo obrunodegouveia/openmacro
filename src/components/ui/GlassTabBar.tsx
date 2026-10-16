@@ -53,11 +53,11 @@ const ICONS: Record<string, { default: SymbolName; selected: SymbolName }> = {
     default: { ios: 'house', android: 'home', web: 'home' },
     selected: { ios: 'house.fill', android: 'home', web: 'home' },
   },
-  progress: {
-    default: { ios: 'chart.bar', android: 'bar_chart', web: 'bar_chart' },
-    selected: { ios: 'chart.bar.fill', android: 'bar_chart', web: 'bar_chart' },
+  course: {
+    default: { ios: 'map', android: 'map', web: 'map' },
+    selected: { ios: 'map.fill', android: 'map', web: 'map' },
   },
-  account: {
+  profile: {
     default: { ios: 'person.crop.circle', android: 'account_circle', web: 'account_circle' },
     selected: {
       ios: 'person.crop.circle.fill',
