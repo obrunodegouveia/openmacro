@@ -55,8 +55,8 @@ export function Tiers() {
             return (
               <motion.li
                 key={tier.id}
-                initial={{ opacity: 0, x: -16 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ x: -16 }}
+                whileInView={{ x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.07 }}
               >

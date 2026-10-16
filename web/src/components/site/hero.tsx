@@ -4,7 +4,6 @@ import { LocaleLink } from "@/components/site/locale-link";
 import { motion } from "motion/react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { MODULES } from "@openmacro/core/content";
-import { GoogleSignIn } from "@/components/site/google-sign-in";
 import { Button } from "@/components/ui/button";
 import { CentralBankBalanceSheet } from "@/components/site/balance-sheet";
 import { useAuth } from "@/components/site/auth-provider";
@@ -24,46 +23,20 @@ import { useSiteText } from "@/lib/use-site-text";
 /** Read from the course itself, so the headline number cannot go stale. */
 const LESSON_COUNT = MODULES.reduce((sum, module) => sum + module.lessons.length, 0);
 
+/** The course's first lesson, in the same order the app plays it. */
+const FIRST_LESSON_ID = MODULES[0].lessons[0].id;
+
 /**
  * The single call to action.
  *
- * Signing in is the front door: it is what starts a streak and what makes
- * progress survive closing the tab. But the site's whole promise — and its
- * COPPA notice — is that no account is required to learn, so the way past it
- * stays one line below rather than disappearing.
- *
- * Degrades to a plain link when the build has no account backend, which is the
- * default for a fork.
+ * A first-time visitor plays before anything else: every lesson works without
+ * an account, and the lesson-complete screen is where saving progress is
+ * offered, once there is progress worth saving. Signing in stays one line
+ * below for people who already have an account.
  */
 function StartCta() {
   const { enabled, learner } = useAuth();
   const s = useSiteText();
-
-  const browse = (
-    <p className="mt-4 text-sm text-ink-faint">
-      {s("hero.or")}{" "}
-      <LocaleLink
-        href="/learn"
-        className="text-ink-muted underline underline-offset-4 hover:text-mint-bright"
-      >
-        {s("hero.browse", { count: LESSON_COUNT })}
-      </LocaleLink>{" "}
-      {s("hero.noAccount")}
-    </p>
-  );
-
-  if (!enabled) {
-    return (
-      <div>
-        <Button asChild size="lg">
-          <LocaleLink href="/learn">
-            {s("hero.start")}
-            <ArrowRight className="size-4" aria-hidden />
-          </LocaleLink>
-        </Button>
-      </div>
-    );
-  }
 
   if (learner) {
     return (
@@ -74,18 +47,39 @@ function StartCta() {
             <ArrowRight className="size-4" aria-hidden />
           </LocaleLink>
         </Button>
-        {browse}
       </div>
     );
   }
 
   return (
     <div>
-      <GoogleSignIn
-        redirectTo="/dashboard"
-        label={s("hero.signInA11y")}
-      />
-      {browse}
+      <Button asChild size="lg">
+        <LocaleLink href={`/learn/${FIRST_LESSON_ID}`}>
+          {s("hero.startFirst")}
+          <ArrowRight className="size-4" aria-hidden />
+        </LocaleLink>
+      </Button>
+      <p className="mt-4 text-sm text-ink-muted">
+        {s("hero.or")}{" "}
+        <LocaleLink
+          href="/learn"
+          className="underline underline-offset-4 hover:text-mint-bright"
+        >
+          {s("hero.browse", { count: LESSON_COUNT })}
+        </LocaleLink>
+        {enabled ? (
+          <>
+            {". "}
+            {s("hero.haveAccount")}{" "}
+            <LocaleLink
+              href="/login"
+              className="font-semibold underline underline-offset-4 hover:text-mint-bright"
+            >
+              {s("hero.signIn")}
+            </LocaleLink>
+          </>
+        ) : null}
+      </p>
     </div>
   );
 }

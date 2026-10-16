@@ -39,6 +39,9 @@ export const ptPT = {
   'hero.start': 'Começar a aprender',
   'hero.continue': 'Continuar a aprender',
   'hero.signInA11y': 'Inicia sessão para começar a aprender',
+  'hero.startFirst': 'Começar a primeira lição',
+  'hero.haveAccount': 'Já estás a aprender?',
+  'hero.signIn': 'Iniciar sessão',
   'hero.or': 'Ou',
   'hero.browse': 'vê as {count, number} lições',
   'hero.noAccount': '— sem precisares de conta.',
@@ -53,13 +56,13 @@ export const ptPT = {
   'footer.mit': 'MIT',
   'footer.mitLicensed': 'Licenciado sob MIT',
   'footer.coppa': 'Concebido com a COPPA em mente',
-  'footer.rewards': 'Recompensas sem custódia',
+  'footer.rewards': 'Recompensas pagas por quem conheces',
   'footer.mitBody':
     'O código e as lições são livres de usar, bifurcar, traduzir e ensinar — incluindo comercialmente.',
   'footer.coppaBody':
     'Não é preciso conta para aprender, não há publicidade comportamental, e não recolhemos dados pessoais de crianças com menos de 13 anos.',
   'footer.rewardsBody':
-    'MacroXP e MintBucks são uma pontuação de aprendizagem, guardada no dispositivo a não ser que inicies sessão para a sincronizar. Os prémios são financiados e atribuídos pelo patrocinador — nunca ficamos com o dinheiro.',
+    'MacroXP e MintBucks são uma pontuação de aprendizagem que ninguém pode comprar ou trocar. Um pai ou professor pode escolher pagar a quem aprende em euros (EURC) por ela. Isso configura-se e levanta-se no site, nunca na app.',
   'footer.disclaimer': 'nada aqui é aconselhamento financeiro.',
   'footer.githubA11y': 'OpenMacro no GitHub',
   'footer.chatA11y': 'Chat da comunidade OpenMacro',
@@ -97,9 +100,9 @@ export const ptPT = {
   'features.educator.prizes.title': 'Prémios patrocinados',
   'features.educator.prizes.body':
     'Financia um prémio para a tua turma ou para o teu filho — livros, equipamento ou privilégios. Defines o objetivo e atribui-lo diretamente.',
-  'features.educator.ledger.title': 'Registo sem custódia',
+  'features.educator.ledger.title': 'Recompensas reais, se quiseres',
   'features.educator.ledger.body':
-    'O registo de recompensas vive no dispositivo de quem aprende. Sem carteira, sem dinheiro real, nada para levantar.',
+    'Um pai ou professor pode recompensar quem aprende em euros (EURC) pelo XP e pelo tempo ativo que ganha. O dinheiro é dele, e só se levanta no site. A app mostra XP, nunca dinheiro.',
 
   // ---- the four-tier model ------------------------------------------------
   'tiers.overline': 'O modelo',
@@ -225,9 +228,9 @@ export const ptPT = {
   'rewards.prizes.title': 'Prémios e Recompensas',
   'rewards.prizes.body':
     'Patrocinados por pais, educadores e pela comunidade: livros (Mehrling, Bagehot, Stigum), equipamento ou privilégios definidos pela família. Os patrocinadores financiam e atribuem diretamente — nunca a plataforma.',
-  'rewards.notTitle': 'O que os pontos não são',
+  'rewards.notTitle': 'Pontos e dinheiro são coisas diferentes',
   'rewards.notBody':
-    'Os MacroXP e os MintBucks são uma pontuação de aprendizagem. Não são moeda, não são um token que se compre ou venda, e não há bolsa, carteira nem forma de levantar dinheiro em lado nenhum do produto. Os prémios são financiados e atribuídos por quem os criou — um pai, uma escola, uma comunidade — e o OpenMacro nunca fica com a custódia do dinheiro. Nada aqui é uma aposta, e nada custa seja o que for a quem aprende.',
+    'Os MacroXP e os MintBucks são uma pontuação de aprendizagem. Ninguém os pode comprar, vender ou trocar. À parte, um pai ou professor pode escolher pagar a quem aprende em euros (EURC) pelo XP e pelo tempo ativo que ganha. Esse dinheiro vem de quem o configurou, só se levanta no site e nunca aparece na app. Nada aqui é uma aposta, e nada custa seja o que for a quem aprende.',
 
   // ---- footer link groups -------------------------------------------------
   'footer.group.learn': 'Aprender',
@@ -369,7 +372,7 @@ export const ptPT = {
   // ---- privacy & COPPA notice ---------------------------------------------
   'privacy.back': 'Voltar a openmacro.org',
   'privacy.title': 'Aviso de privacidade e de privacidade infantil',
-  'privacy.updated': 'Última atualização: 5 de Setembro de 2026. Abrange {domain} e a aplicação móvel OpenMacro.',
+  'privacy.updated': 'Última atualização: 16 de Outubro de 2026. Abrange {domain} e a aplicação móvel OpenMacro.',
   'privacy.authoritative':
     'Esta é uma tradução de cortesia. Em caso de divergência, prevalece a versão inglesa.',
   'privacy.short.title': 'A versão curta',
@@ -392,7 +395,7 @@ export const ptPT = {
   'privacy.notCollect.1': 'Sem cookies para publicidade, perfis ou rastreio entre sítios.',
   'privacy.notCollect.2': 'Sem serviços de analítica ou de gravação de sessões.',
   'privacy.notCollect.3':
-    'Sem moradas, números de telefone ou dados de pagamento. Nunca pedimos uma palavra-passe: são a Apple e a Google que tratam do início de sessão, por isso não há nenhuma para guardarmos.',
+    'Sem moradas, números de telefone ou dados de cartão. Nunca pedimos uma palavra-passe: são a Apple e a Google que tratam do início de sessão, por isso não há nenhuma para guardarmos.',
   'privacy.notCollect.4': 'Sem venda, aluguer ou troca de quaisquer dados, nunca.',
   'privacy.coppa.title': 'Crianças com menos de 13 anos (COPPA)',
   'privacy.coppa.intro':
@@ -405,11 +408,11 @@ export const ptPT = {
     'Não recolhemos conscientemente informação pessoal de crianças com menos de 13 anos. Se achares que uma criança iniciou sessão, escreve para',
   'privacy.coppa.3.tail': 'e apagamos a conta e tudo o que lhe está associado.',
   'privacy.coppa.4':
-    'Os MacroXP e os MintBucks são uma pontuação de aprendizagem. Não são moeda nem carteira, e não podem ser trocados, transferidos ou levantados. Não há forma de comprar seja o que for no produto.',
+    'Os MacroXP e os MintBucks são uma pontuação de aprendizagem. Não são moeda e não podem ser comprados, trocados ou transferidos. Não há forma de comprar seja o que for no produto.',
   'privacy.coppa.5':
     'As credenciais de competência só são emitidas quando quem aprende as pede e, para menores de 13 anos, apenas com autorização de quem tem responsabilidade parental. Não publicamos o desempenho, o nome ou o identificador de uma criança em nenhum registo público ou de terceiros.',
   'privacy.coppa.6':
-    'Os prémios são criados, financiados e atribuídos pelo patrocinador — um pai, uma escola ou um grupo comunitário. O OpenMacro nunca fica com a custódia do dinheiro nem trata de pagamentos. A participação é sempre gratuita, e nada no produto é uma aposta.',
+    'Um pai ou professor pode escolher pagar a quem aprende em euros (EURC) pelo XP e pelo tempo ativo que ganha. Só para essas pessoas registamos os minutos em que estiveram ativas no site e o endereço de pagamento que indicam, e enviamos cada levantamento a partir da carteira que o financia. Os pagamentos na blockchain são públicos. Tudo isto acontece apenas no site, a participação é sempre gratuita, e nada no produto é uma aposta.',
   'privacy.coppa.7':
     'Não há publicidade, não há compras dentro da aplicação, e não há chat nem qualquer outra comunicação entre crianças e desconhecidos em parte alguma do produto.',
   'privacy.coppa.8':

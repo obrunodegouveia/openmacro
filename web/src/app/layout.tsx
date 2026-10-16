@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 import { AuthProvider } from "@/components/site/auth-provider";
+import { MotionPreferences } from "@/components/site/motion-preferences";
 import { LocaleProvider } from "@/components/site/locale-provider";
 import { LOCALE_TAGS } from "@openmacro/core/i18n/locales";
 import { alternates, localeUrl, serverLocale } from "@/lib/locale-server";
@@ -112,7 +113,7 @@ export default async function RootLayout({
         <LocaleProvider initialLocale={locale}>
           {/* Inert when no Supabase project is configured — see lib/supabase.ts. */}
           <AuthProvider>
-            {children}
+            <MotionPreferences>{children}</MotionPreferences>
             {/* Silent unless this account is paid for active time. */}
             <ActivityHeartbeat />
           </AuthProvider>

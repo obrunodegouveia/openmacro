@@ -73,8 +73,7 @@ export function Roadmap() {
             className="absolute left-0 right-0 top-9 hidden h-1 rounded-full bg-hairline md:block"
           >
             <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: "58%" }}
+              initial={{ width: "58%" }}
               viewport={{ once: true }}
               transition={{ duration: 1.1, ease: "easeOut" }}
               className="h-full rounded-full bg-gradient-to-r from-gold via-mint to-azure"
@@ -89,8 +88,8 @@ export function Roadmap() {
                   type="button"
                   onClick={() => setActiveId(track.id)}
                   aria-pressed={selected}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ y: 18 }}
+                  whileInView={{ y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: index * 0.08 }}
                   whileHover={{ y: -4 }}
