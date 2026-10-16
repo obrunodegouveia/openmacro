@@ -134,7 +134,12 @@ export function Treasury() {
     };
   }, [fetchOverview]);
 
-  async function act(action: string, payload: Record<string, unknown>, label: string) {
+  /** Run an admin action. Resolves to the error text, or null on success. */
+  async function act(
+    action: string,
+    payload: Record<string, unknown>,
+    label: string,
+  ): Promise<string | null> {
     setBusy(label);
     setMessage(null);
     try {
@@ -150,9 +155,14 @@ export function Treasury() {
           ? { tone: "ok", text: result.explorerUrl ? `Sent — ${result.explorerUrl}` : "Done." }
           : { tone: "bad", text: result.error ?? "That did not work." },
       );
-      if (response.ok) await load();
+      if (response.ok) {
+        await load();
+        return null;
+      }
+      return result.error ?? "That did not work.";
     } catch {
       setMessage({ tone: "bad", text: "Could not reach the server." });
+      return "Could not reach the server.";
     } finally {
       setBusy(null);
     }
@@ -356,6 +366,14 @@ export function Treasury() {
                   </button>
                 )}
               </div>
+
+              {r.scheme === "earnings" ? (
+                <RatesEditor
+                  recipient={r}
+                  busy={busy !== null}
+                  onSave={(rates) => act("set-rates", { id: r.id, ...rates }, r.id)}
+                />
+              ) : null}
             </li>
           ))}
           {data.recipients.length === 0 ? (
@@ -365,7 +383,7 @@ export function Treasury() {
 
         <AddRecipient
           busy={busy !== null}
-          onAdd={(payload) => void act("add-recipient", payload, "add")}
+          onAdd={(payload) => act("add-recipient", payload, "add")}
         />
       </section>
 
@@ -441,7 +459,8 @@ function AddRecipient({
   onAdd,
 }: {
   busy: boolean;
-  onAdd: (payload: Record<string, unknown>) => void;
+  /** Resolves to the server's error text, or null once the recipient is saved. */
+  onAdd: (payload: Record<string, unknown>) => Promise<string | null>;
 }) {
   const s = useSiteText();
   const [open, setOpen] = React.useState(false);
@@ -450,6 +469,8 @@ function AddRecipient({
     scheme: "module" as "module" | "earnings",
   };
   const [form, setForm] = React.useState(empty);
+  const [error, setError] = React.useState<string | null>(null);
+  const earnings = form.scheme === "earnings";
 
   if (!open) {
     return (
@@ -466,29 +487,25 @@ function AddRecipient({
   return (
     <form
       className="mt-4 space-y-3 rounded-xl border border-black/10 p-4 dark:border-white/15"
-      onSubmit={(event) => {
+      onSubmit={async (event) => {
         event.preventDefault();
-        onAdd(form);
+        setError(null);
+        // An earnings recipient has no per-module amount; do not send a stale one.
+        const failure = await onAdd(earnings ? { ...form, amountEuros: "" } : form);
+        // Keep what was typed when the server says no, so it can be corrected.
+        if (failure) {
+          setError(failure);
+          return;
+        }
         setOpen(false);
         setForm(empty);
       }}
     >
-      <Field label={s("treasury.field.key")} value={form.key} placeholder={s("treasury.field.keyPlaceholder")}
-        onChange={(v) => setForm((f) => ({ ...f, key: v }))} />
-      <Field label={s("treasury.field.name")} value={form.label} placeholder={s("treasury.field.namePlaceholder")}
-        onChange={(v) => setForm((f) => ({ ...f, label: v }))} />
-      <Field label={s("treasury.field.address")} value={form.address} placeholder="0x…" mono
-        onChange={(v) => setForm((f) => ({ ...f, address: v }))} />
-      <Field label={s("treasury.field.amount")} value={form.amountEuros} placeholder="1.00"
-        onChange={(v) => setForm((f) => ({ ...f, amountEuros: v }))} />
-      <Field label={s("treasury.field.claimant")} value={form.claimantEmail} placeholder={s("treasury.field.claimantPlaceholder")}
-        onChange={(v) => setForm((f) => ({ ...f, claimantEmail: v }))} />
-      <Field label={s("treasury.field.note")} value={form.note} placeholder=""
-        onChange={(v) => setForm((f) => ({ ...f, note: v }))} />
+      {/* First, because it decides which of the fields below are required. */}
       <label className="flex items-start gap-2 text-xs text-neutral-600 dark:text-neutral-300">
         <input
           type="checkbox"
-          checked={form.scheme === "earnings"}
+          checked={earnings}
           onChange={(event) =>
             setForm((f) => ({ ...f, scheme: event.target.checked ? "earnings" : "module" }))
           }
@@ -497,9 +514,34 @@ function AddRecipient({
         <span>{s("treasury.field.earnings")}</span>
       </label>
 
+      <Field label={s("treasury.field.key")} value={form.key} placeholder={s("treasury.field.keyPlaceholder")}
+        hint={s("treasury.field.keyHint")} required pattern="[a-z][a-z0-9_\-]{1,30}"
+        onChange={(v) => setForm((f) => ({ ...f, key: v.toLowerCase() }))} />
+      <Field label={s("treasury.field.name")} value={form.label} placeholder={s("treasury.field.namePlaceholder")}
+        required onChange={(v) => setForm((f) => ({ ...f, label: v }))} />
+      <Field label={s("treasury.field.claimant")} value={form.claimantEmail} placeholder={s("treasury.field.claimantPlaceholder")}
+        type="email" required={earnings}
+        onChange={(v) => setForm((f) => ({ ...f, claimantEmail: v }))} />
+      <Field
+        label={earnings ? s("treasury.field.addressOptional") : s("treasury.field.address")}
+        value={form.address} placeholder="0x…" mono required={!earnings} pattern="0x[0-9a-fA-F]{40}"
+        onChange={(v) => setForm((f) => ({ ...f, address: v }))} />
+      {earnings ? null : (
+        <Field label={s("treasury.field.amount")} value={form.amountEuros} placeholder="1.00"
+          onChange={(v) => setForm((f) => ({ ...f, amountEuros: v }))} />
+      )}
+      <Field label={s("treasury.field.note")} value={form.note} placeholder=""
+        onChange={(v) => setForm((f) => ({ ...f, note: v }))} />
+
       <p className="text-xs text-neutral-500">
         {s("treasury.addedPending")}
       </p>
+
+      {error ? (
+        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+          {error}
+        </p>
+      ) : null}
 
       <div className="flex gap-2">
         <button
@@ -511,8 +553,102 @@ function AddRecipient({
         </button>
         <button
           type="button"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false);
+            setError(null);
+          }}
           className="rounded-lg border border-black/15 px-3 py-2 text-sm dark:border-white/20"
+        >
+          {s("treasury.cancel")}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+/**
+ * Change one earnings recipient's euros per XP and per active hour.
+ *
+ * Collapsed to a button until opened. An empty field restores the default.
+ *
+ * @param recipient  The earnings recipient whose rates are shown and edited.
+ * @param busy       True while any admin action is in flight.
+ * @param onSave     Resolves to the server's error text, or null once saved.
+ */
+function RatesEditor({
+  recipient,
+  busy,
+  onSave,
+}: {
+  recipient: Recipient;
+  busy: boolean;
+  onSave: (rates: { xpRateEuros: string; hourRateEuros: string }) => Promise<string | null>;
+}) {
+  const s = useSiteText();
+  const [open, setOpen] = React.useState(false);
+  const [xp, setXp] = React.useState(recipient.xpRateEuros ?? "");
+  const [hour, setHour] = React.useState(recipient.hourRateEuros ?? "");
+  const [error, setError] = React.useState<string | null>(null);
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => {
+          // Start from what is saved, not from an earlier abandoned edit.
+          setXp(recipient.xpRateEuros ?? "");
+          setHour(recipient.hourRateEuros ?? "");
+          setError(null);
+          setOpen(true);
+        }}
+        className="mt-2 text-xs underline underline-offset-2 text-neutral-600 disabled:opacity-50 dark:text-neutral-300"
+      >
+        {s("treasury.rates.edit")}
+      </button>
+    );
+  }
+
+  return (
+    <form
+      className="mt-3 space-y-3 rounded-lg border border-black/10 p-3 dark:border-white/15"
+      onSubmit={async (event) => {
+        event.preventDefault();
+        setError(null);
+        const failure = await onSave({ xpRateEuros: xp.trim(), hourRateEuros: hour.trim() });
+        if (failure) {
+          setError(failure);
+          return;
+        }
+        setOpen(false);
+      }}
+    >
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field label={s("treasury.rates.xp")} value={xp} placeholder="0.002" mono
+          pattern="\d+([.,]\d{1,6})?" onChange={setXp} />
+        <Field label={s("treasury.rates.hour")} value={hour} placeholder="0.20" mono
+          pattern="\d+([.,]\d{1,6})?" onChange={setHour} />
+      </div>
+      <p className="text-xs text-neutral-500">{s("treasury.rates.note")}</p>
+
+      {error ? (
+        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={busy}
+          className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+        >
+          {s("treasury.rates.save")}
+        </button>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="rounded-lg border border-black/15 px-3 py-1.5 text-xs dark:border-white/20"
         >
           {s("treasury.cancel")}
         </button>
@@ -526,25 +662,39 @@ function Field({
   value,
   placeholder,
   mono,
+  hint,
+  required,
+  pattern,
+  type = "text",
   onChange,
 }: {
   label: string;
   value: string;
   placeholder: string;
   mono?: boolean;
+  /** One line under the input explaining what it accepts. */
+  hint?: string;
+  required?: boolean;
+  /** HTML pattern; the browser blocks submit and points at the field. */
+  pattern?: string;
+  type?: "text" | "email";
   onChange: (value: string) => void;
 }) {
   return (
     <label className="block">
       <span className="text-xs font-medium text-neutral-600 dark:text-neutral-300">{label}</span>
       <input
+        type={type}
         value={value}
         placeholder={placeholder}
+        required={required}
+        pattern={pattern}
         onChange={(event) => onChange(event.target.value)}
         className={`mt-1 w-full rounded-lg border border-black/15 bg-transparent px-3 py-2 text-sm dark:border-white/20 ${
           mono ? "font-mono" : ""
         }`}
       />
+      {hint ? <span className="mt-1 block text-xs text-neutral-500">{hint}</span> : null}
     </label>
   );
 }

@@ -483,6 +483,8 @@ export const en = {
   'treasury.field.name': 'Name',
   'treasury.field.namePlaceholder': 'Sofia',
   'treasury.field.address': 'Coinbase deposit address on Base',
+  'treasury.field.keyHint': 'Lowercase letters, digits, - or _, 2–31 characters. No dots or spaces.',
+  'treasury.field.addressOptional': 'Deposit address on Base (optional — the learner can set it)',
   'treasury.field.amount': 'Reward per module in euros (optional)',
   'treasury.field.claimant': 'Account that claims into it',
   'treasury.field.claimantPlaceholder': 'her@email.com',
@@ -493,6 +495,11 @@ export const en = {
   'treasury.scheme.earnings': 'XP and time · €{xp}/XP · €{hour}/hour',
   'treasury.noAddress': 'no address yet — the learner sets it',
   'treasury.add': 'Add',
+  'treasury.rates.edit': 'Edit rates',
+  'treasury.rates.xp': 'Euros per XP (empty = 0.002)',
+  'treasury.rates.hour': 'Euros per active hour (empty = 0.20)',
+  'treasury.rates.note': 'Applies to everything earned so far, not only from now on. Active time is counted on the website only, not in the iPhone app.',
+  'treasury.rates.save': 'Save rates',
   'treasury.cancel': 'Cancel',
 
   // ---- dashboard ----------------------------------------------------------

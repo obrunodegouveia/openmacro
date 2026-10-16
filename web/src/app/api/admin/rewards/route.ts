@@ -8,6 +8,7 @@ import {
   getRecipientById,
   listRecipients,
   normaliseAddress,
+  setRecipientRates,
   setRecipientStatus,
 } from "@/lib/rewards/recipients";
 import {
@@ -127,6 +128,25 @@ export async function POST(request: Request) {
       if (!key || !label) {
         return NextResponse.json({ error: "Key and label are required." }, { status: 400 });
       }
+      // Mirrors the check in 0003, so the admin sees why instead of a
+      // generic constraint error.
+      if (!/^[a-z][a-z0-9_-]{1,30}$/.test(key)) {
+        return NextResponse.json(
+          {
+            error:
+              "The key must start with a letter and use only lowercase letters, digits, - or _ (2–31 characters).",
+          },
+          { status: 400 },
+        );
+      }
+      // Earnings are found from the signed-in email; without one nobody can
+      // ever see the balance or set the address.
+      if (scheme === "earnings" && !str("claimantEmail")) {
+        return NextResponse.json(
+          { error: "Pay by XP and active time needs the learner's account email." },
+          { status: 400 },
+        );
+      }
 
       const result = await addRecipient({
         key,
@@ -234,6 +254,55 @@ export async function POST(request: Request) {
         });
         return NextResponse.json({ error: message }, { status: 502 });
       }
+    }
+
+    // -----------------------------------------------------------------------
+    /**
+     * Change an earnings recipient's euros per XP and per active hour.
+     *
+     * An empty field restores the default. The balance is recomputed from the
+     * rates on every read, so this re-prices everything earned so far.
+     */
+    case "set-rates": {
+      const id = str("id");
+      const before = await getRecipientById(id);
+      if (!before) return NextResponse.json({ error: "No such recipient." }, { status: 404 });
+      if (before.scheme !== "earnings") {
+        return NextResponse.json(
+          { error: "Only a recipient paid by XP and active time has rates." },
+          { status: 400 },
+        );
+      }
+
+      const rate = (key: string): string | null | { error: string } => {
+        const value = str(key).replace(",", ".");
+        if (!value) return null;
+        return /^\d+(\.\d{1,6})?$/.test(value)
+          ? value
+          : { error: "A rate must be a number of euros with at most 6 decimals, like 0.002." };
+      };
+      const xpRateEuros = rate("xpRateEuros");
+      const hourRateEuros = rate("hourRateEuros");
+      for (const parsed of [xpRateEuros, hourRateEuros]) {
+        if (parsed && typeof parsed === "object") {
+          return NextResponse.json({ error: parsed.error }, { status: 400 });
+        }
+      }
+
+      const result = await setRecipientRates(id, {
+        xpRateEuros: xpRateEuros as string | null,
+        hourRateEuros: hourRateEuros as string | null,
+      });
+      if ("error" in result) {
+        return NextResponse.json({ error: result.error }, { status: 400 });
+      }
+
+      await recordAdminEvent(admin.email, "recipient.rates-changed", {
+        key: before.key,
+        from: { xp: before.xpRateEuros, hour: before.hourRateEuros },
+        to: { xp: result.recipient.xpRateEuros, hour: result.recipient.hourRateEuros },
+      });
+      return NextResponse.json({ recipient: result.recipient });
     }
 
     // -----------------------------------------------------------------------
