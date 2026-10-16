@@ -78,6 +78,22 @@ export default function RootLayout() {
               {/* The tab bar owns the top level; the runner sits outside it
                   so a lesson is not interruptible by a tab. */}
               <Stack.Screen name="(tabs)" />
+              {/* A module's page: a plain push, so the system back swipe
+                  returns to wherever the learner came from. The bar carries
+                  only "Module N" and the share button; the full title is in
+                  the page, because iOS large titles truncate long ones. */}
+              <Stack.Screen
+                name="module/[moduleId]"
+                options={{
+                  headerShown: true,
+                  headerTransparent: true,
+                  headerBlurEffect: 'systemChromeMaterial',
+                  headerShadowVisible: false,
+                  headerTintColor: palette.mintDark,
+                  headerTitleStyle: { color: palette.ink },
+                  headerBackButtonDisplayMode: 'minimal',
+                }}
+              />
               {/* The runner is a full-screen, focused context — present it modally. */}
               <Stack.Screen
                 name="lesson/[lessonId]"

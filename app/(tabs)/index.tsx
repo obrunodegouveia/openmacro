@@ -1,20 +1,28 @@
 /**
- * The learning path — the Home tab.
+ * Today — the Home tab.
  *
- * Renders straight from `src/content/registry.ts`, so a contributor who adds a
- * module sees it appear here with zero changes to this file.
+ * This screen used to be the whole course: three collapsible levels holding
+ * thirty-odd collapsible modules holding 180 lesson cards. A new learner met
+ * Module 1's twenty-five cards and had to scroll eleven screens to discover
+ * Module 2 existed; a returning one had to remember where they were.
  *
- * Account, language and the progress summary used to sit at the head and foot
- * of this scroll because there was nowhere else to put them. There is now, and
- * this screen is only the course.
+ * Now it answers one question — what do I do next? — and gets out of the way:
+ *
+ *   1. one large card for the next lesson, with where it sits and how far
+ *      through its module the learner is, and a single button to start it;
+ *   2. review, when something is due;
+ *   3. the rest of the current module as a strip, for the learner who wants
+ *      to see what is coming;
+ *   4. a way into the full course map, which now lives in its own tab.
+ *
+ * Everything is derived from progress by `useCourse`, so the card here, the
+ * "You are here" marker on the Course tab and the module page all agree.
  */
 
-import { Fragment, useCallback, useMemo, useState } from 'react';
+import { Fragment } from 'react';
 import {
   ActivityIndicator,
-  Share,
   Image,
-  LayoutAnimation,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -24,818 +32,366 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 
+import { ActionButton } from '@/components/ui/ActionButton';
+import { Chevron } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
-import { LessonVideo } from '@/components/ui/LessonVideo';
-import { UpdateBanner } from '@/components/ui/UpdateBanner';
+import { ProgressRing } from '@/components/ui/ProgressRing';
 import { StreakBadge } from '@/components/ui/StatusPills';
-import { interpolate } from '@/i18n/interpolate';
+import { TopScrim } from '@/components/ui/TopScrim';
+import { UpdateBanner } from '@/components/ui/UpdateBanner';
+import { emitFeedback } from '@/feedback';
+import { useCourse } from '@/hooks/useCourse';
+import { openLesson, openModule } from '@/navigation/routes';
+import { useReview } from '@/hooks/useReview';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
-import { useReview } from '@/hooks/useReview';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
-import type { Lesson, ModuleLevel } from '@openmacro/core/content/schema';
-import { currentLevel, groupByLevel } from '@openmacro/core/content/levels';
-import { moduleUrl } from '@openmacro/core/content/links';
+import type { Lesson } from '@openmacro/core/content/schema';
 
-export default function LearningPathScreen() {
+export default function TodayScreen() {
   const insets = useSafeAreaInsets();
-  const { profile, progress, loading, error, isLessonComplete } = useProgress();
-  // The course arrives already translated; nothing below knows which language
-  // it is in, which is what keeps the screen free of `locale ===` branches.
-  const { t, locale, course, modules } = useLocale();
+  const { profile, loading, error, isLessonComplete } = useProgress();
+  const { t, course } = useLocale();
   const { due: reviewDue } = useReview();
-
-  const groups = useMemo(() => groupByLevel(modules), [modules]);
-
-  /**
-   * Hand a module's public link to the system share sheet.
-   *
-   * `Share` is React Native's own, so this needs no new dependency — which
-   * matters more than it looks: a native module would change the fingerprint
-   * and this feature could only reach anyone through a new build and an App
-   * Store review, rather than over the air like the rest of the course.
-   *
-   * A dismissed sheet rejects on some platforms and resolves on others.
-   * Neither is a failure worth telling anyone about.
-   */
-  const shareModule = useCallback(
-    async (moduleId: string, title: string) => {
-      const url = moduleUrl(moduleId, locale);
-      try {
-        await Share.share({
-          message: t('path.module.shareMessage', { title, url }),
-          url,
-          title,
-        });
-      } catch {
-        // Cancelled, or no share sheet on this platform.
-      }
-    },
-    [locale, t],
-  );
-
-  /**
-   * The lesson to carry on with.
-   *
-   * With the path collapsed, the screen opens on three headings and no
-   * obvious way back in — a learner mid-course has to remember where they
-   * were and expand their way to it. The website has had a resume card since
-   * it grew a course map; the app never did, and collapsing made its absence
-   * the first thing you meet.
-   */
-  const resume = useMemo(() => {
-    for (const module of modules) {
-      const lesson = module.lessons.find((entry) => !isLessonComplete(entry.id));
-      // The module comes back with the lesson rather than being looked up
-      // again later: this loop already holds it, and it is the *localised*
-      // module, which a lookup through the registry would not be.
-      if (lesson) return { lesson, module };
-    }
-    return undefined;
-  }, [modules, isLessonComplete]);
-
-  /**
-   * The level the learner is actually in — the first with an unfinished
-   * lesson, or the last one if they have finished everything.
-   *
-   * Collapsing every level would open the app on three headings and no course,
-   * so exactly one starts open, and it is the one they would have had to
-   * scroll to find.
-   */
-  const openByDefault = useMemo(
-    () => currentLevel(groups, isLessonComplete),
-    [groups, isLessonComplete],
-  );
-
-  /**
-   * Honour the OS "reduce motion" setting.
-   *
-   * The website gets this for free from a `prefers-reduced-motion` rule in
-   * `globals.css`; the app had nothing, so every expand animated regardless
-   * of what the learner had asked the system for. Someone who turns that on
-   * usually means it.
-   */
+  const { next, statuses } = useCourse();
   const reduceMotion = useReducedMotion();
 
-  const [collapsed, setCollapsed] = useState<readonly ModuleLevel[]>([]);
-  const [touched, setTouched] = useState(false);
+  const started = (profile?.totalXp ?? 0) > 0;
+  const enter = (index: number) =>
+    reduceMotion ? undefined : FadeInDown.delay(index * 70).duration(260);
 
-  /**
-   * The module holding the next unfinished lesson — open by default, for the
-   * same reason exactly one level is.
-   */
-  const openModuleId = useMemo(() => {
-    const next = modules.find((module) =>
-      module.lessons.some((lesson) => !isLessonComplete(lesson.id)),
-    );
-    return next?.id ?? modules[modules.length - 1]?.id;
-  }, [modules, isLessonComplete]);
-
-  const [closedModules, setClosedModules] = useState<readonly string[]>([]);
-  const [moduleTouched, setModuleTouched] = useState(false);
-
-  const isModuleOpen = (moduleId: string) =>
-    moduleTouched ? !closedModules.includes(moduleId) : moduleId === openModuleId;
-
-  const toggleModule = (moduleId: string) => {
-    if (!reduceMotion) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    const open = isModuleOpen(moduleId);
-    setClosedModules((current) => {
-      const base = moduleTouched
-        ? current
-        : modules.map((module) => module.id).filter((id) => id !== openModuleId);
-      return open ? [...base, moduleId] : base.filter((id) => id !== moduleId);
-    });
-    setModuleTouched(true);
-  };
-
-  /**
-   * Until the learner touches a header, openness follows their progress; after
-   * that it follows them. Deriving it rather than seeding state in an effect
-   * means the first paint is already correct — no flash of three open levels
-   * collapsing a frame later.
-   */
-  const isOpen = (level: ModuleLevel) =>
-    touched ? !collapsed.includes(level) : level === openByDefault;
-
-  const toggle = (level: ModuleLevel) => {
-    if (!reduceMotion) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    const open = isOpen(level);
-    setCollapsed((current) => {
-      const base = touched
-        ? current
-        : groups.map((group) => group.level).filter((level) => level !== openByDefault);
-      return open ? [...base, level] : base.filter((entry) => entry !== level);
-    });
-    setTouched(true);
-  };
+  // The rest of the current module, starting at the next lesson.
+  const upNext: Lesson[] = next
+    ? next.status.module.lessons
+        .slice(next.status.module.lessons.indexOf(next.lesson) + 1)
+        .filter((lesson) => !isLessonComplete(lesson.id))
+        .slice(0, 6)
+    : [];
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={[
-        styles.content,
-        { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + TAB_BAR_SPACE },
-      ]}
-    >
-      {/* ---- header ---------------------------------------------------- */}
-      <View style={styles.header}>
-        <View style={styles.headerText}>
-          <Image
-            source={require('../../assets/brand/v3/openmacro-lockup-light.png')}
-            style={styles.brandLockup}
-            resizeMode="contain"
-            accessible
-            accessibilityRole="image"
-            accessibilityLabel="OpenMacro"
-          />
-          <Text style={styles.tagline}>{course.description}</Text>
-        </View>
-        <View style={styles.headerStats}>
-          {loading ? (
-            <ActivityIndicator color={palette.inkFaint} />
-          ) : (
-            <Fragment>
-              <StreakBadge
-                streak={profile?.dayStreak ?? 0}
-                active={profile?.streakActiveToday ?? false}
-              />
-              <View style={styles.xpPill}>
-                <Text style={styles.xpText}>{t('path.xp', { count: profile?.totalXp ?? 0 })}</Text>
-              </View>
-            </Fragment>
-          )}
-        </View>
-      </View>
-
-      <UpdateBanner />
-
-      {error ? (
-        <View style={styles.errorBanner}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      ) : null}
-
-      {/* ---- carry on ---------------------------------------------------
-        Only once there is something to carry on *from*: on a first run this
-        would point at the first lesson of the course, which is already the
-        next thing on screen.
-      */}
-      {resume && (profile?.totalXp ?? 0) > 0 ? (
-        <Pressable
-          onPress={() =>
-            router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: resume.lesson.id } })
-          }
-          accessibilityRole="button"
-          accessibilityLabel={t('path.lesson.open', { title: resume.lesson.title })}
-          style={({ pressed }) => [styles.resume, pressed && styles.lessonCardPressed]}
-        >
-          <View style={styles.resumeIcon}>
-            <Text style={styles.lessonIconText}>{resume.lesson.icon}</Text>
+    <View style={styles.screen}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + TAB_BAR_SPACE },
+        ]}
+        scrollIndicatorInsets={{ bottom: TAB_BAR_SPACE }}
+      >
+        {/* ---- header -------------------------------------------------- */}
+        <View style={styles.header}>
+          <View style={styles.headerText}>
+            <Image
+              source={require('../../assets/brand/v3/openmacro-lockup-light.png')}
+              style={styles.brandLockup}
+              resizeMode="contain"
+              accessible
+              accessibilityRole="image"
+              accessibilityLabel="OpenMacro"
+            />
+            <Text style={styles.tagline}>{course.description}</Text>
           </View>
-          <View style={styles.lessonBody}>
-            <Text style={styles.resumeEyebrow}>{t('map.resume')}</Text>
-            <Text style={styles.lessonTitle}>{resume.lesson.title}</Text>
-            {/* Where this lesson sits. A title alone — "The Forecast Round" —
-                says nothing about where in a 32-module course you are, which
-                is the one thing the card is for once the path is collapsed. */}
-            <Text style={styles.resumeContext} numberOfLines={1}>
-              {t('path.resume.context', {
-                level: t(`level.${resume.module.level}`),
-                module: resume.module.title,
-              })}
-            </Text>
-          </View>
-        </Pressable>
-      ) : null}
-
-      {/* ---- what is slipping -------------------------------------------
-        Sits under the resume card because it is the second thing to do, not
-        the first: the course moves forwards, and review is what keeps the
-        ground behind you from giving way. Absent entirely when the schedule
-        has nothing due, rather than shown as an empty state — a permanent
-        "0 to review" is a nag, not information.
-      */}
-      {reviewDue.length > 0 ? (
-        <Pressable
-          onPress={() => router.push('/review')}
-          accessibilityRole="button"
-          accessibilityLabel={t('review.start')}
-          style={({ pressed }) => [styles.review, pressed && styles.lessonCardPressed]}
-        >
-          <View style={styles.reviewIcon}>
-            <Text style={styles.lessonIconText}>🔁</Text>
-          </View>
-          <View style={styles.lessonBody}>
-            <Text style={styles.reviewEyebrow}>{t('review.title')}</Text>
-            <Text style={styles.lessonTitle}>{t('review.due', { count: reviewDue.length })}</Text>
-          </View>
-        </Pressable>
-      ) : null}
-
-      {/* ---- modules ----------------------------------------------------
-        One collapsible section per level. The path is 32 modules long, so a
-        flat list meant scrolling past two levels to reach the one you are in;
-        grouping is what makes the last third reachable.
-      */}
-      {groups.map((group) => {
-        const open = isOpen(group.level);
-        const levelDone = group.modules.filter((module) =>
-          module.lessons.every((lesson) => isLessonComplete(lesson.id)),
-        ).length;
-        return (
-          <View key={group.level} style={styles.level}>
-            <Pressable
-              onPress={() => toggle(group.level)}
-              style={({ pressed }) => [styles.levelHeader, pressed && styles.levelHeaderPressed]}
-              accessibilityRole="button"
-              accessibilityState={{ expanded: open }}
-              accessibilityLabel={t(`level.${group.level}`)}
-              accessibilityHint={t(`level.${group.level}.unlocks`)}
-            >
-              <View style={styles.levelTitleRow}>
-                <Text style={styles.levelTitle}>{t(`level.${group.level}`)}</Text>
-                <Text style={styles.levelCount}>
-                  {t('level.count', { count: group.modules.length })}
-                </Text>
-                {/* Collapsed, the screen otherwise says nothing about how far
-                    anyone has got — the count is the size of the level, not
-                    the learner's place in it. */}
-                {/* Grouped so the pair sits together on the right whether or
-                    not the progress figure is there — an `auto` margin on the
-                    figure alone leaves the chevron beside the pill the moment
-                    a learner has finished nothing yet. */}
-                <View style={styles.levelTrailing}>
-                  {levelDone > 0 ? (
-                    <Text style={styles.levelProgress}>
-                      {t('path.module.progress', {
-                        done: levelDone,
-                        total: group.modules.length,
-                      })}
-                    </Text>
-                  ) : null}
-                  {/* A glyph, not a word: the lint rule that requires t() for
-                      user-visible text exempts strings with no two consecutive
-                      letters, and a chevron needs no translation. */}
-                  <Text style={styles.levelChevron}>{open ? '⌃' : '⌄'}</Text>
+          <View style={styles.headerStats}>
+            {loading ? (
+              <ActivityIndicator color={palette.inkFaint} />
+            ) : (
+              <Fragment>
+                <StreakBadge
+                  streak={profile?.dayStreak ?? 0}
+                  active={profile?.streakActiveToday ?? false}
+                />
+                <View style={styles.xpPill}>
+                  <Text style={styles.xpText}>{t('path.xp', { count: profile?.totalXp ?? 0 })}</Text>
                 </View>
-              </View>
-              <Text style={styles.levelBlurb}>{t(`level.${group.level}.blurb`)}</Text>
-              <Text style={styles.levelUnlocks}>{t(`level.${group.level}.unlocks`)}</Text>
-            </Pressable>
-
-            {open
-              ? group.modules.map((module, indexInLevel) => {
-                  const moduleOpen = isModuleOpen(module.id);
-                  const done = module.lessons.filter((lesson) =>
-                    isLessonComplete(lesson.id),
-                  ).length;
-                  const finished = done === module.lessons.length;
-
-                  return (
-                    <Animated.View
-                      key={module.id}
-                      entering={
-                        reduceMotion
-                          ? undefined
-                          : FadeInDown.delay(indexInLevel * 60).duration(240)
-                      }
-                      style={styles.module}
-                    >
-                      <Pressable
-                        onPress={() => toggleModule(module.id)}
-                        style={({ pressed }) => [
-                          styles.moduleHeader,
-                          pressed && styles.levelHeaderPressed,
-                        ]}
-                        accessibilityRole="button"
-                        accessibilityState={{ expanded: moduleOpen }}
-                        accessibilityLabel={module.title}
-                        accessibilityHint={module.description}
-                      >
-                        <View style={styles.moduleTopRow}>
-                          <Text style={styles.moduleEyebrow}>
-                            {t('path.module', { number: group.offset + indexInLevel + 1 })}
-                          </Text>
-                          {/* The collapsed row has to carry what the learner
-                              came to find out, or collapsing hides exactly the
-                              thing that makes the list scannable. */}
-                          <Text style={[styles.moduleProgress, finished && styles.moduleProgressDone]}>
-                            {finished
-                              ? t('path.module.done')
-                              : t('path.module.progress', {
-                                  done,
-                                  total: module.lessons.length,
-                                })}
-                          </Text>
-                          <Text style={styles.levelChevron}>{moduleOpen ? '⌃' : '⌄'}</Text>
-                        </View>
-                        <Text style={styles.moduleTitle}>{module.title}</Text>
-                        <Text
-                          style={styles.moduleDescription}
-                          numberOfLines={moduleOpen ? undefined : 2}
-                        >
-                          {module.description}
-                        </Text>
-                      </Pressable>
-
-                      {/* A module-level video, where one exists.
-                          `module.video` has been in the schema and rendered by
-                          the website since the course map was built; the app
-                          only ever read `lesson.video`, so a module video was
-                          invisible on the platform most people use. Placed
-                          above the lessons because it frames them, and inside
-                          the expansion because a collapsed module should stay
-                          one line. Nothing contacts YouTube until pressed. */}
-                      {moduleOpen && module.video ? (
-                        <View style={styles.moduleVideo}>
-                          <LessonVideo
-                            url={module.video.url}
-                            title={module.title}
-                            minutes={module.video.minutes}
-                            source={module.video.source}
-                          />
-                        </View>
-                      ) : null}
-
-                      {/* Somewhere to send it.
-                          A learner who wants to show someone a module cannot
-                          send them an app. The website runs the same content
-                          from the same registry, so this link is the same
-                          exercise in a form anyone can open — no install, no
-                          account. Inside the expansion, under the lessons,
-                          because it is what you reach for after looking
-                          rather than before. */}
-                      {moduleOpen ? (
-                        <Pressable
-                          onPress={() => void shareModule(module.id, module.title)}
-                          accessibilityRole="button"
-                          accessibilityLabel={t('path.module.shareA11y', { title: module.title })}
-                          hitSlop={8}
-                          style={({ pressed }) => [styles.share, pressed && styles.sharePressed]}
-                        >
-                          <Text style={styles.shareIcon}>🔗</Text>
-                          <View style={styles.shareBody}>
-                            <Text style={styles.shareLabel}>{t('path.module.share')}</Text>
-                            {/* The URL itself, readable. Somebody who would
-                                rather type it than tap a share sheet can. */}
-                            <Text style={styles.shareUrl} numberOfLines={1}>
-                              {moduleUrl(module.id, locale).replace('https://', '')}
-                            </Text>
-                          </View>
-                        </Pressable>
-                      ) : null}
-
-                      {moduleOpen
-                        ? module.lessons.map((lesson) => (
-                            <LessonCard
-                              key={lesson.id}
-                              lesson={lesson}
-                              complete={isLessonComplete(lesson.id)}
-                              bestXp={progress[lesson.id]?.bestXp ?? 0}
-                            />
-                          ))
-                        : null}
-                    </Animated.View>
-                  );
-                })
-              : null}
+              </Fragment>
+            )}
           </View>
-        );
-      })}
-
-      {/* ---- contributor call to action -------------------------------- */}
-      <View style={styles.contributeCard}>
-        <Text style={styles.contributeTitle}>{t('path.contribute.title')}</Text>
-        <Text style={styles.contributeBody}>
-          {interpolate(t('path.contribute.body'), {
-            lessons: <Text style={styles.code}>src/content/lessons/</Text>,
-            registry: <Text style={styles.code}>src/content/registry.ts</Text>,
-          })}
-        </Text>
-      </View>
-
-    </ScrollView>
-  );
-}
-
-// ---------------------------------------------------------------------------
-
-interface LessonCardProps {
-  lesson: Lesson;
-  complete: boolean;
-  bestXp: number;
-}
-
-function LessonCard({ lesson, complete, bestXp }: LessonCardProps) {
-  const { t } = useLocale();
-  // Navigating imperatively rather than with <Link asChild>: the `asChild`
-  // clone does not forward a function-form `style` to the child on web, which
-  // silently strips the card's styling there.
-  const open = () =>
-    router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: lesson.id } });
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={t('path.lesson.open', { title: lesson.title })}
-      onPress={open}
-      style={({ pressed }) => [styles.lessonCard, pressed && styles.lessonCardPressed]}
-    >
-      <View style={[styles.lessonIcon, complete && styles.lessonIconComplete]}>
-        <Text style={styles.lessonIconText}>{lesson.icon}</Text>
-      </View>
-
-      <View style={styles.lessonBody}>
-        <Text style={styles.lessonTitle}>{lesson.title}</Text>
-        <Text style={styles.lessonSubtitle} numberOfLines={2}>
-          {lesson.subtitle}
-        </Text>
-        <View style={styles.lessonMetaRow}>
-          <Text style={styles.lessonMeta}>
-            {t('path.lesson.minutes', { count: lesson.estimatedMinutes })}
-          </Text>
-          <Text style={styles.lessonMetaDot}>·</Text>
-          <Text style={styles.lessonMeta}>
-            {t('path.lesson.steps', { count: lesson.challenges.length })}
-          </Text>
-          {complete ? (
-            <Fragment>
-              <Text style={styles.lessonMetaDot}>·</Text>
-              <Text style={[styles.lessonMeta, styles.lessonMetaDone]}>
-                {t('path.lesson.best', { count: bestXp })}
-              </Text>
-            </Fragment>
-          ) : null}
         </View>
-      </View>
 
-      <Text style={styles.chevron}>{complete ? '↻' : '›'}</Text>
-    </Pressable>
+        <UpdateBanner />
+
+        {error ? (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : null}
+
+        {/* ---- the next lesson ------------------------------------------ */}
+        {next ? (
+          <Animated.View entering={enter(0)} style={styles.hero}>
+            <View style={styles.heroTop}>
+              <View style={styles.heroWhere}>
+                <Text style={styles.heroEyebrow}>
+                  {started ? t('today.eyebrowContinue') : t('today.eyebrowStart')}
+                </Text>
+                <Text style={styles.heroContext} numberOfLines={1}>
+                  {t('today.where', {
+                    level: t(`level.${next.status.level}`),
+                    number: next.status.number,
+                  })}
+                </Text>
+                <Text style={styles.heroModule} numberOfLines={2}>
+                  {next.status.module.title}
+                </Text>
+              </View>
+              <ProgressRing
+                progress={next.status.total ? next.status.done / next.status.total : 0}
+                size={56}
+                stroke={5}
+              >
+                <Text style={styles.heroRingText}>
+                  {next.status.done}/{next.status.total}
+                </Text>
+              </ProgressRing>
+            </View>
+
+            <View style={styles.heroLesson}>
+              <View style={styles.heroIcon}>
+                <Text style={styles.heroIconText}>{next.lesson.icon}</Text>
+              </View>
+              <View style={styles.heroLessonBody}>
+                <Text style={styles.heroLessonTitle}>{next.lesson.title}</Text>
+                <Text style={styles.heroLessonMeta}>
+                  {t('path.lesson.minutes', { count: next.lesson.estimatedMinutes })}
+                  {' · '}
+                  {t('path.lesson.steps', { count: next.lesson.challenges.length })}
+                </Text>
+              </View>
+            </View>
+
+            <ActionButton
+              label={started ? t('today.continue') : t('today.start')}
+              onPress={() => openLesson(next.lesson.id)}
+              tone="primary"
+            />
+
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => openModule(next.status.module.id)}
+              hitSlop={8}
+              style={({ pressed }) => [styles.heroLink, pressed && styles.pressed]}
+            >
+              <Text style={styles.heroLinkText}>{t('today.openModule')}</Text>
+              <Chevron />
+            </Pressable>
+          </Animated.View>
+        ) : (
+          <Animated.View entering={enter(0)} style={styles.hero}>
+            <Text style={styles.doneEmoji}>🏆</Text>
+            <Text style={styles.heroModule}>{t('today.allDone')}</Text>
+            <Text style={styles.heroLessonMeta}>{t('today.allDoneBody')}</Text>
+          </Animated.View>
+        )}
+
+        {/* ---- review --------------------------------------------------- */}
+        {reviewDue.length > 0 ? (
+          <Animated.View entering={enter(1)}>
+            <Pressable
+              onPress={() => router.push('/review')}
+              accessibilityRole="button"
+              accessibilityLabel={t('review.start')}
+              style={({ pressed }) => [styles.review, pressed && styles.pressed]}
+            >
+              <View style={styles.reviewIcon}>
+                <SymbolView
+                  name={{ ios: 'arrow.triangle.2.circlepath', android: 'autorenew', web: 'autorenew' }}
+                  size={20}
+                  tintColor={palette.blueDark}
+                  weight="semibold"
+                />
+              </View>
+              <View style={styles.reviewBody}>
+                <Text style={styles.reviewEyebrow}>{t('review.title')}</Text>
+                <Text style={styles.reviewTitle}>{t('review.due', { count: reviewDue.length })}</Text>
+              </View>
+              <Chevron />
+            </Pressable>
+          </Animated.View>
+        ) : null}
+
+        {/* ---- what comes after ----------------------------------------- */}
+        {upNext.length > 0 ? (
+          <Animated.View entering={enter(2)} style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('today.upNext')}</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.strip}
+              style={styles.stripScroll}
+            >
+              {upNext.map((lesson) => (
+                <Pressable
+                  key={lesson.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('path.lesson.open', { title: lesson.title })}
+                  onPress={() => openLesson(lesson.id)}
+                  style={({ pressed }) => [styles.tile, pressed && styles.pressed]}
+                >
+                  <Text style={styles.tileIcon}>{lesson.icon}</Text>
+                  <Text style={styles.tileTitle} numberOfLines={3}>
+                    {lesson.title}
+                  </Text>
+                  <Text style={styles.tileMeta}>
+                    {t('path.lesson.minutes', { count: lesson.estimatedMinutes })}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </Animated.View>
+        ) : null}
+
+        {/* ---- the map -------------------------------------------------- */}
+        <Animated.View entering={enter(3)}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              emitFeedback('select');
+              router.navigate('/course');
+            }}
+            style={({ pressed }) => [styles.browse, pressed && styles.pressed]}
+          >
+            <SymbolView
+              name={{ ios: 'map', android: 'map', web: 'map' }}
+              size={20}
+              tintColor={palette.mintDark}
+            />
+            <Text style={styles.browseText}>{t('today.browse', { count: statuses.length })}</Text>
+            <Chevron />
+          </Pressable>
+        </Animated.View>
+      </ScrollView>
+      <TopScrim />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: palette.canvas,
-  },
-  content: {
-    paddingHorizontal: spacing.xl,
-    gap: spacing.xxl,
-  },
+  screen: { flex: 1, backgroundColor: palette.canvas },
+  content: { paddingHorizontal: spacing.xl, gap: spacing.xl },
+  pressed: { opacity: 0.6 },
+
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: spacing.lg,
   },
-  headerText: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  brandLockup: {
-    width: '100%',
-    maxWidth: 212,
-    height: 40,
-    alignSelf: 'flex-start',
-  },
-  tagline: {
-    ...typography.caption,
-    color: palette.inkMuted,
-    fontWeight: '500',
-  },
-  headerStats: {
-    alignItems: 'flex-end',
-    gap: spacing.sm,
-  },
+  headerText: { flex: 1, gap: spacing.xs },
+  brandLockup: { width: '100%', maxWidth: 212, height: 40, alignSelf: 'flex-start' },
+  tagline: { ...typography.caption, color: palette.inkMuted, fontWeight: '500' },
+  headerStats: { alignItems: 'flex-end', gap: spacing.sm },
   xpPill: {
     backgroundColor: palette.blueSoft,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
   },
-  xpText: {
-    ...typography.caption,
-    color: palette.blueDark,
+  xpText: { ...typography.caption, color: palette.blueDark },
+  errorBanner: { backgroundColor: palette.coralSoft, borderRadius: radius.md, padding: spacing.md },
+  errorText: { ...typography.caption, color: palette.coralDark },
+
+  hero: {
+    gap: spacing.lg,
+    padding: spacing.lg,
+    borderRadius: radius.xl,
+    backgroundColor: palette.surface,
+    borderWidth: 1,
+    borderColor: palette.border,
+    shadowColor: palette.ink,
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
   },
-  errorBanner: {
-    backgroundColor: palette.coralSoft,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  errorText: {
-    ...typography.caption,
-    color: palette.coralDark,
-  },
-  module: {
-    gap: spacing.md,
-  },
-  level: { marginBottom: spacing.lg },
-  moduleTopRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  moduleProgress: {
-    ...typography.caption,
-    color: palette.inkFaint,
-    marginLeft: 'auto',
-    fontVariant: ['tabular-nums'],
-  },
-  moduleProgressDone: { color: palette.mint },
-  levelHeaderPressed: { opacity: 0.7 },
-  levelChevron: {
-    fontSize: 22,
-    lineHeight: 22,
-    color: palette.inkMuted,
-    fontWeight: '700',
-  },
-  levelProgress: {
-    ...typography.caption,
-    color: palette.inkFaint,
-    fontVariant: ['tabular-nums'],
-  },
-  levelTrailing: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginLeft: 'auto',
-  },
-  levelUnlocks: {
-    ...typography.caption,
-    color: palette.inkMuted,
-    marginTop: spacing.xs,
-    lineHeight: 18,
-  },
-  levelHeader: {
-    gap: spacing.xs,
-    borderTopWidth: 1,
-    borderTopColor: palette.border,
-    paddingTop: spacing.xl,
-    marginTop: spacing.lg,
-  },
-  levelTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  levelTitle: {
-    ...typography.display,
-    color: palette.ink,
-  },
-  levelCount: {
-    ...typography.caption,
-    color: palette.mintDark,
-    backgroundColor: palette.mintSoft,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-    borderRadius: 999,
-    overflow: 'hidden',
-  },
-  levelBlurb: {
-    ...typography.body,
-    color: palette.inkMuted,
-  },
-  moduleHeader: {
-    gap: spacing.xs,
-  },
-  moduleEyebrow: {
+  heroTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  heroWhere: { flex: 1, gap: 2 },
+  heroEyebrow: {
     ...typography.overline,
     color: palette.mintDark,
     textTransform: 'uppercase',
   },
-  moduleTitle: {
-    ...typography.title,
-    color: palette.ink,
-  },
-  moduleVideo: { marginBottom: spacing.md },
-  share: {
+  heroContext: { ...typography.caption, color: palette.inkMuted },
+  heroModule: { ...typography.heading, color: palette.ink },
+  heroRingText: { ...typography.caption, fontSize: 12, color: palette.ink, fontVariant: ['tabular-nums'] },
+  heroLesson: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    marginBottom: spacing.md,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    padding: spacing.md,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: palette.border,
+    backgroundColor: palette.mintSoft,
+  },
+  heroIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: palette.surface,
   },
-  sharePressed: { backgroundColor: palette.canvas },
-  shareIcon: { fontSize: 18 },
-  shareBody: { flex: 1, minWidth: 0 },
-  shareLabel: { ...typography.bodyStrong, color: palette.ink },
-  shareUrl: { ...typography.caption, color: palette.inkFaint, marginTop: 1 },
-  moduleDescription: {
-    ...typography.body,
-    color: palette.inkMuted,
-  },
-  /**
-   * The resume card, deliberately the one mint-filled thing on the screen.
-   * Everything else here is a container; this is the action.
-   */
-  resume: {
+  heroIconText: { fontSize: 24 },
+  heroLessonBody: { flex: 1, gap: 2 },
+  heroLessonTitle: { ...typography.bodyStrong, color: palette.ink },
+  heroLessonMeta: { ...typography.caption, color: palette.inkMuted },
+  heroLink: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.lg,
-    backgroundColor: palette.mintSoft,
-    borderWidth: 2,
-    borderBottomWidth: 5,
-    borderColor: palette.mint,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
+    justifyContent: 'center',
+    gap: spacing.xs,
   },
-  /** The review card. Blue, so it reads as the other action, not a second
-      copy of the mint one. */
+  heroLinkText: { ...typography.caption, color: palette.mintDark },
+  doneEmoji: { fontSize: 40 },
+
   review: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.lg,
-    backgroundColor: palette.blueSoft,
-    borderWidth: 2,
-    borderBottomWidth: 5,
-    borderColor: palette.blue,
+    gap: spacing.md,
+    padding: spacing.md,
     borderRadius: radius.lg,
-    padding: spacing.lg,
+    backgroundColor: palette.blueSoft,
+    borderWidth: 1,
+    borderColor: palette.blue,
   },
   reviewIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: palette.surface,
-    borderWidth: 2,
-    borderColor: palette.blue,
   },
-  reviewEyebrow: {
-    ...typography.caption,
-    color: palette.blueDark,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginBottom: 2,
-  },
-  resumeIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: palette.surface,
-    borderWidth: 2,
-    borderColor: palette.mint,
-  },
-  resumeContext: {
-    ...typography.caption,
-    color: palette.mintDark,
-    marginTop: 2,
-  },
-  resumeEyebrow: {
-    ...typography.caption,
-    color: palette.mintDark,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginBottom: 2,
-  },
-  lessonCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-    backgroundColor: palette.surface,
-    borderWidth: 2,
-    borderBottomWidth: 5,
-    borderColor: palette.border,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-  },
-  lessonCardPressed: {
-    borderBottomWidth: 2,
-    marginTop: 3,
-    backgroundColor: palette.canvas,
-  },
-  lessonIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: radius.pill,
-    backgroundColor: palette.canvas,
-    borderWidth: 2,
-    borderColor: palette.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  lessonIconComplete: {
-    backgroundColor: palette.mintSoft,
-    borderColor: palette.mint,
-  },
-  lessonIconText: {
-    fontSize: 24,
-  },
-  lessonBody: {
-    flex: 1,
-    gap: 2,
-  },
-  lessonTitle: {
-    ...typography.heading,
-    color: palette.ink,
-  },
-  lessonSubtitle: {
-    ...typography.caption,
-    color: palette.inkMuted,
-    fontWeight: '500',
-  },
-  lessonMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    marginTop: spacing.xs,
-  },
-  lessonMeta: {
-    ...typography.caption,
-    color: palette.inkFaint,
-  },
-  lessonMetaDone: {
-    color: palette.mintDark,
-  },
-  lessonMetaDot: {
-    color: palette.inkFaint,
-  },
-  chevron: {
-    ...typography.title,
-    color: palette.inkFaint,
-  },
-  contributeCard: {
-    backgroundColor: palette.surface,
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: palette.border,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
+  reviewBody: { flex: 1, gap: 2 },
+  reviewEyebrow: { ...typography.overline, color: palette.blueDark, textTransform: 'uppercase' },
+  reviewTitle: { ...typography.bodyStrong, color: palette.ink },
+
+  section: { gap: spacing.md },
+  sectionTitle: { ...typography.heading, color: palette.ink },
+  // The strip runs to the screen edges, past the content padding.
+  stripScroll: { marginHorizontal: -spacing.xl },
+  strip: { paddingHorizontal: spacing.xl, gap: spacing.md },
+  tile: {
+    width: 168,
+    minHeight: 150,
+    padding: spacing.md,
     gap: spacing.sm,
+    borderRadius: radius.lg,
+    backgroundColor: palette.surface,
+    borderWidth: 1,
+    borderColor: palette.border,
   },
-  contributeTitle: {
-    ...typography.heading,
-    color: palette.ink,
+  tileIcon: { fontSize: 24 },
+  tileTitle: { ...typography.bodyStrong, color: palette.ink, flex: 1 },
+  tileMeta: { ...typography.caption, color: palette.inkMuted },
+
+  browse: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: palette.surface,
+    borderWidth: 1,
+    borderColor: palette.border,
   },
-  contributeBody: {
-    ...typography.caption,
-    color: palette.inkMuted,
-    fontWeight: '500',
-    lineHeight: 20,
-  },
-  code: {
-    fontFamily: 'Courier',
-    color: palette.blueDark,
-  },
-  reset: {
-    alignSelf: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-  },
-  resetText: {
-    ...typography.caption,
-    color: palette.inkFaint,
-  },
-  resetTextArmed: {
-    color: palette.coralDark,
-  },
+  browseText: { ...typography.bodyStrong, color: palette.ink, flex: 1 },
 });

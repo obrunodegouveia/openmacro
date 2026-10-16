@@ -10,7 +10,7 @@
  */
 
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -35,10 +35,11 @@ import { useLocale } from '@/providers/LocaleProvider';
 import { recordLessonOutcome } from '@/services/reviewStore';
 import { getModuleForLesson } from '@openmacro/core/content/registry';
 import { useProgress } from '@/providers/ProgressProvider';
+import { useCourse } from '@/hooks/useCourse';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 export default function LessonRunnerRoute() {
-  const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
+  const { lessonId, __preview } = useLocalSearchParams<{ lessonId: string; __preview?: string }>(); // TEMP-PREVIEW
   const { locale, lessonById } = useLocale();
   const lesson = lessonId ? lessonById(lessonId) : undefined;
 
@@ -54,6 +55,7 @@ export default function LessonRunnerRoute() {
    * Remounting restarts the run, which is the honest outcome: the answers
    * given were to different words.
    */
+  if (__preview === 'complete') return <LessonComplete lesson={lesson} xpEarned={50} perfect={false} bestCombo={3} onExit={() => router.back()} onRestart={() => {}} />; // TEMP-PREVIEW
   return <LessonRunner key={`${lesson.id}#${locale}`} lesson={lesson} />;
 }
 
@@ -184,6 +186,30 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
     }
   }, []);
 
+  /**
+   * The ✕ in the header. Leaving used to be instant, so one stray tap near
+   * the top of the screen threw away a run with no way back. Once anything
+   * has been answered it asks first; before that there is nothing to lose
+   * and it simply closes.
+   */
+  const handleClose = useCallback(() => {
+    if (state.status !== 'in_progress' || state.submissionCount === 0) {
+      handleExit();
+      return;
+    }
+    if (Platform.OS === 'web') {
+      // Alert.alert is a no-op on react-native-web.
+      if (globalThis.confirm?.(`${t('lesson.exitConfirm.title')}\n${t('lesson.exitConfirm.body')}`)) {
+        handleExit();
+      }
+      return;
+    }
+    Alert.alert(t('lesson.exitConfirm.title'), t('lesson.exitConfirm.body'), [
+      { text: t('lesson.exitConfirm.stay'), style: 'cancel' },
+      { text: t('lesson.exitConfirm.leave'), style: 'destructive', onPress: handleExit },
+    ]);
+  }, [state.status, state.submissionCount, handleExit, t]);
+
   // -- end states ---------------------------------------------------------
 
   if (state.status === 'complete') {
@@ -213,7 +239,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
           accessibilityRole="button"
           accessibilityLabel={t('lesson.exit')}
           hitSlop={12}
-          onPress={handleExit}
+          onPress={handleClose}
         >
           <Text style={styles.close}>✕</Text>
         </Pressable>
@@ -330,7 +356,40 @@ function LessonComplete({
 }: LessonCompleteProps) {
   const insets = useSafeAreaInsets();
   const { t, nextLesson: findNext } = useLocale();
+  const { isLessonComplete } = useProgress();
+  const { moduleOfLesson } = useCourse();
   const nextLesson = findNext(lesson.id);
+  const status = moduleOfLesson(lesson.id);
+
+  /**
+   * Where to go now. This screen always knew the next lesson and then offered
+   * only "Back to path", which dropped the learner at the top of a long
+   * scroll — the most important tap in the app did not exist. Now the next
+   * lesson is the primary action, and finishing a module says so and offers
+   * the next one.
+   *
+   * "Finished the module" counts this lesson as done explicitly: the run is
+   * recorded in an effect, so the progress record may be a frame behind.
+   */
+  const moduleFinished =
+    status !== undefined &&
+    status.module.lessons.every((entry) => entry.id === lesson.id || isLessonComplete(entry.id));
+  const nextInSameModule =
+    nextLesson !== undefined &&
+    status !== undefined &&
+    status.module.lessons.some((entry) => entry.id === nextLesson.id);
+
+  const goNext = () => {
+    if (!nextLesson) return;
+    // Replace, so Back from the next lesson returns to the course rather than
+    // stepping back through every lesson of the session.
+    router.replace({ pathname: '/lesson/[lessonId]', params: { lessonId: nextLesson.id } });
+  };
+  const backToModule = () => {
+    if (!status) return onExit();
+    // The module page, without stacking a second copy if it is underneath.
+    router.dismissTo({ pathname: '/module/[moduleId]', params: { moduleId: status.module.id } });
+  };
 
   return (
     <ScrollView
@@ -365,12 +424,32 @@ function LessonComplete({
         </View>
       ) : null}
 
+      {moduleFinished && status ? (
+        <Animated.View entering={FadeIn.delay(200).duration(300)} style={styles.moduleDone}>
+          <Text style={styles.moduleDoneTitle}>{t('complete.moduleDone')}</Text>
+          <Text style={styles.moduleDoneBody}>
+            {t('complete.moduleDoneBody', { module: status.module.title })}
+          </Text>
+        </Animated.View>
+      ) : null}
+
       <View style={styles.endActions}>
-        <ActionButton
-          label={nextLesson ? t('complete.backToPath') : t('complete.finish')}
-          onPress={onExit}
-          tone="primary"
-        />
+        {nextLesson ? (
+          <ActionButton
+            label={
+              nextInSameModule
+                ? t('complete.nextNamed', { title: nextLesson.title })
+                : t('complete.nextModule')
+            }
+            onPress={goNext}
+            tone="primary"
+          />
+        ) : (
+          <ActionButton label={t('complete.finish')} onPress={onExit} tone="primary" />
+        )}
+        {status ? (
+          <ActionButton label={t('complete.backToModule')} onPress={backToModule} tone="ghost" />
+        ) : null}
         <ActionButton label={t('complete.again')} onPress={onRestart} tone="ghost" />
       </View>
     </ScrollView>
@@ -446,6 +525,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: palette.canvas,
   },
+  moduleDone: {
+    gap: spacing.xs,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: palette.goldSoft,
+    borderWidth: 2,
+    borderColor: palette.gold,
+  },
+  moduleDoneTitle: { ...typography.heading, color: palette.goldDark },
+  moduleDoneBody: { ...typography.body, color: palette.ink },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

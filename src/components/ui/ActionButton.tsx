@@ -125,10 +125,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  // Sentence case, as iOS writes buttons. Spaced capitals read slower and
+  // shout; the labels are already written the way they should appear.
   label: {
     ...typography.bodyStrong,
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
+    fontSize: 17,
   },
 });
 
