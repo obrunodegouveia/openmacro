@@ -109,7 +109,7 @@ export function Roadmap() {
                   >
                     {track.icon}
                   </span>
-                  <span className="text-[0.7rem] font-extrabold uppercase tracking-wider text-ink-faint">
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
                     {s("roadmap.track", { n: track.index })}
                   </span>
                   <span className="font-display text-sm font-extrabold leading-snug text-ink">

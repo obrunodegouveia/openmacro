@@ -4,14 +4,12 @@ import * as React from "react";
 import { usePathname } from "next/navigation";
 import { LocaleLink } from "@/components/site/locale-link";
 import { motion, useScroll, useMotionValueEvent, useReducedMotion } from "motion/react";
-import { LayoutDashboard, Menu, X } from "lucide-react";
-import { GithubIcon } from "@/components/ui/icons";
+import { BookA, BookOpen, Ellipsis, House, Menu, X } from "lucide-react";
 import { AccountButton } from "@/components/site/account-button";
 import { LanguagePicker } from "@/components/site/language-picker";
 import { MobileMenu } from "@/components/site/mobile-menu";
 import { useAuth } from "@/components/site/auth-provider";
 import { stripLocale } from "@/lib/locale-path";
-import { GITHUB_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { useSiteText } from "@/lib/use-site-text";
 import { BrandLogo } from "@/components/site/brand-logo";
@@ -20,15 +18,25 @@ import { BrandLogo } from "@/components/site/brand-logo";
  * Hash targets are written root-relative (`/#demo`, not `#demo`) so the nav
  * works identically from a sub-page like /glossary/iorb, where a bare hash
  * would resolve against the current path and go nowhere.
+ *
+ * The header carries places people return to, and nothing else: four at most
+ * with Today. Everything that is read once (the demo, the syllabus, how to
+ * contribute) lives in the menu sheet and the footer, where there is room to
+ * spell it out.
  */
-const LINKS = [
-  { href: "/#demo", key: "nav.demo" },
+const PRIMARY = [
   { href: "/learn", key: "nav.learn" },
-  { href: "/teach", key: "nav.teach" },
   { href: "/glossary", key: "nav.glossary" },
+  { href: "/teach", key: "nav.teach" },
+] as const;
+
+const SECONDARY = [
+  { href: "/#demo", key: "nav.demo" },
   { href: "/#curriculum", key: "nav.syllabus" },
   { href: "/#contribute", key: "nav.contribute" },
 ] as const;
+
+const SHEET_LINKS = [...PRIMARY, ...SECONDARY] as const;
 
 /**
  * ============================================================================
@@ -95,102 +103,157 @@ export function Nav() {
   const retracted = hidden && compact && !open && !reduceMotion;
 
   return (
-    <motion.header
-      animate={{ y: retracted ? "-100%" : 0 }}
-      transition={
-        reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }
-      }
-      style={{ paddingTop: "env(safe-area-inset-top)" }}
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
-        // Also when the menu is open: the sheet hangs off the bottom of this
-        // bar, and a transparent bar above it shows the page scrolling past
-        // where the sheet's own material should be.
-        scrolled || open
-          ? "border-b border-hairline bg-canvas/80 backdrop-blur-xl backdrop-saturate-150"
-          : "border-b border-transparent",
-      )}
-    >
-      <nav
-        aria-label={s("nav.aria")}
-        className="mx-auto flex h-[var(--header-h)] w-full max-w-6xl items-center justify-between px-5 sm:px-8"
+    <>
+      <motion.header
+        animate={{ y: retracted ? "-100%" : 0 }}
+        transition={
+          reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }
+        }
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+          // Also when the menu is open: the sheet hangs off the bottom of this
+          // bar, and a transparent bar above it shows the page scrolling past
+          // where the sheet's own material should be.
+          scrolled || open
+            ? "border-b border-hairline bg-canvas/80 backdrop-blur-xl backdrop-saturate-150"
+            : "border-b border-transparent",
+        )}
       >
-        <LocaleLink href="/#top" className="flex min-h-11 shrink-0 items-center">
-          <BrandLogo />
-        </LocaleLink>
-
-        <div className="hidden items-center gap-1 xl:flex">
-          {/*
-            Signed in, the dashboard is a place, and places belong in the nav
-            with the other places. The account chip on the right links there
-            too, but an avatar is an identity, not a signpost — nobody clicks
-            their own name looking for their progress.
-          */}
-          {learner ? (
-            <LocaleLink
-              href="/dashboard"
-              className="mr-1 inline-flex items-center gap-1.5 rounded-lg border border-mint/30 bg-mint/10 px-3 py-2 text-sm font-bold text-mint-bright transition-colors hover:border-mint/60 hover:bg-mint/15"
-            >
-              <LayoutDashboard className="size-4" aria-hidden />
-              {s("nav.dashboard")}
-            </LocaleLink>
-          ) : null}
-          {LINKS.map((link) => {
-            const active = isCurrent(link.href, here);
-            return (
-              <LocaleLink
-                key={link.href}
-                href={link.href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "rounded-lg px-2.5 py-2 text-sm font-bold transition-colors",
-                  active
-                    ? "bg-white/[0.07] text-ink"
-                    : "text-ink-muted hover:bg-white/5 hover:text-ink",
-                )}
-              >
-                {s(link.key)}
-              </LocaleLink>
-            );
-          })}
-        </div>
-
-        <div className="hidden items-center gap-3 xl:flex">
-          {/* In the header rather than only the footer: a reader who wants the
-              course in Portuguese should not have to reach the bottom of the
-              page to find out they can have it. */}
-          <LanguagePicker />
-          {/* Icon only: the word "GitHub" cost 60px in a bar that did not have
-              60px, and the mark is the more recognisable of the two anyway. The
-              sheet still spells it out, where there is room. */}
-          <a
-            href={GITHUB_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            aria-label={s("nav.github")}
-            title={s("nav.github")}
-            className="grid size-9 place-items-center rounded-xl border border-hairline text-ink-muted transition-colors hover:border-mint/50 hover:bg-white/5 hover:text-ink"
-          >
-            <GithubIcon className="size-4" aria-hidden />
-          </a>
-          <AccountButton />
-        </div>
-
-        {/* 44px square, which the padding alone did not give it. */}
-        <button
-          ref={menuButton}
-          type="button"
-          className="-mr-2 grid size-11 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-white/5 hover:text-ink active:bg-white/10 xl:hidden"
-          aria-expanded={open}
-          aria-label={open ? s("nav.closeMenu") : s("nav.openMenu")}
-          onClick={() => setOpen((value) => !value)}
+        <nav
+          aria-label={s("nav.aria")}
+          className="mx-auto flex h-[var(--header-h)] w-full max-w-6xl items-center justify-between px-5 sm:px-8"
         >
-          {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
-        </button>
-      </nav>
+          <LocaleLink href={learner ? "/dashboard" : "/#top"} className="flex min-h-11 shrink-0 items-center">
+            <BrandLogo />
+          </LocaleLink>
 
-      <MobileMenu open={open} onClose={closeMenu} links={LINKS} triggerRef={menuButton} />
-    </motion.header>
+          <div className="hidden items-center gap-1 lg:flex">
+            {(learner ? [{ href: "/dashboard", key: "nav.dashboard" } as const, ...PRIMARY] : PRIMARY).map(
+              (link) => {
+                const active = isCurrent(link.href, here);
+                return (
+                  <LocaleLink
+                    key={link.href}
+                    href={link.href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "rounded-lg px-3 py-2 text-[0.95rem] font-bold transition-colors",
+                      active
+                        ? "bg-white/[0.08] text-ink"
+                        : "text-ink-muted hover:bg-white/5 hover:text-ink",
+                    )}
+                  >
+                    {s(link.key)}
+                  </LocaleLink>
+                );
+              },
+            )}
+          </div>
+
+          <div className="hidden items-center gap-3 lg:flex">
+            {/* Signed out, the language choice is the first thing a Portuguese
+                reader looks for. Signed in, it is a setting they made once, so
+                it lives in the menu sheet and the footer. */}
+            {learner ? null : <LanguagePicker />}
+            <AccountButton />
+          </div>
+
+          {/* 44px square, which the padding alone did not give it. */}
+          <button
+            ref={menuButton}
+            type="button"
+            className={cn(
+              "-mr-2 size-11 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-white/5 hover:text-ink active:bg-white/10 lg:hidden",
+              // Signed in on a phone, the tab bar's More opens the same sheet.
+              learner ? "hidden md:grid" : "grid",
+            )}
+            aria-expanded={open}
+            aria-label={open ? s("nav.closeMenu") : s("nav.openMenu")}
+            onClick={() => setOpen((value) => !value)}
+          >
+            {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
+          </button>
+        </nav>
+
+        <MobileMenu open={open} onClose={closeMenu} links={SHEET_LINKS} triggerRef={menuButton} />
+      </motion.header>
+      {/* A sibling of the header, not a child: the header is transformed as it
+          retracts, and a transformed ancestor would pin this to the header's
+          bottom edge instead of the screen's. */}
+      {learner ? (
+        <TabBar here={here} menuOpen={open} onMore={() => setOpen((value) => !value)} />
+      ) : null}
+    </>
+  );
+}
+
+/**
+ * The phone tab bar, for signed-in learners.
+ *
+ * The same four places as the header, where a thumb can reach them, which is
+ * how the app is navigated too. Fixed to the bottom with the home-indicator
+ * inset added to its padding; the body reserves the same height (see
+ * globals.css) so the last line of a page is never under it. Hidden from `md`
+ * up, where the header has room for everything.
+ *
+ * Rendered beside the header, never inside it, so the header's retract
+ * transform cannot move it.
+ */
+function TabBar({
+  here,
+  menuOpen,
+  onMore,
+}: {
+  here: string;
+  menuOpen: boolean;
+  onMore: () => void;
+}) {
+  const s = useSiteText();
+  const tabs = [
+    { href: "/dashboard", key: "nav.dashboard", icon: House },
+    { href: "/learn", key: "nav.learn", icon: BookOpen },
+    { href: "/glossary", key: "nav.glossary", icon: BookA },
+  ] as const;
+  const item =
+    "flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs font-bold transition-colors";
+
+  return (
+    <nav
+      data-tabbar
+      aria-label={s("nav.tabs")}
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-hairline bg-canvas/85 backdrop-blur-xl backdrop-saturate-150 md:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <ul className="mx-auto grid max-w-md grid-cols-4 px-2">
+        {tabs.map(({ href, key, icon: Icon }) => {
+          const active = !menuOpen && isCurrent(href, here);
+          return (
+            <li key={href}>
+              <LocaleLink
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={cn(item, active ? "text-mint-bright" : "text-ink-muted")}
+              >
+                <Icon className="size-6" aria-hidden />
+                {s(key)}
+              </LocaleLink>
+            </li>
+          );
+        })}
+        <li>
+          <button
+            type="button"
+            onClick={onMore}
+            aria-expanded={menuOpen}
+            className={cn(item, "w-full", menuOpen ? "text-mint-bright" : "text-ink-muted")}
+          >
+            <Ellipsis className="size-6" aria-hidden />
+            {s("nav.more")}
+          </button>
+        </li>
+      </ul>
+    </nav>
   );
 }
 

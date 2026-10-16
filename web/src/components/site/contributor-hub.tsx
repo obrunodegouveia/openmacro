@@ -75,7 +75,7 @@ export async function ContributorHub() {
                 {SITE.githubRepo}
               </h3>
               {showCounters ? (
-                <span className="text-[0.7rem] font-bold uppercase tracking-wider text-ink-faint">
+                <span className="text-xs font-bold uppercase tracking-wider text-ink-faint">
                   {s("contribute.live")}
                 </span>
               ) : null}
@@ -88,7 +88,7 @@ export async function ContributorHub() {
                   key={tile.label}
                   className="rounded-2xl border border-hairline bg-abyss/60 p-4"
                 >
-                  <dt className="flex items-center gap-1.5 text-[0.7rem] font-extrabold uppercase tracking-wider text-ink-faint">
+                  <dt className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-ink-faint">
                     {tile.icon}
                     {tile.label}
                   </dt>

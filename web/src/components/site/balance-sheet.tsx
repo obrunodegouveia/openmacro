@@ -71,7 +71,7 @@ export function CentralBankBalanceSheet() {
     >
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p className="text-[0.7rem] font-extrabold uppercase tracking-[0.16em] text-ink-faint">
+          <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-ink-faint">
             {s("sheet.eyebrow")}
           </p>
           <p className="font-display text-lg font-extrabold">
@@ -142,7 +142,7 @@ function Column({
         <p className="font-display text-sm font-extrabold uppercase tracking-wider">
           {title}
         </p>
-        <span className="text-[0.7rem] font-semibold text-ink-faint">{hint}</span>
+        <span className="text-xs font-semibold text-ink-faint">{hint}</span>
       </div>
 
       <ul className="flex flex-col gap-3">
@@ -172,7 +172,7 @@ function Column({
       </ul>
 
       <div className="mt-4 flex items-baseline justify-between border-t border-hairline pt-3">
-        <span className="text-[0.7rem] font-extrabold uppercase tracking-wider text-ink-faint">
+        <span className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
           {s("sheet.total")}
         </span>
         <span className="tabular font-mono text-sm font-extrabold text-ink">

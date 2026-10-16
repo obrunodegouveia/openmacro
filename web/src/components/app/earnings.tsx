@@ -202,7 +202,7 @@ export function EarningsPanel() {
   );
 
   return (
-    <section className="mt-10 rounded-2xl border border-black/10 p-5 dark:border-white/15">
+    <section className="rounded-2xl border border-black/10 p-5 dark:border-white/15">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-lg font-medium">{s("earnings.title")}</h2>
         <p className="text-sm text-neutral-500">

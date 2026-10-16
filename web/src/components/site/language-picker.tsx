@@ -124,7 +124,7 @@ export function LanguagePicker({
     <div className={cn("flex flex-col gap-1.5", className)}>
       {/* Named out loud here. In the bar the two language names are their own
           label; in a list of menu rows they need saying what they are. */}
-      <span className="px-1 text-[0.7rem] font-extrabold uppercase tracking-wider text-ink-faint">
+      <span className="px-1 text-xs font-extrabold uppercase tracking-wider text-ink-faint">
         {t("language.label")}
       </span>
       <div
