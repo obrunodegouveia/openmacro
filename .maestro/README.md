@@ -17,6 +17,7 @@ Maestro needs Java 17+ and the Maestro CLI (https://maestro.mobile.dev).
 |---|---|
 | `navigation.yaml` | The three tabs open, and Course opens a module page. |
 | `lesson.yaml` | A question can be answered and checked, the feedback sheet appears with the explanation, and Continue moves on. |
+| `reminder.yaml` | Turning on the daily reminder asks for permission and, once allowed, offers the times. |
 
 Each flow starts the app through the development client's URL
 (`subflows/launch.yaml`), so the bundler must be running on port 8081.

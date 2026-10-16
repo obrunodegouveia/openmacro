@@ -73,6 +73,13 @@ jobs:
       - name: Feedback cue self-test
         run: npm run check:feedback
 
+      # Reminders decide which notifications sit on someone's phone; wrong is
+      # either spam (one on a day already done, or one that survives switching
+      # off) or silence. A simulator cannot tap through the permission prompt,
+      # so this drives the real module against a stub notification centre.
+      - name: Streak reminder self-test
+        run: npm run check:reminders
+
       # A scheduler is a set of claims about the future and every one of them
       # fails quietly: an ease below its floor turns the queue into the same
       # six cards forever, an unbounded interval stops asking about material
