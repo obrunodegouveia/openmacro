@@ -14,6 +14,11 @@
 # update cannot reach the builds that are out there anyway — the fingerprint
 # runtime version will have changed, and the right answer is a new build.
 #
+# Needs an EXPO_TOKEN repository secret (an Expo robot token with publish
+# rights). Without one it skips with a notice rather than failing every merge
+# to main: it used to fail at the very last step, after the checks, so a red
+# run here meant "not configured", not "something is wrong".
+#
 # Only first-party actions, matching ci.yml.
 name: Publish content update
 
@@ -56,22 +61,40 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      # Secrets cannot be read in a job-level `if`, so the gate is a step and
+      # every step after it checks its output.
+      - name: Check for an Expo token
+        id: token
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::notice title=Update not published::No EXPO_TOKEN secret is set, so this run publishes nothing. Add an Expo robot token as the EXPO_TOKEN repository secret to publish every merge to preview. Production updates still go out with npm run update:store."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.token.outputs.ready == 'true'
         with:
           # The update message quotes the commit, so the log needs to exist.
           fetch-depth: 2
 
       - uses: actions/setup-node@v4
+        if: steps.token.outputs.ready == 'true'
         with:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - if: steps.token.outputs.ready == 'true'
+        run: npm ci
 
       # A native change cannot travel over the air. Publishing one produces an
       # update that no installed build will ever be offered, which looks like a
       # successful deploy and is not one.
       - name: Refuse native changes
+        if: steps.token.outputs.ready == 'true'
         run: |
           CHANGED=$(git diff --name-only HEAD^ HEAD || true)
           if echo "$CHANGED" | grep -qE '^(app\.json|app\.config\.js|package\.json|package-lock\.json|babel\.config\.js|metro\.config\.js)$'; then
@@ -85,21 +108,26 @@ jobs:
       # publishing at one nothing in the field carries ships to nobody while
       # reporting success.
       - name: Check the update can reach anything
+        if: steps.token.outputs.ready == 'true'
         run: node ./scripts/update-reachability.mjs --channel "${{ inputs.channel || 'preview' }}"
 
       # The same gates as a build, because an update skips review entirely.
       - name: Typecheck
+        if: steps.token.outputs.ready == 'true'
         run: |
           npm run typecheck
           npm run typecheck:core
 
       - name: Validate content
+        if: steps.token.outputs.ready == 'true'
         run: npm run lint:content
 
       - name: Audit content quality
+        if: steps.token.outputs.ready == 'true'
         run: npm run audit:content
 
       - name: Publish
+        if: steps.token.outputs.ready == 'true'
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           CHANNEL: ${{ inputs.channel || 'preview' }}
