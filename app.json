@@ -66,6 +66,24 @@
             "enableShrinkResourcesInReleaseBuilds": true
           }
         }
+      ],
+      [
+        "expo-widgets",
+        {
+          "widgets": [
+            {
+              "name": "StreakWidget",
+              "displayName": "OpenMacro",
+              "description": "Your streak and the next lesson, one tap away.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium"
+                ]
+              }
+            }
+          ]
+        }
       ]
     ],
     "scheme": "openmacro",
