@@ -22,7 +22,7 @@ import {
   observationKey,
 } from '@openmacro/core/engine/simulation';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, radius, resolvePalette, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, resolvePalette, spacing, typography } from '@/theme/tokens';
 import { formatValue, snapToStep } from '@openmacro/core/format';
 
 export function InteractiveSimView({
@@ -141,7 +141,7 @@ export function InteractiveSimView({
       {hero ? (
         <Animated.View entering={FadeIn.duration(220)} style={styles.heroCard}>
           <Text style={styles.heroLabel}>{hero.label}</Text>
-          <Text style={styles.heroValue}>
+          <Text maxFontSizeMultiplier={fontScale.display} style={styles.heroValue}>
             {formatValue(readouts[hero.key] ?? 0, hero.format, currency, locale)}
           </Text>
           {hero.caption ? <Text style={styles.heroCaption}>{hero.caption}</Text> : null}
@@ -201,7 +201,14 @@ export function InteractiveSimView({
       <View style={styles.objective}>
         <Text style={styles.objectiveHeading}>{t('challenge.sim.goal')}</Text>
         {objectiveSteps.map((step) => (
-          <View key={step.id} style={styles.objectiveRow}>
+          <View
+            key={step.id}
+            style={styles.objectiveRow}
+            accessible
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: step.done }}
+            accessibilityLabel={step.label}
+          >
             <View style={[styles.checkbox, step.done && styles.checkboxDone]}>
               {step.done ? <Text style={styles.checkboxGlyph}>✓</Text> : null}
             </View>
@@ -233,14 +240,16 @@ const styles = StyleSheet.create({
   },
   heroLabel: {
     ...typography.overline,
-    color: palette.inkFaint,
+    // On the ink card, which inverts with the appearance: borderStrong is the
+    // token that stays readable against it in both (about 10:1).
+    color: palette.borderStrong,
     textTransform: 'uppercase',
   },
   heroValue: {
     ...typography.display,
     fontSize: 40,
     lineHeight: 46,
-    color: '#FFFFFF',
+    color: palette.surface,
   },
   heroCaption: {
     ...typography.caption,
@@ -351,7 +360,7 @@ const styles = StyleSheet.create({
     backgroundColor: palette.goldDark,
   },
   checkboxGlyph: {
-    color: '#FFFFFF',
+    color: palette.surface,
     fontSize: 13,
     fontWeight: '900',
   },

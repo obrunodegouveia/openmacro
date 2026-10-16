@@ -16,7 +16,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 // ---------------------------------------------------------------------------
 // Hearts
@@ -50,8 +50,8 @@ function HeartsIndicatorComponent({ hearts, maxHearts }: HeartsIndicatorProps) {
       accessibilityLabel={t('lesson.hearts', { count: hearts, max: maxHearts })}
       style={[styles.pill, animatedStyle]}
     >
-      <Text style={styles.icon}>{hearts > 0 ? '❤️' : '💔'}</Text>
-      <Text style={[styles.value, { color: palette.heart }]}>{hearts}</Text>
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.icon}>{hearts > 0 ? '❤️' : '💔'}</Text>
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={[styles.value, { color: palette.heart }]}>{hearts}</Text>
     </Animated.View>
   );
 }
@@ -72,8 +72,8 @@ function StreakBadgeComponent({ streak, active = true }: StreakBadgeProps) {
   const { t } = useLocale();
   return (
     <View accessibilityLabel={t('path.streak', { count: streak })} style={styles.pill}>
-      <Text style={[styles.icon, !active && styles.inactiveIcon]}>🔥</Text>
-      <Text style={[styles.value, { color: active ? palette.goldDark : palette.inkFaint }]}>
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={[styles.icon, !active && styles.inactiveIcon]}>🔥</Text>
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={[styles.value, { color: active ? palette.goldDark : palette.inkFaint }]}>
         {streak}
       </Text>
     </View>
@@ -114,7 +114,7 @@ function ComboPillComponent({ combo }: ComboPillProps) {
       accessibilityElementsHidden={!visible}
       importantForAccessibility={visible ? 'yes' : 'no-hide-descendants'}
     >
-      <Text style={styles.comboText}>{t('lesson.combo', { count: combo })}</Text>
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.comboText}>{t('lesson.combo', { count: combo })}</Text>
     </Animated.View>
   );
 }

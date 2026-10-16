@@ -15,7 +15,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { emitFeedback } from '@/feedback';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 export type ActionButtonTone = 'primary' | 'danger' | 'neutral' | 'ghost';
 
@@ -27,8 +27,8 @@ interface ToneStyle {
 }
 
 const TONES: Record<ActionButtonTone, ToneStyle> = {
-  primary: { face: palette.mint, shadow: palette.mintBevel, label: '#FFFFFF' },
-  danger: { face: palette.coral, shadow: palette.coralBevel, label: '#FFFFFF' },
+  primary: { face: palette.mint, shadow: palette.mintBevel, label: palette.onFill },
+  danger: { face: palette.coral, shadow: palette.coralBevel, label: palette.onFill },
   neutral: { face: palette.blue, shadow: palette.blueBevel, label: '#FFFFFF' },
   ghost: {
     face: palette.surface,
@@ -100,7 +100,11 @@ function ActionButtonComponent({
           faceStyle,
         ]}
       >
-        <Text style={[styles.label, { color: toneStyle.label }]} numberOfLines={1}>
+        <Text
+          maxFontSizeMultiplier={fontScale.title}
+          style={[styles.label, { color: toneStyle.label }]}
+          numberOfLines={1}
+        >
           {label}
         </Text>
       </Animated.View>

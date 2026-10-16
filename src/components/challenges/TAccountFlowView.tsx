@@ -584,7 +584,9 @@ const styles = StyleSheet.create({
   },
   aggregateBadgeText: {
     ...typography.caption,
-    color: '#FFFFFF',
+    // The surface colour: white on the darker light-mode fills, near-black
+    // on the lighter dark-mode ones, so it reads on both.
+    color: palette.surface,
   },
   aggregateBody: {
     flex: 1,

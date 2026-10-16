@@ -152,6 +152,8 @@ export const ptPT: UiDictionary = {
   'path.reset.armedA11y': 'Toca outra vez para confirmar que queres apagar o progresso',
   'lesson.exit': 'Sair da lição',
   'lesson.check': 'Verificar',
+  'challenge.mc.a11yCorrect': 'resposta certa',
+  'challenge.mc.a11yWrong': 'a tua resposta, errada',
   'lesson.continue': 'Continuar',
   'lesson.gotIt': 'Percebi',
   'lesson.outOfHearts': 'Ficaste sem vidas',

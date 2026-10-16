@@ -12,6 +12,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import type { ChallengeComponentProps } from '@/components/challenges/types';
 import { emitFeedback } from '@/feedback';
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import { seededShuffle } from '@openmacro/core/format';
 
@@ -20,6 +21,7 @@ export function MultipleChoiceView({
   onAnswerChange,
   locked,
 }: ChallengeComponentProps<'multiple_choice'>) {
+  const { t } = useLocale();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   // Stable across re-renders, re-shuffled per challenge id.
@@ -58,7 +60,15 @@ export function MultipleChoiceView({
               // The label text is a child, which react-native-web does not
               // promote to an accessible name on a pressable — without this the
               // options announce as an unlabelled list of radios.
-              accessibilityLabel={option.label}
+              // After grading, say which answer was right and whether the
+              // learner's was: the colours alone tell VoiceOver nothing.
+              accessibilityLabel={
+                revealCorrect
+                  ? `${option.label}, ${t('challenge.mc.a11yCorrect')}`
+                  : revealWrong
+                    ? `${option.label}, ${t('challenge.mc.a11yWrong')}`
+                    : option.label
+              }
               accessibilityState={{ selected: isSelected, disabled: locked }}
               onPress={() => handleSelect(option.id)}
               disabled={locked}
@@ -160,7 +170,9 @@ const styles = StyleSheet.create({
   },
   /** Once the marker has a filled background the glyph must invert. */
   markerTextOnFill: {
-    color: '#FFFFFF',
+    // The surface colour: white on the darker light-mode fills, near-black
+    // on the lighter dark-mode ones, so it reads on both.
+    color: palette.surface,
   },
   optionLabel: {
     ...typography.body,

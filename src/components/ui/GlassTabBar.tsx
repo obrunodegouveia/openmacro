@@ -35,7 +35,7 @@ import { SymbolView } from 'expo-symbols';
 import type { BottomTabBarProps } from 'expo-router/tabs';
 
 import { emitFeedback } from '@/feedback';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 /**
  * What a screen has to clear at the bottom of its scroll.
@@ -146,7 +146,7 @@ function TabItem({ routeName, label, focused, onPress }: TabItemProps) {
         ) : (
           fallback()
         )}
-        <Text numberOfLines={1} style={[styles.label, { color: tint }]}>
+        <Text maxFontSizeMultiplier={fontScale.chrome} numberOfLines={1} style={[styles.label, { color: tint }]}>
           {label}
         </Text>
       </View>

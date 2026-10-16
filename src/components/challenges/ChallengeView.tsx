@@ -18,7 +18,7 @@ import { TAccountFlowView } from '@/components/challenges/TAccountFlowView';
 import type { Challenge } from '@openmacro/core/content/schema';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
 import type { GradeResult } from '@openmacro/core/engine/grading';
-import { palette, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, spacing, typography } from '@/theme/tokens';
 
 export interface ChallengeViewProps {
   challenge: Challenge;
@@ -111,9 +111,9 @@ function ChallengeViewComponent(props: ChallengeViewProps) {
       style={styles.container}
     >
       <View style={styles.header}>
-        <Text style={styles.prompt}>{challenge.prompt}</Text>
+        <Text maxFontSizeMultiplier={fontScale.title} style={styles.prompt}>{challenge.prompt}</Text>
         {challenge.instructions ? (
-          <Text style={styles.instructions}>{challenge.instructions}</Text>
+          <Text maxFontSizeMultiplier={fontScale.title} style={styles.instructions}>{challenge.instructions}</Text>
         ) : null}
       </View>
 
@@ -133,10 +133,13 @@ const styles = StyleSheet.create({
     ...typography.title,
     color: palette.ink,
   },
+  // 15pt rather than the 13pt caption: it tells the learner what to do, and
+  // was the smallest text on the screen.
   instructions: {
-    ...typography.caption,
+    ...typography.body,
+    fontSize: 15,
+    lineHeight: 20,
     color: palette.inkMuted,
-    fontWeight: '500',
   },
 });
 

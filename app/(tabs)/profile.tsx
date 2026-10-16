@@ -30,7 +30,7 @@ import { useReview } from '@/hooks/useReview';
 import { openModule } from '@/navigation/routes';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 /** Where the course is written in the open. */
 const REPOSITORY_URL = 'https://github.com/obrunodegouveia/openmacro';
@@ -57,7 +57,7 @@ export default function ProfileScreen() {
         ]}
         scrollIndicatorInsets={{ bottom: TAB_BAR_SPACE }}
       >
-        <Text style={styles.title}>{t('profile.title')}</Text>
+        <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{t('profile.title')}</Text>
 
         {/* ---- the numbers --------------------------------------------- */}
         <View style={styles.stats}>

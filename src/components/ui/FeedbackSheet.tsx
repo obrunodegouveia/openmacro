@@ -131,7 +131,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   badgeIcon: {
-    color: '#FFFFFF',
+    // The surface colour: white on the darker light-mode fills, near-black
+    // on the lighter dark-mode ones, so it reads on both.
+    color: palette.surface,
     fontSize: 19,
     fontWeight: '900',
     lineHeight: 22,
