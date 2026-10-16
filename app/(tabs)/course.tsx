@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   segmentSelected: {
     backgroundColor: palette.surface,
-    shadowColor: palette.ink,
+    shadowColor: palette.shadow,
     shadowOpacity: 0.08,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 1 },

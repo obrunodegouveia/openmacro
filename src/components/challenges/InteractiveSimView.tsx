@@ -8,7 +8,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, useColorScheme } from 'react-native';
 import Slider from '@react-native-community/slider';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
@@ -22,7 +22,7 @@ import {
   observationKey,
 } from '@openmacro/core/engine/simulation';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { palette, radius, resolvePalette, spacing, typography } from '@/theme/tokens';
 import { formatValue, snapToStep } from '@openmacro/core/format';
 
 export function InteractiveSimView({
@@ -31,6 +31,8 @@ export function InteractiveSimView({
   locked,
 }: ChallengeComponentProps<'interactive_sim'>) {
   const { t, locale } = useLocale();
+  // The slider's tint props take plain strings, not dynamic colours.
+  const sliderColors = resolvePalette(useColorScheme());
   const currency = challenge.currency ?? 'USD';
   const [values, setValues] = useState<Record<string, number>>(() => ({
     ...initialSliderValues(challenge),
@@ -166,9 +168,9 @@ export function InteractiveSimView({
             value={values[slider.key] ?? slider.defaultValue}
             disabled={locked}
             onValueChange={(raw) => handleSliderChange(slider, raw)}
-            minimumTrackTintColor={palette.blue}
-            maximumTrackTintColor={palette.border}
-            thumbTintColor={palette.blueDark}
+            minimumTrackTintColor={sliderColors.blue}
+            maximumTrackTintColor={sliderColors.border}
+            thumbTintColor={sliderColors.blueDark}
             accessibilityLabel={slider.label}
           />
 

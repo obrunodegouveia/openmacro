@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     borderColor: palette.border,
     ...Platform.select({
       ios: {
-        shadowColor: palette.ink,
+        shadowColor: palette.shadow,
         shadowOpacity: 0.12,
         shadowRadius: 18,
         shadowOffset: { width: 0, height: 8 },

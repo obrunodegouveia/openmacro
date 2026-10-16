@@ -14,7 +14,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 
 import type { ChallengeComponentProps } from '@/components/challenges/types';
@@ -45,7 +45,7 @@ function tierLabel(t: Translator, tier: MonetaryTier): string {
   return t(`entity.${tier}`);
 }
 
-const TIER_COLORS: Readonly<Record<MonetaryTier, string>> = {
+const TIER_COLORS: Readonly<Record<MonetaryTier, ColorValue>> = {
   central_bank: palette.blueDark,
   commercial_bank: palette.mintDark,
   shadow_bank: palette.goldDark,

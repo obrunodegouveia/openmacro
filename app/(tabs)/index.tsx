@@ -28,6 +28,7 @@ import {
   StyleSheet,
   Text,
   View,
+  useColorScheme,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
@@ -57,6 +58,8 @@ export default function TodayScreen() {
   const { due: reviewDue } = useReview();
   const { next, statuses } = useCourse();
   const reduceMotion = useReducedMotion();
+  // The lockup is an image, so it cannot follow a dynamic colour by itself.
+  const scheme = useColorScheme();
 
   const started = (profile?.totalXp ?? 0) > 0;
   const enter = (index: number) =>
@@ -83,7 +86,11 @@ export default function TodayScreen() {
         <View style={styles.header}>
           <View style={styles.headerText}>
             <Image
-              source={require('../../assets/brand/v3/openmacro-lockup-light.png')}
+              source={
+                scheme === 'dark'
+                  ? require('../../assets/brand/v3/openmacro-lockup-dark.png')
+                  : require('../../assets/brand/v3/openmacro-lockup-light.png')
+              }
               style={styles.brandLockup}
               resizeMode="contain"
               accessible
@@ -298,7 +305,7 @@ const styles = StyleSheet.create({
     backgroundColor: palette.surface,
     borderWidth: 1,
     borderColor: palette.border,
-    shadowColor: palette.ink,
+    shadowColor: palette.shadow,
     shadowOpacity: 0.06,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 6 },
