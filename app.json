@@ -72,6 +72,15 @@
         }
       ],
       [
+        "react-native-audio-api",
+        {
+          "iosBackgroundMode": false,
+          "androidPermissions": [],
+          "androidForegroundService": false,
+          "disableFFmpeg": true
+        }
+      ],
+      [
         "expo-widgets",
         {
           "widgets": [

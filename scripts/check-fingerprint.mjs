@@ -231,13 +231,13 @@ const CASES = [
      */
     holds: false,
     what: "a native module's iOS source changes",
-    file: 'node_modules/expo-audio/ios/AudioModule.swift',
+    file: 'node_modules/expo-haptics/ios/HapticsModule.swift',
     edit: append('\n// fingerprint probe\n'),
   },
   {
     holds: false,
     what: "a native module's Android source changes",
-    file: 'node_modules/expo-audio/android/src/main/java/expo/modules/audio/AudioModule.kt',
+    file: 'node_modules/expo-haptics/android/src/main/java/expo/modules/haptics/HapticsModule.kt',
     edit: append('\n// fingerprint probe\n'),
   },
   {
