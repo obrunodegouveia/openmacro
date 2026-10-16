@@ -165,44 +165,35 @@ export function TAccountFlowView({
       {/* What actually moved. The verdict and explanation are in the
           lesson's feedback sheet, as in the app. -------------------------- */}
       {locked && result?.correct && challenge.aggregateEffects?.length ? (
-        <div
-          className={cn(
-            "rounded-xl border px-4 py-3",
-            result.correct
-              ? "border-mint/30 bg-mint/[0.07]"
-              : "border-coral/30 bg-coral/[0.07]",
-          )}
-        >
-          {result.correct && challenge.aggregateEffects?.length ? (
-            <ul className="grid gap-3 sm:grid-cols-3">
-              {challenge.aggregateEffects.map((effect) => (
-                <li
-                  key={effect.aggregate}
-                  className="rounded-lg border border-hairline bg-veil/[0.04] p-3"
-                >
-                  <p className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider">
-                    <AggregateIcon direction={effect.direction} />
-                    <span
-                      className={
-                        effect.direction === "expand"
-                          ? "text-mint-bright"
-                          : effect.direction === "contract"
-                            ? "text-coral"
-                            : "text-ink-faint"
-                      }
-                    >
-                      {s(`tflow.effect.${effect.direction}`, {
-                        aggregate: effect.aggregate,
-                      })}
-                    </span>
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-ink-faint">
-                    {effect.note}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+        <div className="rounded-xl border border-mint/30 bg-mint/[0.07] px-4 py-3">
+          <ul className="grid gap-3 sm:grid-cols-3">
+            {challenge.aggregateEffects.map((effect) => (
+              <li
+                key={effect.aggregate}
+                className="rounded-lg border border-hairline bg-veil/[0.04] p-3"
+              >
+                <p className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider">
+                  <AggregateIcon direction={effect.direction} />
+                  <span
+                    className={
+                      effect.direction === "expand"
+                        ? "text-mint-bright"
+                        : effect.direction === "contract"
+                          ? "text-coral"
+                          : "text-ink-faint"
+                    }
+                  >
+                    {s(`tflow.effect.${effect.direction}`, {
+                      aggregate: effect.aggregate,
+                    })}
+                  </span>
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-ink-faint">
+                  {effect.note}
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
       ) : null}
     </div>

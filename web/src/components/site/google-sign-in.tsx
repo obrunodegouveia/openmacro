@@ -44,6 +44,9 @@ export function GoogleSignIn({
 }) {
   const s = useSiteText();
   const { signIn, signingIn, error } = useAuth();
+  // signingIn is shared by both providers; remember which one was pressed so
+  // only that button says it is opening.
+  const [pressed, setPressed] = React.useState<"google" | "apple">("google");
 
   return (
     <div className={className}>
@@ -54,16 +57,27 @@ export function GoogleSignIn({
           <button
             type="button"
             disabled={signingIn}
-            onClick={() => void signIn(redirectTo, "apple")}
-            className="inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-white px-7 text-base font-extrabold text-black transition-transform active:scale-[0.98] disabled:opacity-50"
+            onClick={() => {
+              setPressed("apple");
+              void signIn(redirectTo, "apple");
+            }}
+            // The border gives a white button an edge on the light theme.
+            className="inline-flex h-14 items-center justify-center gap-2 rounded-xl border border-black/15 bg-white px-7 text-base font-extrabold text-black transition-transform active:scale-[0.98] disabled:opacity-50"
           >
             <AppleIcon className="size-5" />
-            {s("apple.continue")}
+            {signingIn && pressed === "apple" ? s("apple.opening") : s("apple.continue")}
           </button>
         ) : null}
-        <Button size="lg" disabled={signingIn} onClick={() => void signIn(redirectTo)}>
+        <Button
+          size="lg"
+          disabled={signingIn}
+          onClick={() => {
+            setPressed("google");
+            void signIn(redirectTo);
+          }}
+        >
           <GoogleIcon className="size-4" aria-hidden />
-          {signingIn ? s("google.opening") : label}
+          {signingIn && pressed === "google" ? s("google.opening") : label}
         </Button>
       </div>
 

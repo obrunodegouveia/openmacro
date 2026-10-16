@@ -177,6 +177,7 @@ html {
 
     --color-mint-bright: #11804e;
     --color-gold: #c98a00;
+    --color-gold-deep: #9a6a00;
     --color-coral: #d33a40;
     --color-azure-text: #2457c5;
 
@@ -243,6 +244,25 @@ body::before {
     );
     border: 1px solid var(--color-hairline);
     backdrop-filter: blur(14px);
+  }
+
+  /*
+   * A surface that stays dark in both themes (code, a video frame). Light
+   * mode darkens ink and the accents for white backgrounds; inside this
+   * scope they keep their dark-theme values, so text stays readable.
+   */
+  .on-dark {
+    --color-ink: #f2f6fc;
+    --color-ink-muted: #97a5bd;
+    --color-ink-faint: #8a9bb3;
+    --color-hairline: #1e2a42;
+    --color-veil: #ffffff;
+    --color-well: #05080f;
+    --color-mint-bright: #3ee08a;
+    --color-gold: #ffc94a;
+    --color-coral: #ff5a5f;
+    --color-azure-text: #8ab0ff;
+    color: var(--color-ink);
   }
 
   /* Subtle grid, used behind the hero and the balance-sheet visual. */

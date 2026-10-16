@@ -569,7 +569,6 @@ export const en = {
   // ---- earnings (XP and active time) -------------------------------------
   'earnings.title': 'Your earnings',
   'earnings.rates': '{xpCents} cents per XP · {hour} per active hour',
-  'earnings.balance': 'Balance',
   'earnings.alreadyWithdrawn': '{amount} already withdrawn',
   'earnings.fromXp': 'From XP',
   'earnings.xpCount': '{xp, number} of {max, number} XP',
@@ -651,6 +650,7 @@ export const en = {
   'permalink.copied': 'Link copied',
   'permalink.copiedLive': 'Link copied to clipboard',
   'google.opening': 'Opening Google',
+  'apple.opening': 'Opening Apple',
   'apple.continue': 'Continue with Apple',
   'layout.skip': 'Skip to content',
   'glossary.title.lead': 'The',

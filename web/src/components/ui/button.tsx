@@ -16,7 +16,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "border-b-4 border-mint-deep bg-mint text-abyss hover:bg-mint-bright",
+          "border-b-4 border-mint-deep bg-mint text-abyss hover:brightness-110",
         gold: "border-b-4 border-gold-deep bg-gold text-abyss hover:brightness-110",
         danger: "border-b-4 border-coral-deep bg-coral text-abyss hover:brightness-110",
         outline:

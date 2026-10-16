@@ -567,7 +567,6 @@ export const ptPT = {
   // ---- ganhos (XP e tempo ativo) -----------------------------------------
   'earnings.title': 'Os teus ganhos',
   'earnings.rates': '{xpCents} cêntimos por XP · {hour} por hora ativa',
-  'earnings.balance': 'Saldo',
   'earnings.alreadyWithdrawn': '{amount} já levantados',
   'earnings.fromXp': 'Por XP',
   'earnings.xpCount': '{xp, number} de {max, number} XP',
@@ -649,6 +648,7 @@ export const ptPT = {
   'permalink.copied': 'Ligação copiada',
   'permalink.copiedLive': 'Ligação copiada para a área de transferência',
   'google.opening': 'A abrir a Google',
+  'apple.opening': 'A abrir a Apple',
   'apple.continue': 'Continuar com a Apple',
   'layout.skip': 'Saltar para o conteúdo',
   'glossary.title.lead': 'A',

@@ -252,8 +252,6 @@ export const en = {
   'lesson.progress': 'Lesson progress',
   'lesson.xpEarnedA11y': '{count, number} XP earned',
   'lesson.permalink': 'this question',
-  'lesson.hint.correct': 'Nice — keep going.',
-  'lesson.hint.incorrect': 'We’ll come back to this one.',
   'lesson.hint.ready': 'Ready when you are.',
   'lesson.hint.answer': 'Answer to continue.',
   'lesson.announceCorrect': 'Correct.',

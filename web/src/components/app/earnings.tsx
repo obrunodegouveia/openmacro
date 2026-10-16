@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { isAddress } from "viem";
 import { LOCALE_TAGS } from "@openmacro/core/i18n/locales";
 
 import { useLocale } from "@/components/site/locale-provider";
@@ -203,7 +204,9 @@ export function EarningsPanel() {
     Number(data.xpRateEuros) * 100,
   );
 
-  const addressValid = /^0x[0-9a-fA-F]{40}$/.test(draft.trim());
+  // The same check the server makes (viem's isAddress, which also verifies
+  // the checksum of a mixed-case address), so "valid" here means it will save.
+  const addressValid = isAddress(draft.trim());
   const shortAddress = data.address
     ? `${data.address.slice(0, 6)}…${data.address.slice(-4)}`
     : null;
@@ -237,7 +240,7 @@ export function EarningsPanel() {
           {data.address ? (
             <button
               type="button"
-              disabled={busy !== null || !canWithdraw}
+              disabled={busy !== null || !canWithdraw || editing}
               onClick={() => void withdraw()}
               className="inline-flex h-12 items-center justify-center rounded-xl bg-white px-6 font-extrabold text-azure-deep transition-transform active:scale-[0.98] disabled:opacity-60"
             >
@@ -318,13 +321,14 @@ export function EarningsPanel() {
               autoCapitalize="off"
               inputMode="text"
               aria-invalid={draft.trim() !== "" && !addressValid}
+              aria-describedby="payout-address-hint"
               className="h-12 w-full rounded-xl border border-hairline bg-well/60 px-4 font-mono text-[0.95rem] text-ink outline-none focus:border-azure"
             />
             <span
               className={`text-sm ${
                 draft.trim() === "" ? "text-ink-faint" : addressValid ? "text-mint-bright" : "text-coral"
               }`}
-              aria-live="polite"
+              id="payout-address-hint"
             >
               {draft.trim() === ""
                 ? s("earnings.addressHint")

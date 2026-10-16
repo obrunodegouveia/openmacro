@@ -33,7 +33,7 @@ export function CodeSnippet({
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-hairline bg-abyss">
+    <div className="on-dark overflow-hidden rounded-2xl border border-hairline bg-abyss">
       <div className="flex items-center justify-between gap-3 border-b border-hairline bg-veil/[0.03] px-4 py-2.5">
         <span className="flex items-center gap-2 font-mono text-xs font-bold text-ink-muted">
           <FileJson className="size-3.5 text-mint" aria-hidden />

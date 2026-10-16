@@ -139,20 +139,30 @@ export function LessonPlayer({
 
   /*
    * Return checks the answer and then continues, from anywhere on the page.
-   * A focused link, field or button (other than an answer option) already
-   * does its own thing with Return, so those are left alone.
+   *
+   * Cases it does not act on:
+   *   - a held key (`repeat`) does nothing, and is swallowed while the sheet
+   *     is up so it cannot press the Continue button the sheet just focused;
+   *   - nothing to do yet: on an option with no answer chosen, the native
+   *     click is what selects it;
+   *   - a focused link, field or button other than an answer option.
    */
   React.useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (event.key !== "Enter" || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key !== "Enter") return;
+      // A held key: swallow it while the sheet is up, or the repeat presses the
+      // Continue button the sheet just focused and the feedback is skipped.
+      if (event.repeat) {
+        if (state.feedback) event.preventDefault();
+        return;
+      }
+      if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+      if (!playing || (!state.feedback && !answer)) return;
       const target = event.target as HTMLElement | null;
-      // An answer option is part of the question, so Return still checks
-      // from one; any other control keeps its own Return behaviour.
       if (target?.closest("a, input, textarea, select, [contenteditable='true'], button:not([role='radio'])")) return;
-      if (!playing) return;
       event.preventDefault();
       if (state.feedback) dispatch({ kind: "continue" });
-      else if (answer) dispatch({ kind: "submit", answer, t });
+      else submit();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -382,7 +392,7 @@ function SessionBar({
               aria-hidden
               className={cn(
                 "size-4",
-                index < state.hearts ? "fill-coral text-coral" : "text-white/15",
+                index < state.hearts ? "fill-coral text-coral" : "text-veil/15",
               )}
             />
           ))}
