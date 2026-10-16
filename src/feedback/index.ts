@@ -3,7 +3,7 @@
  * Haptic + sound feedback
  * ============================================================================
  *
- * A single façade so components never import `expo-haptics` or `expo-audio`
+ * A single façade so components never import `expo-haptics` or `react-native-audio-api`
  * directly. That keeps platform guards in one place and means a cue's sound and
  * vibration are chosen together, from one list, rather than drifting apart
  * across call sites.
@@ -11,11 +11,20 @@
  * The clips in `assets/audio/` are generated, not sampled — see
  * `scripts/generate-sounds.mjs`. To change how something sounds, edit the
  * recipe there and re-run `npm run gen:sounds`.
+ *
+ * Why `react-native-audio-api` and not `expo-audio`: expo-audio plays through
+ * AVPlayer on iOS and ExoPlayer on Android. Both are media players, built to
+ * buffer a stream before they start, and on a device that buffering was heard
+ * as roughly half a second between a tap and its sound — however carefully
+ * the JavaScript side kept `play()` off any await. Web Audio does the opposite:
+ * every clip is decoded into memory once, and a cue is a buffer source started
+ * on the audio render thread, so it sounds within one hardware buffer of the
+ * call. That is the latency budget sound effects need.
  */
 
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
+import { AudioContext, AudioManager, type AudioBuffer } from 'react-native-audio-api';
 
 /** Semantic events the app can emit. Add new cues here, not at call sites. */
 export type FeedbackCue =
@@ -43,16 +52,16 @@ export function setSoundEnabled(enabled: boolean): void {
 /**
  * Choose which clips the cues play.
  *
- * Switching packs tears down the existing players, because a player is bound
- * to the clip it was built with. They are rebuilt on the next cue, or right
- * now if `preloadSounds` has already run — so a switch never leaves the first
- * cue of the new pack paying a decode cost the old one had already paid.
+ * Switching packs drops the decoded clips of the old pack and, if they had
+ * already been loaded, decodes the new pack straight away — so a switch never
+ * leaves the first cue of the new pack waiting on a decode the old one had
+ * already paid for.
  */
 export function setSoundPack(next: SoundPack): void {
   if (next === pack) return;
   pack = next;
-  const wasPreloaded = voices.size > 0;
-  releaseSounds();
+  const wasPreloaded = preloaded;
+  dropClips();
   if (wasPreloaded) preloadSounds();
 }
 
@@ -139,23 +148,20 @@ let pack: SoundPack = 'classic';
  * two places and the WAVs lie about how loud they are.
  */
 
+/** The one audio graph every cue plays through. Created by `preloadSounds`. */
+let context: AudioContext | null = null;
+
+/** Each cue's clip of the current pack, decoded and ready to start. */
+const clips = new Map<FeedbackCue, AudioBuffer>();
+
+/** True once `preloadSounds` has run, so a pack switch knows to decode again. */
+let preloaded = false;
+
 /**
- * Players kept per cue. `select` fires on every slider notch and option tap,
- * often faster than its 100ms clip ends; three lets those overlap instead of
- * cutting each other off, and is cheap — each is a decoded clip in memory.
+ * Bumped whenever the clips are dropped. A decode that finishes after a pack
+ * switch belongs to the old pack and must not land in `clips`.
  */
-const POOL_SIZE = 3;
-
-interface PooledPlayer {
-  player: AudioPlayer;
-  /** At position 0 and not playing: `play()` can start it immediately. */
-  ready: boolean;
-  /** When it last started, to pick the oldest if every player is busy. */
-  startedAt: number;
-}
-
-/** The players for each cue. Created once — see `preloadSounds`. */
-const voices = new Map<FeedbackCue, PooledPlayer[]>();
+let generation = 0;
 
 /** True once the audio session has been configured. See `configureAudio`. */
 let audioConfigured = false;
@@ -163,85 +169,63 @@ let audioConfigured = false;
 /**
  * Set the audio session before the first sound.
  *
- * Two choices worth stating. `playsInSilentMode: false` means the silent
- * switch silences us, which is what a person flicking that switch is asking
- * for. `interruptionMode: 'mixWithOthers'` means we duck nothing — someone
- * doing a lesson on a walk keeps their podcast.
+ * `ambient` is the iOS category for sounds that accompany an interface: the
+ * silent switch silences it, which is what a person flicking that switch is
+ * asking for, and `mixWithOthers` means we duck nothing — someone doing a
+ * lesson on a walk keeps their podcast, and the lesson video keeps its sound.
+ * Android has no equivalent switch and needs no session.
  */
 function configureAudio(): void {
   if (audioConfigured) return;
   audioConfigured = true;
-  void setAudioModeAsync({
-    playsInSilentMode: false,
-    shouldPlayInBackground: false,
-    interruptionMode: 'mixWithOthers',
-  }).catch(() => {
-    // An unavailable audio session is not a reason to fail a lesson.
-  });
-}
-
-/**
- * The pool for a cue, created on first use if `preloadSounds` has not run.
- *
- * `keepAudioSessionActive` keeps the iOS audio session up between cues. Off
- * by default, the session was torn down after every clip and brought back up
- * for the next one: a delay on each sound, and an interruption of whatever
- * else was playing — the lesson video included — every time. That, more than
- * anything, is why sound came and went. `downloadFirst` means a clip is fully
- * loaded before it is first asked to play.
- */
-function poolFor(cue: FeedbackCue): PooledPlayer[] {
-  const existing = voices.get(cue);
-  if (existing) return existing;
-  const pool: PooledPlayer[] = Array.from({ length: POOL_SIZE }, () => {
-    const entry: PooledPlayer = {
-      player: createAudioPlayer(PACKS[pack][cue], {
-        keepAudioSessionActive: true,
-        downloadFirst: true,
-      }),
-      ready: true,
-      startedAt: 0,
-    };
-    // Rewind as soon as a clip ends, off the hot path, so the next fire finds
-    // it at the start and can play with no seek in between.
-    entry.player.addListener('playbackStatusUpdate', (status) => {
-      if (!status.didJustFinish) return;
-      // Parked at the end now, where play() does nothing, until the rewind lands.
-      entry.ready = false;
-      const finishedRun = entry.startedAt;
-      void entry.player
-        .seekTo(0)
-        .then(() => {
-          // Restarted while this rewind was in flight: it is playing again,
-          // and calling it "ready" would let the next cue play() a sounding
-          // player — a no-op, so a dropped sound.
-          if (entry.startedAt === finishedRun) entry.ready = true;
-        })
-        .catch(() => {});
+  if (Platform.OS !== 'ios') return;
+  try {
+    AudioManager.setAudioSessionOptions({
+      iosCategory: 'ambient',
+      iosOptions: ['mixWithOthers'],
     });
-    return entry;
-  });
-  voices.set(cue, pool);
-  return pool;
+  } catch {
+    // An unavailable audio session is not a reason to fail a lesson.
+  }
+}
+
+/** Drop the decoded clips, and any decode still in flight with them. */
+function dropClips(): void {
+  generation += 1;
+  clips.clear();
+  preloaded = false;
 }
 
 /**
- * Create every player up front, so no cue pays a load cost the first time it
- * fires.
+ * Create the audio graph and decode every clip of the current pack, so no cue
+ * pays a load cost the first time it fires.
  *
- * This is why sounds felt late rather than wrong: a lazily-created player has
- * to decode its clip before the first `play()`, so the first correct answer of
- * a session arrived after the animation it was meant to accompany, and only
- * the first. Building them at boot costs a few milliseconds once and makes
- * every cue land on time.
+ * Decoding is asynchronous; a cue that fires before its clip is ready is
+ * skipped rather than delayed, because a late sound is worse than none. In
+ * practice the six clips decode in a few milliseconds at boot, long before
+ * the first tap.
  *
  * Safe to call more than once, and safe to call with sound disabled — the
  * learner can switch it on mid-session and it should be instant then too.
  */
 export function preloadSounds(): void {
+  if (preloaded) return;
   try {
     configureAudio();
-    for (const cue of Object.keys(PACKS[pack]) as FeedbackCue[]) poolFor(cue);
+    context ??= new AudioContext();
+    preloaded = true;
+    const ctx = context;
+    const run = generation;
+    for (const cue of Object.keys(PACKS[pack]) as FeedbackCue[]) {
+      void ctx
+        .decodeAudioData(PACKS[pack][cue] as number)
+        .then((buffer) => {
+          if (run === generation) clips.set(cue, buffer);
+        })
+        .catch(() => {
+          // A clip that will not decode just stays silent.
+        });
+    }
   } catch {
     // A device that cannot prepare audio simply plays none.
   }
@@ -252,11 +236,11 @@ export function preloadSounds(): void {
  * Start timing
  * ---------------------------------------------------------------------------
  *
- * How long a cue takes from being fired to `play()` being called. On the
- * normal path, a ready player from the pool, that is the cost of one array
- * scan; it only grows when every player of a cue is busy and the oldest has
- * to be rewound first. Measure it on a real device: a median near zero and a
- * p95 well under a 60fps frame says the pool is big enough.
+ * How long a cue takes from being fired to its buffer source being started.
+ * That is a map lookup and three calls into the audio graph, so a median near
+ * zero and a p95 well under a 60fps frame is what a device should report; a
+ * number that grows means something is blocking the JavaScript thread around
+ * the tap, not the audio engine.
  *
  * Self-limiting on purpose. It takes a bounded sample, prints one line, and
  * switches itself off — so a build that ships with it enabled costs a boolean
@@ -303,7 +287,7 @@ function now(): number {
     : Date.now();
 }
 
-function recordSeek(startedAt: number): void {
+function recordStart(startedAt: number): void {
   timings.push(now() - startedAt);
   if (timings.length < TIMING_SAMPLE_SIZE) return;
 
@@ -322,70 +306,46 @@ function recordSeek(startedAt: number): void {
 /**
  * Play a cue, now.
  *
- * The previous version paused one player per cue, awaited `seekTo(0)` and only
- * then called `play()`. Correct, but every sound waited on a native seek
- * before starting, so it landed after the tap it belonged to; and when cues
- * arrived faster than seeks resolved, a generation counter dropped all but
- * the last, so a quick select-then-check could lose a sound outright. Both
- * were heard as audio that was late and came and went.
- *
- * Now each cue has a small pool of players already sitting at position 0. A
- * fire takes a ready one and calls `play()` synchronously — no seek on the hot
- * path — and the player rewinds itself after it finishes. Rapid fires overlap
- * across the pool instead of cutting each other off. Only if every player is
- * still sounding does it fall back to restarting the oldest, which is the old
- * seek-then-play path and rare by construction.
+ * A cue is a fresh buffer source over the clip decoded at boot, started at
+ * once. Sources are single-use and cost almost nothing, so cues fired faster
+ * than a clip lasts — a slider dragged across its notches — overlap instead
+ * of cutting each other off, and there is no player to rewind, no position to
+ * get wrong and nothing to wait for between `start()` and sound.
  */
 function playCue(cue: FeedbackCue): void {
   if (!soundEnabled) return;
 
   try {
-    configureAudio();
-    const pool = poolFor(cue);
     const startedAt = now();
-    const free = pool.find((entry) => entry.ready && entry.player.isLoaded);
-
-    if (free) {
-      free.ready = false;
-      free.startedAt = startedAt;
-      free.player.play();
-      if (timingEnabled) recordSeek(startedAt);
+    const clip = clips.get(cue);
+    if (!context || !clip) {
+      // Not decoded yet: start the decode for next time, and stay silent now.
+      preloadSounds();
       return;
     }
+    // iOS suspends the graph after an interruption such as a phone call.
+    if (context.state === 'suspended') void context.resume().catch(() => {});
 
-    // Every player is busy: restart the one that started longest ago.
-    const oldest = pool.reduce((a, b) => (a.startedAt <= b.startedAt ? a : b));
-    oldest.ready = false;
-    oldest.startedAt = startedAt;
-    oldest.player.pause();
-    void oldest.player
-      .seekTo(0)
-      .then(() => {
-        if (timingEnabled) recordSeek(startedAt);
-        if (!soundEnabled) return;
-        oldest.player.play();
-      })
-      .catch(() => {});
+    const source = context.createBufferSource();
+    source.buffer = clip;
+    source.connect(context.destination);
+    source.start();
+    if (timingEnabled) recordStart(startedAt);
   } catch {
     // Sound is cosmetic — a device that will not play it still teaches.
   }
 }
 
 /**
- * Release every player. Call when audio is switched off for good; the app
- * itself never needs this, since the players live as long as the process.
+ * Release the audio graph and every decoded clip. Call when audio is switched
+ * off for good; the app itself never needs this, since the graph lives as
+ * long as the process.
  */
 export function releaseSounds(): void {
-  for (const pool of voices.values()) {
-    for (const entry of pool) {
-      try {
-        entry.player.remove();
-      } catch {
-        // Already gone.
-      }
-    }
-  }
-  voices.clear();
+  dropClips();
+  const closing = context;
+  context = null;
+  if (closing) void closing.close().catch(() => {});
 }
 
 /** Fire-and-forget: emits the haptic and the sound for a cue. */

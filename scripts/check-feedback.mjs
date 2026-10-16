@@ -5,28 +5,26 @@
  * ============================================================================
  *
  * `src/feedback` has one rule that cannot be expressed in the type system and
- * is not visible in review: **playback never begins from an unknown position.**
+ * is not visible in review: **a cue never waits on anything.** It is started
+ * synchronously, inside the call that fired it, or it is skipped — never
+ * queued behind a promise, because a sound that lands after its tap reads as
+ * the app being slow, and that is worse than silence.
  *
- * It is easy to break. `seekTo` is asynchronous and `play` is not, so the
- * obvious spelling — seek, then play on the next line — starts playback from
- * wherever the player already was and lands the rewind afterwards. The result
- * is a cue that is silently dropped or one that jumps mid-note, depending on
- * timing, which is why it was reported as sounds being *sometimes* out of
- * sync rather than always.
+ * It has been broken twice. First by a `seekTo(0)` awaited before every
+ * `play()`, then by the media players underneath expo-audio, which buffer
+ * before they start and put about half a second between a tap and its sound.
+ * The module now decodes every clip once into a Web Audio buffer and starts a
+ * fresh buffer source per cue, which is what makes the rule cheap to keep.
  *
- * The module now keeps a small pool of players per cue, each parked at
- * position 0, so a cue plays at once with no seek in front of it, and a player
- * rewinds itself after its clip ends. The rule still holds, by a different
- * route: a player is only "ready" once its rewind has resolved.
+ * None of that is caught by a typechecker or a linter, and it needs a device
+ * to hear. So this drives the real module against a stub audio graph that
+ * records every call, under the cases a device only produces occasionally:
+ * cues fired before the clips have decoded, cues faster than any clip ends, a
+ * decode that finishes after a pack switch, and a graph iOS has suspended.
  *
- * Nothing about that is caught by a typechecker or a linter, and it needs a
- * device to hear. So this drives the real module against a stub player that
- * records every call, under interleavings a device would only produce
- * occasionally: cues fired faster than any clip ends, a cue fired the instant
- * the previous clip ends, and sound switched off while a rewind is in flight.
- *
- * `react-native`, `expo-haptics` and `expo-audio` are stubbed through a
- * resolve hook, so the file under test is the shipped one rather than a copy.
+ * `react-native`, `expo-haptics` and `react-native-audio-api` are stubbed
+ * through a resolve hook, so the file under test is the shipped one rather
+ * than a copy.
  */
 
 import { registerHooks } from 'node:module';
@@ -37,11 +35,6 @@ import { pathToFileURL, fileURLToPath } from 'node:url';
 
 const ROOT = new URL('../', import.meta.url);
 const STUBS = mkdtempSync(join(tmpdir(), 'openmacro-feedback-'));
-
-/** Every call the module makes on a player, in order, for assertions below. */
-const calls = [];
-/** Pending seek resolvers, so the test controls when a rewind lands. */
-const pending = [];
 
 writeFileSync(
   join(STUBS, 'react-native.mjs'),
@@ -58,47 +51,43 @@ writeFileSync(
 const HARNESS_URL = JSON.stringify(pathToFileURL(join(STUBS, 'harness.mjs')).href);
 
 writeFileSync(
-  join(STUBS, 'expo-audio.mjs'),
+  join(STUBS, 'react-native-audio-api.mjs'),
   [
-    'import { record, deferSeek, players } from ' + HARNESS_URL + ';',
-    'class StubPlayer {',
-    '  constructor(id) { this.id = id; this.position = 0; this.playing = false; this.isLoaded = true; this.listeners = []; }',
-    '  addListener(event, fn) { if (event === "playbackStatusUpdate") this.listeners.push(fn); return { remove() {} }; }',
-    "  play() { record({ player: this.id, call: 'play', position: this.position }); this.playing = true; }",
-    "  pause() { record({ player: this.id, call: 'pause' }); this.playing = false; }",
-    "  remove() { record({ player: this.id, call: 'remove' }); }",
-    '  seekTo(seconds) {',
-    "    record({ player: this.id, call: 'seekTo', seconds });",
-    '    return deferSeek(() => { this.position = seconds; });',
+    'import { record, deferDecode, contexts } from ' + HARNESS_URL + ';',
+    'let nextSource = 0;',
+    'export class AudioContext {',
+    "  constructor() { this.state = 'running'; this.destination = { id: 'destination' }; contexts.push(this); record({ call: 'context' }); }",
+    "  decodeAudioData(source) { record({ call: 'decode', source }); return deferDecode({ clip: source }); }",
+    '  createBufferSource() {',
+    "    const node = { id: 's' + nextSource++, buffer: null, connected: false };",
+    "    node.connect = (target) => { node.connected = target === this.destination; };",
+    "    node.start = () => record({ call: 'start', source: node.id, clip: node.buffer?.clip ?? null, connected: node.connected });",
+    '    return node;',
     '  }',
-    '  // Only the harness calls this: a clip reaching its natural end leaves a',
-    '  // real player parked at the end position, which is where play() is a no-op.',
-    '  finish(duration) {',
-    '    this.position = duration; this.playing = false;',
-    '    for (const fn of this.listeners) fn({ didJustFinish: true });',
-    '  }',
+    "  resume() { record({ call: 'resume' }); this.state = 'running'; return Promise.resolve(); }",
+    "  close() { record({ call: 'close' }); this.state = 'closed'; return Promise.resolve(); }",
     '}',
-    'let next = 0;',
-    "export function createAudioPlayer() { const p = new StubPlayer('p' + next++); players.push(p); return p; }",
-    'export async function setAudioModeAsync() {}',
+    'export const AudioManager = {',
+    "  setAudioSessionOptions(options) { record({ call: 'session', options }); },",
+    '};',
   ].join('\n'),
 );
 
 writeFileSync(
   join(STUBS, 'harness.mjs'),
   `export const calls = [];
-   export const players = [];
+   export const contexts = [];
    export const pending = [];
    export function record(entry) { calls.push(entry); }
-   export function deferSeek(apply) {
-     return new Promise((resolve) => pending.push(() => { apply(); resolve(); }));
+   export function deferDecode(value) {
+     return new Promise((resolve) => pending.push(() => resolve(value)));
    }\n`,
 );
 
 const STUB_FOR = {
   'react-native': join(STUBS, 'react-native.mjs'),
   'expo-haptics': join(STUBS, 'expo-haptics.mjs'),
-  'expo-audio': join(STUBS, 'expo-audio.mjs'),
+  'react-native-audio-api': join(STUBS, 'react-native-audio-api.mjs'),
 };
 
 function isFile(url) {
@@ -131,19 +120,18 @@ registerHooks({
 
 /**
  * The clips are pulled in with `require`, which is Metro's asset convention
- * and has no meaning in Node's ESM scope. The stub player ignores its source
- * argument, so handing back the path is enough to let the module load.
+ * and has no meaning in Node's ESM scope. Handing back the path lets the
+ * module load, and lets the stub report which clip a cue started.
  */
 globalThis.require = (id) => id;
 
 const harness = await import(pathToFileURL(join(STUBS, 'harness.mjs')).href);
 const feedback = await import('@/feedback');
 
-/** Let every in-flight rewind land, in the order it was requested. */
+/** Let every in-flight decode finish, in the order it was requested. */
 async function settle() {
   while (harness.pending.length > 0) harness.pending.shift()();
-  await Promise.resolve();
-  await Promise.resolve();
+  for (let i = 0; i < 4; i++) await Promise.resolve();
 }
 
 let failures = 0;
@@ -155,104 +143,57 @@ function check(name, condition, detail = '') {
   );
   if (!condition) failures += 1;
 }
-const reset = () => { harness.calls.length = 0; harness.pending.length = 0; };
+const reset = () => { harness.calls.length = 0; };
+const starts = () => harness.calls.filter((c) => c.call === 'start');
 
 console.log('\nFeedback cues — self-test\n');
-feedback.preloadSounds();
-reset();
 
-console.log('The invariant');
+console.log('Before the clips have decoded');
+feedback.preloadSounds();
+const session = harness.calls.find((c) => c.call === 'session');
+check(
+  'the iOS session obeys the silent switch and ducks nothing',
+  session?.options.iosCategory === 'ambient' && session.options.iosOptions.includes('mixWithOthers'),
+  JSON.stringify(session?.options),
+);
+check('every clip of the pack is decoded up front', harness.calls.filter((c) => c.call === 'decode').length === 6);
+reset();
 feedback.emitFeedback('correct');
-const immediate = harness.calls.filter((c) => c.call === 'play');
-check('a single cue plays at once, before any rewind is awaited', immediate.length === 1);
-check('…from position zero', immediate.every((c) => c.position === 0), `positions: ${immediate.map((c) => c.position)}`);
-check('…with no seek in front of it', harness.calls.findIndex((c) => c.call === 'seekTo') === -1);
+check('a cue fired before its clip is ready is skipped, not queued', starts().length === 0);
 await settle();
+check('…and does not sound late once the decode lands', starts().length === 0);
+check('…nor starts a second round of decoding', harness.calls.filter((c) => c.call === 'decode').length === 0);
+
+reset();
+console.log('\nThe invariant');
+feedback.emitFeedback('correct');
+const immediate = starts();
+check('a cue starts inside the call that fired it, with nothing awaited', immediate.length === 1);
+check('…playing its own clip', immediate[0]?.clip?.includes('/correct.wav') ?? false, immediate[0]?.clip ?? 'none');
+check('…through the speakers', immediate[0]?.connected === true);
 
 reset();
 console.log('\nCues faster than any clip ends (dragging a slider)');
 for (let i = 0; i < 12; i++) feedback.emitFeedback('select');
-await settle();
-const burst = harness.calls.filter((c) => c.call === 'play');
-const burstPlayers = new Set(burst.map((c) => c.player));
-check('12 rapid cues never play from a stale position', burst.every((c) => c.position === 0), `positions: ${[...new Set(burst.map((c) => c.position))]}`);
-check('…every fire is heard rather than dropped', burst.length === 12, `${burst.length} play(s) for 12 fires`);
-check('…and at most three voices sound at once', burstPlayers.size <= 3, `${burstPlayers.size} player(s) used`);
+const burst = starts();
+check('12 rapid cues are all heard, none dropped', burst.length === 12, `${burst.length} start(s) for 12 fires`);
+check('…each on its own source, so they overlap instead of cutting off', new Set(burst.map((c) => c.source)).size === 12);
 
 reset();
-console.log('\nCues at a realistic pace');
-let playedInSequence = 0;
-for (let i = 0; i < 6; i++) {
-  feedback.emitFeedback('select');
-  await settle();
-  playedInSequence += harness.calls.filter((c) => c.call === 'play').length;
-  reset();
-}
-check('six separated cues play six times', playedInSequence === 6, `${playedInSequence} play(s) for 6 fires`);
-
-reset();
-console.log('\nA cue fired the instant the previous clip ended');
-feedback.emitFeedback('correct');
-await settle();
-// Every clip runs to its end: a real player is left at the end position, where
-// play() does nothing, and announces it with didJustFinish.
-for (const player of harness.players) player.finish(0.4);
-reset();
-// Fire before those rewinds land.
-feedback.emitFeedback('correct');
-await settle();
-const afterEnd = harness.calls.filter((c) => c.call === 'play');
-check(
-  'it never plays a player parked at the end',
-  afterEnd.length > 0 && afterEnd.every((c) => c.position === 0),
-  `positions: ${afterEnd.map((c) => c.position)}`,
-);
-check('…so the cue is not silently dropped', afterEnd.length === 1);
-
-reset();
-console.log('\nA player restarted while its post-clip rewind is in flight');
-// Saturate 'advance', let every clip end (rewinds pending), then restart all
-// three before those rewinds land.
-for (let i = 0; i < 3; i++) feedback.emitFeedback('advance');
-await settle();
-const advancePlayers = [...new Set(harness.calls.filter((c) => c.call === 'play').map((c) => c.player))];
-for (const player of harness.players.filter((p) => advancePlayers.includes(p.id))) player.finish(0.16);
-for (let i = 0; i < 3; i++) feedback.emitFeedback('advance');
-await settle();
-reset();
-// Those three are sounding again; none may be handed out as ready.
+console.log('\nA graph iOS suspended after an interruption');
+harness.contexts[0].state = 'suspended';
 feedback.emitFeedback('advance');
-const handedOut = harness.calls.filter((c) => c.call === 'play' && c.position !== 0);
-await settle();
-check(
-  'a sounding player is never treated as ready',
-  handedOut.length === 0 && harness.calls.some((c) => c.call === 'seekTo'),
-  `${harness.calls.filter((c) => c.call === 'play').length} play(s) after a seek`,
-);
+check('it is resumed', harness.calls.some((c) => c.call === 'resume'));
+check('…and the cue still starts at once', starts().length === 1);
 
 reset();
-console.log('\nSound switched off while a rewind is in flight');
-// Make every 'complete' player busy, so the next cue has to rewind one first.
-for (let i = 0; i < 3; i++) feedback.emitFeedback('complete');
-await settle();
-reset();
-feedback.emitFeedback('complete');
-feedback.setSoundEnabled(false);
-await settle();
-check('the pending cue does not play', harness.calls.filter((c) => c.call === 'play').length === 0);
-feedback.setSoundEnabled(true);
-reset();
-feedback.emitFeedback('complete');
-await settle();
-check('…and switching it back on works immediately', harness.calls.filter((c) => c.call === 'play').length === 1);
-
-reset();
-console.log('\nHousekeeping');
+console.log('\nSound switched off');
 feedback.setSoundEnabled(false);
 feedback.emitFeedback('select');
-await settle();
-check('no player is touched at all while sound is off', harness.calls.length === 0);
+check('nothing touches the audio graph', harness.calls.length === 0);
 feedback.setSoundEnabled(true);
+feedback.emitFeedback('select');
+check('…and switching it back on works immediately', starts().length === 1);
 
 reset();
 console.log('\nSound packs');
@@ -261,53 +202,51 @@ check('an unknown pack name falls back to classic', feedback.toSoundPack('nonsen
 check('an absent pack name falls back to classic', feedback.toSoundPack(undefined) === 'classic');
 check('a known pack name is kept', feedback.toSoundPack('arcade') === 'arcade');
 
-const before = harness.players.length;
-// Every player in use belongs to the current pack: six cues, a pool each.
-const perPack = before;
 feedback.setSoundPack('arcade');
+const arcadeDecodes = harness.calls.filter((c) => c.call === 'decode');
 check(
-  'switching pack tears the old players down',
-  harness.calls.filter((c) => c.call === 'remove').length === perPack,
-  `${harness.calls.filter((c) => c.call === 'remove').length} removed of ${perPack}`,
+  'switching pack decodes the new clips straight away',
+  arcadeDecodes.length === 6 && arcadeDecodes.every((c) => c.source.includes('/arcade/')),
 );
-check('…and rebuilds them for the new pack', harness.players.length === before + perPack);
-
+check('…reusing the one audio graph', harness.contexts.length === 1);
 reset();
 feedback.emitFeedback('correct');
+check('…and stays silent rather than playing an old clip meanwhile', starts().length === 0);
+
+// Switch back before the arcade decodes land: those results are stale.
+feedback.setSoundPack('classic');
 await settle();
-const afterSwitch = harness.calls.filter((c) => c.call === 'play');
-check('…and cues still play from zero afterwards', afterSwitch.length === 1 && afterSwitch[0].position === 0);
+reset();
+feedback.emitFeedback('correct');
+check(
+  'a decode that lands after a switch never plays for the new pack',
+  starts().length === 1 && !starts()[0].clip.includes('/arcade/'),
+  starts()[0]?.clip ?? 'none',
+);
 
 reset();
-feedback.setSoundPack('arcade');
-check('switching to the pack already in use does nothing', harness.calls.length === 0);
 feedback.setSoundPack('classic');
+check('switching to the pack already in use does nothing', harness.calls.length === 0);
 
 console.log('\nStart timing instrumentation');
 feedback.setAudioTimingEnabled(false);
 reset();
 feedback.emitFeedback('correct');
-await settle();
 check('with timing off, nothing is recorded', feedback.audioTimingReport() === null);
-const withoutTiming = harness.calls.filter((c) => c.call === 'play').length;
+const withoutTiming = starts().length;
 
 feedback.setAudioTimingEnabled(true);
 reset();
 feedback.emitFeedback('correct');
-await settle();
-const withTiming = harness.calls.filter((c) => c.call === 'play').length;
 check(
-  'turning it on does not change what the player is asked to do',
-  withTiming === withoutTiming,
-  `${withoutTiming} play(s) off, ${withTiming} on`,
+  'turning it on does not change what the graph is asked to do',
+  starts().length === withoutTiming,
+  `${withoutTiming} start(s) off, ${starts().length} on`,
 );
 check('…and a sample is recorded', (feedback.audioTimingReport()?.samples ?? 0) === 1);
 
 // Drive past the sample ceiling: it must stop on its own rather than grow.
-for (let i = 0; i < 400; i++) {
-  feedback.emitFeedback('select');
-  await settle();
-}
+for (let i = 0; i < 400; i++) feedback.emitFeedback('select');
 const capped = feedback.audioTimingReport();
 check(
   'it stops sampling on its own rather than growing unbounded',
@@ -316,12 +255,15 @@ check(
 );
 reset();
 feedback.emitFeedback('correct');
-await settle();
-check(
-  '…and cues still play normally once it has stopped',
-  harness.calls.filter((c) => c.call === 'play').length === 1,
-);
+check('…and cues still play normally once it has stopped', starts().length === 1);
 feedback.setAudioTimingEnabled(false);
+
+reset();
+console.log('\nReleasing');
+feedback.releaseSounds();
+check('the audio graph is closed', harness.calls.some((c) => c.call === 'close'));
+feedback.emitFeedback('select');
+check('…and a cue afterwards rebuilds it instead of failing', harness.contexts.length === 2 && starts().length === 0);
 
 /**
  * The clips are pulled in with `require`, which Metro resolves at bundle time.

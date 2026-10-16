@@ -75,10 +75,9 @@ export default function RootLayout() {
     setAudioTimingEnabled(env.audioTiming);
 
     /**
-     * Build the audio players now rather than on first use. A player created
-     * lazily has to decode its clip before it can sound, which made the first
-     * cue of a session land after the animation it belonged to — and only the
-     * first, which is what made the timing feel unpredictable.
+     * Decode the clips now rather than on first use, so the first cue of a
+     * session sounds on time like every other one instead of being skipped
+     * while its clip decodes.
      */
     preloadSounds();
   }, []);
