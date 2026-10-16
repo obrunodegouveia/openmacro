@@ -139,17 +139,23 @@ let pack: SoundPack = 'classic';
  * two places and the WAVs lie about how loud they are.
  */
 
-interface Voice {
+/**
+ * Players kept per cue. `select` fires on every slider notch and option tap,
+ * often faster than its 100ms clip ends; three lets those overlap instead of
+ * cutting each other off, and is cheap — each is a decoded clip in memory.
+ */
+const POOL_SIZE = 3;
+
+interface PooledPlayer {
   player: AudioPlayer;
-  /**
-   * Incremented on every fire. A rewind that resolves after a newer fire has
-   * already started is stale and must not play — this is how that is known.
-   */
-  generation: number;
+  /** At position 0 and not playing: `play()` can start it immediately. */
+  ready: boolean;
+  /** When it last started, to pick the oldest if every player is busy. */
+  startedAt: number;
 }
 
-/** One voice per cue. Created once — see `preloadSounds`. */
-const voices = new Map<FeedbackCue, Voice>();
+/** The players for each cue. Created once — see `preloadSounds`. */
+const voices = new Map<FeedbackCue, PooledPlayer[]>();
 
 /** True once the audio session has been configured. See `configureAudio`. */
 let audioConfigured = false;
@@ -174,13 +180,43 @@ function configureAudio(): void {
   });
 }
 
-/** Get the voice for a cue, creating it if `preloadSounds` has not run. */
-function voiceFor(cue: FeedbackCue): Voice {
+/**
+ * The pool for a cue, created on first use if `preloadSounds` has not run.
+ *
+ * `keepAudioSessionActive` keeps the iOS audio session up between cues. Off
+ * by default, the session was torn down after every clip and brought back up
+ * for the next one: a delay on each sound, and an interruption of whatever
+ * else was playing — the lesson video included — every time. That, more than
+ * anything, is why sound came and went. `downloadFirst` means a clip is fully
+ * loaded before it is first asked to play.
+ */
+function poolFor(cue: FeedbackCue): PooledPlayer[] {
   const existing = voices.get(cue);
   if (existing) return existing;
-  const voice: Voice = { player: createAudioPlayer(PACKS[pack][cue]), generation: 0 };
-  voices.set(cue, voice);
-  return voice;
+  const pool: PooledPlayer[] = Array.from({ length: POOL_SIZE }, () => {
+    const entry: PooledPlayer = {
+      player: createAudioPlayer(PACKS[pack][cue], {
+        keepAudioSessionActive: true,
+        downloadFirst: true,
+      }),
+      ready: true,
+      startedAt: 0,
+    };
+    // Rewind as soon as a clip ends, off the hot path, so the next fire finds
+    // it at the start and can play with no seek in between.
+    entry.player.addListener('playbackStatusUpdate', (status) => {
+      if (!status.didJustFinish) return;
+      void entry.player
+        .seekTo(0)
+        .then(() => {
+          entry.ready = true;
+        })
+        .catch(() => {});
+    });
+    return entry;
+  });
+  voices.set(cue, pool);
+  return pool;
 }
 
 /**
@@ -199,7 +235,7 @@ function voiceFor(cue: FeedbackCue): Voice {
 export function preloadSounds(): void {
   try {
     configureAudio();
-    for (const cue of Object.keys(PACKS[pack]) as FeedbackCue[]) voiceFor(cue);
+    for (const cue of Object.keys(PACKS[pack]) as FeedbackCue[]) poolFor(cue);
   } catch {
     // A device that cannot prepare audio simply plays none.
   }
@@ -207,19 +243,14 @@ export function preloadSounds(): void {
 
 /**
  * ---------------------------------------------------------------------------
- * Seek timing
+ * Start timing
  * ---------------------------------------------------------------------------
  *
- * `playCue` waits for a rewind before every sound, which is what makes the
- * timing correct. What that costs is a native seek, and the honest answer to
- * "how long does it take" was that nobody had measured it — the JS half is
- * sub-microsecond, but `seekTo` is an AVPlayer seek on iOS and an ExoPlayer
- * seek on Android, neither of which is free.
- *
- * So: measure it on a real device instead of estimating. The numbers decide
- * whether the current one-player-per-cue design is already fast enough, or
- * whether it is worth pooling several players per cue so the hot path can
- * play synchronously with no seek at all.
+ * How long a cue takes from being fired to `play()` being called. On the
+ * normal path, a ready player from the pool, that is the cost of one array
+ * scan; it only grows when every player of a cue is busy and the oldest has
+ * to be rewound first. Measure it on a real device: a median near zero and a
+ * p95 well under a 60fps frame says the pool is big enough.
  *
  * Self-limiting on purpose. It takes a bounded sample, prints one line, and
  * switches itself off — so a build that ships with it enabled costs a boolean
@@ -233,7 +264,7 @@ let timings: number[] = [];
 
 export interface AudioTimingReport {
   samples: number;
-  /** Milliseconds from requesting the rewind to it resolving. */
+  /** Milliseconds from a cue firing to its clip starting. */
   min: number;
   median: number;
   p95: number;
@@ -275,7 +306,7 @@ function recordSeek(startedAt: number): void {
   if (!report) return;
   const ms = (value: number) => value.toFixed(2);
   console.log(
-    `[OpenMacro] audio seek over ${report.samples} cues — ` +
+    `[OpenMacro] audio start over ${report.samples} cues — ` +
       `min ${ms(report.min)}ms, median ${ms(report.median)}ms, ` +
       `p95 ${ms(report.p95)}ms, max ${ms(report.max)}ms ` +
       `(one 60fps frame is 16.67ms)`,
@@ -283,47 +314,50 @@ function recordSeek(startedAt: number): void {
 }
 
 /**
- * Play a cue, restarting it if it is already sounding.
+ * Play a cue, now.
  *
- * The bug this replaces: `seekTo` is asynchronous and `play` is not, so firing
- * them back to back does not rewind-then-play. It starts playback from
- * wherever the player happens to be and lands the rewind some time afterwards.
- * What that sounds like depends on where the player was — at the end of the
- * previous clip, playback from the end is nothing and the cue is silently
- * dropped; part-way through, the previous fire keeps sounding and then jumps
- * back to the start mid-note. Both are heard as the sound being out of step
- * with the screen, and both depend on timing, which is why it came and went.
- * Dragging a slider is the worst case: `select` fires on every notch, far
- * faster than any clip finishes.
+ * The previous version paused one player per cue, awaited `seekTo(0)` and only
+ * then called `play()`. Correct, but every sound waited on a native seek
+ * before starting, so it landed after the tap it belonged to; and when cues
+ * arrived faster than seeks resolved, a generation counter dropped all but
+ * the last, so a quick select-then-check could lose a sound outright. Both
+ * were heard as audio that was late and came and went.
  *
- * So `play` is only ever called on the next line after a rewind has actually
- * resolved. The generation counter handles the other half: when cues arrive
- * faster than the rewinds resolve, every superseded one drops out rather than
- * stacking up into a burst of overlapping copies.
- *
- * This costs a microtask and a native seek on every fire, and buys a rule that
- * holds under any interleaving: playback never begins from an unknown
- * position. A preferable trade, on a clip already decoded in memory, to a
- * faster path whose correctness depends on events arriving in an order this
- * code cannot guarantee.
+ * Now each cue has a small pool of players already sitting at position 0. A
+ * fire takes a ready one and calls `play()` synchronously — no seek on the hot
+ * path — and the player rewinds itself after it finishes. Rapid fires overlap
+ * across the pool instead of cutting each other off. Only if every player is
+ * still sounding does it fall back to restarting the oldest, which is the old
+ * seek-then-play path and rare by construction.
  */
 function playCue(cue: FeedbackCue): void {
   if (!soundEnabled) return;
 
   try {
     configureAudio();
-    const voice = voiceFor(cue);
-    const generation = (voice.generation += 1);
+    const pool = poolFor(cue);
+    const startedAt = now();
+    const free = pool.find((entry) => entry.ready && entry.player.isLoaded);
 
-    const startedAt = timingEnabled ? now() : 0;
-    voice.player.pause();
-    void voice.player
+    if (free) {
+      free.ready = false;
+      free.startedAt = startedAt;
+      free.player.play();
+      if (timingEnabled) recordSeek(startedAt);
+      return;
+    }
+
+    // Every player is busy: restart the one that started longest ago.
+    const oldest = pool.reduce((a, b) => (a.startedAt <= b.startedAt ? a : b));
+    oldest.ready = false;
+    oldest.startedAt = startedAt;
+    oldest.player.pause();
+    void oldest.player
       .seekTo(0)
       .then(() => {
         if (timingEnabled) recordSeek(startedAt);
-        // Superseded by a later fire, or sound was switched off while waiting.
-        if (voice.generation !== generation || !soundEnabled) return;
-        voice.player.play();
+        if (!soundEnabled) return;
+        oldest.player.play();
       })
       .catch(() => {});
   } catch {
@@ -336,17 +370,19 @@ function playCue(cue: FeedbackCue): void {
  * itself never needs this, since the players live as long as the process.
  */
 export function releaseSounds(): void {
-  for (const voice of voices.values()) {
-    try {
-      voice.player.remove();
-    } catch {
-      // Already gone.
+  for (const pool of voices.values()) {
+    for (const entry of pool) {
+      try {
+        entry.player.remove();
+      } catch {
+        // Already gone.
+      }
     }
   }
   voices.clear();
 }
 
-/** Fire-and-forget: emits the haptic and the (stubbed) sound for a cue. */
+/** Fire-and-forget: emits the haptic and the sound for a cue. */
 export function emitFeedback(cue: FeedbackCue): void {
   void vibrate(cue);
   playCue(cue);
