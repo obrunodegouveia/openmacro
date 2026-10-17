@@ -5,6 +5,16 @@ name: Daily reminder asks for permission, then offers times
 - tapOn: "Profile"
 - scrollUntilVisible:
     element: "Daily reminder"
+# Start from off: the setting persists between runs, and tapping a switch that
+# a previous run left on would turn it off and hide the times.
+- runFlow:
+    when:
+      visible:
+        id: "reminder-switch"
+        checked: true
+    commands:
+      - tapOn:
+          id: "reminder-switch"
 - tapOn:
     id: "reminder-switch"
 - runFlow:
@@ -12,6 +22,7 @@ name: Daily reminder asks for permission, then offers times
       visible: "Allow"
     commands:
       - tapOn: "Allow"
-- extendedWaitUntil:
-    visible: ".*(19:00|7:00).*"
+# The times open below the switch, which can be past the bottom of the screen.
+- scrollUntilVisible:
+    element: ".*(19:00|7:00).*"
     timeout: 10000
