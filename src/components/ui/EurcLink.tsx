@@ -18,7 +18,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text } from 'react-native';
 
 import { Chevron } from '@/components/ui/CourseRows';
 import { useAuth } from '@/providers/AuthProvider';
@@ -27,22 +27,16 @@ import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 const SITE = 'https://openmacro.org';
 
-/** EURC base units (6 decimals) to euros with cents, rounded down. */
-function euros(baseUnits: string): string {
-  const cents = BigInt(baseUnits) / 10_000n;
-  return `€${cents / 100n}.${(cents % 100n).toString().padStart(2, '0')}`;
-}
-
 export function EurcLink() {
   const { session } = useAuth();
   const { t, locale } = useLocale();
-  const [balance, setBalance] = useState<string | null>(null);
+  const [enrolled, setEnrolled] = useState(false);
 
   const token = session?.access_token ?? null;
 
   useEffect(() => {
     if (!token) {
-      setBalance(null);
+      setEnrolled(false);
       return;
     }
     let cancelled = false;
@@ -51,11 +45,11 @@ export function EurcLink() {
         const response = await fetch(`${SITE}/api/earnings`, {
           headers: { authorization: `Bearer ${token}` },
         });
-        const result = (await response.json()) as { earnings?: { balance: string } | null };
-        if (!cancelled) setBalance(response.ok && result.earnings ? result.earnings.balance : null);
+        const result = (await response.json()) as { earnings?: unknown };
+        if (!cancelled) setEnrolled(response.ok && Boolean(result.earnings));
       } catch {
         // Offline or the site is down: no link, rather than a broken one.
-        if (!cancelled) setBalance(null);
+        if (!cancelled) setEnrolled(false);
       }
     })();
     return () => {
@@ -63,7 +57,7 @@ export function EurcLink() {
     };
   }, [token]);
 
-  if (balance === null) return null;
+  if (!enrolled) return null;
 
   const url = `${SITE}${locale === 'pt-PT' ? '/pt' : ''}/dashboard`;
 
@@ -75,11 +69,8 @@ export function EurcLink() {
       accessibilityHint={t('eurc.hint')}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
-      <Text style={styles.icon} allowFontScaling={false}>💶</Text>
-      <View style={styles.text}>
-        <Text style={styles.label}>{t('eurc.label')}</Text>
-        <Text style={styles.hint}>{t('eurc.balance', { amount: euros(balance) })}</Text>
-      </View>
+      <Text style={styles.icon} allowFontScaling={false}>✨</Text>
+      <Text style={styles.label}>{t('eurc.label')}</Text>
       <Chevron />
     </Pressable>
   );
@@ -100,7 +91,5 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.7 },
   icon: { fontSize: 28 },
-  text: { flex: 1, gap: 2 },
-  label: { ...typography.bodyStrong, color: palette.ink },
-  hint: { ...typography.caption, color: palette.inkMuted, fontWeight: '500' },
+  label: { ...typography.bodyStrong, color: palette.ink, flex: 1 },
 });
