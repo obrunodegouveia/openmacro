@@ -68,6 +68,9 @@ export const en = {
   'today.allDone': 'You have finished the whole course',
   // Seasons (see season.ts). Shown only while the season is on.
   'season.halloween.greeting': '🎃 Happy Halloween!',
+  'eurc.label': 'Swap your points for EURC',
+  'eurc.balance': '{amount} ready · opens openmacro.org',
+  'eurc.hint': 'Opens your earnings on the website in Safari',
   'season.halloween.welcome': 'Happy Halloween, {name}!',
   'season.welcomeDismiss': 'Closes the welcome',
   'today.allDoneBody': 'Review keeps it from fading, and any lesson can be replayed from the Course tab.',

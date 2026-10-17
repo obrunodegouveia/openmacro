@@ -36,6 +36,7 @@ import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 
 import { ActionButton } from '@/components/ui/ActionButton';
+import { EurcLink } from '@/components/ui/EurcLink';
 import { Chevron } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { ProgressRing } from '@/components/ui/ProgressRing';
@@ -118,6 +119,9 @@ export default function TodayScreen() {
         </View>
 
         <SeasonalGreeting />
+
+        {/* Only for accounts with an active EURC wallet; see EurcLink. */}
+        <EurcLink />
 
         <UpdateBanner />
 
