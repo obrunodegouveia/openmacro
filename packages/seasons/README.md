@@ -79,6 +79,16 @@ seasons.getSnapshot())` on change to repaint live.
 Every field is optional except `version`. Validate it where it is served
 with `parseRemoteConfig(json, ids)`.
 
+## Seasons inside seasons
+
+Windows may overlap. Give the shorter one a higher `priority` and it wins
+the days they share: a year of four nature seasons with Halloween
+(`priority: 1`) inside autumn shows Halloween in October and autumn either
+side of it. Switch a nested season off remotely (`"disabled": ["halloween"]`)
+and the one beneath it shows instead; only when every window that applies
+is disabled is the answer "off". A calendar without overlaps behaves exactly
+as it always did.
+
 ## Tests
 
 ```sh

@@ -54,10 +54,10 @@ function useWide(): boolean {
  *
  * The calm look keeps the sky, the garland (still) and any corners, and
  * leaves out the flyers and a creepy toy (a spider, a bee); reduced motion
- * keeps the toy, still.
+ * keeps the toy, still. Over a lesson there is only the still sky.
  *
  * @param props.season The season on screen.
- * @param props.sky Whether things may move over this page.
+ * @param props.sky Whether this page may be decorated beyond its sky (not a lesson).
  * @return The layer.
  */
 export function SeasonLayer({ season, sky }: LayerProps) {
@@ -68,6 +68,10 @@ export function SeasonLayer({ season, sky }: LayerProps) {
   const Corners = art?.corners;
   const ToyArt = art?.toy;
   const FlyerArt = art?.flyer;
+
+  // Over a lesson only the still sky: nothing hangs over a question, not
+  // even a garland or the toy, as in the app (the toy lives on Today).
+  if (!sky) return <SeasonAtmosphere season={season} sky={false} />;
 
   return (
     <>

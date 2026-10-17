@@ -61,9 +61,10 @@ export function useSeason(): ActiveSeason | null {
 export interface LayerProps {
   readonly season: ActiveSeason;
   /**
-   * Whether the moving sky (flyers, snow) may cross this page. Not over a
-   * lesson, as in the app: snow falling across a question is a distraction,
-   * not a decoration.
+   * Whether this page may be decorated beyond its still sky: particles,
+   * flyers, the garland, the toy. Not a lesson, as in the app: snow falling
+   * across a question, or a toy hanging over it, is a distraction, not a
+   * decoration.
    */
   readonly sky: boolean;
 }
