@@ -54,6 +54,9 @@ jobs:
       - run: TZ=Pacific/Kiritimati npm run test:seasons
       - run: TZ=America/Los_Angeles npm run test:seasons
       - run: npm run check:seasons
+      # The package must also work outside this repository: build it, install
+      # the tarball into an empty project, run and type-check a consumer.
+      - run: npm run build:seasons && npm run verify:seasons
 
       # Content rules the type system cannot express — double-entry balance on
       # every T-account, formula ids that exist, objectives that target a real

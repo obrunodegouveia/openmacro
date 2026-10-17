@@ -68,6 +68,24 @@ Then style with `:root[data-season="winter"]` and
 `[data-season-look="calm"]`, and call `applyDecision(document.documentElement,
 seasons.getSnapshot())` on change to repaint live.
 
+## Use in another project
+
+Inside this repository the package is consumed as TypeScript source. For any
+other project, build it into plain ES modules with type definitions:
+
+```sh
+npm run build:seasons            # from the repository root → packages/seasons/dist
+npm install /path/to/openmacro/packages/seasons/dist
+# or: cd packages/seasons/dist && npm pack   → a tarball to install or publish
+```
+
+`npm run verify:seasons` proves the build works elsewhere: it installs the
+tarball into an empty project, runs a consumer on plain Node and type-checks
+one with Node module resolution. CI runs it on every change.
+
+Versions follow semver; see CHANGELOG.md. `test/portable.test.ts` fails if
+anything in `src/` imports from the host app, so the folder stays liftable.
+
 ## The remote config
 
 ```json
