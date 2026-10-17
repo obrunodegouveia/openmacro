@@ -412,6 +412,12 @@ html {
   100% { transform: translate(0, calc(100vh + 6rem)) rotate(240deg); }
 }
 
+/* The once-a-day welcome by name (seasonal-welcome.tsx). */
+.season-welcome { animation: season-welcome-in 0.25s ease-out; }
+.season-welcome-card { animation: season-welcome-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+@keyframes season-welcome-in { from { opacity: 0; } }
+@keyframes season-welcome-pop { from { transform: scale(0.6); opacity: 0; } }
+
 @media (prefers-reduced-motion: reduce) {
   .season-bat,
   .season-burst,

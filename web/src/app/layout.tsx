@@ -12,6 +12,7 @@ import { localisedCopy } from "@/lib/seo-copy";
 import { SmoothAnchors } from "@/components/site/smooth-anchors";
 import { ActivityHeartbeat } from "@/components/app/activity-heartbeat";
 import { SeasonalDecor } from "@/components/site/seasonal-decor";
+import { SeasonalWelcome } from "@/components/site/seasonal-welcome";
 import { SEASON_SCRIPT } from "@/lib/season";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -148,6 +149,8 @@ export default async function RootLayout({
             <MotionPreferences>{children}</MotionPreferences>
             {/* Silent unless this account is paid for active time. */}
             <ActivityHeartbeat />
+            {/* Once a day, by name, while a season is on. */}
+            <SeasonalWelcome />
           </AuthProvider>
           <SeasonalDecor />
         </LocaleProvider>
