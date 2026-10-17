@@ -22,6 +22,8 @@ import {
   currentChallenge,
   lessonSessionReducer,
   progressRatio,
+  snapshotSession,
+  type SessionSnapshot,
 } from "@openmacro/core/engine/lessonSession";
 import { Button } from "@/components/ui/button";
 import { ChallengeView } from "@/components/challenges/challenge-view";
@@ -85,6 +87,36 @@ export function LessonPlayer({
     lesson,
     createSession,
   );
+
+  /**
+   * Resume a run left part-way, then keep the stored copy current — the same
+   * as the app (app/lesson/[lessonId].tsx). Every answer is saved in this
+   * browser for this lesson; opening it again carries on from there with the
+   * same hearts and XP. Finishing, failing or starting over clears it.
+   *
+   * Declared before the shared-link effect below so a saved run wins over a
+   * link to one question: `jump` only applies to a clean start. Nothing is
+   * written until the stored run has been read.
+   */
+  const resumeRead = React.useRef(false);
+  React.useEffect(() => {
+    const snapshot = readResume(englishLesson.id);
+    if (snapshot) dispatch({ kind: "resume", snapshot });
+    resumeRead.current = true;
+  }, [englishLesson.id]);
+  React.useEffect(() => {
+    if (!resumeRead.current) return;
+    const snapshot = snapshotSession(state);
+    try {
+      if (snapshot) {
+        localStorage.setItem(resumeKey(englishLesson.id), JSON.stringify(snapshot));
+      } else if (state.submissionCount > 0 || state.status !== "in_progress") {
+        localStorage.removeItem(resumeKey(englishLesson.id));
+      }
+    } catch {
+      // Storage unavailable: the run simply cannot be resumed.
+    }
+  }, [state, englishLesson.id]);
 
   /**
    * Arriving on a link to one particular question.
@@ -725,4 +757,33 @@ function LessonComplete({
       ) : null}
     </div>
   );
+}
+
+/** Where a run in progress is kept, one per lesson. */
+function resumeKey(lessonId: string): string {
+  return `om-lesson-resume:${lessonId}`;
+}
+
+/**
+ * The stored run for a lesson, if it is shaped like one. Whether it still
+ * fits the lesson is the engine's call (`resume` ignores one that does not).
+ *
+ * @param lessonId The lesson.
+ * @return The snapshot, or null.
+ */
+function readResume(lessonId: string): SessionSnapshot | null {
+  try {
+    const raw = localStorage.getItem(resumeKey(lessonId));
+    if (!raw) return null;
+    const value = JSON.parse(raw) as Partial<SessionSnapshot> | null;
+    if (
+      !value || value.version !== 1 ||
+      !Array.isArray(value.queue) || !Array.isArray(value.resolved) || !Array.isArray(value.missed)
+    ) {
+      return null;
+    }
+    return value as SessionSnapshot;
+  } catch {
+    return null;
+  }
 }
