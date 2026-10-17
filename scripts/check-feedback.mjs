@@ -73,9 +73,9 @@ writeFileSync(
   [
     'import { record, deferSeek, players } from ' + HARNESS_URL + ';',
     'class StubPlayer {',
-    '  constructor(id) { this.id = id; this.position = 0; this.playing = false; this.isLoaded = true; this.listeners = []; }',
+    '  constructor(id) { this.id = id; this.position = 0; this.playing = false; this.isLoaded = true; this.volume = 1; this.listeners = []; }',
     '  addListener(event, fn) { if (event === "playbackStatusUpdate") this.listeners.push(fn); return { remove() {} }; }',
-    "  play() { record({ player: this.id, call: 'play', position: this.position }); this.playing = true; }",
+    "  play() { record({ player: this.id, call: 'play', position: this.position, volume: this.volume }); this.playing = true; }",
     "  pause() { record({ player: this.id, call: 'pause' }); this.playing = false; }",
     "  remove() { record({ player: this.id, call: 'remove' }); }",
     '  seekTo(seconds) {',
@@ -170,11 +170,44 @@ function check(name, condition, detail = '') {
 }
 const reset = () => { harness.calls.length = 0; harness.pending.length = 0; };
 
+/**
+ * End every silent warm-up run, as the clips would a moment after boot. The
+ * stub never finishes a clip on its own, so without this every player would
+ * still be busy warming when the first cue below is fired.
+ */
+async function endWarmUps() {
+  for (const p of harness.players) if (p.playing && p.volume === 0) p.finish(1);
+  await settle();
+}
+
 console.log('\nFeedback cues — self-test\n');
 feedback.preloadSounds();
+
+console.log('Warm-up (a binary without the native player)');
+const warmUps = harness.calls.filter((c) => c.call === 'play');
+check(
+  'every fallback player plays through once at boot',
+  new Set(warmUps.map((c) => c.player)).size === harness.players.length,
+  `${warmUps.length} warm-up(s) for ${harness.players.length} players`,
+);
+check('…silently', warmUps.every((c) => c.volume === 0));
+reset();
+feedback.emitFeedback('advance');
+await settle();
+const midWarmUp = harness.calls.filter((c) => c.call === 'play');
+check(
+  'a cue fired before the warm-ups end is still heard',
+  midWarmUp.length === 1 && midWarmUp[0].volume === 1 && midWarmUp[0].position === 0,
+  `volume ${midWarmUp[0]?.volume}`,
+);
+await endWarmUps();
+check('…and every player is back at full volume afterwards', harness.players.every((p) => p.volume === 1));
+for (const p of harness.players) if (p.playing) p.finish(1);
+await settle();
 reset();
 
-console.log('The invariant');
+console.log('\nThe invariant');
+
 feedback.emitFeedback('correct');
 const immediate = harness.calls.filter((c) => c.call === 'play');
 check('a single cue plays at once, before any rewind is awaited', immediate.length === 1);
@@ -285,6 +318,7 @@ check(
 );
 check('…and rebuilds them for the new pack', harness.players.length === before + perPack);
 
+await endWarmUps();
 reset();
 feedback.emitFeedback('correct');
 await settle();
@@ -295,6 +329,7 @@ reset();
 feedback.setSoundPack('arcade');
 check('switching to the pack already in use does nothing', harness.calls.length === 0);
 feedback.setSoundPack('classic');
+await endWarmUps();
 
 console.log('\nStart timing instrumentation');
 feedback.setAudioTimingEnabled(false);
