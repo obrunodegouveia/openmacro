@@ -3,26 +3,15 @@
 -- ============================================================================
 --
 -- Until now an 'earnings' balance was recomputed on every read from each
--- lesson's best_xp times the current rate. Two consequences the treasury
--- owner did not want:
+-- lesson's best_xp times the *current* rate, so changing the rate re-priced
+-- everything ever earned, and lowering it after a withdrawal could leave a
+-- learner owing the treasury.
 --
---   - Replaying a lesson earned nothing unless it beat the old best.
---   - Changing the rate re-priced everything ever earned, so lowering it
---     after a withdrawal could leave a learner owing the treasury.
---
--- Now XP is minted, like money: when the server sees XP it has not minted
--- before, it writes one row here with the rate in force at that moment. A
--- row is never updated or deleted, so minted XP only ever grows and keeps
--- the price it was minted at. A new rate applies to XP minted after it.
---
--- What bounds it (lib/rewards/earnings.ts → mintNewXp)
--- ----------------------------------------------------
---
--- profiles.total_xp and lesson_progress are written by the learner's own
--- client (0001), so neither proves anything. The mint takes the smaller of
--- total_xp and "completions × the most that lesson can award", and mints at
--- most a fixed amount of XP per day. XP over the daily limit is not lost: it
--- mints on a later day.
+-- Now XP is minted, like money. What counts is unchanged: each lesson's best
+-- score, capped at the most that lesson can award. When that sum grows, the
+-- server writes one row here for the difference, at the rate in force at that
+-- moment. A row is never updated or deleted, so minted XP only grows and
+-- keeps the price it was minted at. A new rate applies to XP minted after it.
 --
 -- Two readers racing to mint the same XP compute the same xp_total_after;
 -- the unique index lets one in and the other's insert fails harmlessly.

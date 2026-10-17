@@ -573,8 +573,7 @@ export const ptPT = {
   'earnings.rates': '{xpCents} cêntimos por XP · {hour} por hora ativa',
   'earnings.alreadyWithdrawn': '{amount} já levantados',
   'earnings.fromXp': 'Por XP',
-  'earnings.xpCount': '{xp, number} XP cunhados',
-  'earnings.xpPending': 'mais {xp, number} XP cunhados amanhã',
+  'earnings.xpCount': '{xp, number} de {max, number} XP',
   'earnings.fromTime': 'Por tempo',
   'earnings.today': '{minutes, number} min hoje',
   'earnings.timeRule':

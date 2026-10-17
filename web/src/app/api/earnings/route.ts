@@ -48,7 +48,7 @@ function serialise(recipient: Recipient, summary: EarningsSummary) {
     label: recipient.label,
     address: recipient.address,
     xp: summary.xp,
-    xpPending: summary.xpPending,
+    maxXp: summary.maxXp,
     activeMinutes: summary.activeMinutes,
     activeMinutesToday: summary.activeMinutesToday,
     xpRateEuros: summary.xpRateEuros,

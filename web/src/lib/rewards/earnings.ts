@@ -20,9 +20,9 @@ import type { Recipient } from "@/lib/rewards/recipients";
  *               broadcasting (it may still have been mined)
  *   balance   = earned − withdrawn
  *
- * XP is minted like money (mintNewXp): every XP earned, replays included,
- * becomes euros once, at the rate of that moment, and is never re-priced.
- * Minted XP only grows. A withdrawal that failed before sending (VOID)
+ * XP is minted like money (mintNewXp): each lesson's best score, as it
+ * grows, becomes euros once at the rate of that moment and is never
+ * re-priced. Minted XP only grows. A withdrawal that failed before sending (VOID)
  * simply stops counting.
  *
  * ---------------------------------------------------------------------------
@@ -33,9 +33,9 @@ import type { Recipient } from "@/lib/rewards/recipients";
  * them (migration 0001), and "active" means the browser said so. Two things
  * keep the damage bounded:
  *
- *   - XP to mint is capped by completions × the most each lesson can award,
- *     from the content registry, and at MAX_MINT_XP_PER_DAY a day. More than
- *     that waits for the next day; it is delayed, never lost.
+ *   - Best XP is capped per lesson at the most that lesson can award, from
+ *     the content registry. The whole course is worth MAX_COURSE_XP, however
+ *     the rows were written.
  *   - Minutes are stamped by the server's clock, one row each. Nothing can be
  *     backfilled, and a day can never hold more than 24 hours.
  */
@@ -50,13 +50,6 @@ export const DEFAULT_HOUR_RATE_EUROS = "0.20";
  * fees; it keeps the payout history readable and avoids dust transfers.
  */
 export const MIN_WITHDRAWAL_BASE_UNITS = 1_000_000n; // €1.00
-
-/**
- * The most XP minted in one UTC day, after the first mint. A lesson awards
- * 100–140 XP, so this is about ten lessons a day; it exists because the XP
- * totals are written by the learner's own client and prove nothing.
- */
-export const MAX_MINT_XP_PER_DAY = 1500;
 
 /** Withdrawals are rounded down to whole cents; the remainder stays. */
 const CENT_BASE_UNITS = 10_000n;
@@ -77,10 +70,9 @@ export const MAX_COURSE_XP = [...MAX_XP_BY_LESSON.values()].reduce((a, b) => a +
 const WITHDRAWN_STATUSES = ["UNCLAIMED", "CLAIM_PENDING", "PAID", "FAILED"] as const;
 
 export interface EarningsSummary {
-  /** XP minted so far. */
+  /** XP minted so far: each lesson's best score, summed. */
   xp: number;
-  /** XP earned but over today's mint limit; it mints on a later day. */
-  xpPending: number;
+  maxXp: number;
   activeMinutes: number;
   activeMinutesToday: number;
   xpRateEuros: string;
@@ -133,74 +125,50 @@ export async function recordActiveMinute(userId: string): Promise<boolean> {
 /**
  * Mint whatever XP the learner has earned and not yet been paid for.
  *
- * The XP to account for is the smaller of `profiles.total_xp` (every XP ever
- * earned, replays included) and completions × each lesson's maximum, since
- * both are written by the client. The first mint for a learner is the XP the
- * old best-per-lesson rule already counted, so a balance carries over exactly;
- * every later mint is held to MAX_MINT_XP_PER_DAY.
- *
- * Each mint is priced at the recipient's current rate and never changes.
+ * Earned XP is each lesson's best score, capped at the most that lesson can
+ * award, summed — the same rule as before minting. A replay counts only when
+ * it beats the old best, and then only by the difference. Whatever the sum
+ * has grown by since the last mint is minted now, at the recipient's current
+ * rate, and never re-priced.
  *
  * @param userId     The learner.
  * @param recipient  Their active 'earnings' recipient row.
- * @return The XP that is earned but waiting for a later day's limit.
  */
-async function mintNewXp(userId: string, recipient: Recipient): Promise<number> {
+async function mintNewXp(userId: string, recipient: Recipient): Promise<void> {
   const db = getSupabaseAdmin();
 
-  const startOfToday = new Date();
-  startOfToday.setUTCHours(0, 0, 0, 0);
-
-  const [profile, progress, mints] = await Promise.all([
-    db.from("profiles").select("total_xp").eq("user_id", userId).maybeSingle(),
-    db.from("lesson_progress").select("lesson_id, best_xp, completions").eq("user_id", userId),
-    db.from("xp_mints").select("xp, created_at").eq("user_id", userId),
+  const [progress, mints] = await Promise.all([
+    db.from("lesson_progress").select("lesson_id, best_xp").eq("user_id", userId),
+    db.from("xp_mints").select("xp").eq("user_id", userId),
   ]);
-  for (const result of [profile, progress, mints]) {
+  for (const result of [progress, mints]) {
     // Minting from a partial read could mint twice what was earned.
     if (result.error) throw new Error(`xp mint read failed: ${result.error.message}`);
   }
 
-  const rows = progress.data ?? [];
-  // Per lesson: the most it could have awarded across every completion, and
-  // its best single result. A lesson the registry does not know earns nothing.
-  let ceiling = 0;
-  let bestXp = 0;
-  for (const row of rows) {
+  const earned = (progress.data ?? []).reduce((sum, row) => {
     const cap = MAX_XP_BY_LESSON.get(row.lesson_id as string);
-    if (cap === undefined) continue;
-    ceiling += cap * Math.max(0, row.completions as number);
-    bestXp += Math.min(Math.max(0, row.best_xp as number), cap);
-  }
-
-  const totalXp = Math.max(0, (profile.data?.total_xp as number | undefined) ?? 0);
-  const earned = Math.max(Math.min(totalXp, ceiling), bestXp);
-
+    // A lesson the registry does not know — removed, or invented — earns nothing.
+    if (cap === undefined) return sum;
+    return sum + Math.min(Math.max(0, row.best_xp as number), cap);
+  }, 0);
   const minted = (mints.data ?? []).reduce((sum, row) => sum + (row.xp as number), 0);
-  const mintedToday = (mints.data ?? [])
-    .filter((row) => new Date(row.created_at as string) >= startOfToday)
-    .reduce((sum, row) => sum + (row.xp as number), 0);
 
-  const owed = earned - minted;
-  if (owed <= 0) return 0;
-
-  // The first mint carries over what the best-per-lesson rule already counted.
-  const allowance = minted === 0 ? Math.max(bestXp, MAX_MINT_XP_PER_DAY) : MAX_MINT_XP_PER_DAY - mintedToday;
-  const xp = Math.min(owed, Math.max(0, allowance));
-  if (xp === 0) return owed;
+  // Minted XP only grows: if the best scores ever read lower, nothing happens.
+  const xp = earned - minted;
+  if (xp <= 0) return;
 
   const rateEuros = recipient.xpRateEuros ?? DEFAULT_XP_RATE_EUROS;
   const { error } = await db.from("xp_mints").insert({
     user_id: userId,
     recipient_key: recipient.key,
     xp,
-    xp_total_after: minted + xp,
+    xp_total_after: earned,
     rate_euros: rateEuros,
     amount_base_units: (BigInt(xp) * eurosToBaseUnits(rateEuros)).toString(),
   });
   // 23505: a concurrent read minted this same XP first. Nothing to do.
   if (error && error.code !== "23505") throw new Error(`xp mint failed: ${error.message}`);
-  return owed - xp;
 }
 
 /** Mint any new XP, then compute the learner's balance. */
@@ -209,7 +177,7 @@ export async function readEarnings(
   recipient: Recipient,
 ): Promise<EarningsSummary> {
   const db = getSupabaseAdmin();
-  const xpPending = await mintNewXp(userId, recipient);
+  await mintNewXp(userId, recipient);
 
   const startOfToday = new Date();
   startOfToday.setUTCHours(0, 0, 0, 0);
@@ -263,7 +231,7 @@ export async function readEarnings(
 
   return {
     xp,
-    xpPending,
+    maxXp: MAX_COURSE_XP,
     activeMinutes,
     activeMinutesToday: minutesToday.count ?? 0,
     xpRateEuros,

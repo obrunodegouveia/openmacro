@@ -575,8 +575,7 @@ export const en = {
   'earnings.rates': '{xpCents} cents per XP · {hour} per active hour',
   'earnings.alreadyWithdrawn': '{amount} already withdrawn',
   'earnings.fromXp': 'From XP',
-  'earnings.xpCount': '{xp, number} XP minted',
-  'earnings.xpPending': '{xp, number} more XP mints tomorrow',
+  'earnings.xpCount': '{xp, number} of {max, number} XP',
   'earnings.fromTime': 'From time',
   'earnings.today': '{minutes, number} min today',
   'earnings.timeRule':
