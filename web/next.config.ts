@@ -71,7 +71,7 @@ const nextConfig: NextConfig = {
    * contributor edit a lesson and see it in both apps without publishing
    * anything.
    */
-  transpilePackages: ["@openmacro/core"],
+  transpilePackages: ["@openmacro/core", "@openmacro/seasons"],
 
   /**
    * Trace from the workspace root, not from web/. Without this the standalone

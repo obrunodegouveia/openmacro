@@ -17,5 +17,8 @@
     "./i18n/content": "./src/i18n/content/index.ts",
     "./i18n/site": "./src/i18n/site/index.ts"
   },
+  "dependencies": {
+    "@openmacro/seasons": "*"
+  },
   "sideEffects": false
 }

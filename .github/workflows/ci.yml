@@ -46,6 +46,15 @@ jobs:
       # mobile app and the content validator all import it.
       - run: npm run typecheck:core
 
+      # Seasons: the engine's own tests, in two time zones on either side of
+      # UTC so a season that starts at UTC midnight instead of local midnight
+      # fails here, and the check that every season has a palette on both
+      # clients, every string in every language, and AA contrast.
+      - run: npm run typecheck:seasons
+      - run: TZ=Pacific/Kiritimati npm run test:seasons
+      - run: TZ=America/Los_Angeles npm run test:seasons
+      - run: npm run check:seasons
+
       # Content rules the type system cannot express — double-entry balance on
       # every T-account, formula ids that exist, objectives that target a real
       # readout.

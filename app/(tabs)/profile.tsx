@@ -25,7 +25,8 @@ import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { MusicToggle } from '@/components/ui/MusicToggle';
-import { SeasonalFooter, SeasonalScreenCorner, seasonalEmoji } from '@/components/ui/SeasonalDecor';
+import { SeasonToggle } from '@/components/ui/SeasonToggle';
+import { SeasonalFooter, SeasonalScreenCorner, useSeasonalEmoji } from '@/components/ui/SeasonalDecor';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { useCourse } from '@/hooks/useCourse';
 import { useReview } from '@/hooks/useReview';
@@ -48,6 +49,7 @@ const STACK_STATS_AT = 1.3;
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
+  const streakEmoji = useSeasonalEmoji('streak', '🔥');
   const { profile } = useProgress();
   const { summary } = useReview();
   const { lessonsDone, lessonsTotal, statusOf } = useCourse();
@@ -82,7 +84,7 @@ export default function ProfileScreen() {
             value={profile?.dayStreak ?? 0}
             label={t('progress.stat.streak')}
             accessibilityLabel={t('path.streak', { count: profile?.dayStreak ?? 0 })}
-            emoji={seasonalEmoji('streak', '🔥')}
+            emoji={streakEmoji}
             // Dimmed until today's goal is met, as in the Today header.
             dimEmoji={!(profile?.streakActiveToday ?? false)}
           />
@@ -143,6 +145,9 @@ export default function ProfileScreen() {
         <View style={styles.card}>
           <MusicToggle />
         </View>
+
+        {/* Renders nothing unless a season is on the calendar. */}
+        <SeasonToggle />
 
         {/* ---- about ----------------------------------------------------
           This used to close the learning path, telling learners mid-course

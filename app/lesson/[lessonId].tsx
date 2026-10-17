@@ -22,7 +22,7 @@ import { SignedOutWarning } from '@/components/ui/SignedOutWarning';
 import { ActionButton } from '@/components/ui/ActionButton';
 import { FeedbackSheet } from '@/components/ui/FeedbackSheet';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { SeasonalRain, seasonalEmoji } from '@/components/ui/SeasonalDecor';
+import { SeasonalRain, useSeasonalEmoji } from '@/components/ui/SeasonalDecor';
 import { ComboPill, HeartsIndicator, StreakBadge } from '@/components/ui/StatusPills';
 import type { Lesson } from '@openmacro/core/content/schema';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
@@ -399,6 +399,8 @@ function LessonComplete({
 }: LessonCompleteProps) {
   const insets = useSafeAreaInsets();
   const { t, nextLesson: findNext } = useLocale();
+  const perfectEmoji = useSeasonalEmoji('perfect', '🏆');
+  const completeEmoji = useSeasonalEmoji('complete', '🎉');
   const { isLessonComplete } = useProgress();
   const { moduleOfLesson } = useCourse();
   const nextLesson = findNext(lesson.id);
@@ -446,7 +448,7 @@ function LessonComplete({
       ]}
     >
       <Animated.View entering={FadeIn.duration(300)} style={styles.endHeader}>
-        <Text style={styles.endEmoji}>{perfect ? seasonalEmoji('perfect', '🏆') : seasonalEmoji('complete', '🎉')}</Text>
+        <Text style={styles.endEmoji}>{perfect ? perfectEmoji : completeEmoji}</Text>
         <Text style={styles.endTitle}>
           {perfect ? t('complete.flawless') : t('complete.title')}
         </Text>

@@ -13,7 +13,7 @@ import { SmoothAnchors } from "@/components/site/smooth-anchors";
 import { ActivityHeartbeat } from "@/components/app/activity-heartbeat";
 import { SeasonalDecor } from "@/components/site/seasonal-decor";
 import { SeasonalWelcome } from "@/components/site/seasonal-welcome";
-import { SEASON_SCRIPT } from "@/lib/season";
+import { SEASON_SCRIPT } from "@/lib/season-script";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -134,7 +134,7 @@ export default async function RootLayout({
             marketing page flash on the way to Today. See TODAY_REDIRECT. */}
         <script dangerouslySetInnerHTML={{ __html: TODAY_REDIRECT }} />
         {/* Before first paint too, so a seasonal palette never flashes in
-            after the ordinary one. See lib/season.ts. */}
+            after the ordinary one. See lib/season-script.ts. */}
         <script dangerouslySetInnerHTML={{ __html: SEASON_SCRIPT }} />
         <a
           href="#main"

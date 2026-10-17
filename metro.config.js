@@ -18,8 +18,8 @@ const workspaceRoot = projectRoot; // app lives at the repo root; packages/ is a
 
 const config = getDefaultConfig(projectRoot);
 
-// Watch the shared package so edits to a lesson hot-reload in the app.
-config.watchFolders = [path.resolve(workspaceRoot, 'packages/core')];
+// Watch the shared packages so edits to a lesson (or a season) hot-reload in the app.
+config.watchFolders = [path.resolve(workspaceRoot, 'packages/core'), path.resolve(workspaceRoot, 'packages/seasons')];
 
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
