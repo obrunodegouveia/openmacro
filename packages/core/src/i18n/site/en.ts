@@ -509,7 +509,7 @@ export const en = {
   'treasury.rates.edit': 'Edit rates',
   'treasury.rates.xp': 'Euros per XP (empty = 0.002)',
   'treasury.rates.hour': 'Euros per active hour (empty = 0.20)',
-  'treasury.rates.note': 'Applies to everything earned so far, not only from now on. Active time is counted on the website only, not in the iPhone app.',
+  'treasury.rates.note': 'Applies to XP earned from now on. XP already minted keeps the rate it was minted at. Active time is counted on the website only, not in the iPhone app.',
   'treasury.rates.save': 'Save rates',
   'treasury.cancel': 'Cancel',
 

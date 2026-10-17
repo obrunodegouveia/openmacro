@@ -12,17 +12,18 @@ import type { Recipient } from "@/lib/rewards/recipients";
  * Earnings: a balance built from XP and active time
  * ============================================================================
  *
- * For a recipient on the 'earnings' scheme (migration 0006). The balance is
- * never stored; it is recomputed on every read from three things:
+ * For a recipient on the 'earnings' scheme (migrations 0006 and 0007).
  *
- *   earned    = best XP per lesson × the XP rate
+ *   earned    = every XP mint (each at the rate in force when it was minted)
  *             + active minutes ÷ 60 × the hourly rate
  *   withdrawn = every withdrawal that is in flight, paid, or failed after
  *               broadcasting (it may still have been mined)
  *   balance   = earned − withdrawn
  *
- * Recomputing rather than storing means there is no counter to drift, and a
- * withdrawal that failed before sending (VOID) simply stops counting.
+ * XP is minted like money (mintNewXp): each lesson's best score, as it
+ * grows, becomes euros once at the rate of that moment and is never
+ * re-priced. Minted XP only grows. A withdrawal that failed before sending (VOID)
+ * simply stops counting.
  *
  * ---------------------------------------------------------------------------
  * WHAT THIS CANNOT PROVE
@@ -69,6 +70,7 @@ export const MAX_COURSE_XP = [...MAX_XP_BY_LESSON.values()].reduce((a, b) => a +
 const WITHDRAWN_STATUSES = ["UNCLAIMED", "CLAIM_PENDING", "PAID", "FAILED"] as const;
 
 export interface EarningsSummary {
+  /** XP minted so far: each lesson's best score, summed. */
   xp: number;
   maxXp: number;
   activeMinutes: number;
@@ -120,18 +122,69 @@ export async function recordActiveMinute(userId: string): Promise<boolean> {
   return true;
 }
 
-/** Compute the learner's balance from scratch. */
+/**
+ * Mint whatever XP the learner has earned and not yet been paid for.
+ *
+ * Earned XP is each lesson's best score, capped at the most that lesson can
+ * award, summed — the same rule as before minting. A replay counts only when
+ * it beats the old best, and then only by the difference. Whatever the sum
+ * has grown by since the last mint is minted now, at the recipient's current
+ * rate, and never re-priced.
+ *
+ * @param userId     The learner.
+ * @param recipient  Their active 'earnings' recipient row.
+ */
+async function mintNewXp(userId: string, recipient: Recipient): Promise<void> {
+  const db = getSupabaseAdmin();
+
+  const [progress, mints] = await Promise.all([
+    db.from("lesson_progress").select("lesson_id, best_xp").eq("user_id", userId),
+    db.from("xp_mints").select("xp").eq("user_id", userId),
+  ]);
+  for (const result of [progress, mints]) {
+    // Minting from a partial read could mint twice what was earned.
+    if (result.error) throw new Error(`xp mint read failed: ${result.error.message}`);
+  }
+
+  const earned = (progress.data ?? []).reduce((sum, row) => {
+    const cap = MAX_XP_BY_LESSON.get(row.lesson_id as string);
+    // A lesson the registry does not know — removed, or invented — earns nothing.
+    if (cap === undefined) return sum;
+    return sum + Math.min(Math.max(0, row.best_xp as number), cap);
+  }, 0);
+  const minted = (mints.data ?? []).reduce((sum, row) => sum + (row.xp as number), 0);
+
+  // Minted XP only grows: if the best scores ever read lower, nothing happens.
+  const xp = earned - minted;
+  if (xp <= 0) return;
+
+  const rateEuros = recipient.xpRateEuros ?? DEFAULT_XP_RATE_EUROS;
+  const { error } = await db.from("xp_mints").insert({
+    user_id: userId,
+    recipient_key: recipient.key,
+    xp,
+    // Unique per learner: of two concurrent mints, only one is accepted.
+    xp_total_before: minted,
+    rate_euros: rateEuros,
+    amount_base_units: (BigInt(xp) * eurosToBaseUnits(rateEuros)).toString(),
+  });
+  // 23505: a concurrent read minted this same XP first. Nothing to do.
+  if (error && error.code !== "23505") throw new Error(`xp mint failed: ${error.message}`);
+}
+
+/** Mint any new XP, then compute the learner's balance. */
 export async function readEarnings(
   userId: string,
   recipient: Recipient,
 ): Promise<EarningsSummary> {
   const db = getSupabaseAdmin();
+  await mintNewXp(userId, recipient);
 
   const startOfToday = new Date();
   startOfToday.setUTCHours(0, 0, 0, 0);
 
-  const [progress, minutesAll, minutesToday, claims] = await Promise.all([
-    db.from("lesson_progress").select("lesson_id, best_xp").eq("user_id", userId),
+  const [mints, minutesAll, minutesToday, claims] = await Promise.all([
+    db.from("xp_mints").select("xp, amount_base_units").eq("user_id", userId),
     db
       .from("activity_minutes")
       .select("minute", { count: "exact", head: true })
@@ -149,24 +202,22 @@ export async function readEarnings(
       .order("created_at", { ascending: false }),
   ]);
 
-  for (const result of [progress, minutesAll, minutesToday, claims]) {
+  for (const result of [mints, minutesAll, minutesToday, claims]) {
     // A partial read would understate what was withdrawn and overstate the
     // balance. Refuse rather than guess.
     if (result.error) throw new Error(`earnings read failed: ${result.error.message}`);
   }
 
-  const xp = (progress.data ?? []).reduce((sum, row) => {
-    const cap = MAX_XP_BY_LESSON.get(row.lesson_id as string);
-    // A lesson the registry does not know — removed, or invented — earns nothing.
-    if (cap === undefined) return sum;
-    return sum + Math.min(Math.max(0, row.best_xp as number), cap);
-  }, 0);
+  const xp = (mints.data ?? []).reduce((sum, row) => sum + (row.xp as number), 0);
 
   const activeMinutes = minutesAll.count ?? 0;
   const xpRateEuros = recipient.xpRateEuros ?? DEFAULT_XP_RATE_EUROS;
   const hourRateEuros = recipient.hourRateEuros ?? DEFAULT_HOUR_RATE_EUROS;
 
-  const earnedFromXp = BigInt(xp) * eurosToBaseUnits(xpRateEuros);
+  const earnedFromXp = (mints.data ?? []).reduce(
+    (sum, row) => sum + BigInt(row.amount_base_units as string),
+    0n,
+  );
   // Multiply before dividing so no partial minute is lost to rounding early.
   const earnedFromTime = (BigInt(activeMinutes) * eurosToBaseUnits(hourRateEuros)) / 60n;
 

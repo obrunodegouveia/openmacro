@@ -289,8 +289,9 @@ export async function POST(request: Request) {
     /**
      * Change an earnings recipient's euros per XP and per active hour.
      *
-     * An empty field restores the default. The balance is recomputed from the
-     * rates on every read, so this re-prices everything earned so far.
+     * An empty field restores the default. A new XP rate prices XP minted from
+     * now on; XP already minted keeps its price. The hourly rate still
+     * re-prices all active time.
      */
     case "set-rates": {
       const id = str("id");

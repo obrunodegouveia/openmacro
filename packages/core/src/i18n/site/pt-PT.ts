@@ -507,7 +507,7 @@ export const ptPT = {
   'treasury.rates.edit': 'Editar valores',
   'treasury.rates.xp': 'Euros por XP (vazio = 0,002)',
   'treasury.rates.hour': 'Euros por hora ativa (vazio = 0,20)',
-  'treasury.rates.note': 'Aplica-se a tudo o que já foi ganho, não só a partir de agora. O tempo ativo só conta no site, não na app de iPhone.',
+  'treasury.rates.note': 'Aplica-se ao XP ganho a partir de agora. O XP já cunhado mantém o valor com que foi cunhado. O tempo ativo só conta no site, não na app de iPhone.',
   'treasury.rates.save': 'Guardar valores',
   'treasury.cancel': 'Cancelar',
 

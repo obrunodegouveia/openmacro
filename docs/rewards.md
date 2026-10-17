@@ -204,12 +204,19 @@ for the same work.
 
 ### How the balance is computed
 
-Nothing is stored. Every read recomputes:
+XP is **minted**; everything else is recomputed on every read:
 
-- **XP** is the sum of `best_xp` per lesson, each capped at the most that
-  lesson can award according to the content registry. A forged row of a
-  million XP counts for the lesson's real maximum. The whole course is worth
-  21,470 XP today, which is €42.94 at the default rate.
+- **XP** is each lesson's best score, capped at the most that lesson can
+  award according to the content registry, summed. A forged row of a million
+  XP counts for the lesson's real maximum, and a replay counts only by how
+  much it beats the old best. The whole course is worth 21,470 XP today.
+
+  That XP is **minted** like money (`xp_mints`, migration 0007). Each read
+  mints whatever the sum has grown by since the last mint, at the XP rate in
+  force *at that moment*. A mint is never updated or deleted, so minted XP
+  only grows and keeps its price: changing the rate affects XP earned
+  afterwards, never what is already minted. A learner's first mint was all
+  their XP at the rate of that day.
 - **Time** is the number of rows in `activity_minutes`. The browser pings every
   thirty seconds while the tab is visible and either a lesson video is playing
   or the learner has interacted in the last two minutes — watching counts even

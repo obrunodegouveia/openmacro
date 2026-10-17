@@ -343,9 +343,9 @@ export async function setRecipientStatus(
 /**
  * Change what an earnings recipient is paid per XP and per active hour.
  *
- * Null restores the default from lib/rewards/earnings.ts. The balance is
- * recomputed from these rates on every read, so a change applies to
- * everything earned so far, not only to what is earned next.
+ * Null restores the default from lib/rewards/earnings.ts. The XP rate
+ * applies to XP minted from now on; XP already minted keeps its price
+ * (migration 0007). The hourly rate still re-prices all active time.
  *
  * @param id     The recipient row.
  * @param rates  Euros as decimal strings (at most 6 decimals), or null.
