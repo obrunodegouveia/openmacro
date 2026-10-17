@@ -78,6 +78,8 @@ export const ptPT: UiDictionary = {
   'today.browse': 'Explorar os {count, number} módulos',
   'today.allDone': 'Terminaste o curso inteiro',
   'season.halloween.greeting': '🎃 Feliz Halloween!',
+  'eurc.label': 'Descobre o que o teu XP pode fazer',
+  'eurc.hint': 'Abre openmacro.org no Safari',
   'season.halloween.welcome': 'Feliz Halloween, {name}!',
   'season.welcomeDismiss': 'Fecha as boas-vindas',
   'today.allDoneBody': 'A revisão impede que se apague, e qualquer lição pode ser repetida a partir do separador Curso.',
