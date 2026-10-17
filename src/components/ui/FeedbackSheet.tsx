@@ -7,7 +7,7 @@
  */
 
 import { memo, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,10 +17,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActionButton } from '@/components/ui/ActionButton';
 import { SeasonalBurst } from '@/components/ui/SeasonalDecor';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { useLocale } from '@/providers/LocaleProvider';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 /** How far below its resting place the sheet starts, in px. */
 const SHEET_TRAVEL = 420;
+
+/**
+ * The most of the screen the sheet may cover. A long explanation at a large
+ * text size used to grow it past the top and push Continue off the bottom;
+ * now the explanation scrolls inside it and Continue stays where it is.
+ */
+const MAX_SHEET_SHARE = 0.75;
 
 export interface FeedbackSheetProps {
   correct: boolean;
@@ -44,11 +52,13 @@ function FeedbackSheetComponent({
   title,
   explanation,
   detail,
-  continueLabel = 'Continue',
+  continueLabel,
   onContinue,
   onHeightChange,
 }: FeedbackSheetProps) {
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const { t } = useLocale();
 
   /**
    * The slide-up is driven by an explicit shared value rather than Reanimated's
@@ -73,7 +83,11 @@ function FeedbackSheetComponent({
     <Animated.View
       style={[
         styles.sheet,
-        { backgroundColor: background, paddingBottom: Math.max(insets.bottom, spacing.lg) },
+        {
+          backgroundColor: background,
+          paddingBottom: Math.max(insets.bottom, spacing.lg),
+          maxHeight: windowHeight * MAX_SHEET_SHARE,
+        },
         slideStyle,
       ]}
       accessibilityLiveRegion="polite"
@@ -83,18 +97,24 @@ function FeedbackSheetComponent({
       {correct ? <SeasonalBurst /> : null}
 
       <View style={styles.headerRow}>
-        <View style={[styles.badge, { backgroundColor: accent }]}>
-          <Text style={styles.badgeIcon}>{correct ? '✓' : '✕'}</Text>
+        {/* Decorative and fixed in size: the title says the same in words. */}
+        <View
+          style={[styles.badge, { backgroundColor: accent }]}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        >
+          <Text allowFontScaling={false} style={styles.badgeIcon}>{correct ? '✓' : '✕'}</Text>
         </View>
-        <Text style={[styles.title, { color: accent }]}>{title}</Text>
+        <Text maxFontSizeMultiplier={fontScale.title} style={[styles.title, { color: accent }]}>{title}</Text>
       </View>
 
-      {detail ? <Text style={[styles.detail, { color: accent }]}>{detail}</Text> : null}
-
-      <Text style={styles.explanation}>{explanation}</Text>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} bounces={false}>
+        {detail ? <Text style={[styles.detail, { color: accent }]}>{detail}</Text> : null}
+        <Text style={styles.explanation}>{explanation}</Text>
+      </ScrollView>
 
       <ActionButton
-        label={continueLabel}
+        label={continueLabel ?? t('lesson.continue')}
         tone={correct ? 'primary' : 'danger'}
         onPress={onContinue}
         style={styles.button}
@@ -145,6 +165,14 @@ const styles = StyleSheet.create({
   title: {
     ...typography.title,
     flexShrink: 1,
+  },
+  // Shrinks to fit under the sheet's maxHeight; grows no further than its text.
+  scroll: {
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  scrollContent: {
+    gap: spacing.md,
   },
   detail: {
     ...typography.bodyStrong,

@@ -91,9 +91,8 @@ export function DeleteAccount() {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('account.delete.open')}
-        hitSlop={8}
         onPress={() => setOpen(true)}
-        style={styles.trigger}
+        style={({ pressed }) => [styles.trigger, pressed && styles.pressed]}
       >
         <Text style={styles.triggerText}>{t('account.delete')}</Text>
       </Pressable>
@@ -137,7 +136,7 @@ export function DeleteAccount() {
             setEmail('');
             setError(null);
           }}
-          style={styles.cancel}
+          style={({ pressed }) => [styles.cancel, pressed && styles.pressed]}
         >
           <Text style={styles.cancelText}>{t('account.delete.keep')}</Text>
         </Pressable>
@@ -148,7 +147,11 @@ export function DeleteAccount() {
           accessibilityState={{ disabled: busy, busy }}
           disabled={busy}
           onPress={() => void remove()}
-          style={[styles.confirm, busy ? styles.confirmBusy : null]}
+          style={({ pressed }) => [
+            styles.confirm,
+            pressed && styles.pressed,
+            busy ? styles.confirmBusy : null,
+          ]}
         >
           {busy ? (
             <ActivityIndicator color={palette.surface} />
@@ -164,7 +167,11 @@ export function DeleteAccount() {
 const styles = StyleSheet.create({
   trigger: {
     alignSelf: 'flex-start',
-    paddingVertical: spacing.sm,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  pressed: {
+    opacity: 0.6,
   },
   triggerText: {
     ...typography.caption,
@@ -176,7 +183,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: palette.coralSoft,
+    borderColor: palette.coral,
     backgroundColor: palette.coralSoft,
     gap: spacing.md,
   },
@@ -213,6 +220,8 @@ const styles = StyleSheet.create({
   },
   cancel: {
     flex: 1,
+    minHeight: 44,
+    justifyContent: 'center',
     paddingVertical: spacing.md,
     borderRadius: radius.md,
     alignItems: 'center',
@@ -224,6 +233,8 @@ const styles = StyleSheet.create({
   },
   confirm: {
     flex: 1,
+    minHeight: 44,
+    justifyContent: 'center',
     paddingVertical: spacing.md,
     borderRadius: radius.md,
     alignItems: 'center',

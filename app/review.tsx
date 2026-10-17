@@ -19,7 +19,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { router } from 'expo-router';
@@ -35,7 +35,7 @@ import { emitFeedback } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
 import { reviewChallenges, useReview, type DueChallenge } from '@/hooks/useReview';
 import { gradesFor, recordReviewGrades } from '@/services/reviewStore';
-import { palette, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, spacing, typography } from '@/theme/tokens';
 
 /**
  * Hearts a review session runs with — enough that the limit never arrives.
@@ -146,7 +146,12 @@ function ReviewSession({
         <Text style={styles.doneIcon}>🔁</Text>
         <Text style={styles.doneTitle}>{t('review.done.title')}</Text>
         <Text style={styles.doneBody}>{t('review.done.body', { count: due.length })}</Text>
-        <ActionButton label={t('review.done.close')} onPress={() => router.back()} tone="primary" />
+        <ActionButton
+          label={t('review.done.close')}
+          onPress={() => router.back()}
+          tone="primary"
+          style={styles.endButton}
+        />
       </View>
     );
   }
@@ -158,7 +163,21 @@ function ReviewSession({
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
-        <Text style={styles.headerTitle}>{t('review.title')}</Text>
+        {/* The same way out as the lesson runner's, without its confirmation:
+            grades are recorded only when a review finishes, so leaving early
+            just leaves the questions due, and there are no hearts to lose. */}
+        <View style={styles.headerRow}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('review.exit')}
+            hitSlop={12}
+            onPress={() => router.back()}
+            style={({ pressed }) => pressed && styles.pressed}
+          >
+            <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.close}>✕</Text>
+          </Pressable>
+          <Text maxFontSizeMultiplier={fontScale.title} style={styles.headerTitle}>{t('review.title')}</Text>
+        </View>
         <ProgressBar progress={progressRatio(state)} />
         {/* Where this question came from. Out of its lesson a challenge can
             read as a non sequitur, and the answer often depends on knowing
@@ -222,7 +241,12 @@ function NothingDue() {
       <Text style={styles.doneIcon}>✅</Text>
       <Text style={styles.doneTitle}>{t('review.empty')}</Text>
       <Text style={styles.doneBody}>{t('review.empty.blurb')}</Text>
-      <ActionButton label={t('review.done.close')} onPress={() => router.back()} tone="ghost" />
+      <ActionButton
+        label={t('review.done.close')}
+        onPress={() => router.back()}
+        tone="ghost"
+        style={styles.endButton}
+      />
     </View>
   );
 }
@@ -230,7 +254,10 @@ function NothingDue() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: palette.canvas },
   header: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },
-  headerTitle: { ...typography.title, color: palette.ink },
+  headerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  close: { ...typography.heading, color: palette.inkFaint },
+  pressed: { opacity: 0.6 },
+  headerTitle: { ...typography.title, color: palette.ink, flexShrink: 1 },
   from: { ...typography.caption, color: palette.inkFaint },
   content: { padding: spacing.lg, gap: spacing.lg },
   footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
@@ -242,6 +269,7 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     backgroundColor: palette.canvas,
   },
+  endButton: { alignSelf: 'stretch' },
   doneIcon: { fontSize: 48 },
   doneTitle: { ...typography.display, color: palette.ink, textAlign: 'center' },
   doneBody: {

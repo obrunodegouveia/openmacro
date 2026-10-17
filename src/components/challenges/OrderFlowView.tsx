@@ -60,7 +60,7 @@ import Animated, {
 import type { ChallengeComponentProps } from '@/components/challenges/types';
 import { emitFeedback } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import { seededShuffle } from '@openmacro/core/format';
 import type { FlowEvent } from '@openmacro/core/content/schema';
 
@@ -410,8 +410,9 @@ function DraggableRow({
             <Text style={styles.stepBadgeText}>{index + 1}</Text>
           </View>
           <View style={styles.cardBody}>
-            <Text style={styles.cardLabel}>{event.label}</Text>
-            {event.detail ? <Text style={styles.cardDetail}>{event.detail}</Text> : null}
+            {/* Capped like the prompt, so a step never outgrows the question. */}
+            <Text maxFontSizeMultiplier={fontScale.title} style={styles.cardLabel}>{event.label}</Text>
+            {event.detail ? <Text maxFontSizeMultiplier={fontScale.title} style={styles.cardDetail}>{event.detail}</Text> : null}
           </View>
           {!locked ? <GripGlyph /> : null}
         </View>

@@ -8,17 +8,24 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 
 import type { ChallengeComponentProps } from '@/components/challenges/types';
 import { tapCue } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import { seededShuffle } from '@openmacro/core/format';
 
 /** Link colours cycle so simultaneous pairs stay visually distinct. */
-const LINK_COLORS = [palette.blue, palette.gold, palette.mint, palette.coral, '#9B5DE5'] as const;
+const LINK_COLORS = [palette.blue, palette.gold, palette.mint, palette.coral, palette.linkAccent] as const;
+
+/**
+ * The Dynamic Type scale above which the two columns stack. Side by side each
+ * column is under half the screen, and past this a long term ("intermediation")
+ * no longer fits on a line and breaks mid-word.
+ */
+const STACK_COLUMNS_AT = 1.3;
 
 export function ConceptMatchView({
   challenge,
@@ -26,6 +33,7 @@ export function ConceptMatchView({
   locked,
 }: ChallengeComponentProps<'concept_match'>) {
   const { t } = useLocale();
+  const stacked = useWindowDimensions().fontScale > STACK_COLUMNS_AT;
   /** term pair id -> definition pair id */
   const [pairings, setPairings] = useState<Record<string, string>>({});
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
@@ -101,10 +109,10 @@ export function ConceptMatchView({
   );
 
   return (
-    <View style={styles.columns}>
+    <View style={[styles.columns, stacked && styles.columnsStacked]}>
       {/* ---------------------------------------------------------------- */}
-      <View style={styles.column}>
-        <Text style={styles.columnHeading}>{t('challenge.match.term')}</Text>
+      <View style={[styles.column, stacked && styles.columnStacked]}>
+        <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.columnHeading}>{t('challenge.match.term')}</Text>
         {terms.map((pair) => {
           const linked = pairings[pair.id];
           const isActive = activeTerm === pair.id;
@@ -130,7 +138,7 @@ export function ConceptMatchView({
                 ]}
               >
                 {linked ? <View style={[styles.dot, { backgroundColor: accent }]} /> : null}
-                <Text style={styles.cardText}>{pair.term}</Text>
+                <Text maxFontSizeMultiplier={fontScale.title} style={styles.cardText}>{pair.term}</Text>
               </Pressable>
             </Animated.View>
           );
@@ -138,8 +146,8 @@ export function ConceptMatchView({
       </View>
 
       {/* ---------------------------------------------------------------- */}
-      <View style={styles.column}>
-        <Text style={styles.columnHeading}>{t('challenge.match.means')}</Text>
+      <View style={[styles.column, stacked && styles.columnStacked]}>
+        <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.columnHeading}>{t('challenge.match.means')}</Text>
         {definitions.map((pair) => {
           const linkedTerm = reverse[pair.id];
           const isRight = locked && linkedTerm === pair.id;
@@ -151,6 +159,15 @@ export function ConceptMatchView({
               <Pressable
                 accessibilityRole="button"
                 accessibilityState={{ selected: Boolean(linkedTerm), disabled: locked }}
+                // The link is shown only by a shared colour, which VoiceOver cannot see.
+                accessibilityLabel={
+                  linkedTerm
+                    ? t('challenge.match.definitionLinked', {
+                        definition: pair.definition,
+                        term: challenge.pairs.find((candidate) => candidate.id === linkedTerm)?.term ?? '',
+                      })
+                    : undefined
+                }
                 onPressIn={tapCue}
                 onPress={() => handleDefinitionPress(pair.id)}
                 disabled={locked}
@@ -163,7 +180,7 @@ export function ConceptMatchView({
                 ]}
               >
                 {accent ? <View style={[styles.dot, { backgroundColor: accent }]} /> : null}
-                <Text style={styles.cardTextSmall}>{pair.definition}</Text>
+                <Text maxFontSizeMultiplier={fontScale.title} style={styles.cardTextDefinition}>{pair.definition}</Text>
               </Pressable>
             </Animated.View>
           );
@@ -178,9 +195,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.md,
   },
+  columnsStacked: {
+    flexDirection: 'column',
+    gap: spacing.lg,
+  },
   column: {
     flex: 1,
     gap: spacing.sm,
+  },
+  columnStacked: {
+    flex: 0,
   },
   columnHeading: {
     ...typography.overline,
@@ -224,9 +248,9 @@ const styles = StyleSheet.create({
     ...typography.bodyStrong,
     color: palette.ink,
   },
-  cardTextSmall: {
-    ...typography.caption,
+  /** The same size as the terms, one weight lighter, so the columns read as a pair. */
+  cardTextDefinition: {
+    ...typography.body,
     color: palette.ink,
-    lineHeight: 19,
   },
 });

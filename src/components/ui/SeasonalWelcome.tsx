@@ -20,7 +20,7 @@ import { SeasonalBurst, SeasonalRain } from '@/components/ui/SeasonalDecor';
 import { emitFeedback } from '@/feedback';
 import { useAuth } from '@/providers/AuthProvider';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, season, spacing } from '@/theme/tokens';
+import { fontScale, palette, radius, season, spacing } from '@/theme/tokens';
 
 /** Where the last welcome is remembered, as `<user id>:<local date>`. */
 const STORAGE_KEY = 'openmacro.season.welcomed';
@@ -100,7 +100,7 @@ export function SeasonalWelcome() {
         <SeasonalRain />
         <Animated.View entering={ZoomIn.springify().damping(12)} style={styles.card}>
           <Text style={styles.pumpkin} allowFontScaling={false}>🎃</Text>
-          <Text style={styles.title}>{t('season.halloween.welcome', { name })}</Text>
+          <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{t('season.halloween.welcome', { name })}</Text>
           <View style={styles.burstAnchor}>
             <SeasonalBurst />
           </View>
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   card: {
     alignItems: 'center',
     backgroundColor: palette.surface,
-    borderRadius: 28,
+    borderRadius: radius.xl,
     borderWidth: 3,
     borderColor: palette.gold,
     paddingHorizontal: spacing.xl,

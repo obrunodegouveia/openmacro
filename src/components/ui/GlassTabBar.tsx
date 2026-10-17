@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   iconFallback: {
     width: 20,
     height: 20,
-    borderRadius: 6,
+    borderRadius: radius.sm,
     opacity: 0.9,
   },
 });
