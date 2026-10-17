@@ -16,6 +16,9 @@
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
+import { Asset } from 'expo-asset';
+
+import NativeSfx from '../../modules/openmacro-sfx/src/OpenMacroSfxModule';
 
 /** Semantic events the app can emit. Add new cues here, not at call sites. */
 export type FeedbackCue =
@@ -245,6 +248,49 @@ export function preloadSounds(): void {
   } catch {
     // A device that cannot prepare audio simply plays none.
   }
+  preloadNative();
+}
+
+/**
+ * ---------------------------------------------------------------------------
+ * The low-latency path
+ * ---------------------------------------------------------------------------
+ *
+ * Even fired on touch-down, a cue still landed late, because `expo-audio`
+ * plays through AVPlayer (ExoPlayer on Android), which takes tens of
+ * milliseconds to start a clip. `modules/openmacro-sfx` decodes each clip
+ * into memory once and plays it through AVAudioEngine (SoundPool on Android),
+ * which starts it almost at once.
+ *
+ * The expo-audio pools above stay as the fallback: a binary built before the
+ * module existed (an over-the-air update reaches those too) has no native
+ * module, a clip may still be loading, and `play` returns false when it
+ * cannot sound. In every one of those cases the cue plays the old way.
+ */
+
+/** Cues the native player has loaded, for the current pack. */
+const nativeReady = new Set<FeedbackCue>();
+
+/** Bumped on every reload, so a slow load for an old pack cannot mark a cue ready. */
+let nativeGeneration = 0;
+
+/** Loads the current pack into the native player, if this binary has one. */
+function preloadNative(): void {
+  if (!NativeSfx) return;
+  const generation = ++nativeGeneration;
+  const loading = pack;
+  nativeReady.clear();
+  for (const cue of Object.keys(PACKS[loading]) as FeedbackCue[]) {
+    void Asset.fromModule(PACKS[loading][cue])
+      .downloadAsync()
+      .then((asset) => NativeSfx!.load(`${loading}:${cue}`, asset.localUri ?? asset.uri))
+      .then(() => {
+        if (generation === nativeGeneration) nativeReady.add(cue);
+      })
+      .catch(() => {
+        // Left out of `nativeReady`: this cue keeps using expo-audio.
+      });
+  }
 }
 
 /**
@@ -341,6 +387,10 @@ function playCue(cue: FeedbackCue): void {
 
   try {
     configureAudio();
+    if (nativeReady.has(cue) && NativeSfx?.play(`${pack}:${cue}`)) {
+      if (timingEnabled) recordSeek(now());
+      return;
+    }
     const pool = poolFor(cue);
     const startedAt = now();
     const free = pool.find((entry) => entry.ready && entry.player.isLoaded);
