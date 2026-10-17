@@ -28,6 +28,7 @@ import { ChallengeView } from "@/components/challenges/challenge-view";
 import { ModuleVideo } from "@/components/app/module-video";
 import { SeasonalBurst, SeasonalIcon, SeasonalRain } from "@/components/site/seasonal-decor";
 import { useAuth } from "@/components/site/auth-provider";
+import { SignedOutWarning } from "@/components/site/signed-out-warning";
 import { useLocale } from "@/components/site/locale-provider";
 import { getSupabase } from "@/lib/supabase";
 import { recordCompletion } from "@/lib/progress";
@@ -190,6 +191,7 @@ export function LessonPlayer({
       />
 
       <div className="mx-auto w-full max-w-3xl flex-1 px-5 pb-28 pt-6 sm:px-8">
+        <SignedOutWarning inLesson />
         {!started ? (
           <header className="mb-8">
             {moduleTitle ? (

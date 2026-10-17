@@ -20,6 +20,7 @@ import type { Lesson, Module } from "@openmacro/core/content/schema";
 import { Button } from "@/components/ui/button";
 import { AccountPanel } from "@/components/site/account-button";
 import { useAuth } from "@/components/site/auth-provider";
+import { SignedOutWarning } from "@/components/site/signed-out-warning";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import type { ProgressSnapshot } from "@/lib/progress";
 import { cn } from "@/lib/utils";
@@ -109,6 +110,8 @@ export function DashboardView({
 
   return (
     <div className="flex flex-col gap-8">
+      <SignedOutWarning />
+
       {/* Who and the streak ------------------------------------------------ */}
       <header className="flex items-center gap-4">
         <Avatar learner={learner} />

@@ -17,6 +17,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 
 import { ChallengeView } from '@/components/challenges/ChallengeView';
 import { LessonVideo } from '@/components/ui/LessonVideo';
+import { SignedOutWarning } from '@/components/ui/SignedOutWarning';
 import { ActionButton } from '@/components/ui/ActionButton';
 import { FeedbackSheet } from '@/components/ui/FeedbackSheet';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -260,6 +261,8 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
       <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.lessonTitle} numberOfLines={1} accessibilityRole="header">
         {lesson.title}
       </Text>
+
+      <SignedOutWarning inLesson />
 
       <ComboPill combo={state.combo} />
 

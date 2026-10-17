@@ -36,6 +36,7 @@ import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 
 import { ActionButton } from '@/components/ui/ActionButton';
+import { SignedOutWarning } from '@/components/ui/SignedOutWarning';
 import { EurcLink } from '@/components/ui/EurcLink';
 import { Chevron } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
@@ -124,6 +125,8 @@ export default function TodayScreen() {
         <EurcLink />
 
         <UpdateBanner />
+
+        <SignedOutWarning />
 
         {error ? (
           <View style={styles.errorBanner}>
