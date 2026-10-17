@@ -1,0 +1,40 @@
+/* Something crossing the window (flyer.tsx). The lap is the first 30% of the
+   cycle; the rest it waits off screen. */
+.sv-flyer-lane {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sv-flyer {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  color: var(--sv-flyer-color, currentColor);
+  animation-name: sv-fly;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
+}
+@keyframes sv-fly {
+  0% { transform: translate(-12vw, 0) rotate(0deg); opacity: 0; }
+  1.5% { opacity: 0.9; }
+  6% { transform: translate(14vw, calc(var(--sv-lift) * -1)) rotate(-6deg); }
+  12% { transform: translate(40vw, calc(var(--sv-lift) * 0.6)) rotate(7deg); }
+  18% { transform: translate(64vw, calc(var(--sv-lift) * -0.8)) rotate(-5deg); }
+  24% { transform: translate(88vw, calc(var(--sv-lift) * 0.4)) rotate(4deg); }
+  28.5% { opacity: 0.9; }
+  30% { transform: translate(112vw, 0) rotate(0deg); opacity: 0; }
+  30.1%, 100% { transform: translate(112vw, 0); opacity: 0; }
+}
+.sv-flyer[data-mirror] .sv-flyer-art { scale: -1 1; }
+.sv-flyer[data-flap] .sv-flyer-art > * {
+  display: block;
+  animation: sv-flap var(--sv-flap) ease-in-out infinite alternate;
+}
+@keyframes sv-flap {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0.45); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-flyer { display: none; }
+}

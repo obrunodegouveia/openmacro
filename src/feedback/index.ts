@@ -457,3 +457,17 @@ export function emitFeedback(cue: FeedbackCue): void {
 export function tapCue(): void {
   emitFeedback('select');
 }
+
+/**
+ * A haptic alone, with no sound, for touching something physical that is not
+ * a control: picking up the seasonal toy and letting it go. A sound on every
+ * grab would be noise; the tick in the hand is the point.
+ *
+ * @param touch `grab` (a light impact) or `release` (a selection tick).
+ */
+export function touchHaptic(touch: 'grab' | 'release'): void {
+  if (!hapticsEnabled || !HAPTICS_SUPPORTED) return;
+  const pending = touch === 'grab' ? Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light) : Haptics.selectionAsync();
+  // Haptics are cosmetic: never let a missing motor surface as an error.
+  void pending.catch(() => {});
+}

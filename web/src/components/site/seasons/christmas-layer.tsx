@@ -2,81 +2,84 @@
 
 import * as React from "react";
 import type { LayerProps } from "@/components/site/seasonal-decor";
+import { SeasonAtmosphere } from "./atmosphere";
 import { HangingToy } from "./toy";
+import { FairyLights } from "./visuals/fairy-lights";
+import { Flyer } from "./visuals/flyer";
 import "./layer.css";
-import "./christmas.css";
 
 /**
- * Christmas on the site: snow falling past the page, a sleigh crossing now
- * and then, and a bell on a thread that rings when clicked. The same pack the
- * app draws; the snow here is mostly soft dots, which read as snow at window
- * size better than a field of emoji, with the pack's own flake mixed in.
+ * Christmas on the site: an aurora in the sky, snow falling in three depths
+ * (the far flakes behind the page, the near ones faintly in front), fairy
+ * lights strung under the header, a sleigh crossing now and then, and a
+ * bell on a thread that rings when clicked and swings when thrown. The same
+ * pack the app draws, through the same app-agnostic visuals.
  *
  * Loaded only while Christmas is on (see `seasonal-decor.tsx`).
  */
 
-/** How many soft dots fall, beside the pack's own flakes. */
-const DOTS = 28;
+/** Swags across the window: two on a phone, as in the app, three when wider. */
+const SWAGS = { narrow: 2, wide: 3 } as const;
+
+/** Where the window counts as wide, for the lights. */
+const WIDE = "(min-width: 640px)";
 
 /**
- * Snow: a fixed set of flakes, each on its own lane, size, speed and delay,
- * all chosen from its index so the server and every reload agree.
+ * Whether the window is wide, live.
  *
- * @param props.flake The pack's flake emoji.
- * @param props.flakes How many of them fall.
- * @return The snow.
+ * @return True at `WIDE` and up; false on the server.
  */
-function Snow({ flake, flakes }: { flake: string; flakes: number }) {
-  const items = React.useMemo(
-    () =>
-      Array.from({ length: DOTS + flakes }, (_, i) => ({
-        emoji: i >= DOTS,
-        style: {
-          left: `${((i * 61) % 100) + ((i * 7) % 3) * 0.3}%`,
-          animationDelay: `-${(i * 1709) % 14000}ms`,
-          animationDuration: `${11000 + ((i * 2311) % 9000)}ms`,
-          "--size": `${4 + ((i * 5) % 5)}px`,
-          "--sway": `${((i * 13) % 3) - 1}rem`,
-        } as React.CSSProperties,
-      })),
-    [flakes],
-  );
-  return (
-    <div className="season-snow">
-      {items.map((item, i) =>
-        item.emoji ? (
-          <span key={i} className="season-flake" style={item.style}>
-            {flake}
-          </span>
-        ) : (
-          <span key={i} className="season-dot" style={item.style} />
-        ),
-      )}
-    </div>
+function useWide(): boolean {
+  return React.useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia(WIDE);
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(WIDE).matches,
+    () => false,
   );
 }
 
 /**
- * The Christmas layer. The calm look keeps the bell and leaves the snow and
- * the sleigh out.
+ * The Christmas layer. The calm look keeps the sky, the lights (steady) and
+ * the bell, and leaves the snow and the sleigh out.
  *
  * @param props.season The season on screen.
- * @param props.sky Whether snow and the sleigh may cross this page.
+ * @param props.sky Whether things may move over this page.
  * @return The layer.
  */
 export function ChristmasLayer({ season, sky }: LayerProps) {
-  const { flyer, ambient } = season.pack;
+  const { flyer, look } = season.pack;
+  const moving = season.motion && sky;
+  const swags = useWide() ? SWAGS.wide : SWAGS.narrow;
   return (
-    <div className="season-layer" aria-hidden>
-      {season.motion && sky && ambient ? <Snow flake={ambient.emoji} flakes={Math.min(ambient.count, 6)} /> : null}
-      <HangingToy season={season} />
-      {season.motion && sky
-        ? Array.from({ length: flyer.count }, (_, index) => (
-            <div key={index} className="season-flyer season-sleigh" data-index={index} data-mirror={flyer.mirror || undefined}>
-              {flyer.emoji}
-            </div>
-          ))
-        : null}
-    </div>
+    <>
+      <SeasonAtmosphere season={season} sky={sky} />
+      <div className="season-layer" aria-hidden>
+        {look.lights ? (
+          <div className="season-lights">
+            <FairyLights
+              colors={look.lights.colors}
+              // The pack counts bulbs across a phone's two swags.
+              count={Math.round((look.lights.count * swags) / SWAGS.narrow)}
+              swags={swags}
+              sag={look.lights.sag}
+              twinkleMs={look.lights.twinkleMs}
+              wire="var(--color-ink-faint)"
+              animate={moving}
+            />
+          </div>
+        ) : null}
+        <HangingToy season={season} />
+        {moving
+          ? Array.from({ length: flyer.count }, (_, index) => (
+              <Flyer key={index} top="9vh" width="auto" lapMs={9000} delay={4000} mirror={flyer.mirror} depth={0.03} seed={index}>
+                <span className="season-sleigh">{flyer.emoji}</span>
+              </Flyer>
+            ))
+          : null}
+      </div>
+    </>
   );
 }

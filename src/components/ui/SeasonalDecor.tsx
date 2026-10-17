@@ -6,60 +6,175 @@
  * so a new season is new data, not new components. On an ordinary day every
  * export renders nothing.
  *
- * Everything is drawn with emoji and plain views, not SVG: the app has no
- * SVG renderer, and adding a native module would hold a season back until
- * the next store build instead of shipping it as an update.
+ * These are thin wrappers. The drawing is done by the app-agnostic
+ * primitives in `src/seasons/visuals`, which take plain props; this file is
+ * where OpenMacro's palette, strings, feedback and season pack are read and
+ * handed to them.
+ *
+ * Everything is drawn with emoji, plain views and React Native's own
+ * gradients and shadows, not SVG: the app has no SVG renderer, and adding a
+ * native module would hold a season back until the next store build instead
+ * of shipping it as an update.
  *
  * All of it is decoration. It is hidden from VoiceOver and TalkBack, never
- * takes a tap meant for the screen under it (only the toy is pressable), and
+ * takes a tap meant for the screen under it (only the toy is touchable), and
  * stands still under Reduce Motion or the calm look, where whatever only
- * makes sense moving is not drawn at all.
+ * makes sense moving is not drawn at all. Every loop holds still while its
+ * screen is out of focus or the app is in the background.
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import Animated, {
-  Easing,
-  FadeIn,
-  FadeOut,
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withRepeat,
-  withSequence,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
+import { AppState, StyleSheet, Text, View, useColorScheme, useWindowDimensions, type AppStateStatus } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useIsFocused } from 'expo-router';
 
-import { toyReaction, type SeasonPack } from '@openmacro/core/season';
+import { toyReaction, type SeasonLook, type SeasonPack } from '@openmacro/core/season';
 
-import { emitFeedback } from '@/feedback';
+import { emitFeedback, touchHaptic } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useSeason, type ActiveSeason } from '@/seasons';
+import {
+  Burst,
+  CandleGlow,
+  DraggableToy,
+  EmojiRain,
+  FairyLights,
+  Flyer,
+  Fog,
+  HIDDEN,
+  ParticleField,
+  SkyGlow,
+  SnowCap,
+  type Glow,
+} from '@/seasons/visuals';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
-/** Props that take a decoration out of the accessibility tree. */
-const HIDDEN = {
-  accessible: false,
-  accessibilityElementsHidden: true,
-  importantForAccessibility: 'no-hide-descendants',
-} as const;
-
-/** How far below its anchor the toy hangs at rest, in points. */
+/** How far below the top of the screen the toy hangs at rest, past the safe area. */
 const THREAD = 30;
+
+/** The toy's touch box, in points. */
+const TOY_SIZE = 32;
+
+/** How far a tap drops the toy, and how far it can be pulled. */
+const TOY_DROP = 220;
+const TOY_DRAG = 320;
 
 /** How long the toy's line stays up. */
 const LINE_MS = 1800;
+
+/** Fades for decorations appearing or leaving when the season setting changes. */
+const APPEAR = FadeIn.duration(600);
+const LEAVE = FadeOut.duration(400);
+
+/** How tall the fog lies along the bottom of Today. */
+const FOG_HEIGHT = 240;
+
+/** How many drops fall on a finished lesson. */
+const RAIN_DROPS = 15;
+
+/** The phone width the look's bulb count is written for. */
+const LIGHTS_WIDTH = 390;
+
+/**
+ * Whether decorations here should be moving: the screen they sit on has
+ * focus and the app is in the foreground. Loops hold their frame otherwise,
+ * so three mounted tabs never animate at once, nor anything behind a lesson.
+ *
+ * @return True while it is worth animating.
+ */
+function useAwake(): boolean {
+  const focused = useIsFocused();
+  const [state, setState] = useState<AppStateStatus>(AppState.currentState);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', setState);
+    return () => subscription.remove();
+  }, []);
+  return focused && state === 'active';
+}
+
+/**
+ * The appearance on screen, as the look data indexes it.
+ *
+ * @return `light` or `dark`.
+ */
+function useScheme(): 'light' | 'dark' {
+  return useColorScheme() === 'dark' ? 'dark' : 'light';
+}
+
+/**
+ * The season's sky glows for the appearance on screen.
+ *
+ * @param look The season's look.
+ * @param scheme The appearance.
+ * @return The glows, ready for `SkyGlow`.
+ */
+function glowsFor(look: SeasonLook, scheme: 'light' | 'dark'): Glow[] {
+  return look.sky.glows.map((glow) => ({ ...glow, color: glow.color[scheme], alpha: glow.alpha[scheme] }));
+}
+
+/**
+ * The atmosphere behind a tab screen: the season's tinted sky breathing at
+ * the top, the far particles in the air behind the content, and on Today the
+ * low fog. Place it as the first child of the screen's root view, before the
+ * scroll view, so the content draws over all of it.
+ *
+ * The calm look and Reduce Motion keep the sky, still, and leave the rest.
+ *
+ * @param props.fog Lay the season's fog, if it has one, along the bottom.
+ * @return The atmosphere, or nothing on an ordinary day.
+ */
+export function SeasonalAtmosphere({ fog = false }: { fog?: boolean }) {
+  const season = useSeason();
+  const scheme = useScheme();
+  const awake = useAwake();
+  const { width, height } = useWindowDimensions();
+  const look = season?.pack.look;
+  const glows = useMemo(() => (look ? glowsFor(look, scheme) : []), [look, scheme]);
+  const back = useMemo(() => look?.motes.layers.filter((layer) => !layer.front) ?? [], [look]);
+  if (!season || !look) return null;
+  const paused = !awake;
+
+  return (
+    <Animated.View key={season.id} entering={APPEAR} exiting={LEAVE} pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
+      <SkyGlow glows={glows} height={height * look.sky.height} breatheMs={look.sky.breatheMs} animate={season.motion} paused={paused} />
+      {fog && look.fog ? (
+        <Fog
+          color={look.fog.color[scheme]}
+          alpha={look.fog.alpha[scheme]}
+          height={FOG_HEIGHT}
+          bottom={0}
+          width={width}
+          driftMs={look.fog.driftMs}
+          animate={season.motion}
+          paused={paused}
+        />
+      ) : null}
+      {season.motion ? (
+        <ParticleField
+          layers={back}
+          color={look.motes.color[scheme]}
+          glow={look.motes.glow}
+          direction={look.motes.direction}
+          wind={look.motes.wind}
+          width={width}
+          height={height}
+          paused={paused}
+        />
+      ) : null}
+    </Animated.View>
+  );
+}
 
 /**
  * The toy on a thread, hanging from the top of the screen: the spider at
  * Halloween, a bell at Christmas.
  *
- * It bobs gently on its own. A tap drops it most of the way down the screen
- * (or rings it, for a bell); every third tap it says something, and every
- * tenth it throws a burst. That is the whole game, and it is there because a
- * seven-year-old will find it.
+ * It bobs gently on its own, and a finger can pick it up and throw it: it
+ * swings back on its thread like a pendulum. A tap drops it most of the way
+ * down the screen (or rings it, for a bell); every third tap it says
+ * something, and every tenth it throws a burst. That is the whole game, and
+ * it is there because a seven-year-old will find it.
  *
  * @param props.season The season on screen.
  * @param props.top Where the thread is anchored, usually the safe-area inset.
@@ -68,23 +183,9 @@ const LINE_MS = 1800;
 function HangingToy({ season, top }: { season: ActiveSeason; top: number }) {
   const { t } = useLocale();
   const { toy } = season.pack;
-  const bob = useSharedValue(0);
-  const drop = useSharedValue(0);
-  const swing = useSharedValue(0);
   const taps = useRef(0);
   const [line, setLine] = useState<number | null>(null);
   const [burst, setBurst] = useState(0);
-
-  useEffect(() => {
-    if (!season.motion) return;
-    bob.value = withRepeat(
-      withSequence(
-        withTiming(10, { duration: 1600, easing: Easing.inOut(Easing.sin) }),
-        withTiming(0, { duration: 1600, easing: Easing.inOut(Easing.sin) }),
-      ),
-      -1,
-    );
-  }, [bob, season.motion]);
 
   useEffect(() => {
     if (line === null) return;
@@ -92,58 +193,46 @@ function HangingToy({ season, top }: { season: ActiveSeason; top: number }) {
     return () => clearTimeout(timer);
   }, [line]);
 
-  const onPress = () => {
+  const onTap = () => {
     taps.current += 1;
     const reaction = toyReaction(taps.current);
     emitFeedback(reaction === 'burst' ? 'complete' : 'select');
     if (reaction === 'burst') setBurst((n) => n + 1);
     else if (reaction !== null) setLine(reaction);
-    if (!season.motion) return;
-    if (toy.move === 'drop') {
-      drop.value = withSequence(
-        withSpring(220, { damping: 7, stiffness: 90 }),
-        withDelay(500, withTiming(0, { duration: 1400, easing: Easing.inOut(Easing.quad) })),
-      );
-    } else {
-      swing.value = withSequence(
-        withTiming(22, { duration: 120 }),
-        withTiming(-18, { duration: 180 }),
-        withTiming(12, { duration: 180 }),
-        withTiming(-6, { duration: 180 }),
-        withSpring(0, { damping: 6 }),
-      );
-    }
   };
-
-  // The thread runs from the very top of the screen to the toy.
-  const threadStyle = useAnimatedStyle(() => ({ height: top + THREAD + bob.value + drop.value }));
-  const toyStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: bob.value + drop.value },
-      { rotate: `${bob.value * 0.6 - 3 + swing.value}deg` },
-    ],
-  }));
 
   return (
     <View pointerEvents="box-none" style={styles.toyAnchor}>
-      <Animated.View style={[styles.thread, threadStyle]} {...HIDDEN} />
-      <Animated.View style={[styles.toyBody, { top: top + THREAD - 8 }, toyStyle]}>
-        <Pressable onPress={onPress} hitSlop={12} {...HIDDEN}>
-          <Text style={styles.toy} allowFontScaling={false}>{toy.emoji}</Text>
-        </Pressable>
-        {line !== null ? (
-          <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(250)} style={styles.bubble} {...HIDDEN}>
-            <Text style={styles.bubbleText} numberOfLines={2}>
-              {t(`season.${season.id}.toy.${line as 1 | 2 | 3}`)}
-            </Text>
-          </Animated.View>
-        ) : null}
-        {burst > 0 ? (
-          <View style={styles.toyBurst} pointerEvents="none">
-            <SeasonalBurst key={burst} />
-          </View>
-        ) : null}
-      </Animated.View>
+      <DraggableToy
+        restY={top + THREAD}
+        size={TOY_SIZE}
+        dropBy={TOY_DROP}
+        maxDrag={TOY_DRAG}
+        move={toy.move}
+        thread={palette.inkFaint}
+        animate={season.motion}
+        onTap={onTap}
+        onGrab={() => touchHaptic('grab')}
+        onRelease={() => touchHaptic('release')}
+        attached={
+          <>
+            {line !== null ? (
+              <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(250)} style={styles.bubble} {...HIDDEN}>
+                <Text style={styles.bubbleText} numberOfLines={2}>
+                  {t(`season.${season.id}.toy.${line as 1 | 2 | 3}`)}
+                </Text>
+              </Animated.View>
+            ) : null}
+            {burst > 0 ? (
+              <View style={styles.toyBurst} pointerEvents="none">
+                <SeasonalBurst key={burst} />
+              </View>
+            ) : null}
+          </>
+        }
+      >
+        <Text style={styles.toy} allowFontScaling={false}>{toy.emoji}</Text>
+      </DraggableToy>
     </View>
   );
 }
@@ -163,53 +252,9 @@ export function SeasonalOverlay({ top }: { top: number }) {
   if (!season || (season.calm && season.pack.toy.creepy)) return null;
 
   return (
-    <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
-      <HangingToy key={season.id} season={season} top={top} />
-    </View>
-  );
-}
-
-/**
- * One flyer crossing the top of the screen, then waiting for its next lap:
- * a bat, a sleigh.
- *
- * @param props.emoji What flies.
- * @param props.mirror Whether to flip it, so it faces the way it flies.
- * @param props.delay When its first lap starts, in milliseconds.
- * @param props.y How far from the top it flies.
- * @param props.size Its emoji size; a smaller one reads as further away.
- * @param props.width The screen width, so it crosses all of it.
- * @return The flyer.
- */
-function Flyer({ emoji, mirror, delay, y, size, width }: { emoji: string; mirror: boolean; delay: number; y: number; size: number; width: number }) {
-  const x = useSharedValue(0);
-
-  useEffect(() => {
-    x.value = withDelay(
-      delay,
-      withRepeat(
-        withSequence(
-          withTiming(1, { duration: 6500, easing: Easing.inOut(Easing.quad) }),
-          withDelay(9000, withTiming(0, { duration: 0 })),
-        ),
-        -1,
-      ),
-    );
-  }, [delay, x]);
-
-  const style = useAnimatedStyle(() => ({
-    opacity: x.value > 0 && x.value < 1 ? 1 : 0,
-    transform: [
-      { translateX: -size * 4 + x.value * (width + size * 8) },
-      { translateY: Math.sin(x.value * Math.PI * 4) * 12 },
-      { scaleX: mirror ? -1 : 1 },
-    ],
-  }));
-
-  return (
-    <Animated.Text style={[styles.flyer, { top: y, fontSize: size }, style]} allowFontScaling={false} {...HIDDEN}>
-      {emoji}
-    </Animated.Text>
+    <Animated.View key={season.id} entering={APPEAR} exiting={LEAVE} pointerEvents="box-none" style={StyleSheet.absoluteFill}>
+      <HangingToy season={season} top={top} />
+    </Animated.View>
   );
 }
 
@@ -217,111 +262,116 @@ function Flyer({ emoji, mirror, delay, y, size, width }: { emoji: string; mirror
 // High, in the band just under the clock: lower down they crossed the hero
 // card's buttons and the Course tab's search field.
 const FLIGHTS = [
-  { delay: 1200, y: 8, size: 26 },
-  { delay: 2000, y: 24, size: 18 },
-  { delay: 7500, y: 40, size: 22 },
+  { delay: 1200, y: 10, size: 26, lapMs: 7000, restMs: 9000 },
+  { delay: 2600, y: 26, size: 17, lapMs: 9500, restMs: 7000 },
+  { delay: 8000, y: 42, size: 21, lapMs: 8000, restMs: 10000 },
 ] as const;
 
 /**
- * One flake (or whatever the season sheds) drifting slowly down the screen.
- *
- * @param props.emoji What drifts.
- * @param props.x Where it falls, from the left edge.
- * @param props.delay When it first falls.
- * @param props.duration How long one fall takes.
- * @param props.height The screen height.
- * @param props.size Its emoji size.
- * @return The flake.
- */
-function Drift({ emoji, x, delay, duration, height, size }: { emoji: string; x: number; delay: number; duration: number; height: number; size: number }) {
-  const fall = useSharedValue(0);
-
-  useEffect(() => {
-    fall.value = withDelay(delay, withRepeat(withTiming(1, { duration, easing: Easing.linear }), -1));
-  }, [delay, duration, fall]);
-
-  const style = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: -40 + fall.value * (height + 80) },
-      { translateX: Math.sin(fall.value * Math.PI * 2) * 16 },
-      { rotate: `${fall.value * 180}deg` },
-    ],
-  }));
-
-  return (
-    <Animated.Text style={[styles.drift, { left: x, fontSize: size }, style]} allowFontScaling={false}>
-      {emoji}
-    </Animated.Text>
-  );
-}
-
-/**
  * The sky over whichever tab is open: the season's flyers crossing now and
- * then, and its ambient drift (snow) if it has one. Mounted once, over the
- * tab navigator, so it carries on when the learner switches tabs. Never over
- * a lesson: snow falling across a question is a distraction, not a
- * decoration.
+ * then, and the nearest, faintest particles drifting in front of the
+ * content (the far ones are behind it, in `SeasonalAtmosphere`). Mounted
+ * once, over the tab navigator, so it carries on when the learner switches
+ * tabs. Never over a lesson: snow falling across a question is a
+ * distraction, not a decoration.
  *
  * @return The sky, or nothing on an ordinary day, in the calm look, or
  *     under Reduce Motion.
  */
 export function SeasonalSky() {
   const season = useSeason();
+  const scheme = useScheme();
+  const awake = useAwake();
   const { top } = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
-  const ambient = season?.pack.ambient ?? null;
-  const flakes = useMemo(
-    () =>
-      ambient
-        ? Array.from({ length: ambient.count }, (_, i) => ({
-            x: ((i + 0.5) / ambient.count) * width - 10 + ((i * 37) % 19) - 9,
-            delay: (i * 1709) % 9000,
-            duration: 14000 + ((i * 2311) % 8000),
-            size: 12 + ((i * 7) % 3) * 4,
-          }))
-        : [],
-    [ambient, width],
-  );
-  if (!season?.motion) return null;
-  const { flyer } = season.pack;
+  const look = season?.pack.look;
+  const front = useMemo(() => look?.motes.layers.filter((layer) => layer.front) ?? [], [look]);
+  if (!season?.motion || !look) return null;
+  const { flyer, ambient } = season.pack;
+  const paused = !awake;
 
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
-      {ambient ? (
-        <View style={[StyleSheet.absoluteFill, styles.ambient]}>
-          {flakes.map((flake, i) => (
-            <Drift key={i} emoji={ambient.emoji} height={height} {...flake} />
-          ))}
-        </View>
-      ) : null}
+    <Animated.View key={season.id} entering={APPEAR} exiting={LEAVE} pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
+      <ParticleField
+        layers={front}
+        color={look.motes.color[scheme]}
+        glow={look.motes.glow}
+        direction={look.motes.direction}
+        wind={look.motes.wind}
+        width={width}
+        height={height}
+        emoji={ambient?.emoji}
+        paused={paused}
+      />
       {FLIGHTS.slice(0, flyer.count).map((flight, i) => (
         <Flyer
-          key={`${season.id}-${i}`}
+          key={i}
           emoji={flyer.emoji}
           mirror={flyer.mirror ?? false}
-          delay={flight.delay}
+          flapMs={flyer.flapMs}
           y={top + flight.y}
           size={flight.size}
           width={width}
+          lapMs={flight.lapMs}
+          restMs={flight.restMs}
+          delay={flight.delay}
+          seed={i}
+          paused={paused}
         />
       ))}
-    </View>
+    </Animated.View>
   );
 }
 
 /**
- * The season's ornament caught on the top corner of a card: a cobweb, a
- * bow. Place it inside the card, which must not clip (`overflow` visible).
+ * The season's lights strung along the top of a screen: fairy lights at
+ * Christmas. Place it as the first child of the scroll content; it takes its
+ * own height, runs to the screen edges and scrolls away with the header.
+ *
+ * @return The lights, or nothing on an ordinary day or for a season without.
+ */
+export function SeasonalLights() {
+  const season = useSeason();
+  const awake = useAwake();
+  const { width } = useWindowDimensions();
+  const lights = season?.pack.look.lights;
+  if (!season || !lights) return null;
+  return (
+    <Animated.View entering={APPEAR} exiting={LEAVE} pointerEvents="none" style={styles.lights} {...HIDDEN}>
+      <FairyLights
+        colors={lights.colors}
+        // Fewer bulbs on a narrow screen, the same spacing on a wide one.
+        count={Math.max(5, Math.round((lights.count * width) / LIGHTS_WIDTH))}
+        sag={lights.sag}
+        twinkleMs={lights.twinkleMs}
+        width={width}
+        wire={palette.inkFaint}
+        animate={season.motion}
+        paused={!awake}
+      />
+    </Animated.View>
+  );
+}
+
+/**
+ * The season's ornament caught on the top corner of a card (a cobweb, a
+ * bow), and its snow settled along the card's top edge if it has some.
+ * Place it inside the card, which must not clip (`overflow` visible).
  *
  * @return The ornament, or nothing on an ordinary day.
  */
 export function SeasonalCardCorner() {
   const season = useSeason();
+  const scheme = useScheme();
   if (!season) return null;
+  const { snowCap, motes } = season.pack.look;
   return (
-    <Text pointerEvents="none" style={styles.cardCorner} allowFontScaling={false} {...HIDDEN}>
-      {season.pack.cardCorner}
-    </Text>
+    <>
+      {snowCap ? <SnowCap color={snowCap[scheme]} shade={motes.color.light} inset={radius.xl} /> : null}
+      <Text pointerEvents="none" style={styles.cardCorner} allowFontScaling={false} {...HIDDEN}>
+        {season.pack.cardCorner}
+      </Text>
+    </>
   );
 }
 
@@ -343,24 +393,43 @@ export function SeasonalScreenCorner() {
 }
 
 /** The emoji size for each footer ornament size. */
-const FOOTER_SIZE = { s: { fontSize: 26 }, m: { fontSize: 30 }, l: { fontSize: 36 } } as const;
+const FOOTER_SIZE = { s: 26, m: 30, l: 36 } as const;
 
 /**
  * The row of ornaments that ends a scrolling screen: pumpkins and a ghost,
- * trees and a snowman.
+ * trees and a snowman. Lit ones glow from inside with the season's candle.
  *
  * @return The row, or nothing on an ordinary day.
  */
 export function SeasonalFooter() {
   const season = useSeason();
+  const awake = useAwake();
   if (!season) return null;
+  const { candle } = season.pack.look;
   return (
     <View style={styles.footer} {...HIDDEN}>
-      {season.pack.footer.map((ornament, i) => (
-        <Text key={i} style={[FOOTER_SIZE[ornament.size], ornament.lift && styles.lift]} allowFontScaling={false}>
-          {ornament.emoji}
-        </Text>
-      ))}
+      {season.pack.footer.map((ornament, i) => {
+        const glyph = (
+          <Text style={[{ fontSize: FOOTER_SIZE[ornament.size] }, ornament.lift && styles.lift]} allowFontScaling={false}>
+            {ornament.emoji}
+          </Text>
+        );
+        return candle && ornament.lit ? (
+          <CandleGlow
+            key={i}
+            color={candle.color}
+            size={FOOTER_SIZE[ornament.size]}
+            flickerMs={candle.flickerMs}
+            offset={(i * 0.37) % 1}
+            animate={season.motion}
+            paused={!awake}
+          >
+            {glyph}
+          </CandleGlow>
+        ) : (
+          <View key={i}>{glyph}</View>
+        );
+      })}
     </View>
   );
 }
@@ -391,131 +460,38 @@ export function SeasonalGreeting() {
   const season = useSeason();
   if (!season) return null;
   return (
-    <View style={styles.greeting}>
+    <Animated.View entering={APPEAR} exiting={LEAVE} style={styles.greeting}>
       <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.greetingText}>{t(`season.${season.id}.greeting`)}</Text>
-    </View>
+    </Animated.View>
   );
 }
 
 /**
- * One emoji thrown up out of a point and falling away, for `SeasonalBurst`.
- *
- * @param props.emoji What is thrown.
- * @param props.index Its place in the burst, which fixes its angle and size.
- * @param props.count How many are thrown in all.
- * @return The particle.
- */
-function BurstParticle({ emoji, index, count }: { emoji: string; index: number; count: number }) {
-  const progress = useSharedValue(0);
-  // Fanned out over the upper half-circle, alternating near and far.
-  const angle = Math.PI * (0.12 + (0.76 * index) / (count - 1));
-  const reach = index % 2 === 0 ? 120 : 82;
-
-  useEffect(() => {
-    progress.value = withDelay(index * 25, withTiming(1, { duration: 900, easing: Easing.out(Easing.cubic) }));
-  }, [index, progress]);
-
-  const style = useAnimatedStyle(() => ({
-    opacity: progress.value < 0.7 ? 1 : 1 - (progress.value - 0.7) / 0.3,
-    transform: [
-      { translateX: -Math.cos(angle) * reach * progress.value },
-      // Up and out, then a little gravity at the end.
-      { translateY: -Math.sin(angle) * reach * progress.value + 40 * progress.value * progress.value },
-      { scale: 0.4 + progress.value * 0.8 },
-      { rotate: `${(index % 2 ? 1 : -1) * 40 * progress.value}deg` },
-    ],
-  }));
-
-  return (
-    <Animated.Text style={[styles.particle, style]} allowFontScaling={false}>
-      {emoji}
-    </Animated.Text>
-  );
-}
-
-/**
- * A burst of the season's particles, thrown up once when it mounts. Used on
- * a correct answer. Place it inside a container that does not clip.
+ * A burst of the season's particles over a soft ring of light, thrown up
+ * once when it mounts. Used on a correct answer. Place it inside a container
+ * that does not clip.
  *
  * @return The burst, or nothing on an ordinary day or when nothing may move.
  */
 export function SeasonalBurst() {
   const season = useSeason();
   if (!season?.motion) return null;
-  const { particles } = season.pack;
-  return (
-    <View pointerEvents="none" style={styles.burst} {...HIDDEN}>
-      {particles.map((emoji, index) => (
-        <BurstParticle key={index} emoji={emoji} index={index} count={particles.length} />
-      ))}
-    </View>
-  );
+  const { burst } = season.pack.look;
+  return <Burst particles={season.pack.particles} ring={burst.ring} gravity={burst.gravity} spin={burst.spin} />;
 }
 
 /**
- * One emoji falling down the screen, over and over, for `SeasonalRain`.
- *
- * @param props.x Where it falls, from the left edge.
- * @param props.delay When it first falls, in milliseconds.
- * @param props.duration How long one fall takes.
- * @param props.emoji What falls.
- * @param props.height The height of the screen.
- * @return The particle.
- */
-function RainDrop({ x, delay, duration, emoji, height }: { x: number; delay: number; duration: number; emoji: string; height: number }) {
-  const fall = useSharedValue(0);
-
-  useEffect(() => {
-    fall.value = withDelay(delay, withRepeat(withTiming(1, { duration, easing: Easing.linear }), -1));
-  }, [delay, duration, fall]);
-
-  const style = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: -60 + fall.value * (height + 120) },
-      { translateX: Math.sin(fall.value * Math.PI * 3) * 18 },
-      { rotate: `${fall.value * 240}deg` },
-    ],
-  }));
-
-  return (
-    <Animated.Text style={[styles.drop, { left: x }, style]} allowFontScaling={false}>
-      {emoji}
-    </Animated.Text>
-  );
-}
-
-/**
- * The season's particles drifting down the whole screen, for a finished
- * lesson. Place it last inside the screen's root view.
+ * The season's particles falling down the whole screen in depth, for a
+ * finished lesson. Place it last inside the screen's root view.
  *
  * @return The rain, or nothing on an ordinary day or when nothing may move.
  */
 export function SeasonalRain() {
   const season = useSeason();
+  const awake = useAwake();
   const { width, height } = useWindowDimensions();
-  const particles = season?.pack.particles;
-  const drops = useMemo(
-    () =>
-      particles
-        ? Array.from({ length: 14 }, (_, i) => ({
-            // Spread evenly across the width, nudged so the columns don't line up.
-            x: ((i + 0.5) / 14) * width - 14 + ((i * 37) % 23) - 11,
-            delay: (i * 613) % 4000,
-            duration: 5200 + ((i * 1337) % 3000),
-            emoji: particles[i % particles.length]!,
-          }))
-        : [],
-    [particles, width],
-  );
   if (!season?.motion) return null;
-
-  return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
-      {drops.map((drop, i) => (
-        <RainDrop key={i} {...drop} height={height} />
-      ))}
-    </View>
-  );
+  return <EmojiRain emoji={season.pack.particles} count={RAIN_DROPS} width={width} height={height} paused={!awake} />;
 }
 
 const styles = StyleSheet.create({
@@ -535,19 +511,6 @@ const styles = StyleSheet.create({
     opacity: 0.55,
     transform: [{ rotate: '8deg' }],
   },
-  particle: { position: 'absolute', fontSize: 26 },
-  burst: {
-    position: 'absolute',
-    top: 0,
-    left: '50%',
-    width: 0,
-    height: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  drop: { position: 'absolute', top: 0, fontSize: 28, opacity: 0.9 },
-  ambient: { opacity: 0.45 },
-  drift: { position: 'absolute', top: 0 },
   toyAnchor: {
     position: 'absolute',
     // Between the lockup and the streak on a phone; it swings, so a little
@@ -555,23 +518,14 @@ const styles = StyleSheet.create({
     left: '66%',
     top: 0,
     bottom: 0,
-    width: 32,
+    width: TOY_SIZE,
   },
-  thread: {
-    position: 'absolute',
-    top: 0,
-    left: 15,
-    width: 2,
-    backgroundColor: palette.inkFaint,
-    opacity: 0.6,
-  },
-  toyBody: { position: 'absolute', left: 0, width: 32, alignItems: 'center' },
   toy: { fontSize: 26 },
-  toyBurst: { position: 'absolute', top: 16, left: 16 },
+  toyBurst: { position: 'absolute', top: spacing.lg, left: TOY_SIZE / 2 },
   bubble: {
     position: 'absolute',
-    top: 4,
-    right: 34,
+    top: spacing.xs,
+    right: TOY_SIZE + 2,
     width: 150,
     alignItems: 'flex-end',
   },
@@ -580,7 +534,7 @@ const styles = StyleSheet.create({
     backgroundColor: palette.surface,
     borderColor: palette.border,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     fontSize: 13,
@@ -588,7 +542,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: palette.ink,
   },
-  flyer: { position: 'absolute', left: 0 },
+  // Eats the content's top padding, runs edge to edge, and gives a little of
+  // its height back so the header sits only slightly lower than usual.
+  lights: { marginTop: -spacing.lg, marginBottom: -spacing.md, marginHorizontal: -spacing.lg },
   cardCorner: {
     position: 'absolute',
     top: -18,

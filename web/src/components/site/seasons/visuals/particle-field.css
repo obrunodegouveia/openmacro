@@ -1,0 +1,68 @@
+/* Ambient particles in depth (particle-field.tsx). */
+.sv-field {
+  --sv-mote: var(--sv-mote-dark);
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+@media (prefers-color-scheme: light) {
+  .sv-field { --sv-mote: var(--sv-mote-light); }
+}
+/* Behind the page, like the aurora; in front, under the header and dialogs. */
+.sv-field[data-placement="behind"] { z-index: -1; }
+.sv-field[data-placement="front"] { z-index: 39; }
+
+.sv-depth {
+  position: absolute;
+  inset: -5vh -5vw;
+}
+.sv-mote {
+  position: absolute;
+  top: 0;
+  width: var(--sv-size);
+  height: var(--sv-size);
+  border-radius: 999px;
+  background: var(--sv-mote);
+  opacity: 0;
+  animation-name: sv-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+.sv-field[data-glow] .sv-mote:not([data-emoji]) {
+  box-shadow: 0 0 calc(var(--sv-size) * 2) calc(var(--sv-size) / 2) color-mix(in srgb, var(--sv-mote) 55%, transparent);
+}
+.sv-mote[data-emoji] {
+  width: auto;
+  height: auto;
+  background: none;
+  font-size: calc(var(--sv-size) * 2.2);
+  line-height: 1;
+}
+.sv-field[data-direction="rise"] .sv-mote { animation-name: sv-rise; }
+
+/* Down the window with the wind, swaying on a sine sampled at quarters, and
+   fading in and out at the ends so nothing pops at an edge. */
+@keyframes sv-fall {
+  0% { transform: translate(0, -2vh); opacity: 0; }
+  12% { opacity: var(--sv-op); }
+  25% { transform: translate(calc(var(--sv-wind) * 0.25 + var(--sv-sway)), 27vh); }
+  50% { transform: translate(calc(var(--sv-wind) * 0.5), 55vh); }
+  75% { transform: translate(calc(var(--sv-wind) * 0.75 - var(--sv-sway)), 82vh); }
+  88% { opacity: var(--sv-op); }
+  100% { transform: translate(var(--sv-wind), 110vh); opacity: 0; }
+}
+@keyframes sv-rise {
+  0% { transform: translate(0, 110vh); opacity: 0; }
+  12% { opacity: var(--sv-op); }
+  25% { transform: translate(calc(var(--sv-wind) * 0.25 + var(--sv-sway)), 82vh); }
+  50% { transform: translate(calc(var(--sv-wind) * 0.5), 55vh); }
+  75% { transform: translate(calc(var(--sv-wind) * 0.75 - var(--sv-sway)), 27vh); }
+  88% { opacity: var(--sv-op); }
+  100% { transform: translate(var(--sv-wind), -2vh); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-field { display: none; }
+}

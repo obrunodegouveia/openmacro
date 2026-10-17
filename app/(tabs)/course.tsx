@@ -24,7 +24,7 @@ import { SymbolView } from 'expo-symbols';
 
 import { Chevron, ModuleRow } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
-import { SeasonalFooter, SeasonalScreenCorner } from '@/components/ui/SeasonalDecor';
+import { SeasonalAtmosphere, SeasonalFooter, SeasonalScreenCorner } from '@/components/ui/SeasonalDecor';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { emitFeedback } from '@/feedback';
 import { useCourse, type ModuleStatus } from '@/hooks/useCourse';
@@ -70,6 +70,8 @@ export default function CourseScreen() {
 
   return (
     <View style={styles.screen}>
+      {/* Behind everything: the season's sky, and on Today its fog. */}
+      <SeasonalAtmosphere />
       <ScrollView
         contentContainerStyle={[
           styles.content,

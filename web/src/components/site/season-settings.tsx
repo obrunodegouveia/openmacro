@@ -1,5 +1,6 @@
 "use client";
 
+import { flushSync } from "react-dom";
 import { useSeasonDecision, useSeasonPreference } from "@openmacro/seasons/react";
 import type { SeasonPreference } from "@openmacro/seasons";
 import { useLocale } from "@/components/site/locale-provider";
@@ -9,13 +10,36 @@ import { cn } from "@/lib/utils";
 const OPTIONS: readonly SeasonPreference[] = ["auto", "calm", "off"];
 
 /**
+ * Applies a change of look as a cross-fade of the whole page, where the
+ * browser has the View Transitions API and motion is welcome: the palette,
+ * the sky and the ornaments dissolve into the new look together instead of
+ * snapping. Elsewhere, and under reduced motion, it simply changes.
+ *
+ * The change runs inside `flushSync`, so React has painted the new look by
+ * the time the browser takes its "after" snapshot.
+ *
+ * @param change The change.
+ */
+function withTransition(change: () => void): void {
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (still || typeof document.startViewTransition !== "function") {
+    change();
+    return;
+  }
+  document.documentElement.setAttribute("data-season-switching", "");
+  const transition = document.startViewTransition(() => flushSync(change));
+  void transition.finished.finally(() => document.documentElement.removeAttribute("data-season-switching"));
+}
+
+/**
  * The seasonal look switch, in the footer of every page: On, Calm or Off.
  * The same choice as the app's Profile switch (`SeasonToggle`), kept in this
  * browser.
  *
  * Only there while a season is on the calendar; turned off, it stays, so a
  * visitor can turn it back on. The site repaints at once, colours included,
- * because its palette is CSS keyed on an attribute.
+ * because its palette is CSS keyed on an attribute, and cross-fades into it
+ * where the browser can (`withTransition`).
  *
  * @return The switch, or nothing on an ordinary day and during prerendering.
  */
@@ -43,7 +67,7 @@ export function SeasonSettings() {
               type="button"
               role="radio"
               aria-checked={selected}
-              onClick={() => seasons.setPreference(option)}
+              onClick={() => withTransition(() => seasons.setPreference(option))}
               className={cn(
                 "min-h-9 rounded-full px-3 text-xs font-bold transition-colors",
                 selected ? "bg-veil/10 text-ink" : "text-ink-muted hover:text-ink",

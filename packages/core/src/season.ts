@@ -63,6 +63,135 @@ export interface FooterOrnament {
   readonly size: 's' | 'm' | 'l';
   /** Sits higher than its neighbours, like the ghost floating over the pumpkins. */
   readonly lift?: boolean;
+  /** Lit from inside by the season's candle (`SeasonLook.candle`), like a jack-o'-lantern. */
+  readonly lit?: boolean;
+}
+
+/**
+ * A colour that differs by appearance. `#rrggbb` only, so `check:seasons`
+ * can composite it over the canvas and measure the text on top.
+ */
+export interface Tinted {
+  readonly light: string;
+  readonly dark: string;
+}
+
+/**
+ * One soft radial glow in a season's sky, behind the top of a screen.
+ *
+ * Positions and radii are fractions of the sky band (the width of the
+ * screen, `SeasonLook.sky.height` of its height), so the same numbers fit a
+ * phone and a desktop window. A glow must fade out inside the band
+ * (`y + ry <= 1`), or the band's edge cuts it in a hard line; the app's
+ * band has no mask to hide one. `check:seasons` holds every glow to this.
+ */
+export interface SkyGlow {
+  /**
+   * By appearance. In light, a pale tint of the hue: on a pale canvas a
+   * saturated glow darkens the page under coloured text below AA, while a
+   * pastel one brings the colour and barely moves the luminance.
+   */
+  readonly color: Tinted;
+  /** Centre, as fractions of the band's width and height. */
+  readonly x: number;
+  readonly y: number;
+  /** Horizontal and vertical radius, as fractions of the band's width and height. */
+  readonly rx: number;
+  readonly ry: number;
+  /** Peak opacity at the centre, by appearance. Kept low: content is the hero. */
+  readonly alpha: { readonly light: number; readonly dark: number };
+}
+
+/**
+ * One depth of the ambient particle field. Near layers are bigger, faster
+ * and more opaque; far ones small, slow and faint, which is what reads as
+ * depth on a flat screen.
+ */
+export interface DepthLayer {
+  /** How many particles, at most. Clients may draw fewer on a small screen. */
+  readonly count: number;
+  /** Particle diameter, in points (app) or CSS pixels (site). */
+  readonly size: number;
+  /** How long one particle takes to cross the screen, in milliseconds. */
+  readonly crossMs: number;
+  /** Peak opacity. */
+  readonly opacity: number;
+  /** How far a particle sways side to side, in points. */
+  readonly sway: number;
+  /**
+   * How far the layer follows the pointer on the site, as a fraction of the
+   * pointer's offset from the centre (0 = fixed at infinity). The app has no
+   * pointer and ignores it.
+   */
+  readonly parallax: number;
+  /** Drawn in front of the content, not behind it. Only the nearest layer, and only faint. */
+  readonly front: boolean;
+}
+
+/**
+ * How a season looks, beyond its emoji: the light, the air and the small
+ * signature details. Plain values, so both clients draw the same art
+ * direction from one place, and `check:seasons` can measure it.
+ *
+ * Everything that moves here is drawn only in the full look; the calm look
+ * keeps the sky (still) and the still details, and Reduce Motion the same.
+ */
+export interface SeasonLook {
+  /** The tinted glow behind the top of every tab screen. */
+  readonly sky: {
+    readonly glows: readonly SkyGlow[];
+    /** How much of the screen's height the band covers, from the top. */
+    readonly height: number;
+    /** One slow breath of the glow (brighter and back), in milliseconds. */
+    readonly breatheMs: number;
+  };
+  /** The ambient particle field: snow falling, embers rising. */
+  readonly motes: {
+    readonly color: Tinted;
+    /** A soft halo around each mote, in its own colour. */
+    readonly glow: boolean;
+    readonly direction: 'fall' | 'rise';
+    /** Sideways drift over one crossing, in points; positive blows right. */
+    readonly wind: number;
+    readonly layers: readonly DepthLayer[];
+  };
+  /** The burst on a correct answer. */
+  readonly burst: {
+    /** The soft ring that expands behind it. `#rrggbb`. */
+    readonly ring: string;
+    /** How far a particle falls by the end, in points. */
+    readonly gravity: number;
+    /** How far a particle turns by the end, in degrees. */
+    readonly spin: number;
+  };
+  /** Fairy lights strung along the top of Today, if any. */
+  readonly lights: {
+    /** Bulb colours, in order along the string. `#rrggbb`. */
+    readonly colors: readonly string[];
+    /** Bulbs across a phone-width string. */
+    readonly count: number;
+    /** How far the middle of the string sags, in points. */
+    readonly sag: number;
+    /** One twinkle, in milliseconds. At least 400: nothing flashes faster than 3 Hz. */
+    readonly twinkleMs: number;
+  } | null;
+  /** Snow settled on the top edge of the hero card, if any. */
+  readonly snowCap: Tinted | null;
+  /** A candle flickering inside the footer's lanterns (pumpkins), if any. */
+  readonly candle: {
+    /** `#rrggbb`. */
+    readonly color: string;
+    /** One irregular flicker cycle, in milliseconds. At least 400 (3 Hz). */
+    readonly flickerMs: number;
+  } | null;
+  /** Fog lying along the bottom of Today, behind the content, if any. */
+  readonly fog: {
+    readonly color: Tinted;
+    /** Peak opacity, by appearance. */
+    readonly alpha: { readonly light: number; readonly dark: number };
+    /** One slow drift across and back, in milliseconds. */
+    readonly driftMs: number;
+  } | null;
 }
 
 /**
@@ -104,6 +233,8 @@ export interface SeasonPack {
     readonly count: number;
     /** Mirror it, for emoji that face the wrong way for a left-to-right flight. */
     readonly mirror?: boolean;
+    /** One wing beat, in milliseconds, for flyers with wings; none for a sleigh. */
+    readonly flapMs?: number;
   };
   /** What drifts down the tabs all the time, if anything. Kept faint and few. */
   readonly ambient: { readonly emoji: string; readonly count: number } | null;
@@ -113,6 +244,8 @@ export interface SeasonPack {
   readonly screenCorner: string;
   /** The row that ends a scrolling screen. */
   readonly footer: readonly FooterOrnament[];
+  /** The light, the air and the signature details. */
+  readonly look: SeasonLook;
 }
 
 /** What each season hangs up. */
@@ -122,17 +255,51 @@ export const SEASON_PACKS: Readonly<Record<SeasonId, SeasonPack>> = {
     particles: ['🎃', '🦇', '👻', '🍬', '🎃', '🕷️', '🍭', '👻'],
     welcome: '🎃',
     toy: { emoji: '🕷️', move: 'drop', creepy: true },
-    flyer: { emoji: '🦇', count: 3 },
+    flyer: { emoji: '🦇', count: 3, flapMs: 420 },
     ambient: null,
     cardCorner: '🕸️',
     screenCorner: '🕸️',
     footer: [
-      { emoji: '🎃', size: 's' },
-      { emoji: '🎃', size: 'l' },
+      { emoji: '🎃', size: 's', lit: true },
+      { emoji: '🎃', size: 'l', lit: true },
       { emoji: '👻', size: 'm', lift: true },
-      { emoji: '🎃', size: 'l' },
-      { emoji: '🎃', size: 's' },
+      { emoji: '🎃', size: 'l', lit: true },
+      { emoji: '🎃', size: 's', lit: true },
     ],
+    look: {
+      // Dusk: violet coming down from the top left, a pumpkin glow rising on
+      // the right, a little slime green low in the middle.
+      sky: {
+        glows: [
+          { color: { light: '#E4D6FF', dark: '#7B4DE8' }, x: 0.12, y: 0, rx: 0.9, ry: 0.8, alpha: { light: 0.15, dark: 0.26 } },
+          { color: { light: '#FFDDB8', dark: '#FF8A1F' }, x: 0.92, y: 0.18, rx: 0.7, ry: 0.65, alpha: { light: 0.16, dark: 0.18 } },
+          { color: { light: '#D3F2DF', dark: '#2FBF71' }, x: 0.45, y: 0.72, rx: 0.6, ry: 0.28, alpha: { light: 0.08, dark: 0.06 } },
+        ],
+        height: 0.6,
+        breatheMs: 9000,
+      },
+      // Embers drifting up from the lanterns, few and faint.
+      motes: {
+        color: { light: '#E8700F', dark: '#FFA348' },
+        glow: true,
+        direction: 'rise',
+        wind: 18,
+        layers: [
+          { count: 7, size: 2, crossMs: 26000, opacity: 0.35, sway: 10, parallax: 0.01, front: false },
+          { count: 5, size: 3, crossMs: 19000, opacity: 0.5, sway: 16, parallax: 0.025, front: false },
+          { count: 3, size: 4, crossMs: 14000, opacity: 0.55, sway: 22, parallax: 0.05, front: true },
+        ],
+      },
+      burst: { ring: '#FF8A1F', gravity: 70, spin: 120 },
+      lights: null,
+      snowCap: null,
+      candle: { color: '#FF8A1F', flickerMs: 2600 },
+      fog: {
+        color: { light: '#E6DDF0', dark: '#6B5A88' },
+        alpha: { light: 0.2, dark: 0.22 },
+        driftMs: 42000,
+      },
+    },
   },
   christmas: {
     emoji: { streak: '🎄', complete: '🎁', perfect: '🎅' },
@@ -152,6 +319,38 @@ export const SEASON_PACKS: Readonly<Record<SeasonId, SeasonPack>> = {
       { emoji: '🎄', size: 'l' },
       { emoji: '🎁', size: 's' },
     ],
+    look: {
+      // A cold night: an aurora of teal and frost blue across the top, and
+      // a warm candle glow low on the right, like a lit window.
+      sky: {
+        glows: [
+          { color: { light: '#CDF1F3', dark: '#3FC1C9' }, x: 0.2, y: 0, rx: 0.85, ry: 0.7, alpha: { light: 0.19, dark: 0.2 } },
+          { color: { light: '#D3E4F8', dark: '#2E7BD1' }, x: 0.75, y: 0.05, rx: 0.8, ry: 0.75, alpha: { light: 0.19, dark: 0.24 } },
+          { color: { light: '#FFEDC4', dark: '#FFC23D' }, x: 0.9, y: 0.66, rx: 0.55, ry: 0.32, alpha: { light: 0.26, dark: 0.1 } },
+        ],
+        height: 0.6,
+        breatheMs: 11000,
+      },
+      // Snow in three depths, blown a little to the right.
+      motes: {
+        color: { light: '#7FA9D6', dark: '#FFFFFF' },
+        glow: false,
+        direction: 'fall',
+        wind: 40,
+        layers: [
+          { count: 12, size: 3, crossMs: 24000, opacity: 0.45, sway: 8, parallax: 0.01, front: false },
+          { count: 8, size: 5, crossMs: 16000, opacity: 0.65, sway: 14, parallax: 0.03, front: false },
+          { count: 4, size: 7, crossMs: 11000, opacity: 0.55, sway: 20, parallax: 0.06, front: true },
+        ],
+      },
+      burst: { ring: '#FFC23D', gravity: 60, spin: 90 },
+      // Old-fashioned warm bulbs; red and green here are tree lights, not
+      // "wrong" and "correct": they sit above the content and mean nothing.
+      lights: { colors: ['#FF5A5F', '#FFC23D', '#3FC1C9', '#2FBF71', '#B98CFF'], count: 11, sag: 14, twinkleMs: 2400 },
+      snowCap: { light: '#FFFFFF', dark: '#E8F1FA' },
+      candle: null,
+      fog: null,
+    },
   },
 };
 

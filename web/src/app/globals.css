@@ -239,8 +239,11 @@ html {
     --color-well: #f3e8d8;
     --color-ink-muted: #4f4060;
     --color-ink-faint: #625371;
-    --color-gold: #b65400;
+    /* A shade deeper than the ordinary light values, so text keeps AA on
+       the canvas under the season's sky and fog (check:seasons measures it). */
+    --color-gold: #a84a00;
     --color-gold-deep: #8f4100;
+    --color-mint-bright: #0e7445;
     --color-azure: #7b4de8;
     --color-azure-deep: #5b32c4;
     --color-azure-text: #5b32c4;
@@ -292,6 +295,8 @@ html {
     --color-ink-faint: #536580;
     --color-gold: #8a5a00;
     --color-gold-deep: #6e4700;
+    /* A shade deeper than the ordinary light mint, for AA under the sky. */
+    --color-mint-bright: #0e7445;
     --color-azure: #2e7bd1;
     --color-azure-deep: #1c5a9e;
     --color-azure-text: #1c5a9e;
@@ -307,10 +312,18 @@ html {
   --color-azure-text: #8cc4ff;
 }
 
+/* Switching the seasonal look cross-fades the whole page (season-settings.tsx).
+   Slower than the browser's default, so the palette visibly dissolves. */
+:root[data-season-switching]::view-transition-old(root),
+:root[data-season-switching]::view-transition-new(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+}
+
 /* Seasonal decorations live with their components, in
    components/site/seasons/*.css, and load only while their season is on.
    What stays here is what an ordinary page might need at once: the footer
-   row and the welcome. */
+   row. The welcome's staging loads with it (visuals/welcome-stage.css). */
 .season-patch {
   position: absolute;
   top: 0;
@@ -327,11 +340,6 @@ html {
 .season-ornament[data-size="l"] { font-size: 2.6rem; }
 .season-ornament[data-lift] { margin-bottom: 0.9rem; }
 
-/* The once-a-day welcome by name (seasonal-welcome.tsx). */
-.season-welcome { animation: season-welcome-in 0.25s ease-out; }
-.season-welcome-card { animation: season-welcome-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
-@keyframes season-welcome-in { from { opacity: 0; } }
-@keyframes season-welcome-pop { from { transform: scale(0.6); opacity: 0; } }
 
 
 body {

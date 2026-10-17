@@ -1,34 +1,24 @@
 /* The layer every season's decorations sit in: under the header, over the
-   page, never in the way of a click except the toy's. */
+   page, never in the way of a click except the toy's. The sky, the fog and
+   the particles sit outside it, behind the page (seasons/atmosphere.tsx). */
 .season-layer {
   position: fixed;
   inset: var(--header-total) 0 0 0;
   z-index: 40;
   pointer-events: none;
   overflow: hidden;
+  --sv-flyer-color: var(--color-ink);
 }
 
-/* Something crossing the window on a long loop: bats, a sleigh. */
-.season-flyer {
+/* Fairy lights strung edge to edge just under the header. */
+.season-lights {
   position: absolute;
-  left: 0;
-  width: 3.25rem;
-  color: var(--color-ink);
-  opacity: 0;
-  animation: season-fly 22s linear infinite;
-}
-.season-flyer[data-index="0"] { top: 18vh; animation-delay: 2s; }
-.season-flyer[data-index="1"] { top: 30vh; width: 2.25rem; animation-delay: 9s; }
-.season-flyer[data-index="2"] { top: 12vh; width: 2.75rem; animation-delay: 15s; }
-@keyframes season-fly {
-  0% { transform: translate(-10vw, 0); opacity: 0; }
-  2% { opacity: 0.85; }
-  10% { transform: translate(30vw, -4vh); }
-  20% { transform: translate(70vw, 3vh); }
-  28% { transform: translate(110vw, -2vh); opacity: 0.85; }
-  29%, 100% { transform: translate(110vw, -2vh); opacity: 0; }
+  inset: -2px 0 auto 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .season-flyer { display: none; }
+/* The sleigh: a row of emoji, larger than a bat. */
+.season-sleigh {
+  font-size: 2rem;
+  line-height: 1;
+  white-space: nowrap;
 }

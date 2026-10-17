@@ -1,14 +1,20 @@
 "use client";
 
-import type { LayerProps } from "@/components/site/seasonal-decor";
+import type { ActiveSeason, LayerProps } from "@/components/site/seasonal-decor";
+import { SeasonAtmosphere } from "./atmosphere";
 import { HangingToy } from "./toy";
+import { CandleGlow } from "./visuals/candle-glow";
+import { Flyer } from "./visuals/flyer";
 import "./layer.css";
 import "./halloween.css";
 
 /**
- * Halloween on the site: two cobwebs in the top corners, the spider on its
- * thread and three bats, in SVG. The app draws the same pack in emoji; the
- * site has an SVG renderer and a wider window, so it draws its own artwork.
+ * Halloween on the site: a dusky violet sky with a pumpkin glow, embers
+ * rising in depth, low fog along the bottom, two cobwebs in the top corners,
+ * the spider on its thread (it can be picked up and thrown), and three bats
+ * on wandering flight paths, in SVG. The app draws the same pack in emoji;
+ * the site has an SVG renderer and a wider window, so it draws its own
+ * artwork, through the same app-agnostic visuals for everything that moves.
  *
  * Loaded only while Halloween is on (see `seasonal-decor.tsx`).
  */
@@ -91,22 +97,22 @@ function SpiderArt() {
   );
 }
 
-/**
- * One bat, crossing the window on a long loop with its wings flapping.
- *
- * @param props.index Which of the bats, for its lane and its start time.
- * @return The bat.
- */
-function Bat({ index }: { index: number }) {
+/** Each bat's lane, size, lap and first start: varied, so they never fly in formation. */
+const BATS = [
+  { top: "18vh", width: "3.25rem", lapMs: 6600, delay: 2000, depth: 0.04 },
+  { top: "30vh", width: "2.25rem", lapMs: 8200, delay: 9000, depth: 0.02 },
+  { top: "12vh", width: "2.75rem", lapMs: 7400, delay: 15000, depth: 0.03 },
+] as const;
+
+/** The bat's silhouette, wings spread. */
+function BatArt() {
   return (
-    <div className="season-flyer" data-index={index}>
-      <svg viewBox="0 0 100 40" className="season-bat-wings">
+      <svg viewBox="0 0 100 40">
         <path
           fill="currentColor"
           d="M50 14L46 6L45 13C38 10 22 3 2 7C10 11 12 17 12 23C16 19 22 19 26 24C29 20 34 20 38 26C40 23 44 23 46 29L50 35L54 29C56 23 60 23 62 26C66 20 71 20 74 24C78 19 84 19 88 23C88 17 90 11 98 7C78 3 62 10 55 13L54 6Z"
         />
       </svg>
-    </div>
   );
 }
 
@@ -120,19 +126,27 @@ function Bat({ index }: { index: number }) {
  */
 export function HalloweenLayer({ season, sky }: LayerProps) {
   const creatures = !season.calm;
+  const { flyer } = season.pack;
   return (
-    <div className="season-layer" aria-hidden>
-      <Cobweb side="left" />
-      <Cobweb side="right" />
-      {creatures ? (
-        <HangingToy season={season}>
-          <SpiderArt />
-        </HangingToy>
-      ) : null}
-      {season.motion && sky
-        ? Array.from({ length: season.pack.flyer.count }, (_, index) => <Bat key={index} index={index} />)
-        : null}
-    </div>
+    <>
+      <SeasonAtmosphere season={season} sky={sky} />
+      <div className="season-layer" aria-hidden>
+        <Cobweb side="left" />
+        <Cobweb side="right" />
+        {creatures ? (
+          <HangingToy season={season}>
+            <SpiderArt />
+          </HangingToy>
+        ) : null}
+        {season.motion && sky
+          ? BATS.slice(0, flyer.count).map((bat, index) => (
+              <Flyer key={index} {...bat} flapMs={flyer.flapMs} seed={index}>
+                <BatArt />
+              </Flyer>
+            ))
+          : null}
+      </div>
+    </>
   );
 }
 
@@ -158,17 +172,30 @@ function Pumpkin({ size }: { size: number }) {
   );
 }
 
+/** The footer's pumpkins, by size, left to right. */
+const PUMPKINS = [44, 64, 38] as const;
+
 /**
- * Three lit pumpkins sitting on the top edge of the footer.
+ * Three pumpkins sitting on the top edge of the footer, each lit by the
+ * season's candle and flickering out of step with the others.
  *
+ * @param props.season The season on screen, for its candle and whether it may flicker.
  * @return The pumpkins.
  */
-export function HalloweenFooter() {
+export function HalloweenFooter({ season }: { season: ActiveSeason }) {
+  const { candle } = season.pack.look;
+  const animate = season.motion;
   return (
     <div className="season-patch" aria-hidden>
-      <Pumpkin size={44} />
-      <Pumpkin size={64} />
-      <Pumpkin size={38} />
+      {PUMPKINS.map((size, i) =>
+        candle ? (
+          <CandleGlow key={i} color={candle.color} flickerMs={candle.flickerMs} offset={(i * 0.37) % 1} animate={animate}>
+            <Pumpkin size={size} />
+          </CandleGlow>
+        ) : (
+          <Pumpkin key={i} size={size} />
+        ),
+      )}
     </div>
   );
 }

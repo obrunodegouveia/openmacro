@@ -72,7 +72,8 @@ const LAYERS: Record<SeasonId, React.ComponentType<LayerProps>> = {
   christmas: dynamic(() => import("./seasons/christmas-layer").then((m) => m.ChristmasLayer), { ssr: false }),
 };
 
-const Burst = dynamic(() => import("./seasons/fx").then((m) => m.Burst), { ssr: false });
+const Burst = dynamic(() => import("./seasons/visuals/burst").then((m) => m.Burst), { ssr: false });
+const SnowCap = dynamic(() => import("./seasons/visuals/snow-cap").then((m) => m.SnowCap), { ssr: false });
 const Rain = dynamic(() => import("./seasons/fx").then((m) => m.Rain), { ssr: false });
 const HalloweenFooter = dynamic(() => import("./seasons/halloween-layer").then((m) => m.HalloweenFooter), { ssr: false });
 
@@ -103,7 +104,7 @@ export function SeasonalDecor() {
 export function SeasonalFooter() {
   const season = useSeason();
   if (!season) return null;
-  if (season.id === "halloween") return <HalloweenFooter />;
+  if (season.id === "halloween") return <HalloweenFooter season={season} />;
   return (
     <div className="season-patch" aria-hidden>
       {season.pack.footer.map((ornament, i) => (
@@ -160,15 +161,30 @@ export function SeasonalGreeting() {
 }
 
 /**
- * A burst of the season's particles, thrown up once when it mounts. Used on
- * a correct answer. Place it inside a positioned container.
+ * A burst of the season's particles over a soft ring of light, thrown up
+ * once when it mounts. Used on a correct answer. Place it inside a positioned container.
  *
  * @return The burst, or nothing on an ordinary day or when nothing may move.
  */
 export function SeasonalBurst() {
   const season = useSeason();
   if (!season?.motion) return null;
-  return <Burst particles={season.pack.particles} />;
+  const { burst } = season.pack.look;
+  return <Burst particles={season.pack.particles} ring={burst.ring} gravity={burst.gravity} spin={burst.spin} />;
+}
+
+/**
+ * The season's snow settled on the top edge of a card, if it has any: the
+ * app puts it on Today's hero card, the site on the dashboard's "what next"
+ * card. Place it inside the card, which must be positioned and not clip.
+ *
+ * @return The cap, or nothing on an ordinary day or for a season without snow.
+ */
+export function SeasonalCardCap() {
+  const season = useSeason();
+  const cap = season?.pack.look.snowCap;
+  if (!season || !cap) return null;
+  return <SnowCap color={cap} shade={season.pack.look.motes.color.light} />;
 }
 
 /**

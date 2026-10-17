@@ -1,0 +1,35 @@
+/* Snow on a card's top edge (snow-cap.tsx). */
+.sv-snowcap {
+  --sv-snow: var(--sv-snow-dark);
+  position: absolute;
+  top: -10px;
+  left: 14px;
+  right: 14px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 1;
+}
+@media (prefers-color-scheme: light) {
+  .sv-snowcap { --sv-snow: var(--sv-snow-light); }
+}
+.sv-snowcap > span {
+  position: absolute;
+  background: var(--sv-snow);
+}
+.sv-snowcap > [data-part="lump"] {
+  bottom: 4px;
+  border-radius: 999px 999px 4px 4px;
+}
+.sv-snowcap > [data-part="base"] {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 3px color-mix(in srgb, var(--sv-snow-shade) 25%, transparent);
+}
+.sv-snowcap > [data-part="drip"] {
+  top: 10px;
+  width: 5px;
+  border-radius: 0 0 3px 3px;
+}

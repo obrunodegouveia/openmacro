@@ -26,7 +26,7 @@ import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { MusicToggle } from '@/components/ui/MusicToggle';
 import { SeasonToggle } from '@/components/ui/SeasonToggle';
-import { SeasonalFooter, SeasonalScreenCorner, useSeasonalEmoji } from '@/components/ui/SeasonalDecor';
+import { SeasonalAtmosphere, SeasonalFooter, SeasonalScreenCorner, useSeasonalEmoji } from '@/components/ui/SeasonalDecor';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { useCourse } from '@/hooks/useCourse';
 import { useReview } from '@/hooks/useReview';
@@ -62,6 +62,8 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.screen}>
+      {/* Behind everything: the season's sky, and on Today its fog. */}
+      <SeasonalAtmosphere />
       <ScrollView
         contentContainerStyle={[
           styles.content,

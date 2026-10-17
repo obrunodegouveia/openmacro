@@ -1,0 +1,52 @@
+/* A burst (burst.tsx). Each particle flies out along its own --dx/--dy
+   while gravity (--g) pulls it down harder as time goes on: the x and y
+   travel on different easings, which is what makes the arc ballistic. */
+.sv-burst {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.sv-burst > span:not(.sv-burst-ring) {
+  position: absolute;
+  font-size: 1.6rem;
+  line-height: 1;
+  opacity: 0;
+  translate: -50% -50%;
+  animation:
+    sv-burst-out 1s cubic-bezier(0.15, 0.7, 0.3, 1) forwards,
+    sv-burst-fall 1s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+.sv-burst > span[data-near] { z-index: 1; }
+@keyframes sv-burst-out {
+  0% { transform: translate(0, 0) scale(calc(var(--s) * 0.45)) rotate(0); opacity: 1; }
+  30% { transform: translate(calc(var(--dx) * 0.6), calc(var(--dy) * 0.6)) scale(var(--s)); }
+  60% { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(var(--s)) rotate(var(--rot)); opacity: 0; }
+}
+/* Gravity, as a margin, so it adds to the throw on `transform` without
+   fighting it for the same property. */
+@keyframes sv-burst-fall {
+  from { margin-top: 0; }
+  to { margin-top: var(--g); }
+}
+.sv-burst-ring {
+  position: absolute;
+  width: var(--sv-ring-size);
+  height: var(--sv-ring-size);
+  translate: -50% -50%;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--sv-ring) 80%, transparent);
+  background: radial-gradient(circle, color-mix(in srgb, var(--sv-ring) 18%, transparent) 0%, transparent 70%);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--sv-ring) 60%, transparent);
+  animation: sv-burst-ring 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes sv-burst-ring {
+  from { transform: scale(0.15); opacity: 0.7; }
+  to { transform: scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-burst { display: none; }
+}

@@ -23,6 +23,11 @@
  * 4. Its text colours clear WCAG AA (4.5:1) on its own canvas and surfaces,
  *    in both appearances, on both clients. A season is the one time a
  *    palette is written in a hurry; it is not the time for unreadable text.
+ * 5. Its look (`pack.look`) keeps that true and stays gentle: the canvas
+ *    under the sky glow and the fog, at their brightest and all stacked
+ *    up, still carries AA text on both clients; every glow fades out inside
+ *    its band; nothing twinkles or flickers anywhere near 3 Hz; and the
+ *    particle field stays within its cap.
  *
  * The ordinary palettes are measured too, as the baseline the seasons are
  * held to.
@@ -151,6 +156,105 @@ for (const id of SEASON_IDS) {
 }
 
 // ---------------------------------------------------------------------------
+// 5. The look: atmosphere contrast, glow bounds, flashing, particle caps.
+// ---------------------------------------------------------------------------
+
+/** Parses #rrggbb to [r, g, b]. */
+const rgb = (hex) => [0, 2, 4].map((i) => parseInt(hex.trim().replace('#', '').slice(i, i + 2), 16));
+const toHex = (channels) => `#${channels.map((c) => Math.round(c).toString(16).padStart(2, '0')).join('')}`;
+
+/**
+ * The canvas with tints laid over it, one after another.
+ *
+ * @param canvas The canvas, #rrggbb.
+ * @param tints Each `{ color, alpha }`, in drawing order.
+ * @return The result, #rrggbb.
+ */
+function tinted(canvas, tints) {
+  let out = rgb(canvas);
+  for (const { color, alpha } of tints) {
+    const over = rgb(color);
+    out = out.map((c, i) => c * (1 - alpha) + over[i] * alpha);
+  }
+  return toHex(out);
+}
+
+/** How a glow fades from centre to edge, as both clients draw it (`FALLOFF` in each `SkyGlow`). */
+const FALLOFF = [[0, 1], [0.3, 0.7], [0.55, 0.35], [0.8, 0.1], [1, 0]];
+
+/** A glow's opacity at a point of its band, following `FALLOFF`. */
+function glowAt(glow, alpha, x, y) {
+  const d = Math.hypot((x - glow.x) / glow.rx, (y - glow.y) / glow.ry);
+  if (d >= 1) return 0;
+  const i = FALLOFF.findIndex(([at]) => at >= d);
+  const [a0, k0] = FALLOFF[Math.max(0, i - 1)];
+  const [a1, k1] = FALLOFF[i];
+  return alpha * (a1 === a0 ? k1 : k0 + ((d - a0) / (a1 - a0)) * (k1 - k0));
+}
+
+/**
+ * The darkest or lightest the sky makes the canvas anywhere: the band is
+ * sampled on a grid, every glow's opacity there laid over the canvas, and
+ * the sample furthest from the canvas's own luminance kept. The breath only
+ * ever dims the glow, so its peak is the worst case.
+ */
+function worstSky(canvas, glows, scheme) {
+  const base = luminance(canvas);
+  let worst = canvas;
+  for (let gx = 0; gx <= 20; gx += 1) {
+    for (let gy = 0; gy <= 20; gy += 1) {
+      const tints = glows.map((glow) => ({ color: glow.color[scheme], alpha: glowAt(glow, glow.alpha[scheme], gx / 20, gy / 20) }));
+      const here = tinted(canvas, tints);
+      if (Math.abs(luminance(here) - base) > Math.abs(luminance(worst) - base)) worst = here;
+    }
+  }
+  return worst;
+}
+
+/** The most particles a field draws (MAX_PARTICLES in the app, MAX_FIELD on the site). */
+const PARTICLE_CAP = 40;
+/** The shortest twinkle or flicker cycle: each half stays well over 1/3 s. */
+const SLOWEST_FLASH_MS = 1000;
+
+for (const id of SEASON_IDS) {
+  const look = SEASON_PACKS[id]?.look;
+  if (!look) {
+    fail(`core ${id}: no look in SEASON_PACKS`);
+    continue;
+  }
+  for (const [i, glow] of look.sky.glows.entries()) {
+    if (glow.y + glow.ry > 1.001) fail(`core ${id}: sky glow ${i} runs past its band (y + ry = ${(glow.y + glow.ry).toFixed(2)} > 1), so its edge would show`);
+    if (glow.alpha.light > 0.35 || glow.alpha.dark > 0.35) fail(`core ${id}: sky glow ${i} is brighter than 0.35; the sky is a tint, not a light`);
+  }
+  const total = look.motes.layers.reduce((sum, layer) => sum + layer.count, 0);
+  if (total > PARTICLE_CAP) fail(`core ${id}: ${total} particles, over the cap of ${PARTICLE_CAP}`);
+  const front = look.motes.layers.filter((layer) => layer.front);
+  if (front.length > 1) fail(`core ${id}: more than one particle layer in front of the content`);
+  for (const layer of front) if (layer.opacity > 0.75) fail(`core ${id}: the front particle layer is over 0.75 opacity`);
+  if (look.lights && look.lights.twinkleMs < SLOWEST_FLASH_MS) fail(`core ${id}: lights twinkle every ${look.lights.twinkleMs}ms, under ${SLOWEST_FLASH_MS}ms`);
+  if (look.candle && look.candle.flickerMs < SLOWEST_FLASH_MS) fail(`core ${id}: the candle flickers every ${look.candle.flickerMs}ms, under ${SLOWEST_FLASH_MS}ms`);
+
+  for (const scheme of ['light', 'dark']) {
+    // The fog lies along the bottom, far from the sky at the top: each is
+    // measured on its own, the fog at its densest.
+    const fog = look.fog ? [{ color: look.fog.color[scheme], alpha: look.fog.alpha[scheme] }] : [];
+    const under = (canvas) => ({ sky: worstSky(canvas, look.sky.glows, scheme), fog: tinted(canvas, fog) });
+
+    // The app: its season palette for this appearance.
+    const appLight = { ...light, ...seasonal[id].light };
+    const app = scheme === 'light' ? appLight : { ...appLight, ...dark, ...seasonal[id].dark };
+    measure(`app ${id} ${scheme}`, { ...app, ...under(app.canvas) }, APP_TEXT, ['sky', 'fog']);
+
+    // The site: its season block for this appearance.
+    const darkBlock = block(`:root[data-season="${id}"]`);
+    const lightBlock = darkBlock && block(`  :root[data-season="${id}"]`, darkBlock.start + 1);
+    if (!darkBlock || !lightBlock) continue;
+    const web = scheme === 'light' ? { ...baseLight, ...lightBlock.tokens } : { ...baseDark, ...darkBlock.tokens };
+    measure(`web ${id} ${scheme}`, { ...web, ...under(web['--color-canvas']) }, scheme === 'light' ? WEB_LIGHT_TEXT : WEB_TEXT, ['sky', 'fog']);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // 3. Strings, in every catalogue.
 // ---------------------------------------------------------------------------
 
@@ -187,4 +291,4 @@ if (errors.length) {
   console.error('');
   process.exit(1);
 }
-console.log(`\n  Seasons: ${SEASON_IDS.join(', ')} have palettes on both clients, every string in ${catalogues.length} catalogues, and AA text throughout.\n`);
+console.log(`\n  Seasons: ${SEASON_IDS.join(', ')} have palettes on both clients, every string in ${catalogues.length} catalogues, AA text throughout (under the sky and fog too), and gentle looks.\n`);
