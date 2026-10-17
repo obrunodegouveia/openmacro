@@ -122,7 +122,7 @@ export const ptPT: UiDictionary = {
   'profile.about.github': 'Ver o curso no GitHub',
   'progress.title': 'Progresso',
   'progress.stat.xp': 'XP ganhos',
-  'progress.stat.lessons': 'De {total, plural, one {# lição} other {# lições}}',
+  'progress.stat.lessons': 'de {total, plural, one {# lição} other {# lições}}',
   'progress.stat.streak': 'Dias seguidos',
   'progress.module.count': '{done, number} / {total, number}',
   'progress.memory.title': 'Memória',
