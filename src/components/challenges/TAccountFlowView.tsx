@@ -28,7 +28,7 @@ import type {
 import { entityBalance, openingTotal } from '@openmacro/core/engine/tAccounts';
 import { tapCue } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import type { Translator } from '@openmacro/core/i18n';
 import { formatCompactCurrency, formatSignedCompactCurrency, seededShuffle } from '@openmacro/core/format';
 
@@ -343,7 +343,10 @@ function EntityCard({
           {entity.role ? <Text style={styles.entityRole}>{entity.role}</Text> : null}
         </View>
         <View style={[styles.tierBadge, { borderColor: TIER_COLORS[entity.tier] }]}>
-          <Text style={[styles.tierText, { color: TIER_COLORS[entity.tier] }]}>
+          <Text
+            maxFontSizeMultiplier={fontScale.chrome}
+            style={[styles.tierText, { color: TIER_COLORS[entity.tier] }]}
+          >
             {tierLabel(t, entity.tier)}
           </Text>
         </View>
@@ -419,9 +422,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   tierText: {
-    fontSize: 10,
-    lineHeight: 14,
-    fontWeight: '800',
+    ...typography.overline,
     letterSpacing: 0.4,
     textTransform: 'uppercase',
   },

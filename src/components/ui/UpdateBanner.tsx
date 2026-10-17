@@ -26,8 +26,8 @@ export function UpdateBanner() {
         accessibilityLabel={t('update.restartA11y')}
         accessibilityState={{ disabled: applying, busy: applying }}
         disabled={applying}
-        hitSlop={8}
         onPress={() => void apply()}
+        style={({ pressed }) => [styles.button, pressed && styles.pressed]}
       >
         {applying ? (
           <ActivityIndicator color={palette.mintDark} />
@@ -46,7 +46,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: spacing.md,
     marginBottom: spacing.md,
-    paddingVertical: spacing.md,
+    // Less than the other banners, because the 44pt button sets the height.
+    paddingVertical: spacing.xs,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.lg,
     backgroundColor: palette.mintSoft,
@@ -56,6 +57,8 @@ const styles = StyleSheet.create({
     color: palette.ink,
     flexShrink: 1,
   },
+  button: { minHeight: 44, minWidth: 44, alignItems: 'center', justifyContent: 'center' },
+  pressed: { opacity: 0.6 },
   action: {
     ...typography.bodyStrong,
     color: palette.mintDark,

@@ -86,7 +86,7 @@ import {
   useVideoCaptions,
   useVideosCollapsed,
 } from '@/services/videoPreference';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 export interface LessonVideoProps {
   /** A watch URL, a youtu.be link, or a bare 11-character id. */
@@ -176,7 +176,7 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
       startInLoadingState
       renderLoading={() => (
         <View style={styles.loading}>
-          <ActivityIndicator color={palette.inkFaint} />
+          <ActivityIndicator color={palette.onMedia} />
         </View>
       )}
     />
@@ -212,9 +212,11 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
               }}
             >
               <View style={styles.playButton}>
-                <Text style={styles.playGlyph}>▶︎</Text>
+                <Text allowFontScaling={false} style={styles.playGlyph}>▶︎</Text>
               </View>
-              <Text style={styles.placeholderTitle} numberOfLines={2}>
+              {/* One line, capped: in a 16:9 frame a title that wrapped at a
+                  large text size pushed the play button out of the top. */}
+              <Text maxFontSizeMultiplier={fontScale.title} style={styles.placeholderTitle} numberOfLines={1}>
                 {title}
               </Text>
             </Pressable>
@@ -226,7 +228,7 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
         accessibilityRole="button"
         accessibilityState={{ expanded: !collapsed }}
         accessibilityLabel={collapsed ? t('lesson.video.show') : t('lesson.video.hide')}
-        style={styles.meta}
+        style={({ pressed }) => [styles.meta, pressed && styles.pressed]}
         onPress={toggle}
       >
         <View style={styles.metaLines}>
@@ -257,7 +259,8 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
               player. A playing video switches without restarting. */}
           <Pressable
             accessibilityRole="button"
-            style={styles.control}
+            accessibilityLabel={t('lesson.video.captions', { choice: t(`lesson.video.captions.${captions}`) })}
+            style={({ pressed }) => [styles.control, pressed && styles.pressed]}
             onPress={() => setCaptions(nextCaptions(captions))}
           >
             <Text style={styles.toggle}>
@@ -267,7 +270,8 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
           {playing ? (
             <Pressable
               accessibilityRole="button"
-              style={styles.control}
+              accessibilityLabel={t('lesson.video.fullscreen')}
+              style={({ pressed }) => [styles.control, pressed && styles.pressed]}
               onPress={() => setFull(true)}
             >
               <Text style={styles.toggle}>{t('lesson.video.fullscreen')}</Text>
@@ -346,11 +350,11 @@ const styles = StyleSheet.create({
     // 16:9, which is what the player expects; anything else letterboxes.
     aspectRatio: 16 / 9,
     width: '100%',
-    backgroundColor: palette.ink,
+    backgroundColor: palette.media,
   },
   web: {
     flex: 1,
-    backgroundColor: palette.ink,
+    backgroundColor: palette.media,
   },
   loading: {
     position: 'absolute',
@@ -360,7 +364,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: palette.ink,
+    backgroundColor: palette.media,
   },
   placeholder: {
     flex: 1,
@@ -387,7 +391,7 @@ const styles = StyleSheet.create({
   },
   placeholderTitle: {
     ...typography.bodyStrong,
-    color: palette.surface,
+    color: palette.onMedia,
     textAlign: 'center',
   },
   meta: {
@@ -402,10 +406,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
+    paddingBottom: spacing.xs,
   },
   control: {
-    paddingVertical: spacing.xs,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  pressed: {
+    opacity: 0.6,
   },
   fullscreen: {
     flex: 1,
@@ -438,7 +446,8 @@ const styles = StyleSheet.create({
   },
   toggle: {
     ...typography.caption,
-    color: palette.mint,
+    // mint itself is a fill, 2.4:1 as text; mintDark is the text green.
+    color: palette.mintDark,
   },
   metaText: {
     ...typography.caption,

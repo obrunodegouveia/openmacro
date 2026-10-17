@@ -62,8 +62,23 @@ const light = {
   /** Hearts. */
   heart: '#FF4B6E',
 
+  /**
+   * The fifth colour that tells concept_match links apart, after blue, gold,
+   * mint and coral. A fill, the same in both appearances. Violet, except at
+   * Halloween, when blue is already violet (see `seasonal`).
+   */
+  linkAccent: '#9B5DE5',
+
   /** Drop shadows. Dark in both appearances: a light shadow reads as a glow. */
   shadow: '#0B1220',
+
+  /**
+   * Behind a video, and the text on it. Near-black in both appearances, like
+   * any player: a frame that turned pale in dark mode flashed white around
+   * the video as it loaded.
+   */
+  media: '#0B0F14',
+  onMedia: '#F7F9FB',
 
   /**
    * Text on the bright fills (mint, coral, gold), in both appearances. White
@@ -144,6 +159,8 @@ const seasonal: Record<SeasonId, { light: Partial<Record<PaletteKey, string>>; d
       blueDark: '#5B32C4',
       blueSoft: '#EFE8FF',
       blueBevel: '#5B32C4',
+      // Teal, because blue has become violet.
+      linkAccent: '#14A3A8',
       shadow: '#1A0F24',
       ink: '#241A2E',
       inkMuted: '#594C66',

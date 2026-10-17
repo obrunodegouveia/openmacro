@@ -67,8 +67,8 @@ function AccountBarComponent() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('account.signOutOf', { name: identity.displayName })}
-          hitSlop={8}
           onPress={() => void signOut()}
+          style={({ pressed }) => [styles.signOutButton, pressed && styles.pressed]}
         >
           <Text style={styles.signOut}>{t('account.signOut')}</Text>
         </Pressable>
@@ -160,7 +160,7 @@ function statusLine(t: Translator, merging: boolean, sync: SyncState | null): st
 function GoogleMark() {
   return (
     <View style={styles.mark} accessibilityElementsHidden importantForAccessibility="no">
-      <Text style={styles.markText}>G</Text>
+      <Text allowFontScaling={false} style={styles.markText}>G</Text>
     </View>
   );
 }
@@ -211,6 +211,8 @@ const styles = StyleSheet.create({
   statusPending: {
     color: palette.goldDark,
   },
+  signOutButton: { minHeight: 44, minWidth: 44, justifyContent: 'center' },
+  pressed: { opacity: 0.6 },
   signOut: {
     ...typography.caption,
     color: palette.inkMuted,
@@ -262,7 +264,7 @@ const styles = StyleSheet.create({
     borderColor: palette.border,
   },
   markText: {
-    fontSize: 14,
+    ...typography.caption,
     fontWeight: '800',
     color: '#4285F4',
   },

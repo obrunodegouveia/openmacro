@@ -149,7 +149,7 @@ export default function TodayScreen() {
                     number: next.status.number,
                   })}
                 </Text>
-                <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroModule} numberOfLines={2}>
+                <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroModule} numberOfLines={3}>
                   {next.status.module.title}
                 </Text>
               </View>
@@ -166,7 +166,7 @@ export default function TodayScreen() {
 
             <View style={styles.heroLesson}>
               <View style={styles.heroIcon}>
-                <Text style={styles.heroIconText}>{next.lesson.icon}</Text>
+                <Text allowFontScaling={false} style={styles.heroIconText}>{next.lesson.icon}</Text>
               </View>
               <View style={styles.heroLessonBody}>
                 <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroLessonTitle}>{next.lesson.title}</Text>
@@ -250,8 +250,8 @@ export default function TodayScreen() {
                   onPress={() => openLesson(lesson.id)}
                   style={({ pressed }) => [styles.tile, pressed && styles.pressed]}
                 >
-                  <Text style={styles.tileIcon}>{lesson.icon}</Text>
-                  <Text style={styles.tileTitle} numberOfLines={3}>
+                  <Text allowFontScaling={false} style={styles.tileIcon}>{lesson.icon}</Text>
+                  <Text style={styles.tileTitle} numberOfLines={4}>
                     {lesson.title}
                   </Text>
                   <Text style={styles.tileMeta}>
@@ -297,7 +297,9 @@ export default function TodayScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: palette.canvas },
-  content: { paddingHorizontal: spacing.xl, gap: spacing.xl },
+  // The same side padding as Course and Profile, so switching tabs does not
+  // shift the content sideways.
+  content: { paddingHorizontal: spacing.lg, gap: spacing.xl },
   pressed: { opacity: 0.6 },
 
   header: {
@@ -341,7 +343,7 @@ const styles = StyleSheet.create({
   },
   heroContext: { ...typography.caption, color: palette.inkMuted },
   heroModule: { ...typography.heading, color: palette.ink },
-  heroRingText: { ...typography.caption, fontSize: 12, color: palette.ink, fontVariant: ['tabular-nums'] },
+  heroRingText: { ...typography.caption, fontSize: typography.overline.fontSize, lineHeight: typography.overline.lineHeight, color: palette.ink, fontVariant: ['tabular-nums'] },
   heroLesson: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -353,7 +355,7 @@ const styles = StyleSheet.create({
   heroIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: palette.surface,
@@ -363,6 +365,7 @@ const styles = StyleSheet.create({
   heroLessonTitle: { ...typography.bodyStrong, color: palette.ink },
   heroLessonMeta: { ...typography.caption, color: palette.inkMuted },
   heroLink: {
+    minHeight: 44,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -384,7 +387,7 @@ const styles = StyleSheet.create({
   reviewIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: palette.surface,
@@ -396,10 +399,10 @@ const styles = StyleSheet.create({
   section: { gap: spacing.md },
   sectionTitle: { ...typography.heading, color: palette.ink },
   // The strip runs to the screen edges, past the content padding.
-  stripScroll: { marginHorizontal: -spacing.xl },
-  strip: { paddingHorizontal: spacing.xl, gap: spacing.md },
+  stripScroll: { marginHorizontal: -spacing.lg },
+  strip: { paddingHorizontal: spacing.lg, gap: spacing.md },
   tile: {
-    width: 168,
+    width: 200,
     minHeight: 150,
     padding: spacing.md,
     gap: spacing.sm,

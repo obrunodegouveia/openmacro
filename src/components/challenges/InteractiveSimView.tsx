@@ -176,9 +176,11 @@ export function InteractiveSimView({
 
           <View style={styles.sliderScale}>
             <Text style={styles.sliderBound}>{formatValue(slider.min, slider.format, currency, locale)}</Text>
-            {slider.hint ? <Text style={styles.sliderHint}>{slider.hint}</Text> : null}
             <Text style={styles.sliderBound}>{formatValue(slider.max, slider.format, currency, locale)}</Text>
           </View>
+          {/* Its own line: squeezed between the bounds, a hint of any length
+              wrapped into a narrow column and pushed them apart unevenly. */}
+          {slider.hint ? <Text style={styles.sliderHint}>{slider.hint}</Text> : null}
         </View>
       ))}
 
@@ -253,7 +255,9 @@ const styles = StyleSheet.create({
   },
   heroCaption: {
     ...typography.caption,
-    color: palette.inkFaint,
+    // inkFaint is a canvas colour and nearly vanished on the ink card; see
+    // heroLabel.
+    color: palette.borderStrong,
     fontVariant: ['tabular-nums'],
   },
   sliderBlock: {
@@ -297,7 +301,6 @@ const styles = StyleSheet.create({
   sliderHint: {
     ...typography.caption,
     color: palette.inkFaint,
-    flexShrink: 1,
     textAlign: 'center',
     fontWeight: '500',
   },
