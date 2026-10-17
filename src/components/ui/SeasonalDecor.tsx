@@ -14,8 +14,8 @@
  * pressable), and stands still under Reduce Motion.
  */
 
-import { useEffect } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo } from 'react';
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -28,7 +28,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { emitFeedback } from '@/feedback';
+import { useLocale } from '@/providers/LocaleProvider';
 import { palette, season, spacing } from '@/theme/tokens';
 
 /** Props that take a decoration out of the accessibility tree. */
@@ -135,25 +138,39 @@ function Bat({ delay, y, size }: { delay: number; y: number; size: number }) {
 }
 
 /**
- * What floats over the whole Today screen: the spider and, unless Reduce
- * Motion is on, two bats. Place it last inside the screen's root view.
+ * The spider hanging over the Today screen. Place it last inside the screen's
+ * root view.
  *
  * @param props.top The safe-area top inset, so nothing hides under the clock.
  * @return The overlay, or nothing on an ordinary day.
  */
 export function SeasonalOverlay({ top }: { top: number }) {
-  const reduceMotion = useReducedMotion();
   if (season !== 'halloween') return null;
 
   return (
     <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
-      {reduceMotion ? null : (
-        <View pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
-          <Bat delay={1200} y={top + 96} size={26} />
-          <Bat delay={2000} y={top + 130} size={18} />
-        </View>
-      )}
       <HangingSpider top={top} />
+    </View>
+  );
+}
+
+/**
+ * Bats crossing whichever tab is open. Mounted once, over the tab navigator,
+ * so they keep flying when the learner switches tabs. Never over a lesson:
+ * a bat crossing a question is a distraction, not a decoration.
+ *
+ * @return The bats, or nothing on an ordinary day or under Reduce Motion.
+ */
+export function SeasonalBats() {
+  const reduceMotion = useReducedMotion();
+  const { top } = useSafeAreaInsets();
+  if (season !== 'halloween' || reduceMotion) return null;
+
+  return (
+    <View pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
+      <Bat delay={1200} y={top + 96} size={26} />
+      <Bat delay={2000} y={top + 130} size={18} />
+      <Bat delay={7500} y={top + 260} size={22} />
     </View>
   );
 }
@@ -191,7 +208,202 @@ export function SeasonalFooter() {
   );
 }
 
+/** The emoji a season swaps in for the app's own, by role. */
+const SEASON_EMOJI = {
+  halloween: { streak: '🎃', complete: '🎃', perfect: '🧙' },
+} as const;
+
+/**
+ * The emoji to show for a role, in season or out of it: the streak flame
+ * becomes a jack-o'-lantern for Halloween, the lesson-complete party popper a
+ * pumpkin. The meaning stays; only the picture dresses up.
+ *
+ * @param role Which emoji.
+ * @param ordinary What to show on an ordinary day.
+ * @return The emoji.
+ */
+export function seasonalEmoji(role: keyof (typeof SEASON_EMOJI)['halloween'], ordinary: string): string {
+  return season === 'halloween' ? SEASON_EMOJI.halloween[role] : ordinary;
+}
+
+/**
+ * A small greeting pill, "🎃 Happy Halloween!", for the top of a screen.
+ *
+ * Unlike the decorations it is text, so VoiceOver reads it.
+ *
+ * @return The pill, or nothing on an ordinary day.
+ */
+export function SeasonalGreeting() {
+  const { t } = useLocale();
+  if (season !== 'halloween') return null;
+  return (
+    <View style={styles.greeting}>
+      <Text style={styles.greetingText}>{t('season.halloween.greeting')}</Text>
+    </View>
+  );
+}
+
+/**
+ * A cobweb in the top corner of a screen. Place it as the first child of the
+ * screen's scroll content, so it scrolls away with the title.
+ *
+ * @return The web, or nothing on an ordinary day.
+ */
+export function SeasonalScreenCorner() {
+  if (season !== 'halloween') return null;
+  return (
+    <Text pointerEvents="none" style={styles.screenWeb} allowFontScaling={false} {...HIDDEN}>
+      🕸️
+    </Text>
+  );
+}
+
+/** What a burst or a rain is made of. */
+const PARTICLES = ['🎃', '🦇', '👻', '🍬', '🎃', '🕷️', '🍭', '👻'];
+
+/**
+ * One emoji thrown up out of a point and falling away, for `SeasonalBurst`.
+ *
+ * @param props.index Its place in the burst, which fixes its angle and size.
+ * @return The particle.
+ */
+function BurstParticle({ index }: { index: number }) {
+  const progress = useSharedValue(0);
+  // Fanned out over the upper half-circle, alternating near and far.
+  const angle = Math.PI * (0.12 + (0.76 * index) / (PARTICLES.length - 1));
+  const reach = index % 2 === 0 ? 120 : 82;
+
+  useEffect(() => {
+    progress.value = withDelay(index * 25, withTiming(1, { duration: 900, easing: Easing.out(Easing.cubic) }));
+  }, [index, progress]);
+
+  const style = useAnimatedStyle(() => ({
+    opacity: progress.value < 0.7 ? 1 : 1 - (progress.value - 0.7) / 0.3,
+    transform: [
+      { translateX: -Math.cos(angle) * reach * progress.value },
+      // Up and out, then a little gravity at the end.
+      { translateY: -Math.sin(angle) * reach * progress.value + 40 * progress.value * progress.value },
+      { scale: 0.4 + progress.value * 0.8 },
+      { rotate: `${(index % 2 ? 1 : -1) * 40 * progress.value}deg` },
+    ],
+  }));
+
+  return (
+    <Animated.Text style={[styles.particle, style]} allowFontScaling={false}>
+      {PARTICLES[index]}
+    </Animated.Text>
+  );
+}
+
+/**
+ * A burst of pumpkins, bats and ghosts, thrown up once when it mounts. Used
+ * on a correct answer. Place it inside a container that does not clip.
+ *
+ * @return The burst, or nothing on an ordinary day or under Reduce Motion.
+ */
+export function SeasonalBurst() {
+  const reduceMotion = useReducedMotion();
+  if (season !== 'halloween' || reduceMotion) return null;
+  return (
+    <View pointerEvents="none" style={styles.burst} {...HIDDEN}>
+      {PARTICLES.map((_, index) => (
+        <BurstParticle key={index} index={index} />
+      ))}
+    </View>
+  );
+}
+
+/**
+ * One emoji falling down the screen, over and over, for `SeasonalRain`.
+ *
+ * @param props.x Where it falls, from the left edge.
+ * @param props.delay When it first falls, in milliseconds.
+ * @param props.duration How long one fall takes.
+ * @param props.emoji What falls.
+ * @param props.height The height of the screen.
+ * @return The particle.
+ */
+function RainDrop({ x, delay, duration, emoji, height }: { x: number; delay: number; duration: number; emoji: string; height: number }) {
+  const fall = useSharedValue(0);
+
+  useEffect(() => {
+    fall.value = withDelay(delay, withRepeat(withTiming(1, { duration, easing: Easing.linear }), -1));
+  }, [delay, duration, fall]);
+
+  const style = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: -60 + fall.value * (height + 120) },
+      { translateX: Math.sin(fall.value * Math.PI * 3) * 18 },
+      { rotate: `${fall.value * 240}deg` },
+    ],
+  }));
+
+  return (
+    <Animated.Text style={[styles.drop, { left: x }, style]} allowFontScaling={false}>
+      {emoji}
+    </Animated.Text>
+  );
+}
+
+/**
+ * Pumpkins, sweets and ghosts drifting down the whole screen, for a finished
+ * lesson. Place it last inside the screen's root view.
+ *
+ * @return The rain, or nothing on an ordinary day or under Reduce Motion.
+ */
+export function SeasonalRain() {
+  const reduceMotion = useReducedMotion();
+  const { width, height } = useWindowDimensions();
+  const drops = useMemo(
+    () =>
+      Array.from({ length: 14 }, (_, i) => ({
+        // Spread evenly across the width, nudged so the columns don't line up.
+        x: ((i + 0.5) / 14) * width - 14 + ((i * 37) % 23) - 11,
+        delay: (i * 613) % 4000,
+        duration: 5200 + ((i * 1337) % 3000),
+        emoji: PARTICLES[i % PARTICLES.length]!,
+      })),
+    [width],
+  );
+  if (season !== 'halloween' || reduceMotion) return null;
+
+  return (
+    <View pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
+      {drops.map((drop, i) => (
+        <RainDrop key={i} {...drop} height={height} />
+      ))}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  greeting: {
+    alignSelf: 'flex-start',
+    backgroundColor: palette.goldSoft,
+    borderRadius: 999,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  greetingText: { fontSize: 14, lineHeight: 19, fontWeight: '800', color: palette.goldDark },
+  screenWeb: {
+    position: 'absolute',
+    top: -spacing.lg,
+    right: -spacing.md,
+    fontSize: 64,
+    opacity: 0.55,
+    transform: [{ rotate: '8deg' }],
+  },
+  particle: { position: 'absolute', fontSize: 26 },
+  burst: {
+    position: 'absolute',
+    top: 0,
+    left: '50%',
+    width: 0,
+    height: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  drop: { position: 'absolute', top: 0, fontSize: 28, opacity: 0.9 },
   spiderAnchor: {
     position: 'absolute',
     // Between the lockup and the streak on a phone; it swings, so a little

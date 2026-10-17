@@ -34,6 +34,7 @@ import { LessonRow, type LessonState } from '@/components/ui/CourseRows';
 import { LessonVideo } from '@/components/ui/LessonVideo';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { useCourse } from '@/hooks/useCourse';
+import { SeasonalCardCorner, SeasonalFooter } from '@/components/ui/SeasonalDecor';
 import { openLesson } from '@/navigation/routes';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
@@ -122,6 +123,7 @@ export default function ModuleScreen() {
         </View>
 
         <View style={styles.stats}>
+          <SeasonalCardCorner />
           <ProgressRing
             progress={total ? done / total : 0}
             size={52}
@@ -167,6 +169,7 @@ export default function ModuleScreen() {
             );
           })}
         </View>
+        <SeasonalFooter />
       </ScrollView>
 
       {target ? (

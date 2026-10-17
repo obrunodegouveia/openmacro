@@ -77,6 +77,7 @@ export const ptPT: UiDictionary = {
   'today.upNext': 'A seguir neste módulo',
   'today.browse': 'Explorar os {count, number} módulos',
   'today.allDone': 'Terminaste o curso inteiro',
+  'season.halloween.greeting': '🎃 Feliz Halloween!',
   'today.allDoneBody': 'A revisão impede que se apague, e qualquer lição pode ser repetida a partir do separador Curso.',
   'course.title': 'Curso',
   'course.search': 'Procurar módulos e lições',

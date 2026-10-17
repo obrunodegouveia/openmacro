@@ -26,6 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChallengeView } from "@/components/challenges/challenge-view";
 import { ModuleVideo } from "@/components/app/module-video";
+import { SeasonalBurst, SeasonalIcon, SeasonalRain } from "@/components/site/seasonal-decor";
 import { useAuth } from "@/components/site/auth-provider";
 import { useLocale } from "@/components/site/locale-provider";
 import { getSupabase } from "@/lib/supabase";
@@ -501,6 +502,8 @@ function FeedbackSheet({
         correct ? "border-mint/40 bg-sheet-correct/95" : "border-coral/40 bg-sheet-wrong/95",
       )}
     >
+      {/* Thrown once, when the sheet arrives with a right answer. */}
+      {correct ? <SeasonalBurst /> : null}
       <div className="mx-auto grid w-full max-w-3xl gap-3 px-5 pt-5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-8">
         <div className="flex items-center gap-3">
           <span
@@ -637,8 +640,12 @@ function LessonComplete({
   return (
     <div className="glass rounded-card p-7 text-center shadow-2xl shadow-black/50 sm:p-10">
       <span className="mx-auto grid size-14 place-items-center rounded-2xl border border-mint/30 bg-mint/10">
-        <PartyPopper className="size-7 text-mint-bright" aria-hidden />
+        <SeasonalIcon role={perfect ? "perfect" : "complete"} className="text-3xl">
+          <PartyPopper className="size-7 text-mint-bright" aria-hidden />
+        </SeasonalIcon>
       </span>
+      {/* Over the whole window: pumpkins and ghosts drifting down. */}
+      <SeasonalRain />
       <h2 className="mt-5 font-display text-2xl font-extrabold tracking-tight">
         {t("complete.title")}
       </h2>

@@ -39,7 +39,7 @@ import { ActionButton } from '@/components/ui/ActionButton';
 import { Chevron } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { ProgressRing } from '@/components/ui/ProgressRing';
-import { SeasonalCardCorner, SeasonalFooter, SeasonalOverlay } from '@/components/ui/SeasonalDecor';
+import { SeasonalCardCorner, SeasonalFooter, SeasonalGreeting, SeasonalOverlay } from '@/components/ui/SeasonalDecor';
 import { StreakBadge } from '@/components/ui/StatusPills';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { UpdateBanner } from '@/components/ui/UpdateBanner';
@@ -116,6 +116,8 @@ export default function TodayScreen() {
             )}
           </View>
         </View>
+
+        <SeasonalGreeting />
 
         <UpdateBanner />
 

@@ -24,6 +24,7 @@ import { SymbolView } from 'expo-symbols';
 
 import { Chevron, ModuleRow } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
+import { SeasonalFooter, SeasonalScreenCorner } from '@/components/ui/SeasonalDecor';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { emitFeedback } from '@/feedback';
 import { useCourse, type ModuleStatus } from '@/hooks/useCourse';
@@ -80,7 +81,10 @@ export default function CourseScreen() {
         // The title scrolls away; search and the level switch stay.
         stickyHeaderIndices={[1]}
       >
-        <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{t('course.title')}</Text>
+        <View>
+          <SeasonalScreenCorner />
+          <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{t('course.title')}</Text>
+        </View>
 
         <View style={styles.sticky}>
           <View style={styles.search}>
@@ -172,6 +176,8 @@ export default function CourseScreen() {
             ))}
           </View>
         ) : null}
+
+        <SeasonalFooter />
       </ScrollView>
       <TopScrim />
     </View>

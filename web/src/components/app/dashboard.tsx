@@ -23,6 +23,7 @@ import { useAuth } from "@/components/site/auth-provider";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import type { ProgressSnapshot } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import { SeasonalGreeting, SeasonalIcon } from "@/components/site/seasonal-decor";
 
 /**
  * ============================================================================
@@ -115,11 +116,14 @@ export function DashboardView({
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-balance">
             {signedIn && firstName ? s("today.hello", { name: firstName }) : s("today.helloAnon")}
           </h1>
+          <SeasonalGreeting />
           <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-ink-muted">
-            <Flame
-              className={cn("size-4", progress.streakActiveToday ? "text-gold" : "text-ink-faint")}
-              aria-hidden
-            />
+            <SeasonalIcon role="streak" className={cn("text-base", !progress.streakActiveToday && "opacity-40")}>
+              <Flame
+                className={cn("size-4", progress.streakActiveToday ? "text-gold" : "text-ink-faint")}
+                aria-hidden
+              />
+            </SeasonalIcon>
             {loading
               ? " "
               : progress.dayStreak === 0
