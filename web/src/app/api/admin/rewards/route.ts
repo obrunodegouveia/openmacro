@@ -8,6 +8,7 @@ import {
   getRecipientById,
   listRecipients,
   normaliseAddress,
+  setRecipientAddress,
   setRecipientRates,
   setRecipientStatus,
 } from "@/lib/rewards/recipients";
@@ -254,6 +255,34 @@ export async function POST(request: Request) {
         });
         return NextResponse.json({ error: message }, { status: 502 });
       }
+    }
+
+    // -----------------------------------------------------------------------
+    /**
+     * Change where a recipient is paid.
+     *
+     * A per-module recipient returns to pending and must be tested and
+     * activated again; an earnings recipient keeps its status, as it does
+     * when the learner changes the address themselves.
+     */
+    case "set-address": {
+      const parsed = normaliseAddress(str("address"));
+      if ("error" in parsed) {
+        return NextResponse.json({ error: parsed.error }, { status: 400 });
+      }
+
+      const result = await setRecipientAddress(str("id"), parsed.address);
+      if ("error" in result) {
+        return NextResponse.json({ error: result.error }, { status: 400 });
+      }
+
+      await recordAdminEvent(admin.email, "recipient.address-set-by-admin", {
+        key: result.previous.key,
+        from: result.previous.address,
+        to: parsed.address,
+        status: { from: result.previous.status, to: result.recipient.status },
+      });
+      return NextResponse.json({ recipient: result.recipient });
     }
 
     // -----------------------------------------------------------------------
