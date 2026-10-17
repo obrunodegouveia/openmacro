@@ -31,7 +31,7 @@ const noSubscription = () => () => {};
  *
  * @return The season, or `null` on the server and on an ordinary day.
  */
-function useSeason(): SeasonId | null {
+export function useSeason(): SeasonId | null {
   return useSyncExternalStore(noSubscription, documentSeason, () => null);
 }
 
