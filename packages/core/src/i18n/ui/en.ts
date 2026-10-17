@@ -68,6 +68,9 @@ export const en = {
   'today.allDone': 'You have finished the whole course',
   // Seasons (see season.ts). Shown only while the season is on.
   'season.halloween.greeting': '🎃 Happy Halloween!',
+  'signedOut.today': '⚠️ You’re not signed in. Your progress stays on this device only and isn’t saved to your account.',
+  'signedOut.lesson': '⚠️ Not signed in: this lesson won’t be saved to your account.',
+  'signedOut.signIn': 'Sign in',
   'eurc.label': 'Find out what your XP can do',
   'eurc.hint': 'Opens openmacro.org in Safari',
   'season.halloween.welcome': 'Happy Halloween, {name}!',
