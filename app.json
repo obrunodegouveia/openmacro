@@ -3,7 +3,7 @@
     "name": "OpenMacro",
     "slug": "openmacro",
     "owner": "care-to-beauty",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Duolingo-style micro-learning for macroeconomics, monetary policy and fractional-reserve banking. Five minutes a day, no account needed.",
     "orientation": "portrait",
     "icon": "./assets/brand/v3/openmacro-icon-light.png",
