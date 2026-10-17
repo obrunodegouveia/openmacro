@@ -82,7 +82,88 @@ export type LessonSessionAction =
    * still answered, so a shared link changes the order of a run and never its
    * contents.
    */
-  | { kind: 'jump'; challengeId: string };
+  | { kind: 'jump'; challengeId: string }
+  /**
+   * Pick a run back up where the learner left it (see `snapshotSession`).
+   *
+   * Only from a clean start, and only when the snapshot still fits the
+   * lesson; otherwise it is ignored and the run starts over.
+   */
+  | { kind: 'resume'; snapshot: SessionSnapshot };
+
+/**
+ * What is kept of a run in progress so that closing a lesson by accident does
+ * not lose it. Plain JSON: each client stores it on the device per lesson.
+ *
+ * Hearts, the combo and XP come back exactly as they were, so leaving and
+ * returning is never a way to refill hearts or retry for free. An answer that
+ * had been graded but not yet continued past is applied on resume, as if the
+ * learner had pressed Continue.
+ */
+export interface SessionSnapshot {
+  version: 1;
+  lessonId: string;
+  queue: readonly string[];
+  resolved: readonly string[];
+  missed: readonly string[];
+  hearts: number;
+  combo: number;
+  bestCombo: number;
+  xpEarned: number;
+  submissionCount: number;
+  stepSerial: number;
+  /** The graded answer on screen when the run was left, if any. */
+  pending: { challengeId: string; correct: boolean } | null;
+}
+
+/**
+ * The part of a run worth resuming, or null when there is nothing to keep:
+ * nothing answered yet, or the run is over.
+ *
+ * @param state The session.
+ * @return A snapshot to store, or null meaning "clear what is stored".
+ */
+export function snapshotSession(state: LessonSessionState): SessionSnapshot | null {
+  if (state.status !== 'in_progress' || state.submissionCount === 0) return null;
+  return {
+    version: 1,
+    lessonId: state.lesson.id,
+    queue: state.queue,
+    resolved: state.resolved,
+    missed: state.missed,
+    hearts: state.hearts,
+    combo: state.combo,
+    bestCombo: state.bestCombo,
+    xpEarned: state.xpEarned,
+    submissionCount: state.submissionCount,
+    stepSerial: state.stepSerial,
+    pending: state.feedback
+      ? { challengeId: state.feedback.challengeId, correct: state.feedback.correct }
+      : null,
+  };
+}
+
+/**
+ * Whether a stored snapshot still describes this lesson: same id, and exactly
+ * the lesson's challenges between what is left and what is done. A lesson
+ * changed by an update since the snapshot was taken starts over instead.
+ */
+function snapshotFits(lesson: Lesson, snapshot: SessionSnapshot): boolean {
+  if (snapshot?.version !== 1 || snapshot.lessonId !== lesson.id) return false;
+  const ids = lesson.challenges.map((challenge) => challenge.id);
+  const left = new Set(snapshot.queue);
+  const done = new Set(snapshot.resolved);
+  if (left.size !== snapshot.queue.length || done.size !== snapshot.resolved.length) return false;
+  if (left.size === 0 || left.size + done.size !== ids.length) return false;
+  if (!ids.every((id) => left.has(id) !== done.has(id))) return false;
+  if (!snapshot.missed.every((id) => ids.includes(id))) return false;
+  if (snapshot.pending && snapshot.pending.challengeId !== snapshot.queue[0]) return false;
+  const maxHearts = lesson.hearts ?? DEFAULT_HEARTS;
+  if (!Number.isInteger(snapshot.hearts) || snapshot.hearts > maxHearts) return false;
+  // No hearts left is only possible with the losing answer still on screen;
+  // resuming then fails the run, so leaving is never a way out of failing.
+  return snapshot.hearts > 0 || (snapshot.pending !== null && !snapshot.pending.correct && snapshot.hearts === 0);
+}
 
 export function createSession(lesson: Lesson): LessonSessionState {
   const hearts = lesson.hearts ?? DEFAULT_HEARTS;
@@ -148,6 +229,36 @@ export function lessonSessionReducer(
           ...state.queue.slice(index + 1),
         ],
       };
+    }
+
+    // -----------------------------------------------------------------------
+    case 'resume': {
+      if (state.status !== 'in_progress' || state.feedback) return state;
+      if (state.resolved.length > 0 || state.submissionCount > 0) return state;
+      const { snapshot } = action;
+      if (!snapshotFits(state.lesson, snapshot)) return state;
+
+      const resumed: LessonSessionState = {
+        ...state,
+        queue: snapshot.queue,
+        resolved: snapshot.resolved,
+        missed: snapshot.missed,
+        hearts: snapshot.hearts,
+        combo: snapshot.combo,
+        bestCombo: snapshot.bestCombo,
+        xpEarned: snapshot.xpEarned,
+        submissionCount: snapshot.submissionCount,
+        stepSerial: snapshot.stepSerial,
+      };
+      if (!snapshot.pending) return resumed;
+      // The graded answer was already counted; move past it as Continue would.
+      return lessonSessionReducer(
+        {
+          ...resumed,
+          feedback: { correct: snapshot.pending.correct, title: '', explanation: '', challengeId: snapshot.pending.challengeId },
+        },
+        { kind: 'continue' },
+      );
     }
 
     // -----------------------------------------------------------------------

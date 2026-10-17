@@ -93,7 +93,7 @@ export const en = {
   'lesson.status.next': 'Up next',
   'lesson.status.upcoming': 'Not started',
   'lesson.exitConfirm.title': 'Leave this lesson?',
-  'lesson.exitConfirm.body': 'The answers you gave in this run will be lost.',
+  'lesson.exitConfirm.body': 'Your place is saved on this device. Open this lesson again to carry on where you left off.',
   'lesson.exitConfirm.leave': 'Leave',
   'lesson.exitConfirm.stay': 'Keep going',
   'complete.nextNamed': 'Next lesson · {title}',
