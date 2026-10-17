@@ -163,7 +163,8 @@ async function mintNewXp(userId: string, recipient: Recipient): Promise<void> {
     user_id: userId,
     recipient_key: recipient.key,
     xp,
-    xp_total_after: earned,
+    // Unique per learner: of two concurrent mints, only one is accepted.
+    xp_total_before: minted,
     rate_euros: rateEuros,
     amount_base_units: (BigInt(xp) * eurosToBaseUnits(rateEuros)).toString(),
   });

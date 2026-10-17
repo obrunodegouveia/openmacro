@@ -13,24 +13,27 @@
 -- moment. A row is never updated or deleted, so minted XP only grows and
 -- keeps the price it was minted at. A new rate applies to XP minted after it.
 --
--- Two readers racing to mint the same XP compute the same xp_total_after;
--- the unique index lets one in and the other's insert fails harmlessly.
+-- Each mint records what had been minted before it. Two readers racing to
+-- mint read the same total, so they insert the same xp_total_before, and the
+-- unique index lets exactly one in. Keying on the total *after* would not:
+-- two readers that saw different best scores would both get in, and the
+-- same XP would be minted twice.
 
 create table if not exists public.xp_mints (
   id                uuid        primary key default gen_random_uuid(),
   user_id           uuid        not null references auth.users (id) on delete cascade,
   recipient_key     text        not null,
   xp                integer     not null check (xp > 0),
-  -- Everything minted for this learner including this row. The uniqueness of
-  -- (user_id, xp_total_after) is what makes double-minting impossible.
-  xp_total_after    integer     not null check (xp_total_after > 0),
+  -- Everything minted for this learner before this row. The uniqueness of
+  -- (user_id, xp_total_before) is what makes double-minting impossible.
+  xp_total_before   integer     not null check (xp_total_before >= 0),
   rate_euros        text        not null check (rate_euros ~ '^\d+(\.\d{1,6})?$'),
   amount_base_units text        not null check (amount_base_units ~ '^[0-9]+$'),
   created_at        timestamptz not null default now()
 );
 
-create unique index if not exists xp_mints_user_total
-  on public.xp_mints (user_id, xp_total_after);
+create unique index if not exists xp_mints_user_total_before
+  on public.xp_mints (user_id, xp_total_before);
 
 alter table public.xp_mints enable row level security;
 -- No policies: service role only, like reward_recipients and activity_minutes.
