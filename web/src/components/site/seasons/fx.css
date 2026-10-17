@@ -1,0 +1,52 @@
+/* A burst on a correct answer: each particle flies to its own --dx/--dy. */
+.season-burst {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.season-burst > span {
+  position: absolute;
+  font-size: 1.6rem;
+  line-height: 1;
+  opacity: 0;
+  animation: season-burst 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+@keyframes season-burst {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+  70% { opacity: 1; }
+  100% {
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 40px)) scale(1.2) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+
+/* Particles drifting down the window on a finished lesson. Behind the page,
+   like the aurora on body::before: through the gaps, never over text. */
+.season-rain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.season-rain > span {
+  position: absolute;
+  top: -3rem;
+  font-size: 1.75rem;
+  opacity: 0.9;
+  animation: season-rain linear infinite;
+}
+@keyframes season-rain {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(18px, 36vh) rotate(80deg); }
+  66% { transform: translate(-18px, 72vh) rotate(160deg); }
+  100% { transform: translate(0, calc(100vh + 6rem)) rotate(240deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-burst,
+  .season-rain { display: none; }
+}

@@ -15,7 +15,7 @@ import { Tabs } from 'expo-router';
 import { View } from 'react-native';
 
 import { GlassTabBar } from '@/components/ui/GlassTabBar';
-import { SeasonalBats } from '@/components/ui/SeasonalDecor';
+import { SeasonalSky } from '@/components/ui/SeasonalDecor';
 import { SeasonalWelcome } from '@/components/ui/SeasonalWelcome';
 import { useLocale } from '@/providers/LocaleProvider';
 
@@ -37,8 +37,8 @@ export default function TabLayout() {
       <Tabs.Screen name="course" options={{ title: t('tabs.course') }} />
       <Tabs.Screen name="profile" options={{ title: t('tabs.profile') }} />
     </Tabs>
-    {/* Over every tab, so they keep flying when the learner switches. */}
-    <SeasonalBats />
+    {/* Over every tab, so the sky carries on when the learner switches. */}
+    <SeasonalSky />
     <SeasonalWelcome />
     </View>
   );

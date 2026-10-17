@@ -7,9 +7,10 @@ import { SeasonalBurst, SeasonalRain, useSeason } from "@/components/site/season
 
 /**
  * A seasonal welcome by name: the first time a signed-in learner opens the
- * site each day while a season is on, "Happy Halloween, Maria!" fills the
- * window with a burst of pumpkins, then gets out of the way. The app shows
- * the same thing (src/components/ui/SeasonalWelcome.tsx).
+ * site each day while a season is on, "Happy Halloween, Maria!" (or "Ho ho
+ * ho, Maria!") fills the window with a burst of the season's particles, then
+ * gets out of the way. Never in the calm look, which has no popups. The app
+ * shows the same thing (src/components/ui/SeasonalWelcome.tsx).
  *
  * The name is the signed-in account's own, from the session. Nobody's name is
  * written into the site; signed out, or with no name on the account, there is
@@ -53,13 +54,14 @@ export function SeasonalWelcome() {
   const { learner } = useAuth();
   const { t } = useLocale();
   const [name, setName] = React.useState<string | null>(null);
+  const id = season && !season.calm ? season.id : null;
 
   const userId = learner?.id ?? null;
   const displayName = learner?.name ?? "";
 
   React.useEffect(() => {
     const first = firstName(displayName);
-    if (season !== "halloween" || !userId || !first) return;
+    if (!id || !userId || !first) return;
     const mark = `${userId}:${today()}`;
     try {
       if (localStorage.getItem(STORAGE_KEY) === mark) return;
@@ -70,7 +72,7 @@ export function SeasonalWelcome() {
     // Deferred a frame so the state change happens outside the effect body.
     const frame = requestAnimationFrame(() => setName(first));
     return () => cancelAnimationFrame(frame);
-  }, [season, userId, displayName]);
+  }, [id, userId, displayName]);
 
   React.useEffect(() => {
     if (!name) return;
@@ -83,21 +85,21 @@ export function SeasonalWelcome() {
     };
   }, [name]);
 
-  if (!name) return null;
+  if (!name || !season) return null;
 
   return (
     <div
       role="status"
       onClick={() => setName(null)}
-      className="season-welcome fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-[rgba(20,8,32,0.72)] p-6"
+      className="season-welcome fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-abyss/75 p-6"
     >
       <SeasonalRain />
       <div className="season-welcome-card relative max-w-sm rounded-[28px] border-[3px] border-gold bg-surface px-8 py-6 text-center">
         <p className="text-[88px] leading-none" aria-hidden>
-          🎃
+          {season.pack.welcome}
         </p>
         <p className="mt-3 text-4xl font-black leading-tight text-gold">
-          {t("season.halloween.welcome", { name })}
+          {t(`season.${season.id}.welcome`, { name })}
         </p>
         <div className="absolute inset-x-0 top-[40%]">
           <SeasonalBurst />

@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@openmacro/core": "*",
+    "@openmacro/seasons": "*",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/slider": "5.2.0",
     "@supabase/supabase-js": "^2.115.0",
@@ -15,6 +16,7 @@
     "expo-build-properties": "~57.0.17",
     "expo-constants": "~57.0.17",
     "expo-dev-client": "~57.0.19",
+    "expo-file-system": "~57.0.7",
     "expo-haptics": "~57.0.3",
     "expo-linking": "~57.0.10",
     "expo-localization": "~57.0.2",
@@ -96,7 +98,10 @@
     "i18n:import": "node ./scripts/i18n.mjs import",
     "i18n:fixspelling": "node ./scripts/i18n.mjs fixspelling",
     "update:check": "node ./scripts/update-reachability.mjs",
-    "release:record": "node ./scripts/update-reachability.mjs --record"
+    "release:record": "node ./scripts/update-reachability.mjs --record",
+    "test:seasons": "npm test --workspace @openmacro/seasons",
+    "typecheck:seasons": "node ./node_modules/typescript-native/bin/tsc -p packages/seasons --noEmit",
+    "check:seasons": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON ./scripts/check-seasons.mjs"
   },
   "private": true,
   "description": "Duolingo-style micro-learning app teaching macroeconomics, monetary policy and fractional-reserve banking.",

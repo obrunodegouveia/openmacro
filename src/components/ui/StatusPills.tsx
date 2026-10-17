@@ -15,7 +15,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { seasonalEmoji } from '@/components/ui/SeasonalDecor';
+import { useSeasonalEmoji } from '@/components/ui/SeasonalDecor';
 import { useLocale } from '@/providers/LocaleProvider';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
@@ -71,9 +71,10 @@ export interface StreakBadgeProps {
 
 function StreakBadgeComponent({ streak, active = true }: StreakBadgeProps) {
   const { t } = useLocale();
+  const flame = useSeasonalEmoji('streak', '🔥');
   return (
     <View accessibilityLabel={t('path.streak', { count: streak })} style={styles.pill}>
-      <Text maxFontSizeMultiplier={fontScale.chrome} style={[styles.icon, !active && styles.inactiveIcon]}>{seasonalEmoji('streak', '🔥')}</Text>
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={[styles.icon, !active && styles.inactiveIcon]}>{flame}</Text>
       <Text maxFontSizeMultiplier={fontScale.chrome} style={[styles.value, { color: active ? palette.goldDark : palette.inkFaint }]}>
         {streak}
       </Text>

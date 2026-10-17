@@ -1,0 +1,26 @@
+{
+  "name": "@openmacro/seasons",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Seasonal themes for any app: a calendar with movable feasts, a viewer preference, a remote kill switch and a pre-paint boot script, decided by one dependency-free function.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.ts",
+    "./types": "./src/types.ts",
+    "./web": "./src/web.ts"
+  },
+  "scripts": {
+    "test": "node --test 'test/**/*.test.ts'"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "sideEffects": false
+}

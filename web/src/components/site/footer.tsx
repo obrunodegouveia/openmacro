@@ -6,7 +6,8 @@ import { AccountPanel } from "@/components/site/account-button";
 import { Badge } from "@/components/ui/badge";
 import { LanguagePicker } from "@/components/site/language-picker";
 import { BrandLogo } from "@/components/site/brand-logo";
-import { SeasonalPumpkins } from "@/components/site/seasonal-decor";
+import { SeasonalFooter } from "@/components/site/seasonal-decor";
+import { SeasonSettings } from "@/components/site/season-settings";
 import {
   GITHUB_CONTRIBUTING_URL,
   GITHUB_ISSUES_URL,
@@ -50,7 +51,7 @@ export async function Footer() {
 
   return (
     <footer className="relative border-t border-hairline bg-well/60">
-      <SeasonalPumpkins />
+      <SeasonalFooter />
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
           <AccountPanel />
@@ -128,6 +129,8 @@ export async function Footer() {
 
           <div className="flex flex-wrap items-center gap-3">
             <LanguagePicker />
+            {/* Renders nothing unless a season is on the calendar. */}
+            <SeasonSettings />
             <Badge tone="mint">
               <Scale className="size-3" aria-hidden />
               {s("footer.mit")}

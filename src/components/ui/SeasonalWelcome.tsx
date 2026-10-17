@@ -1,7 +1,8 @@
 /**
  * A seasonal welcome by name: the first time a signed-in learner opens the
- * app each day while a season is on, "Happy Halloween, Maria!" fills the
- * screen with a burst of pumpkins, then gets out of the way.
+ * app each day while a season is on, "Happy Halloween, Maria!" (or "Ho ho
+ * ho, Maria!") fills the screen with a burst of the season's particles, then
+ * gets out of the way. Never in the calm look, which has no popups.
  *
  * The name is the signed-in account's own, read from the session. Nobody's
  * name is written into the app; a learner who is signed out, or whose account
@@ -20,7 +21,8 @@ import { SeasonalBurst, SeasonalRain } from '@/components/ui/SeasonalDecor';
 import { emitFeedback } from '@/feedback';
 import { useAuth } from '@/providers/AuthProvider';
 import { useLocale } from '@/providers/LocaleProvider';
-import { fontScale, palette, radius, season, spacing } from '@/theme/tokens';
+import { useSeason } from '@/seasons';
+import { fontScale, palette, radius, resolvePalette, spacing } from '@/theme/tokens';
 
 /** Where the last welcome is remembered, as `<user id>:<local date>`. */
 const STORAGE_KEY = 'openmacro.season.welcomed';
@@ -54,14 +56,16 @@ function firstName(displayName: string): string | null {
 export function SeasonalWelcome() {
   const { identity } = useAuth();
   const { t } = useLocale();
+  const season = useSeason();
   const [name, setName] = useState<string | null>(null);
+  const id = season && !season.calm ? season.id : null;
 
   const userId = identity?.userId ?? null;
   const displayName = identity?.displayName ?? '';
 
   useEffect(() => {
     const first = firstName(displayName);
-    if (season !== 'halloween' || !userId || !first) return;
+    if (!id || !userId || !first) return;
     let cancelled = false;
     const mark = `${userId}:${today()}`;
     void (async () => {
@@ -78,7 +82,7 @@ export function SeasonalWelcome() {
     return () => {
       cancelled = true;
     };
-  }, [userId, displayName]);
+  }, [id, userId, displayName]);
 
   useEffect(() => {
     if (!name) return;
@@ -86,7 +90,8 @@ export function SeasonalWelcome() {
     return () => clearTimeout(timer);
   }, [name]);
 
-  if (!name) return null;
+  if (!name || !season) return null;
+  const welcome = t(`season.${season.id}.welcome`, { name });
 
   return (
     <Animated.View entering={FadeIn.duration(250)} exiting={FadeOut.duration(400)} style={styles.backdrop}>
@@ -94,13 +99,13 @@ export function SeasonalWelcome() {
         style={styles.fill}
         onPress={() => setName(null)}
         accessibilityRole="button"
-        accessibilityLabel={t('season.halloween.welcome', { name })}
+        accessibilityLabel={welcome}
         accessibilityHint={t('season.welcomeDismiss')}
       >
         <SeasonalRain />
         <Animated.View entering={ZoomIn.springify().damping(12)} style={styles.card}>
-          <Text style={styles.pumpkin} allowFontScaling={false}>🎃</Text>
-          <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{t('season.halloween.welcome', { name })}</Text>
+          <Text style={styles.emoji} allowFontScaling={false}>{season.pack.welcome}</Text>
+          <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{welcome}</Text>
           <View style={styles.burstAnchor}>
             <SeasonalBurst />
           </View>
@@ -111,7 +116,8 @@ export function SeasonalWelcome() {
 }
 
 const styles = StyleSheet.create({
-  backdrop: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(20, 8, 32, 0.72)' },
+  // The season's own shadow tone at 72%, so the scrim is tinted to match.
+  backdrop: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: `${resolvePalette('light').shadow}B8` },
   fill: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.lg },
   card: {
     alignItems: 'center',
@@ -123,7 +129,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     maxWidth: 360,
   },
-  pumpkin: { fontSize: 88, lineHeight: 104 },
+  emoji: { fontSize: 88, lineHeight: 104 },
   title: {
     marginTop: spacing.sm,
     fontSize: 34,

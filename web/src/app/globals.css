@@ -257,94 +257,60 @@ html {
   --color-azure-text: #c4a8ff;
 }
 
-/* Seasonal decorations (seasonal-decor.tsx). Under the header, over the page,
-   never in the way of a click except the spider's. */
-.season-layer {
-  position: fixed;
-  inset: var(--header-total) 0 0 0;
-  z-index: 40;
-  pointer-events: none;
-  overflow: hidden;
-}
-.season-cobweb {
-  position: absolute;
-  top: 0;
-  width: clamp(5.5rem, 14vw, 10rem);
-  height: auto;
-}
-.season-cobweb[data-side="left"] { left: 0; }
-.season-cobweb[data-side="right"] { right: 0; transform: scaleX(-1); }
-
-.season-spider {
-  position: absolute;
-  top: 0;
-  right: clamp(3.25rem, 9vw, 6rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: var(--color-ink);
-}
-/* The thread is drawn above the body, so it stretches as the spider drops. */
-.season-spider-body {
-  position: relative;
-  margin-top: clamp(3.5rem, 8vw, 6rem);
-  pointer-events: auto;
-  cursor: pointer;
-  transform-origin: 50% -100vh;
-  animation: season-spider-bob 3.2s ease-in-out infinite;
-}
-.season-spider-body::before {
-  content: "";
-  position: absolute;
-  bottom: 70%;
-  left: calc(50% - 0.5px);
-  width: 1px;
-  height: 100vh;
-  background: var(--color-ink-faint);
-  opacity: 0.55;
-}
-.season-spider[data-dropping] .season-spider-body {
-  animation: season-spider-drop 2.6s cubic-bezier(0.3, 1.4, 0.5, 1) 1;
-}
-@keyframes season-spider-bob {
-  0%, 100% { transform: translateY(0) rotate(-3deg); }
-  50% { transform: translateY(10px) rotate(3deg); }
-}
-@keyframes season-spider-drop {
-  0% { transform: translateY(0); }
-  30% { transform: translateY(45vh); }
-  55% { transform: translateY(45vh); }
-  100% { transform: translateY(0); }
+/* Christmas: a snowy night. Frost blue where the site is azure, candle gold
+   for money and streaks. Red and green come from the decorations only: in
+   the palette they would read as "wrong" and "correct". */
+:root[data-season="christmas"] {
+  --color-abyss: #040912;
+  --color-canvas: #081120;
+  --color-surface: #0e1a2c;
+  --color-surface-raised: #132238;
+  --color-hairline: #1f3350;
+  --color-well: #040912;
+  --color-ink-muted: #a9bbd0;
+  --color-ink-faint: #93a7bf;
+  --color-gold: #ffc94a;
+  --color-gold-deep: #e0a526;
+  --color-azure: #4a9be8;
+  --color-azure-deep: #2e7bd1;
+  --color-azure-text: #8cc4ff;
+  --aurora-1: rgba(140, 196, 255, 0.14);
+  --aurora-2: rgba(255, 201, 74, 0.1);
+  --aurora-3: rgba(255, 255, 255, 0.06);
+  --season-snow: rgba(255, 255, 255, 0.75);
 }
 
-.season-bat {
-  position: absolute;
-  left: 0;
-  width: 3.25rem;
-  color: var(--color-ink);
-  opacity: 0;
-  animation: season-bat-fly 22s linear infinite;
-}
-.season-bat[data-index="0"] { top: 18vh; animation-delay: 2s; }
-.season-bat[data-index="1"] { top: 30vh; width: 2.25rem; animation-delay: 9s; }
-.season-bat[data-index="2"] { top: 12vh; width: 2.75rem; animation-delay: 15s; }
-.season-bat-wings {
-  display: block;
-  animation: season-bat-flap 0.28s ease-in-out infinite alternate;
-}
-@keyframes season-bat-fly {
-  0% { transform: translate(-10vw, 0); opacity: 0; }
-  2% { opacity: 0.85; }
-  10% { transform: translate(30vw, -4vh); }
-  20% { transform: translate(70vw, 3vh); }
-  28% { transform: translate(110vw, -2vh); opacity: 0.85; }
-  29%, 100% { transform: translate(110vw, -2vh); opacity: 0; }
-}
-@keyframes season-bat-flap {
-  from { transform: scaleY(1); }
-  to { transform: scaleY(0.45); }
+@media (prefers-color-scheme: light) {
+  :root[data-season="christmas"] {
+    --color-abyss: #05080f;
+    --color-canvas: #f3f7fb;
+    --color-surface: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-hairline: #dce6f0;
+    --color-well: #e8eff7;
+    --color-ink-muted: #45566d;
+    --color-ink-faint: #536580;
+    --color-gold: #8a5a00;
+    --color-gold-deep: #6e4700;
+    --color-azure: #2e7bd1;
+    --color-azure-deep: #1c5a9e;
+    --color-azure-text: #1c5a9e;
+    --aurora-1: rgba(46, 123, 209, 0.12);
+    --aurora-2: rgba(255, 194, 61, 0.12);
+    --aurora-3: rgba(46, 123, 209, 0.05);
+    --season-snow: rgba(46, 123, 209, 0.35);
+  }
 }
 
+:root[data-season="christmas"] .on-dark {
+  --color-gold: #ffc94a;
+  --color-azure-text: #8cc4ff;
+}
+
+/* Seasonal decorations live with their components, in
+   components/site/seasons/*.css, and load only while their season is on.
+   What stays here is what an ordinary page might need at once: the footer
+   row and the welcome. */
 .season-patch {
   position: absolute;
   top: 0;
@@ -355,62 +321,11 @@ html {
   transform: translateY(-82%);
   pointer-events: none;
 }
-.season-pumpkin { filter: drop-shadow(0 0 14px rgba(255, 138, 31, 0.35)); }
-.season-pumpkin-face { animation: season-flicker 2.4s steps(1) infinite; }
-@keyframes season-flicker {
-  0%, 100% { opacity: 1; }
-  41% { opacity: 0.72; }
-  44% { opacity: 1; }
-  71% { opacity: 0.85; }
-}
-
-/* A burst on a correct answer: each particle flies to its own --dx/--dy. */
-.season-burst {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-.season-burst > span {
-  position: absolute;
-  font-size: 1.6rem;
-  line-height: 1;
-  opacity: 0;
-  animation: season-burst 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
-}
-@keyframes season-burst {
-  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
-  70% { opacity: 1; }
-  100% {
-    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 40px)) scale(1.2) rotate(var(--rot));
-    opacity: 0;
-  }
-}
-
-/* Treats drifting down the window on a finished lesson. Behind the page,
-   like the aurora on body::before: through the gaps, never over text. */
-.season-rain {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
-}
-.season-rain > span {
-  position: absolute;
-  top: -3rem;
-  font-size: 1.75rem;
-  opacity: 0.9;
-  animation: season-rain linear infinite;
-}
-@keyframes season-rain {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(18px, 36vh) rotate(80deg); }
-  66% { transform: translate(-18px, 72vh) rotate(160deg); }
-  100% { transform: translate(0, calc(100vh + 6rem)) rotate(240deg); }
-}
+.season-ornament { line-height: 1; }
+.season-ornament[data-size="s"] { font-size: 1.75rem; }
+.season-ornament[data-size="m"] { font-size: 2.1rem; }
+.season-ornament[data-size="l"] { font-size: 2.6rem; }
+.season-ornament[data-lift] { margin-bottom: 0.9rem; }
 
 /* The once-a-day welcome by name (seasonal-welcome.tsx). */
 .season-welcome { animation: season-welcome-in 0.25s ease-out; }
@@ -418,11 +333,6 @@ html {
 @keyframes season-welcome-in { from { opacity: 0; } }
 @keyframes season-welcome-pop { from { transform: scale(0.6); opacity: 0; } }
 
-@media (prefers-reduced-motion: reduce) {
-  .season-bat,
-  .season-burst,
-  .season-rain { display: none; }
-}
 
 body {
   background-color: var(--color-canvas);
