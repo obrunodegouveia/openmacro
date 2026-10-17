@@ -670,4 +670,29 @@ export const ptPT = {
   'tflow.effect.contract': '{aggregate} contraiu',
   'tflow.effect.unchanged': '{aggregate} inalterado',
   'player.xpEarned': '+{count, number} XP',
+  // ---- get the app --------------------------------------------------------
+  'app.overline': 'A app',
+  'app.title.lead': 'Cinco minutos por dia,',
+  'app.title.emphasis': 'no teu bolso.',
+  'app.lede':
+    'O mesmo curso e os mesmos desafios deste site, feitos para o telemóvel — para o autocarro, a fila e os dez minutos antes de dormir.',
+  'app.perk.offline.title': 'Todas as lições funcionam offline',
+  'app.perk.offline.body':
+    'Da primeira à última lição, sem rede. O curso vive no teu telemóvel.',
+  'app.perk.sync.title': 'A tua sequência vai contigo',
+  'app.perk.sync.body':
+    'Inicia sessão uma vez e os teus XP e a tua sequência de dias acompanham-te entre este site e a app.',
+  'app.perk.free.title': 'Gratuita. Sem anúncios. Sem rastreio.',
+  'app.perk.free.body':
+    'Não precisas de conta e não há nada para comprar. Código aberto, como tudo aqui.',
+  'app.store.apple.eyebrow': 'Descarregar na',
+  'app.store.google.eyebrow': 'Disponível no',
+  'app.store.google.soon': 'Brevemente no',
+  'app.qr.alt': 'Código QR que abre a app OpenMacro na loja do teu telemóvel',
+  'app.qr.title': 'Estás num computador?',
+  'app.qr.body': 'Aponta a câmara do telemóvel para aqui e abre a app na tua loja.',
+  'app.shot.today': 'O ecrã Hoje da app OpenMacro: uma sequência de 12 dias, 420 XP e a próxima lição',
+  'app.shot.lesson': 'Uma lição na app OpenMacro, com a explicação depois de uma resposta certa',
+  'app.chip.streak': 'Sequência de 12 dias',
+  'app.chip.offline': 'Funciona offline',
 } as const;

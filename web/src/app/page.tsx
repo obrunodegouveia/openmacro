@@ -1,6 +1,7 @@
 import { Nav } from "@/components/site/nav";
 import { Hero } from "@/components/site/hero";
 import { Demo } from "@/components/site/demo";
+import { GetTheApp } from "@/components/site/get-the-app";
 import { Tiers } from "@/components/site/tiers";
 import { Features } from "@/components/site/features";
 import { Roadmap } from "@/components/site/roadmap";
@@ -109,6 +110,7 @@ export default function Home() {
       <main id="main">
         <Hero />
         <Demo />
+        <GetTheApp />
         <Tiers />
         <Features />
         <Roadmap />
