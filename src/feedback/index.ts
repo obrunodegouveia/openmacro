@@ -393,3 +393,17 @@ export function emitFeedback(cue: FeedbackCue): void {
   void vibrate(cue);
   playCue(cue);
 }
+
+/**
+ * The tap sound and haptic, for a control's `onPressIn`.
+ *
+ * On press-in, not on press: `onPress` fires when the finger lifts, and a tap
+ * is held for 80-150 ms, so a cue fired there always trailed the button's own
+ * sink (which starts on press-in) by that much. That was the delay people
+ * heard. Use this on controls that do not scroll away under the finger, such
+ * as lesson answers and action buttons; a row in a scrolling list keeps its
+ * cue on `onPress`, so starting a scroll on it does not click.
+ */
+export function tapCue(): void {
+  emitFeedback('select');
+}

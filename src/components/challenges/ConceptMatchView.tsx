@@ -12,7 +12,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 
 import type { ChallengeComponentProps } from '@/components/challenges/types';
-import { emitFeedback } from '@/feedback';
+import { tapCue } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import { seededShuffle } from '@openmacro/core/format';
@@ -64,7 +64,6 @@ export function ConceptMatchView({
   const handleTermPress = useCallback(
     (termId: string) => {
       if (locked) return;
-      emitFeedback('select');
       // Tapping a linked term unlinks it and picks it up again.
       if (pairings[termId]) {
         setPairings((current) => {
@@ -83,7 +82,6 @@ export function ConceptMatchView({
   const handleDefinitionPress = useCallback(
     (definitionId: string) => {
       if (locked) return;
-      emitFeedback('select');
 
       const linkedTerm = reverse[definitionId];
       // Tapping a linked definition unlinks it.
@@ -120,6 +118,7 @@ export function ConceptMatchView({
                 accessibilityRole="button"
                 accessibilityState={{ selected: isActive || Boolean(linked), disabled: locked }}
                 accessibilityHint={t('challenge.match.hint')}
+                onPressIn={tapCue}
                 onPress={() => handleTermPress(pair.id)}
                 disabled={locked}
                 style={[
@@ -152,6 +151,7 @@ export function ConceptMatchView({
               <Pressable
                 accessibilityRole="button"
                 accessibilityState={{ selected: Boolean(linkedTerm), disabled: locked }}
+                onPressIn={tapCue}
                 onPress={() => handleDefinitionPress(pair.id)}
                 disabled={locked}
                 style={[
