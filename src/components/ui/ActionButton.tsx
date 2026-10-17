@@ -14,7 +14,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { emitFeedback } from '@/feedback';
+import { tapCue } from '@/feedback';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 export type ActionButtonTone = 'primary' | 'danger' | 'neutral' | 'ghost';
@@ -65,6 +65,8 @@ function ActionButtonComponent({
   }));
 
   const handlePressIn = useCallback(() => {
+    // The sound lands with the sink, not when the finger lifts.
+    tapCue();
     sink.value = withTiming(SINK, { duration: 60 });
   }, [sink]);
 
@@ -73,7 +75,6 @@ function ActionButtonComponent({
   }, [sink]);
 
   const handlePress = useCallback(() => {
-    emitFeedback('select');
     onPress();
   }, [onPress]);
 

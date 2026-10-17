@@ -26,7 +26,7 @@ import type {
   TAccountEntryOption,
 } from '@openmacro/core/content/schema';
 import { entityBalance, openingTotal } from '@openmacro/core/engine/tAccounts';
-import { emitFeedback } from '@/feedback';
+import { tapCue } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import type { Translator } from '@openmacro/core/i18n';
@@ -110,7 +110,6 @@ export function TAccountFlowView({
   const place = useCallback(
     (id: string) => {
       if (locked) return;
-      emitFeedback('select');
       setPlaced((current) => (current.includes(id) ? current : [...current, id]));
     },
     [locked],
@@ -119,7 +118,6 @@ export function TAccountFlowView({
   const remove = useCallback(
     (id: string) => {
       if (locked) return;
-      emitFeedback('select');
       setPlaced((current) => current.filter((entry) => entry !== id));
     },
     [locked],
@@ -173,6 +171,7 @@ export function TAccountFlowView({
                       : 'challenge.taccount.liabilities',
                   ),
                 })}
+                onPressIn={tapCue}
                 onPress={() => place(option.id)}
                 disabled={locked}
                 style={styles.poolChip}
@@ -301,6 +300,7 @@ function EntityCard({
                 accessibilityLabel={t('challenge.taccount.remove', {
                   account: option.shift.account,
                 })}
+                onPressIn={tapCue}
                 onPress={() => onRemove(option.id)}
                 disabled={locked}
                 style={[

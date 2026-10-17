@@ -11,7 +11,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import type { ChallengeComponentProps } from '@/components/challenges/types';
-import { emitFeedback } from '@/feedback';
+import { tapCue } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 import { seededShuffle } from '@openmacro/core/format';
@@ -34,7 +34,6 @@ export function MultipleChoiceView({
   const handleSelect = useCallback(
     (optionId: string) => {
       if (locked) return;
-      emitFeedback('select');
       setSelectedId(optionId);
     },
     [locked],
@@ -70,6 +69,7 @@ export function MultipleChoiceView({
                     : option.label
               }
               accessibilityState={{ selected: isSelected, disabled: locked }}
+              onPressIn={tapCue}
               onPress={() => handleSelect(option.id)}
               disabled={locked}
               style={[
