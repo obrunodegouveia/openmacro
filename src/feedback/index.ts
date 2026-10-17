@@ -168,7 +168,7 @@ let audioConfigured = false;
  * for. `interruptionMode: 'mixWithOthers'` means we duck nothing — someone
  * doing a lesson on a walk keeps their podcast.
  */
-function configureAudio(): void {
+export function configureAudio(): void {
   if (audioConfigured) return;
   audioConfigured = true;
   void setAudioModeAsync({

@@ -24,6 +24,7 @@ import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { StreakBadge } from '@/components/ui/StatusPills';
+import { MusicToggle } from '@/components/ui/MusicToggle';
 import { SeasonalFooter, SeasonalScreenCorner } from '@/components/ui/SeasonalDecor';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { useCourse } from '@/hooks/useCourse';
@@ -143,6 +144,10 @@ export default function ProfileScreen() {
 
         <View style={styles.card}>
           <LanguagePicker />
+        </View>
+
+        <View style={styles.card}>
+          <MusicToggle />
         </View>
 
         {/* ---- about ----------------------------------------------------
