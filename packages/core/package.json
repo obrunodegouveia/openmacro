@@ -11,6 +11,7 @@
     "./engine/*": "./src/engine/*.ts",
     "./progress/*": "./src/progress/*.ts",
     "./format": "./src/format.ts",
+    "./season": "./src/season.ts",
     "./i18n": "./src/i18n/index.ts",
     "./i18n/*": "./src/i18n/*.ts",
     "./i18n/content": "./src/i18n/content/index.ts",

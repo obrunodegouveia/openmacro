@@ -6,6 +6,7 @@ import { AccountPanel } from "@/components/site/account-button";
 import { Badge } from "@/components/ui/badge";
 import { LanguagePicker } from "@/components/site/language-picker";
 import { BrandLogo } from "@/components/site/brand-logo";
+import { SeasonalPumpkins } from "@/components/site/seasonal-decor";
 import {
   GITHUB_CONTRIBUTING_URL,
   GITHUB_ISSUES_URL,
@@ -49,6 +50,7 @@ export async function Footer() {
 
   return (
     <footer className="relative border-t border-hairline bg-well/60">
+      <SeasonalPumpkins />
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
           <AccountPanel />

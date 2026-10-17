@@ -9,6 +9,8 @@
 
 import { DynamicColorIOS, Platform, type ColorSchemeName, type ColorValue } from 'react-native';
 
+import { currentSeason, type SeasonId } from '@openmacro/core/season';
+
 /**
  * A colour that follows the system appearance.
  *
@@ -112,13 +114,75 @@ const dark: Partial<Record<PaletteKey, string>> = {
 };
 
 /**
+ * The season the app is dressed for, if any (see `@openmacro/core/season`).
+ *
+ * Read once, at launch: the palette below is baked into every
+ * `StyleSheet.create` when its module loads, so a season starts or ends the
+ * next time the app is opened, not at midnight while it is running.
+ * `EXPO_PUBLIC_SEASON` forces one (`halloween`) or none (`none`) in a dev
+ * build, so a season can be checked in July.
+ */
+export const season: SeasonId | null = currentSeason(new Date(), process.env.EXPO_PUBLIC_SEASON);
+
+/**
+ * What each season repaints, on top of `light` and `dark`.
+ *
+ * Only accents and surfaces move. Mint stays green and coral stays red in
+ * every season, because they mean "correct" and "wrong" and a learner should
+ * never have to relearn that for a month. Every text colour here was checked
+ * for 4.5:1 on its surfaces, like the base palette.
+ */
+const seasonal: Record<SeasonId, { light: Partial<Record<PaletteKey, string>>; dark: Partial<Record<PaletteKey, string>> }> = {
+  // Pumpkin for the streak and XP, violet where the app is usually blue, and
+  // a warm parchment canvas. Mint stays, and reads as slime green beside them.
+  halloween: {
+    light: {
+      gold: '#FF8A1F',
+      goldDark: '#A84A00',
+      goldSoft: '#FFEBD6',
+      blue: '#7B4DE8',
+      blueDark: '#5B32C4',
+      blueSoft: '#EFE8FF',
+      blueBevel: '#5B32C4',
+      shadow: '#1A0F24',
+      ink: '#241A2E',
+      inkMuted: '#594C66',
+      inkFaint: '#66587A',
+      border: '#EDE2D2',
+      borderStrong: '#D9C9B2',
+      canvas: '#FBF5EC',
+      overlay: 'rgba(36, 26, 46, 0.4)',
+    },
+    dark: {
+      gold: '#FF8A1F',
+      goldDark: '#FFA348',
+      goldSoft: '#3A220C',
+      blue: '#7B4DE8',
+      blueDark: '#B49CFF',
+      blueSoft: '#22163A',
+      blueBevel: '#5B32C4',
+      ink: '#EEE6F5',
+      inkMuted: '#B9ABCC',
+      inkFaint: '#9D8EB3',
+      border: '#2E2140',
+      borderStrong: '#3F2E55',
+      surface: '#1A1026',
+      canvas: '#0E0816',
+    },
+  },
+};
+
+const lightNow = { ...light, ...(season ? seasonal[season].light : {}) } as Record<PaletteKey, string>;
+const darkNow = { ...dark, ...(season ? seasonal[season].dark : {}) };
+
+/**
  * The palette components use. Each colour that differs by appearance is a
  * native dynamic colour (see `adaptive`); the rest are plain strings.
  */
 export const palette = Object.fromEntries(
   (Object.keys(light) as PaletteKey[]).map((key) => [
     key,
-    dark[key] ? adaptive(light[key], dark[key]) : light[key],
+    darkNow[key] ? adaptive(lightNow[key], darkNow[key]) : lightNow[key],
   ]),
 ) as Record<PaletteKey, ColorValue>;
 
@@ -130,7 +194,7 @@ export const palette = Object.fromEntries(
  * @return Every palette colour as a string.
  */
 export function resolvePalette(scheme: ColorSchemeName): Record<PaletteKey, string> {
-  return scheme === 'dark' ? { ...light, ...dark } as Record<PaletteKey, string> : { ...light };
+  return scheme === 'dark' ? { ...lightNow, ...darkNow } as Record<PaletteKey, string> : { ...lightNow };
 }
 
 export const spacing = {
