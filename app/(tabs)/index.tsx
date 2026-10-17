@@ -39,6 +39,7 @@ import { ActionButton } from '@/components/ui/ActionButton';
 import { Chevron } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { ProgressRing } from '@/components/ui/ProgressRing';
+import { SeasonalCardCorner, SeasonalFooter, SeasonalOverlay } from '@/components/ui/SeasonalDecor';
 import { StreakBadge } from '@/components/ui/StatusPills';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { UpdateBanner } from '@/components/ui/UpdateBanner';
@@ -127,6 +128,7 @@ export default function TodayScreen() {
         {/* ---- the next lesson ------------------------------------------ */}
         {next ? (
           <Animated.View entering={enter(0)} style={styles.hero}>
+            <SeasonalCardCorner />
             <View style={styles.heroTop}>
               <View style={styles.heroWhere}>
                 <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroEyebrow}>
@@ -185,6 +187,7 @@ export default function TodayScreen() {
           </Animated.View>
         ) : (
           <Animated.View entering={enter(0)} style={styles.hero}>
+            <SeasonalCardCorner />
             <Text style={styles.doneEmoji}>🏆</Text>
             <Text style={styles.heroModule}>{t('today.allDone')}</Text>
             <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroLessonMeta}>{t('today.allDoneBody')}</Text>
@@ -274,8 +277,11 @@ export default function TodayScreen() {
             <Chevron />
           </Pressable>
         </Animated.View>
+
+        <SeasonalFooter />
       </ScrollView>
       <TopScrim />
+      <SeasonalOverlay top={insets.top} />
     </View>
   );
 }

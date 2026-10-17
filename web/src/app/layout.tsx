@@ -11,6 +11,8 @@ import { getSiteText } from "@/lib/site-text";
 import { localisedCopy } from "@/lib/seo-copy";
 import { SmoothAnchors } from "@/components/site/smooth-anchors";
 import { ActivityHeartbeat } from "@/components/app/activity-heartbeat";
+import { SeasonalDecor } from "@/components/site/seasonal-decor";
+import { SEASON_SCRIPT } from "@/lib/season";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -119,11 +121,20 @@ export default async function RootLayout({
   const locale = await serverLocale();
 
   return (
-    <html lang={LOCALE_TAGS[locale]} className={`${jakarta.variable} ${jetbrains.variable}`}>
+    // suppressHydrationWarning: SEASON_SCRIPT sets `data-season` on <html>
+    // before React hydrates it, which is the point, not a mismatch.
+    <html
+      lang={LOCALE_TAGS[locale]}
+      className={`${jakarta.variable} ${jetbrains.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased">
         {/* Before first paint, so a signed-in learner never sees the
             marketing page flash on the way to Today. See TODAY_REDIRECT. */}
         <script dangerouslySetInnerHTML={{ __html: TODAY_REDIRECT }} />
+        {/* Before first paint too, so a seasonal palette never flashes in
+            after the ordinary one. See lib/season.ts. */}
+        <script dangerouslySetInnerHTML={{ __html: SEASON_SCRIPT }} />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-mint focus:px-4 focus:py-2 focus:font-bold focus:text-abyss"
@@ -138,6 +149,7 @@ export default async function RootLayout({
             {/* Silent unless this account is paid for active time. */}
             <ActivityHeartbeat />
           </AuthProvider>
+          <SeasonalDecor />
         </LocaleProvider>
       </body>
     </html>

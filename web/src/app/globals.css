@@ -192,6 +192,182 @@ html {
   }
 }
 
+/*
+ * ============================================================================
+ * Seasons
+ * ============================================================================
+ *
+ * `data-season` is set on <html> before first paint by the inline script in
+ * layout.tsx, from the calendar in `@openmacro/core/season`. A season only
+ * repaints tokens; the decorations are `components/site/seasonal-decor.tsx`.
+ *
+ * Mint and coral never move: they mean "correct" and "wrong" all year.
+ * Each season block sets the dark values, and its light block below must set
+ * every one of the same tokens again, because `:root[data-season]` outranks
+ * the plain `:root` light block above.
+ */
+
+/* Halloween: a midnight-purple canvas, pumpkin where the site is gold and
+   violet where it is azure. Mint stays and reads as slime green. */
+:root[data-season="halloween"] {
+  --color-abyss: #07040c;
+  --color-canvas: #0d0815;
+  --color-surface: #160e22;
+  --color-surface-raised: #1f142f;
+  --color-hairline: #2f2145;
+  --color-well: #07040c;
+  --color-ink-muted: #ab9dc0;
+  --color-ink-faint: #9a8bb1;
+  --color-gold: #ff8a1f;
+  --color-gold-deep: #d9650a;
+  --color-azure: #8b5cf6;
+  --color-azure-deep: #6d3fd8;
+  --color-azure-text: #c4a8ff;
+  --aurora-1: rgba(255, 138, 31, 0.14);
+  --aurora-2: rgba(139, 92, 246, 0.2);
+  --aurora-3: rgba(47, 191, 113, 0.08);
+  --season-web: rgba(226, 214, 240, 0.32);
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-season="halloween"] {
+    --color-abyss: #05080f;
+    --color-canvas: #fbf5ec;
+    --color-surface: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-hairline: #ecdfcc;
+    --color-well: #f3e8d8;
+    --color-ink-muted: #4f4060;
+    --color-ink-faint: #625371;
+    --color-gold: #b65400;
+    --color-gold-deep: #8f4100;
+    --color-azure: #7b4de8;
+    --color-azure-deep: #5b32c4;
+    --color-azure-text: #5b32c4;
+    --aurora-1: rgba(255, 138, 31, 0.16);
+    --aurora-2: rgba(123, 77, 232, 0.1);
+    --aurora-3: rgba(47, 191, 113, 0.06);
+    --season-web: rgba(60, 40, 80, 0.22);
+  }
+}
+
+/* A dark surface keeps the season's dark accents in either theme. */
+:root[data-season="halloween"] .on-dark {
+  --color-gold: #ff8a1f;
+  --color-azure-text: #c4a8ff;
+}
+
+/* Seasonal decorations (seasonal-decor.tsx). Under the header, over the page,
+   never in the way of a click except the spider's. */
+.season-layer {
+  position: fixed;
+  inset: var(--header-total) 0 0 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+}
+.season-cobweb {
+  position: absolute;
+  top: 0;
+  width: clamp(5.5rem, 14vw, 10rem);
+  height: auto;
+}
+.season-cobweb[data-side="left"] { left: 0; }
+.season-cobweb[data-side="right"] { right: 0; transform: scaleX(-1); }
+
+.season-spider {
+  position: absolute;
+  top: 0;
+  right: clamp(3.25rem, 9vw, 6rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--color-ink);
+}
+/* The thread is drawn above the body, so it stretches as the spider drops. */
+.season-spider-body {
+  position: relative;
+  margin-top: clamp(3.5rem, 8vw, 6rem);
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: 50% -100vh;
+  animation: season-spider-bob 3.2s ease-in-out infinite;
+}
+.season-spider-body::before {
+  content: "";
+  position: absolute;
+  bottom: 70%;
+  left: calc(50% - 0.5px);
+  width: 1px;
+  height: 100vh;
+  background: var(--color-ink-faint);
+  opacity: 0.55;
+}
+.season-spider[data-dropping] .season-spider-body {
+  animation: season-spider-drop 2.6s cubic-bezier(0.3, 1.4, 0.5, 1) 1;
+}
+@keyframes season-spider-bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(10px) rotate(3deg); }
+}
+@keyframes season-spider-drop {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(45vh); }
+  55% { transform: translateY(45vh); }
+  100% { transform: translateY(0); }
+}
+
+.season-bat {
+  position: absolute;
+  left: 0;
+  width: 3.25rem;
+  color: var(--color-ink);
+  opacity: 0;
+  animation: season-bat-fly 22s linear infinite;
+}
+.season-bat[data-index="0"] { top: 18vh; animation-delay: 2s; }
+.season-bat[data-index="1"] { top: 30vh; width: 2.25rem; animation-delay: 9s; }
+.season-bat[data-index="2"] { top: 12vh; width: 2.75rem; animation-delay: 15s; }
+.season-bat-wings {
+  display: block;
+  animation: season-bat-flap 0.28s ease-in-out infinite alternate;
+}
+@keyframes season-bat-fly {
+  0% { transform: translate(-10vw, 0); opacity: 0; }
+  2% { opacity: 0.85; }
+  10% { transform: translate(30vw, -4vh); }
+  20% { transform: translate(70vw, 3vh); }
+  28% { transform: translate(110vw, -2vh); opacity: 0.85; }
+  29%, 100% { transform: translate(110vw, -2vh); opacity: 0; }
+}
+@keyframes season-bat-flap {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0.45); }
+}
+
+.season-patch {
+  position: absolute;
+  top: 0;
+  right: clamp(1.25rem, 6vw, 5rem);
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  transform: translateY(-82%);
+  pointer-events: none;
+}
+.season-pumpkin { filter: drop-shadow(0 0 14px rgba(255, 138, 31, 0.35)); }
+.season-pumpkin-face { animation: season-flicker 2.4s steps(1) infinite; }
+@keyframes season-flicker {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 0.72; }
+  44% { opacity: 1; }
+  71% { opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-bat { display: none; }
+}
+
 body {
   background-color: var(--color-canvas);
   color: var(--color-ink);
@@ -206,9 +382,9 @@ body::before {
   pointer-events: none;
   z-index: -1;
   background:
-    radial-gradient(60rem 40rem at 12% -10%, rgba(47, 191, 113, 0.16), transparent 60%),
-    radial-gradient(50rem 36rem at 90% 8%, rgba(61, 126, 255, 0.14), transparent 62%),
-    radial-gradient(44rem 34rem at 50% 105%, rgba(255, 201, 74, 0.09), transparent 60%);
+    radial-gradient(60rem 40rem at 12% -10%, var(--aurora-1, rgba(47, 191, 113, 0.16)), transparent 60%),
+    radial-gradient(50rem 36rem at 90% 8%, var(--aurora-2, rgba(61, 126, 255, 0.14)), transparent 62%),
+    radial-gradient(44rem 34rem at 50% 105%, var(--aurora-3, rgba(255, 201, 74, 0.09)), transparent 60%);
 }
 
 @layer components {
