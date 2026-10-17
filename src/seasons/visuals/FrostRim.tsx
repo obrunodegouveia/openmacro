@@ -1,7 +1,7 @@
 /**
- * Frost along the top edge of a card: a thin, pale rim that thickens in
- * places, crystals set along it, and now and then one of them catching the
- * light.
+ * Frost along the top edge of a card: a thin, pale rim with short icicles
+ * hanging from it, crystals set along it, and now and then one of them
+ * catching the light.
  *
  * Plain views and a glyph; the glints are slow (one every few seconds per
  * crystal, never in step), so nothing flashes. Place it inside the card,
@@ -16,22 +16,28 @@ import { HIDDEN, hash, playState, rgba } from './shared';
 
 /** The crystals along the rim, as [left %, size in points]. */
 const CRYSTALS: readonly (readonly [number, number])[] = [
-  [6, 9],
-  [19, 6],
-  [33, 11],
-  [47, 7],
-  [58, 10],
-  [72, 6],
-  [86, 12],
-  [95, 7],
+  [5, 12],
+  [17, 8],
+  [31, 14],
+  [45, 9],
+  [57, 13],
+  [70, 8],
+  [84, 15],
+  [95, 9],
 ];
 
-/** Where the rim thickens, as [left %, width %]. */
-const THICK: readonly (readonly [number, number])[] = [
-  [4, 18],
-  [30, 14],
-  [55, 20],
-  [82, 14],
+/** The icicles hanging from the rim, as [left %, width, length], in points. */
+const ICICLES: readonly (readonly [number, number, number])[] = [
+  [8, 4, 10],
+  [14, 3, 6],
+  [23, 5, 14],
+  [36, 3, 7],
+  [44, 4, 11],
+  [53, 3, 6],
+  [63, 5, 13],
+  [74, 3, 8],
+  [81, 4, 12],
+  [91, 3, 7],
 ];
 
 /** One crystal's glint cycle, in milliseconds, before each varies it. */
@@ -48,14 +54,21 @@ const GLINT_MS = 5200;
  */
 export function FrostRim({ color, inset, animate, paused }: { color: string; inset: number; animate: boolean; paused: boolean }) {
   return (
-    <View pointerEvents="none" style={[styles.rim, { left: inset * 0.5, right: inset * 0.5 }]} {...HIDDEN}>
+    <View pointerEvents="none" style={[styles.rim, { left: inset * 0.85, right: inset * 0.85 }]} {...HIDDEN}>
       <View style={[styles.line, { experimental_backgroundImage: `linear-gradient(to bottom, ${rgba(color, 0.85)}, ${rgba(color, 0.25)})` }]} />
-      {THICK.map(([left, width], i) => (
+      {ICICLES.map(([left, width, length], i) => (
         <View
-          key={`t${i}`}
+          key={`i${i}`}
           style={[
-            styles.thick,
-            { left: `${left}%`, width: `${width}%`, experimental_backgroundImage: `linear-gradient(to bottom, ${rgba(color, 0.7)}, ${rgba(color, 0)})` },
+            styles.icicle,
+            // A thin triangle, pointing down: a border trick, as views have no clip path.
+            {
+              left: `${left}%`,
+              borderLeftWidth: width / 2,
+              borderRightWidth: width / 2,
+              borderTopWidth: length,
+              borderTopColor: rgba(color, 0.7),
+            },
           ]}
         />
       ))}
@@ -93,8 +106,8 @@ export function FrostRim({ color, inset, animate, paused }: { color: string; ins
 }
 
 const styles = StyleSheet.create({
-  rim: { position: 'absolute', top: -2, height: 8 },
-  line: { position: 'absolute', left: 0, right: 0, top: 0, height: 3, borderRadius: 2 },
-  thick: { position: 'absolute', top: 0, height: 7, borderBottomLeftRadius: 6, borderBottomRightRadius: 6 },
+  rim: { position: 'absolute', top: -2, height: 12 },
+  line: { position: 'absolute', left: 0, right: 0, top: 0, height: 4, borderRadius: 2 },
+  icicle: { position: 'absolute', top: 2, width: 0, height: 0, borderLeftColor: 'transparent', borderRightColor: 'transparent' },
   crystal: { position: 'absolute' },
 });

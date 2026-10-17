@@ -694,8 +694,8 @@ export const SEASON_PACKS: Readonly<Record<SeasonId, SeasonPack>> = {
         motion: 'pulse',
         wind: 14,
         layers: [
-          { count: 8, size: 2, crossMs: 34000, opacity: 0.55, sway: 26, parallax: 0.01, front: false },
-          { count: 6, size: 3, crossMs: 26000, opacity: 0.8, sway: 36, parallax: 0.03, front: false },
+          { count: 8, size: 2.5, crossMs: 34000, opacity: 0.65, sway: 26, parallax: 0.01, front: false },
+          { count: 6, size: 3.5, crossMs: 26000, opacity: 0.9, sway: 36, parallax: 0.03, front: false },
           { count: 3, size: 4, crossMs: 20000, opacity: 0.6, sway: 44, parallax: 0.05, front: true, shape: 'spark' },
         ],
       },
@@ -923,7 +923,7 @@ export const SEASON_PACKS: Readonly<Record<SeasonId, SeasonPack>> = {
       },
       burst: { ring: '#3FB5D0', gravity: 40, spin: 160 },
       garland: null,
-      edge: { kind: 'frost', color: { light: '#9CC4E4', dark: '#DDEBFF' } },
+      edge: { kind: 'frost', color: { light: '#7FB0DE', dark: '#DDEBFF' } },
       candle: null,
       // Mist like breath on a cold day: swelling, rising a little, settling.
       mist: {

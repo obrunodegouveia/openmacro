@@ -3,8 +3,9 @@
   --sv-frost: var(--sv-frost-dark);
   position: absolute;
   top: -2px;
-  left: 12px;
-  right: 12px;
+  /* Where the card's top edge runs straight, clear of its rounded corners. */
+  left: 1.1rem;
+  right: 1.1rem;
   height: 8px;
   pointer-events: none;
   z-index: 1;
@@ -15,16 +16,16 @@
 .sv-frost > [data-part="line"] {
   position: absolute;
   inset: 0 0 auto 0;
-  height: 3px;
+  height: 4px;
   border-radius: 2px;
   background: linear-gradient(to bottom, color-mix(in srgb, var(--sv-frost) 85%, transparent), color-mix(in srgb, var(--sv-frost) 25%, transparent));
 }
-.sv-frost > [data-part="thick"] {
+.sv-frost > [data-part="icicle"] {
   position: absolute;
-  top: 0;
-  height: 7px;
-  border-radius: 0 0 6px 6px;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--sv-frost) 70%, transparent), transparent);
+  top: 2px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--sv-frost) 85%, transparent), color-mix(in srgb, var(--sv-frost) 20%, transparent));
+  /* Tapering to a point. */
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
 .sv-frost > [data-part="crystal"] {
   position: absolute;
