@@ -155,13 +155,18 @@ interface PooledPlayer {
   ready: boolean;
   /** When it last started, to pick the oldest if every player is busy. */
   startedAt: number;
+  /** Playing its silent warm-up run, at volume 0. See `warmUp`. */
+  warming: boolean;
 }
 
 /** The players for each cue. Created once — see `preloadSounds`. */
 const voices = new Map<FeedbackCue, PooledPlayer[]>();
 
-/** True once the audio session has been configured. See `configureAudio`. */
-let audioConfigured = false;
+/**
+ * Settles once the audio session has been configured, or failed to be; null
+ * until `configureAudio` first runs.
+ */
+let audioConfigured: Promise<void> | null = null;
 
 /**
  * Set the audio session before the first sound.
@@ -171,16 +176,15 @@ let audioConfigured = false;
  * for. `interruptionMode: 'mixWithOthers'` means we duck nothing — someone
  * doing a lesson on a walk keeps their podcast.
  */
-export function configureAudio(): void {
-  if (audioConfigured) return;
-  audioConfigured = true;
-  void setAudioModeAsync({
+export function configureAudio(): Promise<void> {
+  audioConfigured ??= setAudioModeAsync({
     playsInSilentMode: false,
     shouldPlayInBackground: false,
     interruptionMode: 'mixWithOthers',
   }).catch(() => {
     // An unavailable audio session is not a reason to fail a lesson.
   });
+  return audioConfigured;
 }
 
 /**
@@ -204,11 +208,17 @@ function poolFor(cue: FeedbackCue): PooledPlayer[] {
       }),
       ready: true,
       startedAt: 0,
+      warming: false,
     };
     // Rewind as soon as a clip ends, off the hot path, so the next fire finds
     // it at the start and can play with no seek in between.
     entry.player.addListener('playbackStatusUpdate', (status) => {
+      if (status.isLoaded) warmUp(entry);
       if (!status.didJustFinish) return;
+      if (entry.warming) {
+        entry.warming = false;
+        entry.player.volume = 1;
+      }
       // Parked at the end now, where play() does nothing, until the rewind lands.
       entry.ready = false;
       const finishedRun = entry.startedAt;
@@ -222,10 +232,54 @@ function poolFor(cue: FeedbackCue): PooledPlayer[] {
         })
         .catch(() => {});
     });
+    // Already loaded, if the clip was cached: no status change will say so.
+    if (entry.player.isLoaded) warmUp(entry);
     return entry;
   });
   voices.set(cue, pool);
   return pool;
+}
+
+/**
+ * Play a fallback player through once, silently, as soon as it has loaded.
+ *
+ * The first `play()` of an AVPlayer (ExoPlayer on Android) also builds its
+ * render pipeline, so it starts noticeably later than every play after it.
+ * Without this, that cost landed on the first tap of each player — and with
+ * three players per cue, on the first three taps of a session. Paying it at
+ * boot, at volume 0, means a tap only ever meets a player that has played.
+ *
+ * Only where the native player is missing: a binary that has one plays
+ * through it, and these players then sound only while it is still loading.
+ */
+const warmed = new WeakSet<PooledPlayer>();
+
+function warmUp(entry: PooledPlayer): void {
+  if (NativeSfx || warmed.has(entry)) return;
+  warmed.add(entry);
+  try {
+    entry.warming = true;
+    entry.ready = false;
+    entry.startedAt = now();
+    entry.player.volume = 0;
+    entry.player.play();
+  } catch {
+    entry.warming = false;
+    entry.ready = true;
+  }
+}
+
+/**
+ * Take a player for a real cue. A player still on its silent warm-up run is
+ * turned up first, so a cue that has to restart one is never inaudible.
+ */
+function claim(entry: PooledPlayer, startedAt: number): void {
+  entry.ready = false;
+  entry.startedAt = startedAt;
+  if (entry.warming) {
+    entry.warming = false;
+    entry.player.volume = 1;
+  }
 }
 
 /**
@@ -274,16 +328,27 @@ const nativeReady = new Set<FeedbackCue>();
 /** Bumped on every reload, so a slow load for an old pack cannot mark a cue ready. */
 let nativeGeneration = 0;
 
-/** Loads the current pack into the native player, if this binary has one. */
+/**
+ * Loads the current pack into the native player, if this binary has one.
+ *
+ * Not before the audio session is configured. The first load starts the
+ * native engine, and an iOS category change after that stops the engine
+ * again; the first tap of the session then waited while `play` started it
+ * back up. Waiting for `configureAudio` puts the category change first.
+ */
 function preloadNative(): void {
   if (!NativeSfx) return;
   const generation = ++nativeGeneration;
   const loading = pack;
   nativeReady.clear();
+  const sessionReady = configureAudio();
   for (const cue of Object.keys(PACKS[loading]) as FeedbackCue[]) {
     void Asset.fromModule(PACKS[loading][cue])
       .downloadAsync()
-      .then((asset) => NativeSfx!.load(`${loading}:${cue}`, asset.localUri ?? asset.uri))
+      .then(async (asset) => {
+        await sessionReady;
+        return NativeSfx!.load(`${loading}:${cue}`, asset.localUri ?? asset.uri);
+      })
       .then(() => {
         if (generation === nativeGeneration) nativeReady.add(cue);
       })
@@ -363,6 +428,16 @@ function recordSeek(startedAt: number): void {
       `p95 ${ms(report.p95)}ms, max ${ms(report.max)}ms ` +
       `(one 60fps frame is 16.67ms)`,
   );
+
+  // The part after `play()`: the render cycle a clip waits for, then the
+  // route's own delay. Only binaries from build 37 can report it.
+  const hardware = NativeSfx?.latency?.();
+  if (hardware) {
+    console.log(
+      `[OpenMacro] native output — io buffer ${ms(hardware.ioBuffer)}ms, ` +
+        `route latency ${ms(hardware.output)}ms at ${hardware.sampleRate}Hz`,
+    );
+  }
 }
 
 /**
@@ -396,8 +471,7 @@ function playCue(cue: FeedbackCue): void {
     const free = pool.find((entry) => entry.ready && entry.player.isLoaded);
 
     if (free) {
-      free.ready = false;
-      free.startedAt = startedAt;
+      claim(free, startedAt);
       free.player.play();
       if (timingEnabled) recordSeek(startedAt);
       return;
@@ -405,8 +479,7 @@ function playCue(cue: FeedbackCue): void {
 
     // Every player is busy: restart the one that started longest ago.
     const oldest = pool.reduce((a, b) => (a.startedAt <= b.startedAt ? a : b));
-    oldest.ready = false;
-    oldest.startedAt = startedAt;
+    claim(oldest, startedAt);
     oldest.player.pause();
     void oldest.player
       .seekTo(0)
@@ -438,10 +511,16 @@ export function releaseSounds(): void {
   voices.clear();
 }
 
-/** Fire-and-forget: emits the haptic and the sound for a cue. */
+/**
+ * Fire-and-forget: emits the sound and the haptic for a cue.
+ *
+ * Sound first. Both calls return at once, but the haptic still crosses to the
+ * native side before the sound is asked for if it goes first; the ear notices
+ * lateness sooner than the hand does.
+ */
 export function emitFeedback(cue: FeedbackCue): void {
-  void vibrate(cue);
   playCue(cue);
+  void vibrate(cue);
 }
 
 /**

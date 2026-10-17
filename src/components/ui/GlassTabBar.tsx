@@ -92,6 +92,11 @@ function GlassTabBarComponent({ state, descriptors, navigation, insets }: Bottom
               routeName={route.name}
               label={label}
               focused={focused}
+              onPressIn={() => {
+                // On touch-down, like every other control that clicks: the
+                // dock never scrolls, so a press that starts here is a tap.
+                if (!focused) emitFeedback('select');
+              }}
               onPress={() => {
                 // `canPreventDefault` lets a screen intercept; honour it.
                 const event = navigation.emit({
@@ -100,7 +105,6 @@ function GlassTabBarComponent({ state, descriptors, navigation, insets }: Bottom
                   canPreventDefault: true,
                 });
                 if (focused || event.defaultPrevented) return;
-                emitFeedback('select');
                 navigation.navigate(route.name);
               }}
             />
@@ -115,10 +119,11 @@ interface TabItemProps {
   routeName: string;
   label: string;
   focused: boolean;
+  onPressIn: () => void;
   onPress: () => void;
 }
 
-function TabItem({ routeName, label, focused, onPress }: TabItemProps) {
+function TabItem({ routeName, label, focused, onPressIn, onPress }: TabItemProps) {
   const icons = ICONS[routeName];
   const tint = focused ? palette.mintDark : palette.inkMuted;
 
@@ -132,6 +137,7 @@ function TabItem({ routeName, label, focused, onPress }: TabItemProps) {
       accessibilityRole="tab"
       accessibilityState={{ selected: focused }}
       accessibilityLabel={label}
+      onPressIn={onPressIn}
       onPress={onPress}
       style={styles.item}
     >
