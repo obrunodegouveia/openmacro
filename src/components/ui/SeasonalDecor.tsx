@@ -39,7 +39,7 @@ const HIDDEN = {
 } as const;
 
 /** How far below its anchor the spider hangs at rest, in points. */
-const THREAD = 64;
+const THREAD = 30;
 
 /**
  * A spider on a thread, hanging from the top of the screen.
