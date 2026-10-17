@@ -113,7 +113,7 @@ export const en = {
 
   'progress.title': 'Progress',
   'progress.stat.xp': 'XP earned',
-  'progress.stat.lessons': 'Of {total, plural, one {# lesson} other {# lessons}}',
+  'progress.stat.lessons': 'of {total, plural, one {# lesson} other {# lessons}}',
   'progress.stat.streak': 'Day streak',
   'progress.module.count': '{done, number} / {total, number}',
   'progress.memory.title': 'Memory',
