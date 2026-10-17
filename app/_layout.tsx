@@ -22,6 +22,7 @@ import {
   setSoundEnabled,
   setSoundPack,
 } from '@/feedback';
+import { startMusic } from '@/feedback/music';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { LocaleProvider } from '@/providers/LocaleProvider';
 import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
@@ -64,6 +65,9 @@ export default function RootLayout() {
      * first, which is what made the timing feel unpredictable.
      */
     preloadSounds();
+
+    // Optional background loop; on unless the learner turned it off.
+    void startMusic();
   }, []);
 
   /**

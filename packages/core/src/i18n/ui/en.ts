@@ -323,6 +323,8 @@ export const en = {
 
   // ---- language ------------------------------------------------------------
   'language.label': 'Language',
+  'music.label': 'Music',
+  'music.hint': 'A little Korobeiniki playing in the background',
   'language.choose': 'Show the course in {name}',
   'language.partial':
     'This language is still being translated. Anything not yet translated appears in English.',

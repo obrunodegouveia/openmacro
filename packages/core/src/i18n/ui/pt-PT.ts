@@ -274,6 +274,8 @@ export const ptPT: UiDictionary = {
   'complete.savedLocally': 'Guardado neste dispositivo. Inicia sessão para o manteres em todos os dispositivos e começares uma sequência.',
   'complete.optional': 'Opcional. As lições são gratuitas de qualquer maneira.',
   'language.label': 'Idioma',
+  'music.label': 'Música',
+  'music.hint': 'Um pouco de Korobeiniki a tocar em fundo',
   'language.choose': 'Mostrar o curso em {name}',
   'language.partial': 'Este idioma ainda está a ser traduzido. O que ainda não estiver traduzido aparece em inglês.',
 };

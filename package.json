@@ -51,6 +51,7 @@
     "web": "expo start --web",
     "typecheck": "node ./node_modules/typescript-native/bin/tsc --noEmit",
     "typecheck:core": "node ./node_modules/typescript-native/bin/tsc -p packages/core --noEmit",
+    "gen:music": "node ./scripts/generate-music.mjs",
     "gen:sounds": "node ./scripts/generate-sounds.mjs",
     "audit:content": "node ./scripts/audit-content.mjs",
     "lint:content": "node ./scripts/validate-content.mjs",
