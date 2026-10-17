@@ -135,7 +135,16 @@ function TabItem({ routeName, label, focused, onPress }: TabItemProps) {
       onPress={onPress}
       style={styles.item}
     >
-      <View style={[styles.itemInner, focused && styles.itemInnerFocused]}>
+      <View style={styles.itemInner}>
+        {/*
+          The capsule is its own view, mounted when the tab is selected,
+          rather than a background the inner view switches on. Android drops
+          a view's border radius when its style changes after it has mounted,
+          so every tab selected after launch drew its capsule as a square;
+          only Today, selected at launch, came out round. A view mounted
+          already selected is drawn round every time.
+        */}
+        {focused ? <View style={styles.capsule} /> : null}
         {icons ? (
           <SymbolView
             // Decorative: the control around it carries the label.
@@ -204,9 +213,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 2,
     paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
   },
-  itemInnerFocused: {
+  capsule: {
+    pointerEvents: 'none',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    borderRadius: radius.pill,
     backgroundColor: palette.mintSoft,
   },
   label: {

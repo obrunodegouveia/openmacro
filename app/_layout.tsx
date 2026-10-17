@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useMemo } from 'react';
-import { useColorScheme } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -122,13 +122,23 @@ export default function RootLayout() {
               {/* A module's page: a plain push, so the system back swipe
                   returns to wherever the learner came from. The bar carries
                   only "Module N" and the share button; the full title is in
-                  the page, because iOS large titles truncate long ones. */}
+                  the page, because iOS large titles truncate long ones.
+
+                  Translucent on iOS only. The page clears a transparent bar
+                  with `contentInsetAdjustmentBehavior`, which Android ignores,
+                  so there the page began underneath the bar and "Module N"
+                  sat on top of the module's title. Android gets the opaque
+                  bar it would draw natively. */}
               <Stack.Screen
                 name="module/[moduleId]"
                 options={{
                   headerShown: true,
-                  headerTransparent: true,
+                  headerTransparent: Platform.OS === 'ios',
                   headerBlurEffect: 'systemChromeMaterial',
+                  headerStyle:
+                    Platform.OS === 'ios'
+                      ? undefined
+                      : { backgroundColor: navigationTheme.colors.background },
                   headerShadowVisible: false,
                   headerTintColor: palette.mintDark,
                   headerTitleStyle: { color: palette.ink },
