@@ -12,7 +12,9 @@
     "./web": "./src/web.ts"
   },
   "scripts": {
-    "test": "node --test 'test/**/*.test.ts'"
+    "test": "node --test 'test/**/*.test.ts'",
+    "build": "node scripts/build.mjs",
+    "verify:dist": "node scripts/verify-dist.mjs"
   },
   "peerDependencies": {
     "react": ">=18"

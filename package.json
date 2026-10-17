@@ -101,6 +101,8 @@
     "release:record": "node ./scripts/update-reachability.mjs --record",
     "test:seasons": "npm test --workspace @openmacro/seasons",
     "typecheck:seasons": "node ./node_modules/typescript-native/bin/tsc -p packages/seasons --noEmit",
+    "build:seasons": "npm run build --workspace @openmacro/seasons",
+    "verify:seasons": "npm run verify:dist --workspace @openmacro/seasons",
     "check:seasons": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON ./scripts/check-seasons.mjs"
   },
   "private": true,
