@@ -34,3 +34,15 @@ export const GITHUB_ISSUES_URL = `${GITHUB_URL}/issues`;
 export const GITHUB_LESSONS_URL = `${GITHUB_URL}/tree/main/packages/core/src/content/lessons`;
 /** There is no CONTRIBUTING.md — the guide is a section of the README. */
 export const GITHUB_CONTRIBUTING_URL = `${GITHUB_URL}/blob/main/README.md#contributing`;
+
+/**
+ * The mobile apps.
+ *
+ * `PLAY_STORE_LIVE` exists because the Android app was submitted before it was
+ * approved: a Play link that 404s is worse than an honest "coming soon". Flip
+ * it to `true` once https://play.google.com/store/apps/details?id=org.openmacro.app
+ * opens, and the badge, the `/app` redirect and the banner all follow.
+ */
+export const APP_STORE_URL = "https://apps.apple.com/app/openmacro-economics/id6810758729";
+export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=org.openmacro.app";
+export const PLAY_STORE_LIVE = false;

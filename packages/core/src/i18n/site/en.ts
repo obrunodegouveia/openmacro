@@ -672,4 +672,29 @@ export const en = {
   'tflow.effect.contract': '{aggregate} contracted',
   'tflow.effect.unchanged': '{aggregate} unchanged',
   'player.xpEarned': '+{count, number} XP',
+  // ---- get the app --------------------------------------------------------
+  'app.overline': 'The app',
+  'app.title.lead': 'Five minutes a day,',
+  'app.title.emphasis': 'in your pocket.',
+  'app.lede':
+    'The same course and the same challenges as this site, made for a phone — for the bus, the queue and the ten minutes before bed.',
+  'app.perk.offline.title': 'Every lesson works offline',
+  'app.perk.offline.body':
+    'From the first lesson to the last, with no signal. The course lives on your phone.',
+  'app.perk.sync.title': 'Your streak comes with you',
+  'app.perk.sync.body':
+    'Sign in once and your XP and day streak follow you between this site and the app.',
+  'app.perk.free.title': 'Free. No ads. No tracking.',
+  'app.perk.free.body':
+    'No account needed and nothing to buy. Open source, like everything here.',
+  'app.store.apple.eyebrow': 'Download on the',
+  'app.store.google.eyebrow': 'Get it on',
+  'app.store.google.soon': 'Coming soon to',
+  'app.qr.alt': 'QR code that opens the OpenMacro app in your phone’s app store',
+  'app.qr.title': 'On a computer?',
+  'app.qr.body': 'Point your phone’s camera here to open the app in your store.',
+  'app.shot.today': 'The OpenMacro app’s Today screen: a 12-day streak, 420 XP and the next lesson',
+  'app.shot.lesson': 'A lesson in the OpenMacro app, with the explanation after a correct answer',
+  'app.chip.streak': '12-day streak',
+  'app.chip.offline': 'Works offline',
 } as const;
