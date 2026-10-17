@@ -428,6 +428,16 @@ function recordSeek(startedAt: number): void {
       `p95 ${ms(report.p95)}ms, max ${ms(report.max)}ms ` +
       `(one 60fps frame is 16.67ms)`,
   );
+
+  // The part after `play()`: the render cycle a clip waits for, then the
+  // route's own delay. Only binaries from build 37 can report it.
+  const hardware = NativeSfx?.latency?.();
+  if (hardware) {
+    console.log(
+      `[OpenMacro] native output — io buffer ${ms(hardware.ioBuffer)}ms, ` +
+        `route latency ${ms(hardware.output)}ms at ${hardware.sampleRate}Hz`,
+    );
+  }
 }
 
 /**
