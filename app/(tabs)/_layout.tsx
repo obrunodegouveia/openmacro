@@ -16,6 +16,7 @@ import { View } from 'react-native';
 
 import { GlassTabBar } from '@/components/ui/GlassTabBar';
 import { SeasonalBats } from '@/components/ui/SeasonalDecor';
+import { SeasonalWelcome } from '@/components/ui/SeasonalWelcome';
 import { useLocale } from '@/providers/LocaleProvider';
 
 export default function TabLayout() {
@@ -38,6 +39,7 @@ export default function TabLayout() {
     </Tabs>
     {/* Over every tab, so they keep flying when the learner switches. */}
     <SeasonalBats />
+    <SeasonalWelcome />
     </View>
   );
 }
