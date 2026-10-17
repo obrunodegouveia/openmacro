@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, View, type ColorValue } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, hash, playState, rgba } from './shared';
+import { HIDDEN, hash, playState, rgba } from './shared.ts';
 
 /** How many swags the string hangs in across the width. */
 const SWAGS = 2;

@@ -9,7 +9,7 @@
 
 import { StyleSheet, Text, View } from 'react-native';
 
-import { HIDDEN, hash } from './shared';
+import { HIDDEN, hash } from './shared.ts';
 
 /** Where each one lands along the edge, in %, left to right; as many as are given, up to these. */
 const SPOTS = [9, 31, 58, 80] as const;

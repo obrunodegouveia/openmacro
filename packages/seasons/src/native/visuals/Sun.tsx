@@ -14,10 +14,8 @@ import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, playState, rgba } from './shared';
-
-/** How far the rays reach, as a multiple of the core's radius. */
-const REACH = 2.6;
+import { RAY_STRENGTH, SUN_REACH as REACH } from '../../presets/optics.ts';
+import { HIDDEN, playState, rgba } from './shared.ts';
 
 /** A ray's width at its root, as a fraction of the core's radius. */
 const RAY_WIDTH = 0.22;
@@ -78,7 +76,7 @@ export function Sun({
         angle: (i / rays) * 360,
         // Long and short in turn, like a child's drawing of the sun, but soft.
         length: crown * (i % 2 ? 0.72 : 1),
-        background: `linear-gradient(to bottom, ${rgba(color, alpha * 0.55)} 0%, ${rgba(color, alpha * 0.18)} 55%, ${rgba(color, 0)} 100%)`,
+        background: `linear-gradient(to bottom, ${rgba(color, alpha * RAY_STRENGTH)} 0%, ${rgba(color, alpha * 0.18)} 55%, ${rgba(color, 0)} 100%)`,
       })),
     [rays, crown, color, alpha],
   );

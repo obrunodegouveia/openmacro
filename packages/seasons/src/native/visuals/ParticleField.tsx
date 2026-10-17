@@ -21,13 +21,12 @@ import { memo, useMemo } from 'react';
 import { StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, hash, playState, rgba } from './shared';
+import { MAX_PARTICLES } from '../../presets/optics.ts';
+import type { MoteMotion, MoteShape } from '../../presets/types.ts';
+import { HIDDEN, hash, playState, rgba } from './shared.ts';
 
-/** What a drawn particle looks like. */
-export type MoteShape = 'dot' | 'petal' | 'leaf' | 'spark';
-
-/** How the particles move, beyond crossing the screen. See `MoteMotion` in the season data. */
-export type MoteMotion = 'drift' | 'tumble' | 'flutter' | 'pulse' | 'glint';
+export { MAX_PARTICLES };
+export type { MoteMotion, MoteShape };
 
 /** One depth of the field. */
 export interface ParticleLayer {
@@ -46,9 +45,6 @@ export interface ParticleLayer {
   /** Emoji drawn instead, one per particle in turn. */
   readonly emoji?: readonly string[];
 }
-
-/** The most particles one field draws, whatever it is asked for. */
-export const MAX_PARTICLES = 40;
 
 /** How far beyond the field's edges a particle starts and ends, in points. */
 const OVERSCAN = 24;

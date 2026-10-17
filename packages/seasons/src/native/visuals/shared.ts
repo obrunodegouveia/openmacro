@@ -1,12 +1,16 @@
 /**
- * Small helpers every seasonal visual shares.
+ * Small helpers every native seasonal visual shares.
  *
- * The visuals in this folder are app-agnostic primitives: React Native,
- * Reanimated and Gesture Handler only, and every colour, emoji, count and
- * size arrives as a prop. Nothing here imports the app's theme, i18n or
- * content, so the folder can be lifted into `@openmacro/seasons` (or another
- * app) as it is. The app's own wrappers, which read the season pack and the
- * palette, are `src/components/ui/Seasonal*.tsx`.
+ * The visuals in this folder are primitives: React Native, Reanimated and
+ * Gesture Handler only, and every colour, emoji, count and size arrives as
+ * a prop. They know nothing about packs or seasons; the composition layer
+ * (`../decor.tsx`) reads the live season's pack and hands them plain values.
+ * Use them directly to draw something the composition does not.
+ *
+ * The rules every one of them follows: hidden from VoiceOver and TalkBack
+ * (`HIDDEN`), never taking a touch meant for the screen under it (only the
+ * toy is touchable), standing still when `animate` is false, and holding
+ * their frame when `paused`.
  */
 
 /** Props that take a decoration out of the accessibility tree. */

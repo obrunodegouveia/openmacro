@@ -17,7 +17,7 @@ import { useMemo } from 'react';
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, playState, rgba } from './shared';
+import { HIDDEN, playState, rgba } from './shared.ts';
 
 /** How much wider than the screen each bank is, so its movement never shows an edge. */
 const OVERHANG = 0.3;

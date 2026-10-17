@@ -32,7 +32,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { HIDDEN } from './shared';
+import { HIDDEN } from './shared.ts';
 
 /** How far the toy bobs on its own, in points. */
 const BOB = 8;

@@ -12,7 +12,8 @@ import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, playState, rgba } from './shared';
+import { GLOW_FALLOFF as FALLOFF } from '../../presets/optics.ts';
+import { HIDDEN, playState, rgba } from './shared.ts';
 
 /** One glow, already resolved for the appearance on screen. */
 export interface Glow {
@@ -27,19 +28,6 @@ export interface Glow {
   /** Opacity at the centre. */
   readonly alpha: number;
 }
-
-/**
- * How a glow fades from its centre to its edge, as [offset, strength]
- * pairs: an eased falloff, so the edge of a wide, flat glow never reads as
- * a line. The same curve as the site's `SkyGlow`.
- */
-const FALLOFF: readonly (readonly [number, number])[] = [
-  [0, 1],
-  [0.3, 0.7],
-  [0.55, 0.35],
-  [0.8, 0.1],
-  [1, 0],
-];
 
 /** How much dimmer the glow is at the bottom of its breath. */
 const BREATH_LOW = 0.72;

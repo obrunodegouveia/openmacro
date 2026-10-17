@@ -12,7 +12,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, hash, playState, rgba } from './shared';
+import { HIDDEN, hash, playState, rgba } from './shared.ts';
 
 /** The crystals along the rim, as [left %, size in points]. */
 const CRYSTALS: readonly (readonly [number, number])[] = [

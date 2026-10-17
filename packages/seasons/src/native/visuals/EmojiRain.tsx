@@ -11,7 +11,7 @@ import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, hash, playState } from './shared';
+import { HIDDEN, hash, playState } from './shared.ts';
 
 /** The depths, far first: emoji size, one fall in milliseconds, opacity. */
 const DEPTHS = [

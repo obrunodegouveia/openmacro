@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 
-import { HIDDEN, hash, rgba } from './shared';
+import { HIDDEN, hash, rgba } from './shared.ts';
 
 /** How long one particle flies. */
 const FLIGHT_MS = 1000;

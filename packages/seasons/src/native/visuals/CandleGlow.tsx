@@ -11,7 +11,7 @@
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, playState, rgba } from './shared';
+import { HIDDEN, playState, rgba } from './shared.ts';
 
 /** One flicker cycle, as keyframe percentage to brightness. Uneven on purpose. */
 const FLICKER: Readonly<Record<number, number>> = { 0: 1, 18: 0.82, 30: 0.95, 46: 0.7, 58: 0.9, 74: 0.78, 88: 0.97, 100: 1 };

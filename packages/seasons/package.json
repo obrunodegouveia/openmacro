@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./presets": "./src/presets/index.ts",
+    "./native": "./src/native/index.ts",
     "./react": "./src/react.ts",
     "./types": "./src/types.ts",
     "./web": "./src/web.ts",
@@ -19,10 +20,30 @@
     "verify:dist": "node scripts/verify-dist.mjs"
   },
   "peerDependencies": {
-    "react": ">=18"
+    "expo-haptics": "*",
+    "react": ">=18",
+    "react-native": ">=0.81",
+    "react-native-gesture-handler": ">=2.20",
+    "react-native-reanimated": ">=4",
+    "react-native-worklets": ">=0.5"
   },
   "peerDependenciesMeta": {
+    "expo-haptics": {
+      "optional": true
+    },
     "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-worklets": {
       "optional": true
     }
   },

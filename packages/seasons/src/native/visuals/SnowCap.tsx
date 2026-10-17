@@ -9,7 +9,7 @@
 
 import { StyleSheet, View } from 'react-native';
 
-import { HIDDEN, rgba } from './shared';
+import { HIDDEN, rgba } from './shared.ts';
 
 /** The lumps along the drift, as [left %, width %, height in points]. */
 const LUMPS: readonly (readonly [number, number, number])[] = [

@@ -3,8 +3,9 @@
  * app each day while a season is on, "Happy Halloween, Maria!" (or "Ho ho
  * ho, Maria!") is staged across the screen (a glow blooming, motes rising,
  * the card springing in over a burst of the season's particles), then gets
- * out of the way. The staging is `WelcomeStage`, an app-agnostic primitive;
- * this file decides when it shows and what it says. Never in the calm look, which has no popups.
+ * out of the way. The staging is `SeasonWelcome` from
+ * `@openmacro/seasons/native`; this file decides when it shows and for whom.
+ * Never in the calm look, which has no popups.
  *
  * The name is the signed-in account's own, read from the session. Nobody's
  * name is written into the app; a learner who is signed out, or whose account
@@ -16,14 +17,13 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
+
+import { SeasonWelcome } from '@openmacro/seasons/native';
 
 import { emitFeedback } from '@/feedback';
 import { useAuth } from '@/providers/AuthProvider';
-import { useLocale } from '@/providers/LocaleProvider';
 import { useSeason } from '@/seasons';
-import { WelcomeStage } from '@/seasons/visuals';
-import { fontScale, resolvePalette } from '@/theme/tokens';
+import { fontScale } from '@/theme/tokens';
 
 /** Where the last welcome is remembered, as `<user id>:<local date>`. */
 const STORAGE_KEY = 'openmacro.season.welcomed';
@@ -56,9 +56,7 @@ function firstName(displayName: string): string | null {
  */
 export function SeasonalWelcome() {
   const { identity } = useAuth();
-  const { t } = useLocale();
   const season = useSeason();
-  const scheme = useColorScheme();
   const [name, setName] = useState<string | null>(null);
   const id = season && !season.calm ? season.id : null;
 
@@ -92,40 +90,5 @@ export function SeasonalWelcome() {
     return () => clearTimeout(timer);
   }, [name]);
 
-  if (!name || !season) return null;
-  const welcome = t(season.pack.strings.welcome, { name });
-  const colours = resolvePalette(scheme);
-  const { motes } = season.pack.look;
-  // The season's own air rises through the stage: its colours, its motion,
-  // and the shape of its nearest drawn particles.
-  const shape = [...motes.layers].reverse().find((layer) => !layer.emoji)?.shape;
-
-  return (
-    <WelcomeStage
-      emoji={season.pack.welcome}
-      title={welcome}
-      particles={season.pack.particles}
-      colors={{
-        // The season's own shadow tone at 72% (the scrim is tinted to
-        // match); a light shadow, in either appearance.
-        scrim: `${resolvePalette('light').shadow}B8`,
-        surface: colours.surface,
-        border: colours.gold,
-        title: colours.goldDark,
-        glow: season.pack.look.burst.ring,
-      }}
-      motes={{
-        colors: motes.colors.map((color) => color[scheme === 'dark' ? 'dark' : 'light']),
-        motion: motes.motion,
-        direction: motes.direction,
-        shape,
-        glow: motes.glow,
-      }}
-      animate={season.motion}
-      onDismiss={() => setName(null)}
-      label={welcome}
-      hint={t('season.welcomeDismiss')}
-      maxTitleScale={fontScale.title}
-    />
-  );
+  return <SeasonWelcome name={name} onDismiss={() => setName(null)} maxTitleScale={fontScale.title} />;
 }

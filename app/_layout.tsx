@@ -27,7 +27,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { LocaleProvider } from '@/providers/LocaleProvider';
 import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';
-import { useSeasonLifecycle } from '@/seasons';
+import { SeasonsProvider } from '@/seasons';
 import { palette, resolvePalette } from '@/theme/tokens';
 
 export default function RootLayout() {
@@ -52,9 +52,6 @@ export default function RootLayout() {
       },
     };
   }, [scheme]);
-  // The season follows the date, the learner and the remote switch while the app runs.
-  useSeasonLifecycle();
-
   // Apply the feedback switches from .env once, at boot.
   useEffect(() => {
     setHapticsEnabled(env.hapticsEnabled);
@@ -95,6 +92,8 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <LocaleProvider>
+        {/* Seasons, for every screen, in the learner's language. */}
+        <SeasonsProvider>
         <AuthProvider>
           <ContentUpdateProvider>
           <ProgressProvider>
@@ -140,6 +139,7 @@ export default function RootLayout() {
           </ProgressProvider>
           </ContentUpdateProvider>
         </AuthProvider>
+        </SeasonsProvider>
         </LocaleProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

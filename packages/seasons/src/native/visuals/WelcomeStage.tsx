@@ -13,9 +13,9 @@ import { useWindowDimensions, Pressable, StyleSheet, Text, View } from 'react-na
 import { useEffect, useMemo, useState } from 'react';
 import Animated, { Easing, FadeIn, FadeInDown, FadeOut, ZoomIn, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 
-import { Burst } from './Burst';
-import { ParticleField, type MoteMotion, type MoteShape, type ParticleLayer } from './ParticleField';
-import { HIDDEN, rgba } from './shared';
+import { Burst } from './Burst.tsx';
+import { ParticleField, type MoteMotion, type MoteShape, type ParticleLayer } from './ParticleField.tsx';
+import { HIDDEN, rgba } from './shared.ts';
 
 /** When each layer arrives, in milliseconds after mounting. */
 const CUE = { glow: 0, card: 120, emoji: 320, title: 460, burst: 380 } as const;

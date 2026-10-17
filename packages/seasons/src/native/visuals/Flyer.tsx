@@ -10,11 +10,11 @@
  * `shared.ts` for the rules every visual here follows.
  */
 
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { HIDDEN, hash, playState } from './shared';
+import { HIDDEN, hash, playState } from './shared.ts';
 
 /**
  * One flyer.
@@ -35,6 +35,8 @@ import { HIDDEN, hash, playState } from './shared';
  * @param props.delay When the first lap starts.
  * @param props.seed Varies the path, so two flyers never fly in formation.
  * @param props.paused Hold it where it is.
+ * @param props.children Artwork drawn instead of the emoji, `size` points
+ *     tall; it beats its wings and banks like the emoji would.
  * @return The flyer.
  */
 export function Flyer({
@@ -53,6 +55,7 @@ export function Flyer({
   delay,
   seed,
   paused,
+  children,
 }: {
   emoji: string;
   mirror: boolean;
@@ -69,6 +72,7 @@ export function Flyer({
   delay: number;
   seed: number;
   paused: boolean;
+  children?: ReactNode;
 }) {
   const flight = useMemo(() => {
     const total = lapMs + restMs;
@@ -130,9 +134,13 @@ export function Flyer({
       ]}
       {...HIDDEN}
     >
-      <Animated.Text allowFontScaling={false} style={[{ fontSize: size }, flap]}>
-        {emoji}
-      </Animated.Text>
+      {children ? (
+        <Animated.View style={flap}>{children}</Animated.View>
+      ) : (
+        <Animated.Text allowFontScaling={false} style={[{ fontSize: size }, flap]}>
+          {emoji}
+        </Animated.Text>
+      )}
     </Animated.View>
   );
 }
