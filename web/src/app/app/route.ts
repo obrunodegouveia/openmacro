@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import { APP_STORE_URL, PLAY_STORE_LIVE, PLAY_STORE_URL } from "@/lib/site";
+import { APP_STORE_URL, PLAY_STORE_LIVE, PLAY_STORE_URL, SITE } from "@/lib/site";
 import { LOCALE_HEADER } from "@/middleware";
 
 /**
@@ -14,11 +14,15 @@ import { LOCALE_HEADER } from "@/middleware";
  *
  * A 302, not a 301: where Android goes changes the day `PLAY_STORE_LIVE` flips,
  * and a permanent redirect would be cached past that day.
+ *
+ * The fallback is built on `SITE.url`, not on the request: behind Cloud Run
+ * the request's own origin is the container's `0.0.0.0:8080`, and the first
+ * deploy sent desktop visitors there.
  */
 export function GET(request: NextRequest) {
   const userAgent = request.headers.get("user-agent") ?? "";
   const portuguese = request.headers.get(LOCALE_HEADER) === "pt-PT";
-  const fallback = new URL(portuguese ? "/pt#app" : "/#app", request.nextUrl.origin);
+  const fallback = new URL(portuguese ? "/pt#app" : "/#app", SITE.url);
 
   const target = /iPhone|iPad|iPod/i.test(userAgent)
     ? APP_STORE_URL
