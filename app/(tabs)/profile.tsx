@@ -62,7 +62,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.screen}>
-      {/* Behind everything: the season's sky, and on Today its fog. */}
+      {/* Behind everything: the season's sky and its far particles. */}
       <SeasonalAtmosphere />
       <ScrollView
         contentContainerStyle={[

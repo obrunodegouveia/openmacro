@@ -3,8 +3,13 @@
   position: relative;
   height: calc(var(--sv-sag) + 1.25rem);
   pointer-events: none;
-  color: var(--sv-wire, currentColor);
+  --sv-wire: var(--sv-wire-dark, currentColor);
+  color: var(--sv-wire);
 }
+@media (prefers-color-scheme: light) {
+  .sv-lights { --sv-wire: var(--sv-wire-light, currentColor); }
+}
+.sv-lights[data-beads] { height: calc(var(--sv-sag) + 1.6rem); }
 .sv-lights-wire {
   position: absolute;
   inset: 0 0 auto 0;
@@ -47,6 +52,29 @@
   from { opacity: 1; box-shadow: 0 0 12px 3px color-mix(in srgb, var(--sv-bulb) 80%, transparent); }
   to { opacity: 0.55; box-shadow: 0 0 4px 0 color-mix(in srgb, var(--sv-bulb) 40%, transparent); }
 }
+/* A bead (a blossom, a leaf) on its stalk, swaying from where it hangs. */
+.sv-bead {
+  position: absolute;
+  margin-left: -0.55rem;
+  margin-top: -2px;
+  width: 1.1rem;
+  font-size: 1.05rem;
+  line-height: 1;
+  text-align: center;
+  transform-origin: 50% 0;
+  rotate: var(--sv-tilt);
+}
+.sv-lights[data-animate] .sv-bead {
+  animation-name: sv-bead-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes sv-bead-sway {
+  from { transform: rotate(-9deg); }
+  to { transform: rotate(9deg); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .sv-lights[data-animate] .sv-bulb { animation: none; }
+  .sv-lights[data-animate] .sv-bulb,
+  .sv-lights[data-animate] .sv-bead { animation: none; }
 }

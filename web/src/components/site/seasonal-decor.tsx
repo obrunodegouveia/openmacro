@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useReducedMotion } from "motion/react";
 import { useSeasonDecision } from "@openmacro/seasons/react";
 import { SEASON_PACKS, type SeasonId, type SeasonPack } from "@openmacro/core/season";
+import { SEASON_ART } from "@/components/site/seasons/art";
 import { seasonController, startSeasonRuntime } from "@/lib/season";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/site/locale-provider";
@@ -19,11 +20,12 @@ import { useLocale } from "@/components/site/locale-provider";
  * same data the app draws.
  *
  * Light by construction. This file is the only part every page loads, and it
- * holds no artwork: each season's layer (`seasons/<id>-layer.tsx`) and the
- * effects (`seasons/fx.tsx`), with their CSS, are separate chunks fetched
- * only while that season is on. An ordinary day downloads none of them, and
- * prerendered HTML has no decorations at all, so hydration adds them without
- * a mismatch.
+ * holds no artwork: the layer that draws any season (`seasons/layer.tsx`),
+ * a season's own artwork (`seasons/art.ts`) and the effects
+ * (`seasons/fx.tsx`), with their CSS, are separate chunks fetched only while
+ * a season is on, and each visual's CSS only when it is drawn. With the
+ * seasons off nothing is downloaded, and prerendered HTML has no
+ * decorations at all, so hydration adds them without a mismatch.
  *
  * Everything is `aria-hidden` and ignores the pointer, except the toy. The
  * calm look and reduced motion leave out whatever only makes sense moving.
@@ -66,16 +68,15 @@ export interface LayerProps {
   readonly sky: boolean;
 }
 
-/** Each season's layer of window decorations, loaded only while it is on. */
-const LAYERS: Record<SeasonId, React.ComponentType<LayerProps>> = {
-  halloween: dynamic(() => import("./seasons/halloween-layer").then((m) => m.HalloweenLayer), { ssr: false }),
-  christmas: dynamic(() => import("./seasons/christmas-layer").then((m) => m.ChristmasLayer), { ssr: false }),
-};
+/** The layer that draws any season's pack, loaded only while a season is on. */
+const Layer = dynamic(() => import("./seasons/layer").then((m) => m.SeasonLayer), { ssr: false });
 
 const Burst = dynamic(() => import("./seasons/visuals/burst").then((m) => m.Burst), { ssr: false });
 const SnowCap = dynamic(() => import("./seasons/visuals/snow-cap").then((m) => m.SnowCap), { ssr: false });
+const FrostRim = dynamic(() => import("./seasons/visuals/frost-rim").then((m) => m.FrostRim), { ssr: false });
+const Scatter = dynamic(() => import("./seasons/visuals/scatter").then((m) => m.Scatter), { ssr: false });
+const CandleGlow = dynamic(() => import("./seasons/visuals/candle-glow").then((m) => m.CandleGlow), { ssr: false });
 const Rain = dynamic(() => import("./seasons/fx").then((m) => m.Rain), { ssr: false });
-const HalloweenFooter = dynamic(() => import("./seasons/halloween-layer").then((m) => m.HalloweenFooter), { ssr: false });
 
 /**
  * Everything that floats over the page, for whichever season is on, and the
@@ -90,28 +91,39 @@ export function SeasonalDecor() {
   React.useEffect(() => startSeasonRuntime(), []);
   // An embedded video is someone else's page; it stays undressed.
   if (!season || /^(\/pt)?\/embed\//.test(pathname)) return null;
-  const Layer = LAYERS[season.id];
   return <Layer season={season} sky={!/^(\/pt)?\/learn\/[^/]+/.test(pathname)} />;
 }
 
 /**
- * The row of ornaments sitting on the top edge of the footer. Place it inside
- * a positioned container. Halloween has its own lit pumpkins; any other
- * season sets out its pack's row.
+ * The row of ornaments sitting on the top edge of the footer: the pack's
+ * row, lit ones glowing with the season's candle, or the season's own
+ * artwork (Halloween's SVG pumpkins). Place it inside a positioned
+ * container.
  *
  * @return The row, or nothing on an ordinary day.
  */
 export function SeasonalFooter() {
   const season = useSeason();
   if (!season) return null;
-  if (season.id === "halloween") return <HalloweenFooter season={season} />;
+  const Art = SEASON_ART[season.id]?.footer;
+  if (Art) return <Art season={season} />;
+  const { candle } = season.pack.look;
   return (
     <div className="season-patch" aria-hidden>
-      {season.pack.footer.map((ornament, i) => (
-        <span key={i} className="season-ornament" data-size={ornament.size} data-lift={ornament.lift || undefined}>
-          {ornament.emoji}
-        </span>
-      ))}
+      {season.pack.footer.map((ornament, i) => {
+        const glyph = (
+          <span key={i} className="season-ornament" data-size={ornament.size} data-lift={ornament.lift || undefined}>
+            {ornament.emoji}
+          </span>
+        );
+        return candle && ornament.lit ? (
+          <CandleGlow key={i} color={candle.color} flickerMs={candle.flickerMs} offset={(i * 0.37) % 1} animate={season.motion}>
+            {glyph}
+          </CandleGlow>
+        ) : (
+          glyph
+        );
+      })}
     </div>
   );
 }
@@ -155,7 +167,7 @@ export function SeasonalGreeting() {
   if (!season) return null;
   return (
     <p className="mt-2 inline-flex w-fit items-center rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-sm font-extrabold text-gold">
-      {t(`season.${season.id}.greeting`)}
+      {t(season.pack.strings.greeting)}
     </p>
   );
 }
@@ -174,17 +186,20 @@ export function SeasonalBurst() {
 }
 
 /**
- * The season's snow settled on the top edge of a card, if it has any: the
- * app puts it on Today's hero card, the site on the dashboard's "what next"
- * card. Place it inside the card, which must be positioned and not clip.
+ * Whatever the season has settled on the top edge of a card: snow, frost,
+ * fallen leaves. The app puts it on Today's hero card, the site on the
+ * dashboard's "what next" card. Place it inside the card, which must be
+ * positioned and not clip.
  *
- * @return The cap, or nothing on an ordinary day or for a season without snow.
+ * @return The edge, or nothing on an ordinary day or for a season without one.
  */
-export function SeasonalCardCap() {
+export function SeasonalCardEdge() {
   const season = useSeason();
-  const cap = season?.pack.look.snowCap;
-  if (!season || !cap) return null;
-  return <SnowCap color={cap} shade={season.pack.look.motes.color.light} />;
+  const edge = season?.pack.look.edge;
+  if (!season || !edge) return null;
+  if (edge.kind === "frost") return <FrostRim color={edge.color} animate={season.motion} />;
+  if (edge.kind === "scatter") return <Scatter emoji={edge.emoji} />;
+  return <SnowCap color={edge.color} shade={season.pack.look.motes.colors[0]?.light ?? season.pack.palette.light.inkFaint} />;
 }
 
 /**

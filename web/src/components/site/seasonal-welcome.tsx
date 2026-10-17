@@ -14,7 +14,8 @@ const WelcomeStage = dynamic(() => import("./seasons/visuals/welcome-stage").the
  * site each day while a season is on, "Happy Halloween, Maria!" (or "Ho ho
  * ho, Maria!") is staged across the window (a glow blooming, motes rising,
  * the card springing in over a burst of the season's particles), then gets
- * out of the way. The staging is the app-agnostic `WelcomeStage`. Never in the calm look, which has no popups. The app
+ * out of the way. The staging is the app-agnostic `WelcomeStage`, in the
+ * season's own air. Never in the calm look, which has no popups. The app
  * shows the same thing (src/components/ui/SeasonalWelcome.tsx).
  *
  * The name is the signed-in account's own, from the session. Nobody's name is
@@ -91,13 +92,23 @@ export function SeasonalWelcome() {
   }, [name]);
 
   if (!name || !season) return null;
+  const { motes } = season.pack.look;
 
   return (
     <WelcomeStage
       emoji={season.pack.welcome}
-      title={t(`season.${season.id}.welcome`, { name })}
+      title={t(season.pack.strings.welcome, { name })}
       particles={season.pack.particles}
       glow={season.pack.look.burst.ring}
+      // The season's own air rises through the stage: its colours, its
+      // motion, and the shape of its nearest drawn particles.
+      motes={{
+        colors: motes.colors,
+        motion: motes.motion,
+        direction: motes.direction,
+        shape: [...motes.layers].reverse().find((layer) => !layer.emoji)?.shape,
+        glow: motes.glow,
+      }}
       animate={season.motion}
       onDismiss={() => setName(null)}
       scrimClassName="bg-abyss/75"

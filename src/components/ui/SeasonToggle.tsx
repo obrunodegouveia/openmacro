@@ -17,6 +17,8 @@ import Animated, { FadeIn, FadeOut, LinearTransition, useAnimatedStyle, useShare
 
 import type { SeasonPreference } from '@openmacro/seasons';
 
+import { SeasonalBurst } from '@/components/ui/SeasonalDecor';
+import { emitFeedback } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
 import { restartForSeason, useSeasonSettings } from '@/seasons';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
@@ -29,7 +31,8 @@ const SLIDE = { damping: 18, stiffness: 220, mass: 0.8 } as const;
 /**
  * The switch. The selection slides between the options on a spring, and the
  * notes below it fade in and out, so a change of look is felt as well as
- * seen; the decorations themselves fade in and out where they hang.
+ * seen; the decorations themselves fade in and out where they hang. Turning
+ * the season on throws a burst of it out of the switch, with a cheer.
  *
  * @return The switch, or nothing while no season is on the calendar.
  */
@@ -41,6 +44,16 @@ export function SeasonToggle() {
   const slot = width > 0 ? (width - spacing.xs * 2 - spacing.xs * (OPTIONS.length - 1)) / OPTIONS.length : 0;
   const x = useSharedValue(0);
   const placed = useRef(false);
+  // Counts each time the season is turned on, so every one gets a burst.
+  const [cheer, setCheer] = useState(0);
+
+  const choose = (option: SeasonPreference) => {
+    if (option === 'auto' && preference !== 'auto') {
+      setCheer((n) => n + 1);
+      emitFeedback('complete');
+    }
+    setPreference(option);
+  };
 
   useEffect(() => {
     if (slot === 0) return;
@@ -77,7 +90,7 @@ export function SeasonToggle() {
               accessibilityRole="radio"
               accessibilityState={{ selected }}
               accessibilityHint={option === 'calm' ? t('season.mode.calmHint') : undefined}
-              onPress={() => setPreference(option)}
+              onPress={() => choose(option)}
               // Before the track is measured, the selected option draws its own
               // thumb; after, the sliding one does.
               style={({ pressed }) => [styles.option, selected && slot === 0 && styles.optionSelected, pressed && !selected && styles.optionPressed]}
@@ -88,6 +101,12 @@ export function SeasonToggle() {
             </Pressable>
           );
         })}
+        {/* Out of the "On" option, which sits first. */}
+        {cheer > 0 && slot > 0 ? (
+          <View pointerEvents="none" style={[styles.cheer, { left: spacing.xs + slot / 2 }]}>
+            <SeasonalBurst key={cheer} />
+          </View>
+        ) : null}
       </View>
 
       {preference === 'calm' ? (
@@ -144,6 +163,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     borderRadius: radius.sm,
   },
+  cheer: { position: 'absolute', top: '50%', width: 0, height: 0 },
   thumb: {
     position: 'absolute',
     top: spacing.xs,

@@ -24,7 +24,7 @@ import { SignedOutWarning } from "@/components/site/signed-out-warning";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import type { ProgressSnapshot } from "@/lib/progress";
 import { cn } from "@/lib/utils";
-import { SeasonalCardCap, SeasonalGreeting, SeasonalIcon } from "@/components/site/seasonal-decor";
+import { SeasonalCardEdge, SeasonalGreeting, SeasonalIcon } from "@/components/site/seasonal-decor";
 
 /**
  * ============================================================================
@@ -150,7 +150,7 @@ export function DashboardView({
           aria-label={s("dash.continueAria")}
           className="relative rounded-card border border-mint/30 bg-mint/[0.06] p-5 sm:p-6"
         >
-          <SeasonalCardCap />
+          <SeasonalCardEdge />
           <p className="text-sm font-bold text-mint-bright">
             {progress.completed === 0 ? s("dash.startHere") : s("dash.pickUp")}
             <span className="font-semibold text-ink-muted"> · {progress.next.module.title}</span>

@@ -12,11 +12,11 @@ import "./toy.css";
 const LINE_MS = 1800;
 
 /**
- * The toy on a thread from the top of the window: the spider at Halloween,
- * a bell at Christmas. The same game as the app's: it can be picked up and
- * thrown (it swings back on its thread), a click drops it (or rings it),
- * every third click it says something, every tenth it throws a burst. The
- * physics is the app-agnostic `DraggableToy`; this wrapper adds the words.
+ * The toy on a thread from the top of the window: a spider, a bell, a bee,
+ * a beach ball. The same game as the app's: it can be picked up and thrown
+ * (it swings back on its thread), a click plays the pack's move, every
+ * third click it says something, every tenth it throws a burst. The physics
+ * is the app-agnostic `DraggableToy`; this wrapper adds the words.
  *
  * @param props.season The season on screen.
  * @param props.children The toy's artwork; the pack's emoji when omitted.
@@ -42,11 +42,13 @@ export function HangingToy({ season, children }: { season: ActiveSeason; childre
     else if (reaction !== null) setLine({ line: reaction, tap: taps.current });
   };
 
-  const { look } = season.pack;
+  const { look, strings } = season.pack;
   return (
     <DraggableToy
       className="season-toy"
-      rest="clamp(3.5rem, 8vw, 6rem)"
+      // Short on a phone, so it hangs in the margin above the first line of
+      // the page rather than over it; longer as the window widens.
+      rest="clamp(0.5rem, 9vw - 1.5rem, 6rem)"
       move={season.pack.toy.move}
       animate={season.motion}
       onTap={onTap}
@@ -54,7 +56,7 @@ export function HangingToy({ season, children }: { season: ActiveSeason; childre
         <>
           {line !== null ? (
             <p key={line.tap} className="season-toy-line">
-              {t(`season.${season.id}.toy.${line.line as 1 | 2 | 3}`)}
+              {t(strings.toy[(line.line - 1) % strings.toy.length]!)}
             </p>
           ) : null}
           {burst > 0 && season.motion ? (

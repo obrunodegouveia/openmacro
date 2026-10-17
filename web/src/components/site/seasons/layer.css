@@ -1,6 +1,6 @@
-/* The layer every season's decorations sit in: under the header, over the
-   page, never in the way of a click except the toy's. The sky, the fog and
-   the particles sit outside it, behind the page (seasons/atmosphere.tsx). */
+/* The layer every season's decorations sit in (layer.tsx): under the header,
+   over the page, never in the way of a click except the toy's. The sky, the
+   mist and the particles sit outside it, behind the page (atmosphere.tsx). */
 .season-layer {
   position: fixed;
   inset: var(--header-total) 0 0 0;
@@ -10,15 +10,15 @@
   --sv-flyer-color: var(--color-ink);
 }
 
-/* Fairy lights strung edge to edge just under the header. */
-.season-lights {
+/* The garland, strung edge to edge just under the header. */
+.season-garland {
   position: absolute;
   inset: -2px 0 auto 0;
 }
 
-/* The sleigh: a row of emoji, larger than a bat. */
-.season-sleigh {
-  font-size: 2rem;
+/* An emoji flyer: a bird, a butterfly, a sleigh, a leaf. */
+.season-flyer {
+  display: block;
   line-height: 1;
   white-space: nowrap;
 }

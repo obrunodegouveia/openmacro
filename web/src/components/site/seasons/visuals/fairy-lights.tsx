@@ -1,12 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { hash, type Vars } from "./runtime";
+import { hash, type ByScheme, type Vars } from "./runtime";
 import "./fairy-lights.css";
 
 /**
- * A string of fairy lights hung across the top of the window in swags, each
- * bulb glowing in its own colour and twinkling on its own beat.
+ * A garland hung across the top of the window in swags: fairy lights, each
+ * bulb glowing in its own colour and twinkling on its own beat, or beads
+ * (blossoms, leaves) hung along a stem, each swaying on its own.
  *
  * The wire is one SVG path stretched to the width (its stroke kept at one
  * pixel whatever the stretch); the bulbs are HTML, placed on the same curve
@@ -32,16 +33,18 @@ function dropAt(x: number, swags: number): number {
  * The lights.
  *
  * @param props.colors Bulb colours in order along the string, any CSS colour.
- * @param props.count How many bulbs.
+ * @param props.beads Emoji hung instead of bulbs, in order along the string.
+ * @param props.count How many bulbs or beads.
  * @param props.swags How many swags across the width.
  * @param props.sag How far each swag dips, in CSS pixels.
- * @param props.twinkleMs One twinkle, in milliseconds.
- * @param props.wire The wire's and sockets' colour, any CSS colour.
- * @param props.animate Whether the bulbs twinkle; still, they glow steadily.
+ * @param props.twinkleMs One twinkle (or a bead's sway), in milliseconds.
+ * @param props.wire The wire's and sockets' colour, any CSS colour, or one by appearance.
+ * @param props.animate Whether the bulbs twinkle and the beads sway; still, they hang steady.
  * @return The lights.
  */
 export function FairyLights({
   colors,
+  beads,
   count,
   swags,
   sag,
@@ -50,11 +53,12 @@ export function FairyLights({
   animate,
 }: {
   colors: readonly string[];
+  beads?: readonly string[];
   count: number;
   swags: number;
   sag: number;
   twinkleMs: number;
-  wire: string;
+  wire: string | ByScheme<string>;
   animate: boolean;
 }) {
   const wire = React.useMemo(() => {
@@ -74,7 +78,7 @@ export function FairyLights({
         return {
           left: `${(x * 100).toFixed(2)}%`,
           top: `${(dropAt(x, swags) * sag).toFixed(1)}px`,
-          "--sv-bulb": colors[i % colors.length]!,
+          "--sv-bulb": colors[i % Math.max(1, colors.length)] ?? "#ffffff",
           "--sv-tilt": `${(slope * 14 + (hash(i, 1) - 0.5) * 16).toFixed(1)}deg`,
           animationDuration: `${Math.round(twinkleMs * (0.75 + hash(i, 2) * 0.5))}ms`,
           animationDelay: `-${Math.round(hash(i, 3) * twinkleMs)}ms`,
@@ -82,15 +86,32 @@ export function FairyLights({
       }),
     [colors, count, swags, sag, twinkleMs],
   );
+  const wireVars: Vars =
+    typeof wireColor === "string"
+      ? { "--sv-wire-dark": wireColor, "--sv-wire-light": wireColor }
+      : { "--sv-wire-dark": wireColor.dark, "--sv-wire-light": wireColor.light };
 
   return (
-    <div className="sv sv-lights" data-animate={animate || undefined} style={{ "--sv-sag": `${sag}px`, "--sv-wire": wireColor } as Vars} aria-hidden>
+    <div
+      className="sv sv-lights"
+      data-animate={animate || undefined}
+      data-beads={beads?.length ? "" : undefined}
+      style={{ "--sv-sag": `${sag}px`, ...wireVars } as Vars}
+      aria-hidden
+    >
       <svg className="sv-lights-wire" viewBox="0 0 1000 100" preserveAspectRatio="none">
-        <path d={wire} fill="none" stroke="currentColor" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+        <path d={wire} fill="none" stroke="currentColor" strokeWidth={beads?.length ? 2 : 1.5} vectorEffect="non-scaling-stroke" />
       </svg>
-      {bulbs.map((style, i) => (
-        <span key={i} className="sv-bulb" style={style} />
-      ))}
+      {bulbs.map((style, i) =>
+        beads?.length ? (
+          // A bead hangs from its stalk and sways like a flower in a breeze.
+          <span key={i} className="sv-bead" style={style}>
+            {beads[i % beads.length]}
+          </span>
+        ) : (
+          <span key={i} className="sv-bulb" style={style} />
+        ),
+      )}
     </div>
   );
 }

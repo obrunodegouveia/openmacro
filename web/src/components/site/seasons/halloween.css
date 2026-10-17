@@ -1,12 +1,20 @@
-/* Halloween artwork (halloween-layer.tsx). */
+/* Halloween's own artwork (halloween-art.tsx). */
 .season-cobweb {
   position: absolute;
   top: 0;
   width: clamp(5.5rem, 14vw, 10rem);
   height: auto;
+  /* Silk: the faint ink, fainter still. */
+  color: color-mix(in srgb, var(--color-ink-faint) 42%, transparent);
 }
 .season-cobweb[data-side="left"] { left: 0; }
 .season-cobweb[data-side="right"] { right: 0; transform: scaleX(-1); }
+
+.season-bat {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 
 /* The face glows a little brighter than the skin; the candle (visuals/
    candle-glow.css) does the flicker. */

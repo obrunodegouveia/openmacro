@@ -10,11 +10,11 @@
  */
 
 import { useWindowDimensions, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Animated, { Easing, FadeIn, FadeInDown, FadeOut, ZoomIn, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 
 import { Burst } from './Burst';
-import { ParticleField, type ParticleLayer } from './ParticleField';
+import { ParticleField, type MoteMotion, type MoteShape, type ParticleLayer } from './ParticleField';
 import { HIDDEN, rgba } from './shared';
 
 /** When each layer arrives, in milliseconds after mounting. */
@@ -28,6 +28,19 @@ const MOTES: readonly ParticleLayer[] = [
   { count: 10, size: 3, crossMs: 9000, opacity: 0.45, sway: 10 },
   { count: 6, size: 5, crossMs: 6500, opacity: 0.7, sway: 16 },
 ];
+
+/**
+ * The season's own air for the stage: its particles' colours, shape and
+ * motion, so spring welcomes you with tumbling petals and winter with
+ * glinting crystals. Without it, plain motes rise in the glow colour.
+ */
+export interface WelcomeMotes {
+  readonly colors: readonly string[];
+  readonly motion: MoteMotion;
+  readonly direction: 'fall' | 'rise';
+  readonly shape?: MoteShape;
+  readonly glow: boolean;
+}
 
 /** The colours it is drawn in, all supplied by the caller. */
 export interface WelcomeColors {
@@ -83,6 +96,7 @@ function Bloom({ color, size, animate }: { color: string; size: number; animate:
  * @param props.title The greeting.
  * @param props.particles What the burst throws.
  * @param props.colors See `WelcomeColors`.
+ * @param props.motes The season's air, see `WelcomeMotes`.
  * @param props.animate Whether anything moves.
  * @param props.onDismiss A tap anywhere.
  * @param props.label The accessibility label for the whole stage (the greeting).
@@ -95,6 +109,7 @@ export function WelcomeStage({
   title,
   particles,
   colors,
+  motes,
   animate,
   onDismiss,
   label,
@@ -105,6 +120,7 @@ export function WelcomeStage({
   title: string;
   particles: readonly string[];
   colors: WelcomeColors;
+  motes?: WelcomeMotes;
   animate: boolean;
   onDismiss: () => void;
   label: string;
@@ -113,6 +129,7 @@ export function WelcomeStage({
 }) {
   const { width, height } = useWindowDimensions();
   const glow = Math.min(width, height) * GLOW_SIZE;
+  const layers = useMemo(() => MOTES.map((layer) => ({ ...layer, shape: motes?.shape })), [motes?.shape]);
   const enter = <T extends { delay: (ms: number) => T }>(animation: T, at: number) => (animate ? animation.delay(at) : undefined);
 
   return (
@@ -121,7 +138,17 @@ export function WelcomeStage({
         <Bloom color={colors.glow} size={glow} animate={animate} />
         {animate ? (
           <View style={StyleSheet.absoluteFill} pointerEvents="none" {...HIDDEN}>
-            <ParticleField layers={MOTES} color={colors.glow} glow direction="rise" wind={12} width={width} height={height} paused={false} />
+            <ParticleField
+              layers={layers}
+              colors={motes?.colors ?? [colors.glow]}
+              glow={motes?.glow ?? true}
+              motion={motes?.motion}
+              direction={motes?.direction ?? 'rise'}
+              wind={12}
+              width={width}
+              height={height}
+              paused={false}
+            />
           </View>
         ) : null}
         {/* Behind the card, so the burst flies out from under it. */}

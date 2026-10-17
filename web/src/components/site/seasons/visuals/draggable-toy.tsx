@@ -36,8 +36,9 @@ function step(x: number, v: number, spring: { stiffness: number; damping: number
  *
  * It bobs on its own. Dragged, it follows the pointer on a stretching thread,
  * hanging along it; let go, it springs back and swings like a pendulum,
- * carrying the speed it was thrown with. A click drops it (`drop`) or rings
- * it (`swing`). The physics runs in `requestAnimationFrame` and writes
+ * carrying the speed it was thrown with. A click drops it (`drop`), rings
+ * it (`swing`), bounces it on its thread (`bounce`) or sends it darting
+ * about in a little loop (`buzz`). The physics runs in `requestAnimationFrame` and writes
  * `transform`s straight to the DOM: React renders nothing while it moves.
  * Without motion it hangs still and comes back from a drag without
  * swinging. See `runtime.ts` for the rules every visual here follows.
@@ -47,7 +48,7 @@ function step(x: number, v: number, spring: { stiffness: number; damping: number
  * stop on every page.
  *
  * @param props.rest How far below the container's top it hangs, as a CSS length.
- * @param props.move `drop` or `swing`.
+ * @param props.move `drop`, `swing`, `bounce` or `buzz`.
  * @param props.animate Whether it may move on its own.
  * @param props.onTap A click, after the toy has started its move.
  * @param props.className Places the toy (its container is absolutely positioned).
@@ -65,7 +66,7 @@ export function DraggableToy({
   attached,
 }: {
   rest: string;
-  move: "drop" | "swing";
+  move: "drop" | "swing" | "bounce" | "buzz";
   animate: boolean;
   onTap?: () => void;
   className?: string;

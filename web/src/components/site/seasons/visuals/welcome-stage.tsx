@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { Burst } from "./burst";
-import { ParticleField, type FieldLayer } from "./particle-field";
-import type { Vars } from "./runtime";
+import { ParticleField, type FieldLayer, type MoteMotion, type MoteShape } from "./particle-field";
+import type { ByScheme, Vars } from "./runtime";
 import "./welcome-stage.css";
 
 /** The motes rising behind the card. */
@@ -11,6 +11,19 @@ const MOTES: readonly FieldLayer[] = [
   { count: 14, size: 3, crossMs: 9000, opacity: 0.45, sway: 12, parallax: 0 },
   { count: 8, size: 5, crossMs: 6500, opacity: 0.7, sway: 18, parallax: 0 },
 ];
+
+/**
+ * The season's own air for the stage: its particles' colours, shape and
+ * motion, so spring welcomes you with tumbling petals and winter with
+ * glinting crystals. Without it, plain motes rise in the glow colour.
+ */
+export interface WelcomeMotes {
+  readonly colors: readonly ByScheme<string>[];
+  readonly motion: MoteMotion;
+  readonly direction: "fall" | "rise";
+  readonly shape?: MoteShape;
+  readonly glow: boolean;
+}
 
 /** When the burst goes off, as the card lands. */
 const BURST_MS = 380;
@@ -27,6 +40,7 @@ const BURST_MS = 380;
  * @param props.title The greeting.
  * @param props.particles What the burst throws.
  * @param props.glow The glow, motes and ring, any CSS colour.
+ * @param props.motes The season's air, see `WelcomeMotes`.
  * @param props.animate Whether anything moves.
  * @param props.onDismiss A click anywhere.
  * @param props.className Classes for the card (its colours and border).
@@ -39,6 +53,7 @@ export function WelcomeStage({
   title,
   particles,
   glow,
+  motes,
   animate,
   onDismiss,
   className,
@@ -49,6 +64,7 @@ export function WelcomeStage({
   title: string;
   particles: readonly string[];
   glow: string;
+  motes?: WelcomeMotes;
   animate: boolean;
   onDismiss: () => void;
   className?: string;
@@ -56,6 +72,7 @@ export function WelcomeStage({
   scrimClassName?: string;
 }) {
   const [burst, setBurst] = React.useState(false);
+  const layers = React.useMemo(() => MOTES.map((layer) => ({ ...layer, shape: motes?.shape })), [motes?.shape]);
   React.useEffect(() => {
     if (!animate) return;
     const timer = setTimeout(() => setBurst(true), BURST_MS);
@@ -73,7 +90,15 @@ export function WelcomeStage({
       <div className="sv-welcome-bloom" aria-hidden />
       {animate ? (
         <div className="sv-welcome-motes" aria-hidden>
-          <ParticleField layers={MOTES} color={{ light: glow, dark: glow }} glow direction="rise" wind={12} placement="front" />
+          <ParticleField
+            layers={layers}
+            colors={motes?.colors ?? [{ light: glow, dark: glow }]}
+            glow={motes?.glow ?? true}
+            motion={motes?.motion}
+            direction={motes?.direction ?? "rise"}
+            wind={12}
+            placement="front"
+          />
         </div>
       ) : null}
       <div className="sv-welcome-burst" aria-hidden>

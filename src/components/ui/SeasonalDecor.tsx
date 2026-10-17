@@ -29,7 +29,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsFocused } from 'expo-router';
 
-import { toyReaction, type SeasonLook, type SeasonPack } from '@openmacro/core/season';
+import { toyReaction, type DepthLayer, type SeasonLook, type SeasonPack } from '@openmacro/core/season';
 
 import { emitFeedback, touchHaptic } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
@@ -41,11 +41,15 @@ import {
   EmojiRain,
   FairyLights,
   Flyer,
-  Fog,
+  FrostRim,
   HIDDEN,
+  Mist,
   ParticleField,
+  Scatter,
   SkyGlow,
   SnowCap,
+  Sun,
+  hash,
   type Glow,
 } from '@/seasons/visuals';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
@@ -67,14 +71,20 @@ const LINE_MS = 1800;
 const APPEAR = FadeIn.duration(600);
 const LEAVE = FadeOut.duration(400);
 
-/** How tall the fog lies along the bottom of Today. */
-const FOG_HEIGHT = 240;
+/** How tall the mist lies along the bottom of Today. */
+const MIST_HEIGHT = 240;
 
 /** How many drops fall on a finished lesson. */
 const RAIN_DROPS = 15;
 
-/** The phone width the look's bulb count is written for. */
-const LIGHTS_WIDTH = 390;
+/** The phone width the look's garland count is written for. */
+const GARLAND_WIDTH = 390;
+
+/**
+ * The band, under the clock, that flyers cross: high, because lower down
+ * they crossed the hero card's buttons and the Course tab's search field.
+ */
+const FLIGHT_BAND = { top: 8, depth: 40 } as const;
 
 /**
  * Whether decorations here should be moving: the screen they sit on has
@@ -114,17 +124,48 @@ function glowsFor(look: SeasonLook, scheme: 'light' | 'dark'): Glow[] {
 }
 
 /**
+ * The particle field for one placement, behind the content or in front of
+ * it, as the season's look describes it.
+ *
+ * @param props.look The season's look.
+ * @param props.layers The depths to draw.
+ * @param props.scheme The appearance.
+ * @param props.paused Hold it.
+ * @return The field.
+ */
+function Motes({ look, layers, scheme, paused }: { look: SeasonLook; layers: readonly DepthLayer[]; scheme: 'light' | 'dark'; paused: boolean }) {
+  const { width, height } = useWindowDimensions();
+  const colors = useMemo(() => look.motes.colors.map((color) => color[scheme]), [look, scheme]);
+  if (!layers.length) return null;
+  return (
+    <ParticleField
+      layers={layers}
+      colors={colors}
+      glow={look.motes.glow}
+      direction={look.motes.direction}
+      motion={look.motes.motion}
+      wind={look.motes.wind}
+      width={width}
+      height={height}
+      paused={paused}
+    />
+  );
+}
+
+/**
  * The atmosphere behind a tab screen: the season's tinted sky breathing at
- * the top, the far particles in the air behind the content, and on Today the
- * low fog. Place it as the first child of the screen's root view, before the
- * scroll view, so the content draws over all of it.
+ * the top (and its sun, if it has one), the far particles in the air behind
+ * the content, and on Today the mist along the bottom. Place it as the first
+ * child of the screen's root view, before the scroll view, so the content
+ * draws over all of it.
  *
- * The calm look and Reduce Motion keep the sky, still, and leave the rest.
+ * The calm look and Reduce Motion keep the sky and the sun, still, and leave
+ * the particles out.
  *
- * @param props.fog Lay the season's fog, if it has one, along the bottom.
+ * @param props.mist Lay the season's mist, if it has one, along the bottom.
  * @return The atmosphere, or nothing on an ordinary day.
  */
-export function SeasonalAtmosphere({ fog = false }: { fog?: boolean }) {
+export function SeasonalAtmosphere({ mist = false }: { mist?: boolean }) {
   const season = useSeason();
   const scheme = useScheme();
   const awake = useAwake();
@@ -134,47 +175,53 @@ export function SeasonalAtmosphere({ fog = false }: { fog?: boolean }) {
   const back = useMemo(() => look?.motes.layers.filter((layer) => !layer.front) ?? [], [look]);
   if (!season || !look) return null;
   const paused = !awake;
+  const band = height * look.sky.height;
 
   return (
     <Animated.View key={season.id} entering={APPEAR} exiting={LEAVE} pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
-      <SkyGlow glows={glows} height={height * look.sky.height} breatheMs={look.sky.breatheMs} animate={season.motion} paused={paused} />
-      {fog && look.fog ? (
-        <Fog
-          color={look.fog.color[scheme]}
-          alpha={look.fog.alpha[scheme]}
-          height={FOG_HEIGHT}
-          bottom={0}
+      <SkyGlow glows={glows} height={band} breatheMs={look.sky.breatheMs} animate={season.motion} paused={paused} />
+      {look.sun ? (
+        <Sun
+          color={look.sun.color[scheme]}
+          alpha={look.sun.alpha[scheme]}
+          x={look.sun.x}
+          y={look.sun.y}
+          radius={look.sun.radius}
+          rays={look.sun.rays}
+          turnMs={look.sun.turnMs}
           width={width}
-          driftMs={look.fog.driftMs}
+          height={band}
           animate={season.motion}
           paused={paused}
         />
       ) : null}
-      {season.motion ? (
-        <ParticleField
-          layers={back}
-          color={look.motes.color[scheme]}
-          glow={look.motes.glow}
-          direction={look.motes.direction}
-          wind={look.motes.wind}
+      {mist && look.mist ? (
+        <Mist
+          mode={look.mist.mode}
+          color={look.mist.color[scheme]}
+          alpha={look.mist.alpha[scheme]}
+          height={MIST_HEIGHT}
+          bottom={0}
           width={width}
-          height={height}
+          cycleMs={look.mist.cycleMs}
+          animate={season.motion}
           paused={paused}
         />
       ) : null}
+      {season.motion ? <Motes look={look} layers={back} scheme={scheme} paused={paused} /> : null}
     </Animated.View>
   );
 }
 
 /**
- * The toy on a thread, hanging from the top of the screen: the spider at
- * Halloween, a bell at Christmas.
+ * The toy on a thread, hanging from the top of the screen: a spider, a
+ * bell, a bee, a beach ball.
  *
  * It bobs gently on its own, and a finger can pick it up and throw it: it
- * swings back on its thread like a pendulum. A tap drops it most of the way
- * down the screen (or rings it, for a bell); every third tap it says
- * something, and every tenth it throws a burst. That is the whole game, and
- * it is there because a seven-year-old will find it.
+ * swings back on its thread like a pendulum. A tap plays the pack's move;
+ * every third tap it says something, and every tenth it throws a burst.
+ * That is the whole game, and it is there because a seven-year-old will
+ * find it.
  *
  * @param props.season The season on screen.
  * @param props.top Where the thread is anchored, usually the safe-area inset.
@@ -182,7 +229,7 @@ export function SeasonalAtmosphere({ fog = false }: { fog?: boolean }) {
  */
 function HangingToy({ season, top }: { season: ActiveSeason; top: number }) {
   const { t } = useLocale();
-  const { toy } = season.pack;
+  const { toy, strings } = season.pack;
   const taps = useRef(0);
   const [line, setLine] = useState<number | null>(null);
   const [burst, setBurst] = useState(0);
@@ -201,6 +248,8 @@ function HangingToy({ season, top }: { season: ActiveSeason; top: number }) {
     else if (reaction !== null) setLine(reaction);
   };
 
+  const said = line !== null ? strings.toy[(line - 1) % strings.toy.length] : undefined;
+
   return (
     <View pointerEvents="box-none" style={styles.toyAnchor}>
       <DraggableToy
@@ -216,10 +265,10 @@ function HangingToy({ season, top }: { season: ActiveSeason; top: number }) {
         onRelease={() => touchHaptic('release')}
         attached={
           <>
-            {line !== null ? (
+            {said ? (
               <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(250)} style={styles.bubble} {...HIDDEN}>
                 <Text style={styles.bubbleText} numberOfLines={2}>
-                  {t(`season.${season.id}.toy.${line as 1 | 2 | 3}`)}
+                  {t(said)}
                 </Text>
               </Animated.View>
             ) : null}
@@ -241,8 +290,8 @@ function HangingToy({ season, top }: { season: ActiveSeason; top: number }) {
  * The toy hanging over the Today screen. Place it last inside the screen's
  * root view.
  *
- * In the calm look it hangs still, and a creepy one (the spider) is not
- * there at all.
+ * In the calm look it hangs still, and a creepy one (a spider, a bee) is
+ * not there at all.
  *
  * @param props.top The safe-area top inset, so nothing hides under the clock.
  * @return The overlay, or nothing on an ordinary day.
@@ -258,15 +307,6 @@ export function SeasonalOverlay({ top }: { top: number }) {
   );
 }
 
-/** Where each flyer flies and when it starts, by its index. */
-// High, in the band just under the clock: lower down they crossed the hero
-// card's buttons and the Course tab's search field.
-const FLIGHTS = [
-  { delay: 1200, y: 10, size: 26, lapMs: 7000, restMs: 9000 },
-  { delay: 2600, y: 26, size: 17, lapMs: 9500, restMs: 7000 },
-  { delay: 8000, y: 42, size: 21, lapMs: 8000, restMs: 10000 },
-] as const;
-
 /**
  * The sky over whichever tab is open: the season's flyers crossing now and
  * then, and the nearest, faintest particles drifting in front of the
@@ -274,6 +314,10 @@ const FLIGHTS = [
  * once, over the tab navigator, so it carries on when the learner switches
  * tabs. Never over a lesson: snow falling across a question is a
  * distraction, not a decoration.
+ *
+ * Each flyer's lane, size and schedule come from its index, around the
+ * pack's own; a flight with `spacingMs` (a gust of leaves) sets off
+ * together, each a beat behind the one before.
  *
  * @return The sky, or nothing on an ordinary day, in the calm look, or
  *     under Reduce Motion.
@@ -283,69 +327,73 @@ export function SeasonalSky() {
   const scheme = useScheme();
   const awake = useAwake();
   const { top } = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const look = season?.pack.look;
   const front = useMemo(() => look?.motes.layers.filter((layer) => layer.front) ?? [], [look]);
   if (!season?.motion || !look) return null;
-  const { flyer, ambient } = season.pack;
+  const { flyer } = season.pack;
   const paused = !awake;
 
   return (
     <Animated.View key={season.id} entering={APPEAR} exiting={LEAVE} pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
-      <ParticleField
-        layers={front}
-        color={look.motes.color[scheme]}
-        glow={look.motes.glow}
-        direction={look.motes.direction}
-        wind={look.motes.wind}
-        width={width}
-        height={height}
-        emoji={ambient?.emoji}
-        paused={paused}
-      />
-      {FLIGHTS.slice(0, flyer.count).map((flight, i) => (
-        <Flyer
-          key={i}
-          emoji={flyer.emoji}
-          mirror={flyer.mirror ?? false}
-          flapMs={flyer.flapMs}
-          y={top + flight.y}
-          size={flight.size}
-          width={width}
-          lapMs={flight.lapMs}
-          restMs={flight.restMs}
-          delay={flight.delay}
-          seed={i}
-          paused={paused}
-        />
-      ))}
+      <Motes look={look} layers={front} scheme={scheme} paused={paused} />
+      {flyer
+        ? Array.from({ length: flyer.count }, (_, i) => {
+            const together = flyer.spacingMs !== undefined;
+            const emoji = typeof flyer.emoji === 'string' ? flyer.emoji : flyer.emoji[i % flyer.emoji.length]!;
+            return (
+              <Flyer
+                key={i}
+                emoji={emoji}
+                mirror={flyer.mirror ?? false}
+                flapMs={flyer.flapMs}
+                flapAxis={flyer.flapAxis}
+                y={top + FLIGHT_BAND.top + hash(i, 1) * FLIGHT_BAND.depth}
+                // The first at the pack's size; the rest a little further off.
+                size={flyer.size * (i === 0 ? 1 : 0.7 + hash(i, 2) * 0.25)}
+                width={width}
+                lapMs={flyer.lapMs * (together ? 1 : 1 + hash(i, 3) * 0.35)}
+                restMs={flyer.restMs}
+                wobble={flyer.wobble}
+                waves={flyer.waves}
+                spin={flyer.spin}
+                delay={together ? 2000 + i * flyer.spacingMs! : 1200 + i * 3200 + hash(i, 4) * 2400}
+                seed={i}
+                paused={paused}
+              />
+            );
+          })
+        : null}
     </Animated.View>
   );
 }
 
 /**
- * The season's lights strung along the top of a screen: fairy lights at
- * Christmas. Place it as the first child of the scroll content; it takes its
- * own height, runs to the screen edges and scrolls away with the header.
+ * The season's garland strung along the top of a screen: fairy lights at
+ * Christmas, a blossom branch in spring. Place it as the first child of the
+ * scroll content; it takes its own height, runs to the screen edges and
+ * scrolls away with the header.
  *
- * @return The lights, or nothing on an ordinary day or for a season without.
+ * @return The garland, or nothing on an ordinary day or for a season without.
  */
-export function SeasonalLights() {
+export function SeasonalGarland() {
   const season = useSeason();
+  const scheme = useScheme();
   const awake = useAwake();
   const { width } = useWindowDimensions();
-  const lights = season?.pack.look.lights;
-  if (!season || !lights) return null;
+  const garland = season?.pack.look.garland;
+  if (!season || !garland) return null;
   return (
-    <Animated.View entering={APPEAR} exiting={LEAVE} pointerEvents="none" style={styles.lights} {...HIDDEN}>
+    <Animated.View entering={APPEAR} exiting={LEAVE} pointerEvents="none" style={styles.garland} {...HIDDEN}>
       <FairyLights
-        colors={lights.colors}
-        // Fewer bulbs on a narrow screen, the same spacing on a wide one.
-        count={Math.max(5, Math.round((lights.count * width) / LIGHTS_WIDTH))}
-        sag={lights.sag}
-        twinkleMs={lights.twinkleMs}
+        colors={garland.colors}
+        beads={garland.beads}
+        // Fewer on a narrow screen, the same spacing on a wide one.
+        count={Math.max(5, Math.round((garland.count * width) / GARLAND_WIDTH))}
+        sag={garland.sag}
+        twinkleMs={garland.beatMs}
         width={width}
-        wire={palette.inkFaint}
+        wire={garland.wire?.[scheme] ?? palette.inkFaint}
         animate={season.motion}
         paused={!awake}
       />
@@ -355,19 +403,25 @@ export function SeasonalLights() {
 
 /**
  * The season's ornament caught on the top corner of a card (a cobweb, a
- * bow), and its snow settled along the card's top edge if it has some.
- * Place it inside the card, which must not clip (`overflow` visible).
+ * bow), and whatever has settled along the card's top edge: snow, frost,
+ * fallen leaves. Place it inside the card, which must not clip (`overflow`
+ * visible).
  *
+ * @param props.edge Draw the season's edge too: on the hero card only.
  * @return The ornament, or nothing on an ordinary day.
  */
-export function SeasonalCardCorner() {
+export function SeasonalCardCorner({ edge = true }: { edge?: boolean }) {
   const season = useSeason();
   const scheme = useScheme();
+  const awake = useAwake();
   if (!season) return null;
-  const { snowCap, motes } = season.pack.look;
+  const settled = edge ? season.pack.look.edge : null;
+  const shade = season.pack.look.motes.colors[0]?.light ?? season.pack.palette.light.inkFaint;
   return (
     <>
-      {snowCap ? <SnowCap color={snowCap[scheme]} shade={motes.color.light} inset={radius.xl} /> : null}
+      {settled?.kind === 'snow' ? <SnowCap color={settled.color[scheme]} shade={shade} inset={radius.xl} /> : null}
+      {settled?.kind === 'frost' ? <FrostRim color={settled.color[scheme]} inset={radius.xl} animate={season.motion} paused={!awake} /> : null}
+      {settled?.kind === 'scatter' ? <Scatter emoji={settled.emoji} /> : null}
       <Text pointerEvents="none" style={styles.cardCorner} allowFontScaling={false} {...HIDDEN}>
         {season.pack.cardCorner}
       </Text>
@@ -397,7 +451,8 @@ const FOOTER_SIZE = { s: 26, m: 30, l: 36 } as const;
 
 /**
  * The row of ornaments that ends a scrolling screen: pumpkins and a ghost,
- * trees and a snowman. Lit ones glow from inside with the season's candle.
+ * trees and a snowman, tulips and a chick. Lit ones glow from inside with
+ * the season's candle.
  *
  * @return The row, or nothing on an ordinary day.
  */
@@ -461,7 +516,7 @@ export function SeasonalGreeting() {
   if (!season) return null;
   return (
     <Animated.View entering={APPEAR} exiting={LEAVE} style={styles.greeting}>
-      <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.greetingText}>{t(`season.${season.id}.greeting`)}</Text>
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.greetingText}>{t(season.pack.strings.greeting)}</Text>
     </Animated.View>
   );
 }
@@ -544,7 +599,7 @@ const styles = StyleSheet.create({
   },
   // Eats the content's top padding, runs edge to edge, and gives a little of
   // its height back so the header sits only slightly lower than usual.
-  lights: { marginTop: -spacing.lg, marginBottom: -spacing.md, marginHorizontal: -spacing.lg },
+  garland: { marginTop: -spacing.lg, marginBottom: -spacing.md, marginHorizontal: -spacing.lg },
   cardCorner: {
     position: 'absolute',
     top: -18,

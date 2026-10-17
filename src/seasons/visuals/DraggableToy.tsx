@@ -4,7 +4,9 @@
  * It bobs on its own. Dragged, it follows the finger on a stretching thread
  * and tilts with it; let go, it springs back and swings on the thread like a
  * pendulum, carrying the speed it was thrown with. A tap drops it down the
- * screen and lets it climb back (`drop`), or rings it (`swing`). The caller
+ * screen and lets it climb back (`drop`), rings it (`swing`), bounces it on
+ * its thread like a ball on elastic (`bounce`), or sends it darting about
+ * in a little loop (`buzz`). The caller
  * hears about every grab, release and tap, for haptics and jokes.
  *
  * Built on Gesture Handler and Reanimated: the drag, the spring and the
@@ -57,7 +59,8 @@ const HIT_SLOP = 14;
  * @param props.size The toy's box, square, in points.
  * @param props.dropBy How far a tap drops a `drop` toy, in points.
  * @param props.maxDrag How far it can be pulled down, in points.
- * @param props.move `drop` falls and climbs back; `swing` rings like a bell.
+ * @param props.move `drop` falls and climbs back; `swing` rings like a bell;
+ *     `bounce` bounces on the thread; `buzz` darts about and back.
  * @param props.thread The thread's colour.
  * @param props.animate Whether it may move on its own.
  * @param props.onTap A tap, after the toy has started its move.
@@ -87,7 +90,7 @@ export function DraggableToy({
   size: number;
   dropBy: number;
   maxDrag: number;
-  move: 'drop' | 'swing';
+  move: 'drop' | 'swing' | 'bounce' | 'buzz';
   thread: ColorValue;
   animate: boolean;
   onTap?: () => void;
@@ -99,6 +102,10 @@ export function DraggableToy({
   const bob = useSharedValue(0);
   const drop = useSharedValue(0);
   const ring = useSharedValue(0);
+  // The bounce's squash at the bottom (0 to 1), and the buzz's darting.
+  const squash = useSharedValue(0);
+  const dartX = useSharedValue(0);
+  const dartY = useSharedValue(0);
   const x = useSharedValue(0);
   const y = useSharedValue(0);
   const startX = useSharedValue(0);
@@ -125,6 +132,25 @@ export function DraggableToy({
         withSpring(dropBy, { damping: 7, stiffness: 90 }),
         withDelay(500, withTiming(0, { duration: 1400, easing: Easing.inOut(Easing.quad) })),
       );
+    } else if (animate && move === 'bounce') {
+      // Falls, stretches the thread, and is pulled back up past its rest,
+      // bouncing to a stop, squashing a little each time it turns at the bottom.
+      drop.value = withSequence(
+        withTiming(dropBy * 0.42, { duration: 340, easing: Easing.in(Easing.quad) }),
+        withSpring(0, { damping: 4, stiffness: 140, mass: 0.8 }),
+      );
+      squash.value = withSequence(
+        withDelay(300, withTiming(1, { duration: 70 })),
+        withTiming(0, { duration: 260, easing: Easing.out(Easing.back(3)) }),
+      );
+      // A full turn, so resetting to 0 at the end is invisible.
+      ring.value = withSequence(withTiming(360, { duration: 1100, easing: Easing.out(Easing.cubic) }), withTiming(0, { duration: 0 }));
+    } else if (animate && move === 'buzz') {
+      // A quick loop and back, like a bee that has seen a flower.
+      const leg = { duration: 160, easing: Easing.inOut(Easing.quad) };
+      dartX.value = withSequence(withTiming(-34, leg), withTiming(-46, leg), withTiming(-10, leg), withTiming(26, leg), withTiming(14, leg), withSpring(0, { damping: 8 }));
+      dartY.value = withSequence(withTiming(18, leg), withTiming(52, leg), withTiming(70, leg), withTiming(40, leg), withTiming(8, leg), withSpring(0, { damping: 8 }));
+      ring.value = withSequence(withTiming(-14, { duration: 160 }), withTiming(16, { duration: 320 }), withTiming(-10, { duration: 320 }), withSpring(0, { damping: 6 }));
     } else if (animate) {
       ring.value = withSequence(
         withTiming(22, { duration: 120 }),
@@ -179,10 +205,11 @@ export function DraggableToy({
   // The thread runs from the anchor to the top of the toy, at whatever angle
   // the toy has been pulled to.
   const threadStyle = useAnimatedStyle(() => {
-    const dy = restY + bob.value + drop.value + y.value;
+    const dx = x.value + dartX.value;
+    const dy = restY + bob.value + drop.value + y.value + dartY.value;
     return {
-      height: Math.hypot(x.value, dy),
-      transform: [{ rotate: `${-Math.atan2(x.value, dy)}rad` }],
+      height: Math.hypot(dx, dy),
+      transform: [{ rotate: `${-Math.atan2(dx, dy)}rad` }],
     };
   });
 
@@ -192,9 +219,11 @@ export function DraggableToy({
     const lean = (Math.atan2(x.value, dy) * 180) / Math.PI;
     return {
       transform: [
-        { translateX: x.value },
-        { translateY: bob.value + drop.value + y.value },
+        { translateX: x.value + dartX.value },
+        { translateY: bob.value + drop.value + y.value + dartY.value },
         { rotate: `${-lean + bob.value * 0.6 - 3 + ring.value}deg` },
+        { scaleX: 1 + squash.value * 0.16 },
+        { scaleY: 1 - squash.value * 0.2 },
       ],
     };
   });

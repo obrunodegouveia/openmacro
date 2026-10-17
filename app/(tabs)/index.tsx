@@ -41,7 +41,7 @@ import { EurcLink } from '@/components/ui/EurcLink';
 import { Chevron } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { ProgressRing } from '@/components/ui/ProgressRing';
-import { SeasonalAtmosphere, SeasonalCardCorner, SeasonalFooter, SeasonalGreeting, SeasonalLights, SeasonalOverlay } from '@/components/ui/SeasonalDecor';
+import { SeasonalAtmosphere, SeasonalCardCorner, SeasonalFooter, SeasonalGreeting, SeasonalGarland, SeasonalOverlay } from '@/components/ui/SeasonalDecor';
 import { StreakBadge } from '@/components/ui/StatusPills';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { UpdateBanner } from '@/components/ui/UpdateBanner';
@@ -78,8 +78,8 @@ export default function TodayScreen() {
 
   return (
     <View style={styles.screen}>
-      {/* Behind everything: the season's sky, and on Today its fog. */}
-      <SeasonalAtmosphere fog />
+      {/* Behind everything: the season's sky, and on Today its mist. */}
+      <SeasonalAtmosphere mist />
       <ScrollView
         contentContainerStyle={[
           styles.content,
@@ -87,7 +87,7 @@ export default function TodayScreen() {
         ]}
         scrollIndicatorInsets={{ bottom: TAB_BAR_SPACE }}
       >
-        <SeasonalLights />
+        <SeasonalGarland />
 
         {/* ---- header -------------------------------------------------- */}
         <View style={styles.header}>

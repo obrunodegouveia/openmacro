@@ -1,26 +1,18 @@
 "use client";
 
-import type { ActiveSeason, LayerProps } from "@/components/site/seasonal-decor";
-import { SeasonAtmosphere } from "./atmosphere";
-import { HangingToy } from "./toy";
+import type { ActiveSeason } from "@/components/site/seasonal-decor";
 import { CandleGlow } from "./visuals/candle-glow";
-import { Flyer } from "./visuals/flyer";
-import "./layer.css";
 import "./halloween.css";
 
 /**
- * Halloween on the site: a dusky violet sky with a pumpkin glow, embers
- * rising in depth, low fog along the bottom, two cobwebs in the top corners,
- * the spider on its thread (it can be picked up and thrown), and three bats
- * on wandering flight paths, in SVG. The app draws the same pack in emoji;
- * the site has an SVG renderer and a wider window, so it draws its own
- * artwork, through the same app-agnostic visuals for everything that moves.
- *
- * Loaded only while Halloween is on (see `seasonal-decor.tsx`).
+ * Halloween's own artwork on the site: SVG cobwebs in the top corners, an
+ * SVG spider for the toy, SVG bats for the flyers and lit SVG pumpkins on
+ * the footer. Optional by design: without this file Halloween would draw
+ * its pack's emoji like every other season, through the same generic layer
+ * (`layer.tsx`). The site has an SVG renderer and a wider window, so it
+ * spends it here. Registered in `art.ts`, and fetched only while Halloween
+ * is on.
  */
-
-/** The silk colour; set per theme as `--season-web` in globals.css. */
-const SILK = "var(--season-web)";
 
 /**
  * The SVG path of a quarter cobweb with its hub in the top-left corner.
@@ -67,22 +59,32 @@ const WEB_PATH = cobwebPath(160);
  */
 function Cobweb({ side }: { side: "left" | "right" }) {
   return (
-    <svg
-      viewBox="0 0 164 164"
-      className="season-cobweb"
-      data-side={side}
-      fill="none"
-      stroke={SILK}
-      strokeWidth={1.3}
-      strokeLinecap="round"
-    >
+    <svg viewBox="0 0 164 164" className="season-cobweb" data-side={side} fill="none" stroke="currentColor" strokeWidth={1.3} strokeLinecap="round">
       <path d={WEB_PATH} />
     </svg>
   );
 }
 
-/** The spider, in SVG, for the hanging toy. */
-function SpiderArt() {
+/**
+ * Both cobwebs, for the layer's corners.
+ *
+ * @return The webs.
+ */
+export function Cobwebs() {
+  return (
+    <>
+      <Cobweb side="left" />
+      <Cobweb side="right" />
+    </>
+  );
+}
+
+/**
+ * The spider, in SVG, for the hanging toy.
+ *
+ * @return The spider.
+ */
+export function SpiderArt() {
   return (
     <svg viewBox="0 0 48 44" width={40} height={36}>
       <g stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" fill="none">
@@ -97,56 +99,19 @@ function SpiderArt() {
   );
 }
 
-/** Each bat's lane, size, lap and first start: varied, so they never fly in formation. */
-const BATS = [
-  { top: "18vh", width: "3.25rem", lapMs: 6600, delay: 2000, depth: 0.04 },
-  { top: "30vh", width: "2.25rem", lapMs: 8200, delay: 9000, depth: 0.02 },
-  { top: "12vh", width: "2.75rem", lapMs: 7400, delay: 15000, depth: 0.03 },
-] as const;
-
-/** The bat's silhouette, wings spread. */
-function BatArt() {
-  return (
-      <svg viewBox="0 0 100 40">
-        <path
-          fill="currentColor"
-          d="M50 14L46 6L45 13C38 10 22 3 2 7C10 11 12 17 12 23C16 19 22 19 26 24C29 20 34 20 38 26C40 23 44 23 46 29L50 35L54 29C56 23 60 23 62 26C66 20 71 20 74 24C78 19 84 19 88 23C88 17 90 11 98 7C78 3 62 10 55 13L54 6Z"
-        />
-      </svg>
-  );
-}
-
 /**
- * The Halloween layer: cobwebs always, and in the full look the spider and
- * the bats. The calm look keeps the webs and leaves the creatures out.
+ * A bat's silhouette, wings spread, for the flyers.
  *
- * @param props.season The season on screen.
- * @param props.sky Whether the bats may fly over this page.
- * @return The layer.
+ * @return The bat.
  */
-export function HalloweenLayer({ season, sky }: LayerProps) {
-  const creatures = !season.calm;
-  const { flyer } = season.pack;
+export function BatArt() {
   return (
-    <>
-      <SeasonAtmosphere season={season} sky={sky} />
-      <div className="season-layer" aria-hidden>
-        <Cobweb side="left" />
-        <Cobweb side="right" />
-        {creatures ? (
-          <HangingToy season={season}>
-            <SpiderArt />
-          </HangingToy>
-        ) : null}
-        {season.motion && sky
-          ? BATS.slice(0, flyer.count).map((bat, index) => (
-              <Flyer key={index} {...bat} flapMs={flyer.flapMs} seed={index}>
-                <BatArt />
-              </Flyer>
-            ))
-          : null}
-      </div>
-    </>
+    <svg viewBox="0 0 100 40" className="season-bat">
+      <path
+        fill="currentColor"
+        d="M50 14L46 6L45 13C38 10 22 3 2 7C10 11 12 17 12 23C16 19 22 19 26 24C29 20 34 20 38 26C40 23 44 23 46 29L50 35L54 29C56 23 60 23 62 26C66 20 71 20 74 24C78 19 84 19 88 23C88 17 90 11 98 7C78 3 62 10 55 13L54 6Z"
+      />
+    </svg>
   );
 }
 
@@ -184,12 +149,11 @@ const PUMPKINS = [44, 64, 38] as const;
  */
 export function HalloweenFooter({ season }: { season: ActiveSeason }) {
   const { candle } = season.pack.look;
-  const animate = season.motion;
   return (
     <div className="season-patch" aria-hidden>
       {PUMPKINS.map((size, i) =>
         candle ? (
-          <CandleGlow key={i} color={candle.color} flickerMs={candle.flickerMs} offset={(i * 0.37) % 1} animate={animate}>
+          <CandleGlow key={i} color={candle.color} flickerMs={candle.flickerMs} offset={(i * 0.37) % 1} animate={season.motion}>
             <Pumpkin size={size} />
           </CandleGlow>
         ) : (

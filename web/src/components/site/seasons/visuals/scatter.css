@@ -1,0 +1,12 @@
+/* Things resting on a card's top edge (scatter.tsx). */
+.sv-scatter {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.sv-scatter > span {
+  position: absolute;
+  line-height: 1;
+}

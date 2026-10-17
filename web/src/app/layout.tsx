@@ -14,6 +14,7 @@ import { ActivityHeartbeat } from "@/components/app/activity-heartbeat";
 import { SeasonalDecor } from "@/components/site/seasonal-decor";
 import { SeasonalWelcome } from "@/components/site/seasonal-welcome";
 import { SEASON_SCRIPT } from "@/lib/season-script";
+import { SEASON_STYLES } from "@/lib/season-palette";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -136,6 +137,9 @@ export default async function RootLayout({
         {/* Before first paint too, so a seasonal palette never flashes in
             after the ordinary one. See lib/season-script.ts. */}
         <script dangerouslySetInnerHTML={{ __html: SEASON_SCRIPT }} />
+        {/* Every season's palette, written from its pack (lib/season-palette.ts),
+            so it is in place for that first paint too. */}
+        <style dangerouslySetInnerHTML={{ __html: SEASON_STYLES }} />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-mint focus:px-4 focus:py-2 focus:font-bold focus:text-abyss"

@@ -1,6 +1,7 @@
 /**
- * A string of fairy lights hung across the top of a screen, in swags, each
- * bulb glowing in its own colour and twinkling on its own beat.
+ * A garland hung across the top of a screen, in swags: fairy lights, each
+ * bulb glowing in its own colour and twinkling on its own beat, or beads
+ * (blossoms, leaves) hung along a stem, each swaying on its own.
  *
  * Drawn with plain views: the wire is short rotated segments sampled along
  * the curve, each bulb a rounded view with a coloured `boxShadow` glow. The
@@ -10,7 +11,7 @@
  */
 
 import { useMemo } from 'react';
-import { StyleSheet, View, type ColorValue } from 'react-native';
+import { StyleSheet, Text, View, type ColorValue } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { HIDDEN, hash, playState, rgba } from './shared';
@@ -26,6 +27,12 @@ const BULB = { width: 8, height: 11 } as const;
 
 /** The quietest a bulb gets, mid-twinkle. */
 const DIM = 0.5;
+
+/** A bead's emoji size, in points. */
+const BEAD = 17;
+
+/** How far a bead swings either way, in degrees. */
+const BEAD_SWING = 9;
 
 /**
  * Where the wire is at a point across the width.
@@ -45,17 +52,19 @@ function wireAt(x: number, width: number, sag: number): { y: number; slope: numb
  * top `sag + 20` points of it.
  *
  * @param props.colors Bulb colours, in order along the string, `#rrggbb`.
- * @param props.count How many bulbs.
+ * @param props.beads Emoji hung instead of bulbs, in order along the string.
+ * @param props.count How many bulbs or beads.
  * @param props.sag How far each swag dips, in points.
- * @param props.twinkleMs One twinkle, in milliseconds.
+ * @param props.twinkleMs One twinkle (or a bead's sway), in milliseconds.
  * @param props.width The string's width.
  * @param props.wire The wire's colour.
- * @param props.animate Whether the bulbs twinkle; still, they glow steadily.
+ * @param props.animate Whether the bulbs twinkle and the beads sway; still, they hang steady.
  * @param props.paused Hold the twinkle.
  * @return The lights.
  */
 export function FairyLights({
   colors,
+  beads,
   count,
   sag,
   twinkleMs,
@@ -65,6 +74,7 @@ export function FairyLights({
   paused,
 }: {
   colors: readonly string[];
+  beads?: readonly string[];
   count: number;
   sag: number;
   twinkleMs: number;
@@ -94,25 +104,54 @@ export function FairyLights({
         return {
           x,
           y,
-          color: colors[i % colors.length]!,
+          color: colors[i % Math.max(1, colors.length)] ?? '#FFFFFF',
+          bead: beads?.length ? beads[i % beads.length]! : null,
           // Hangs off the wire, tipped a little with it.
           angle: Math.atan(slope) * 0.6 + (hash(i, 1) - 0.5) * 0.3,
           duration: twinkleMs * (0.75 + hash(i, 2) * 0.5),
           delay: hash(i, 3) * twinkleMs,
         };
       }),
-    [colors, count, width, sag, twinkleMs],
+    [colors, beads, count, width, sag, twinkleMs],
   );
 
   return (
-    <View pointerEvents="none" style={[styles.box, { width, height: sag + BULB.height + 12 }]} {...HIDDEN}>
+    <View pointerEvents="none" style={[styles.box, { width, height: sag + (beads?.length ? BEAD + 8 : BULB.height + 12) }]} {...HIDDEN}>
       {segments.map((s, i) => (
         <View
           key={i}
           style={[styles.wire, { left: s.left, top: s.top, width: s.length + 0.5, backgroundColor: wire, transform: [{ rotate: `${s.angle}rad` }] }]}
         />
       ))}
-      {bulbs.map((b, i) => (
+      {bulbs.map((b, i) =>
+        b.bead ? (
+          // A bead hangs from its stalk and sways like a flower in a breeze.
+          <Animated.View
+            key={i}
+            style={[
+              styles.beadAnchor,
+              { left: b.x - BEAD / 2, top: b.y - 2, transform: [{ rotate: `${b.angle}rad` }] },
+              animate
+                ? {
+                    animationName: {
+                      from: { transform: [{ rotate: `${(b.angle * 180) / Math.PI - BEAD_SWING}deg` }] },
+                      to: { transform: [{ rotate: `${(b.angle * 180) / Math.PI + BEAD_SWING}deg` }] },
+                    },
+                    animationDuration: b.duration / 2,
+                    animationDelay: b.delay,
+                    animationDirection: 'alternate',
+                    animationIterationCount: 'infinite',
+                    animationTimingFunction: 'ease-in-out',
+                    animationPlayState: playState(paused),
+                  }
+                : null,
+            ]}
+          >
+            <Text allowFontScaling={false} style={styles.bead}>
+              {b.bead}
+            </Text>
+          </Animated.View>
+        ) : (
         <View key={i} style={[styles.bulbAnchor, { left: b.x - BULB.width / 2, top: b.y, transform: [{ rotate: `${b.angle}rad` }] }]}>
           <View style={[styles.socket, { backgroundColor: wire }]} />
           <Animated.View
@@ -139,7 +178,8 @@ export function FairyLights({
             <View style={styles.glint} />
           </Animated.View>
         </View>
-      ))}
+        ),
+      )}
     </View>
   );
 }
@@ -157,5 +197,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: BULB.width,
     borderBottomRightRadius: BULB.width,
   },
+  beadAnchor: { position: 'absolute', width: BEAD, alignItems: 'center', transformOrigin: 'top' },
+  bead: { fontSize: BEAD, lineHeight: BEAD + 3 },
   glint: { position: 'absolute', top: 2, left: 2, width: 2, height: 3, borderRadius: 1, backgroundColor: 'rgba(255, 255, 255, 0.7)' },
 });

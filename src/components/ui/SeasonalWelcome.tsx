@@ -93,8 +93,12 @@ export function SeasonalWelcome() {
   }, [name]);
 
   if (!name || !season) return null;
-  const welcome = t(`season.${season.id}.welcome`, { name });
+  const welcome = t(season.pack.strings.welcome, { name });
   const colours = resolvePalette(scheme);
+  const { motes } = season.pack.look;
+  // The season's own air rises through the stage: its colours, its motion,
+  // and the shape of its nearest drawn particles.
+  const shape = [...motes.layers].reverse().find((layer) => !layer.emoji)?.shape;
 
   return (
     <WelcomeStage
@@ -109,6 +113,13 @@ export function SeasonalWelcome() {
         border: colours.gold,
         title: colours.goldDark,
         glow: season.pack.look.burst.ring,
+      }}
+      motes={{
+        colors: motes.colors.map((color) => color[scheme === 'dark' ? 'dark' : 'light']),
+        motion: motes.motion,
+        direction: motes.direction,
+        shape,
+        glow: motes.glow,
       }}
       animate={season.motion}
       onDismiss={() => setName(null)}
