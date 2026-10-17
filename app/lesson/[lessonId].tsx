@@ -16,6 +16,7 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import { ChallengeView } from '@/components/challenges/ChallengeView';
+import { readVersioned, removeVersioned, writeVersioned } from '@/services/localStore';
 import { LessonVideo } from '@/components/ui/LessonVideo';
 import { SignedOutWarning } from '@/components/ui/SignedOutWarning';
 import { ActionButton } from '@/components/ui/ActionButton';
@@ -30,6 +31,8 @@ import {
   currentChallenge,
   lessonSessionReducer,
   progressRatio,
+  snapshotSession,
+  type SessionSnapshot,
 } from '@openmacro/core/engine/lessonSession';
 import { emitFeedback } from '@/feedback';
 import { useContentUpdate } from '@/providers/ContentUpdateProvider';
@@ -82,6 +85,37 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
   }, [setSafeToReload]);
 
   const [state, dispatch] = useReducer(lessonSessionReducer, lesson, createSession);
+
+  /**
+   * Resume a run left part-way, then keep the stored copy current.
+   *
+   * A tap on ✕ by mistake used to throw the whole run away. Now every answer
+   * is saved on the device for this lesson, and opening it again carries on
+   * from there with the same hearts and XP. Finishing, failing or starting
+   * over clears it. Nothing is written until the stored run has been read,
+   * or the fresh state would overwrite it first.
+   */
+  const resumeRead = useRef(false);
+  useEffect(() => {
+    let cancelled = false;
+    void readVersioned(resumeKey(lesson.id), RESUME_VERSION, isSnapshot).then((snapshot) => {
+      if (cancelled) return;
+      if (snapshot) dispatch({ kind: 'resume', snapshot });
+      resumeRead.current = true;
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [lesson.id]);
+  useEffect(() => {
+    if (!resumeRead.current) return;
+    const snapshot = snapshotSession(state);
+    if (snapshot) {
+      void writeVersioned(resumeKey(lesson.id), RESUME_VERSION, snapshot).catch(() => {});
+    } else if (state.submissionCount > 0 || state.status !== 'in_progress') {
+      void removeVersioned(resumeKey(lesson.id));
+    }
+  }, [state, lesson.id]);
   const [draft, setDraft] = useState<ChallengeAnswer | null>(null);
   /** Measured height of the feedback sheet, so content can clear it. */
   const [sheetHeight, setSheetHeight] = useState(0);
@@ -668,3 +702,19 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
 });
+
+// ---------------------------------------------------------------------------
+
+/** Where a run in progress is kept, one per lesson. */
+const resumeKey = (lessonId: string) => `openmacro.lessonResume.${lessonId}`;
+const RESUME_VERSION = 1;
+
+/** Shape check only; whether it still fits the lesson is the engine's call. */
+function isSnapshot(value: unknown): value is SessionSnapshot {
+  const v = value as Partial<SessionSnapshot> | null;
+  return (
+    typeof v === 'object' && v !== null && v.version === 1 &&
+    Array.isArray(v.queue) && Array.isArray(v.resolved) && Array.isArray(v.missed) &&
+    typeof v.hearts === 'number' && typeof v.xpEarned === 'number'
+  );
+}

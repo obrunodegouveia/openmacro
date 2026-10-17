@@ -106,7 +106,7 @@ export const ptPT: UiDictionary = {
   'lesson.status.next': 'A seguir',
   'lesson.status.upcoming': 'Por começar',
   'lesson.exitConfirm.title': 'Sair desta lição?',
-  'lesson.exitConfirm.body': 'As respostas que deste nesta tentativa perdem-se.',
+  'lesson.exitConfirm.body': 'O teu progresso fica guardado neste dispositivo. Abre esta lição outra vez para continuares onde paraste.',
   'lesson.exitConfirm.leave': 'Sair',
   'lesson.exitConfirm.stay': 'Continuar',
   'complete.nextNamed': 'Lição seguinte · {title}',
