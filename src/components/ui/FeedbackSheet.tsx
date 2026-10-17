@@ -16,6 +16,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActionButton } from '@/components/ui/ActionButton';
+import { SeasonalBurst } from '@/components/ui/SeasonalDecor';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 /** How far below its resting place the sheet starts, in px. */
@@ -78,6 +79,9 @@ function FeedbackSheetComponent({
       accessibilityLiveRegion="polite"
       onLayout={(event) => onHeightChange?.(event.nativeEvent.layout.height)}
     >
+      {/* Thrown once, when the sheet arrives with a right answer. */}
+      {correct ? <SeasonalBurst /> : null}
+
       <View style={styles.headerRow}>
         <View style={[styles.badge, { backgroundColor: accent }]}>
           <Text style={styles.badgeIcon}>{correct ? '✓' : '✕'}</Text>

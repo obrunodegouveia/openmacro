@@ -12,14 +12,17 @@
  */
 
 import { Tabs } from 'expo-router';
+import { View } from 'react-native';
 
 import { GlassTabBar } from '@/components/ui/GlassTabBar';
+import { SeasonalBats } from '@/components/ui/SeasonalDecor';
 import { useLocale } from '@/providers/LocaleProvider';
 
 export default function TabLayout() {
   const { t } = useLocale();
 
   return (
+    <View style={{ flex: 1 }}>
     <Tabs
       tabBar={(props) => <GlassTabBar {...props} />}
       screenOptions={{
@@ -33,5 +36,8 @@ export default function TabLayout() {
       <Tabs.Screen name="course" options={{ title: t('tabs.course') }} />
       <Tabs.Screen name="profile" options={{ title: t('tabs.profile') }} />
     </Tabs>
+    {/* Over every tab, so they keep flying when the learner switches. */}
+    <SeasonalBats />
+    </View>
   );
 }

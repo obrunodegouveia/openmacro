@@ -66,6 +66,8 @@ export const en = {
   'today.upNext': 'Next in this module',
   'today.browse': 'Browse all {count, number} modules',
   'today.allDone': 'You have finished the whole course',
+  // Seasons (see season.ts). Shown only while the season is on.
+  'season.halloween.greeting': '🎃 Happy Halloween!',
   'today.allDoneBody': 'Review keeps it from fading, and any lesson can be replayed from the Course tab.',
   'course.title': 'Course',
   'course.search': 'Search modules and lessons',

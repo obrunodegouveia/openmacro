@@ -20,6 +20,7 @@ import { LessonVideo } from '@/components/ui/LessonVideo';
 import { ActionButton } from '@/components/ui/ActionButton';
 import { FeedbackSheet } from '@/components/ui/FeedbackSheet';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { SeasonalRain, seasonalEmoji } from '@/components/ui/SeasonalDecor';
 import { ComboPill, HeartsIndicator, StreakBadge } from '@/components/ui/StatusPills';
 import type { Lesson } from '@openmacro/core/content/schema';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
@@ -39,7 +40,7 @@ import { useCourse } from '@/hooks/useCourse';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 export default function LessonRunnerRoute() {
-  const { lessonId, __preview } = useLocalSearchParams<{ lessonId: string; __preview?: string }>(); // TEMP-PREVIEW
+  const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
   const { locale, lessonById } = useLocale();
   const lesson = lessonId ? lessonById(lessonId) : undefined;
 
@@ -55,7 +56,6 @@ export default function LessonRunnerRoute() {
    * Remounting restarts the run, which is the honest outcome: the answers
    * given were to different words.
    */
-  if (__preview === 'complete') return <LessonComplete lesson={lesson} xpEarned={50} perfect={false} bestCombo={3} onExit={() => router.back()} onRestart={() => {}} />; // TEMP-PREVIEW
   return <LessonRunner key={`${lesson.id}#${locale}`} lesson={lesson} />;
 }
 
@@ -398,15 +398,18 @@ function LessonComplete({
   };
 
   return (
+    <View style={styles.endRoot}>
+    {/* Behind the content: treats drift through the gaps, never over text. */}
+    <SeasonalRain />
     <ScrollView
-      style={styles.screen}
+      style={styles.endScroll}
       contentContainerStyle={[
         styles.endContent,
         { paddingTop: insets.top + spacing.xxxl, paddingBottom: insets.bottom + spacing.xl },
       ]}
     >
       <Animated.View entering={FadeIn.duration(300)} style={styles.endHeader}>
-        <Text style={styles.endEmoji}>{perfect ? '🏆' : '🎉'}</Text>
+        <Text style={styles.endEmoji}>{perfect ? seasonalEmoji('perfect', '🏆') : seasonalEmoji('complete', '🎉')}</Text>
         <Text style={styles.endTitle}>
           {perfect ? t('complete.flawless') : t('complete.title')}
         </Text>
@@ -459,6 +462,7 @@ function LessonComplete({
         <ActionButton label={t('complete.again')} onPress={onRestart} tone="ghost" />
       </View>
     </ScrollView>
+    </View>
   );
 }
 
@@ -527,6 +531,8 @@ function Stat({ label, value, tone }: { label: string; value: string; tone: Colo
 // ---------------------------------------------------------------------------
 
 const styles = StyleSheet.create({
+  endRoot: { flex: 1, backgroundColor: palette.canvas },
+  endScroll: { flex: 1 },
   screen: {
     flex: 1,
     backgroundColor: palette.canvas,

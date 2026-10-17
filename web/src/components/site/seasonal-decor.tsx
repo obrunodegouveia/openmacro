@@ -1,8 +1,11 @@
 "use client";
 
+import * as React from "react";
 import { useState, useSyncExternalStore } from "react";
 import type { SeasonId } from "@openmacro/core/season";
 import { documentSeason } from "@/lib/season";
+import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/site/locale-provider";
 
 /**
  * Seasonal decorations: what the site hangs up when a season is on.
@@ -209,6 +212,121 @@ export function SeasonalPumpkins() {
       <Pumpkin size={44} />
       <Pumpkin size={64} />
       <Pumpkin size={38} />
+    </div>
+  );
+}
+
+/** The emoji a season swaps in for the site's own icons, by role. */
+const SEASON_EMOJI = {
+  halloween: { streak: "🎃", complete: "🎃", perfect: "🧙" },
+} as const;
+
+/**
+ * Shows a seasonal emoji in place of an ordinary icon: the streak flame
+ * becomes a jack-o'-lantern for Halloween, the lesson-complete party popper a
+ * pumpkin. The same swap as `seasonalEmoji` in the app.
+ *
+ * @param props.role Which icon this is.
+ * @param props.className Classes for the emoji, sized like the icon.
+ * @param props.children The ordinary icon, shown on an ordinary day.
+ * @return The emoji in season, otherwise the icon.
+ */
+export function SeasonalIcon({
+  role,
+  className,
+  children,
+}: {
+  role: keyof (typeof SEASON_EMOJI)["halloween"];
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const season = useSeason();
+  if (season !== "halloween") return <>{children}</>;
+  return (
+    <span className={cn("leading-none", className)} aria-hidden>
+      {SEASON_EMOJI.halloween[role]}
+    </span>
+  );
+}
+
+/**
+ * A small greeting pill, "🎃 Happy Halloween!". Text, so it is read aloud.
+ *
+ * @return The pill, or nothing on an ordinary day.
+ */
+export function SeasonalGreeting() {
+  const season = useSeason();
+  const { t } = useLocale();
+  if (season !== "halloween") return null;
+  return (
+    <p className="mt-2 inline-flex w-fit items-center rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-sm font-extrabold text-gold">
+      {t("season.halloween.greeting")}
+    </p>
+  );
+}
+
+/** What a burst or a rain is made of. Same set as the app. */
+const PARTICLES = ["🎃", "🦇", "👻", "🍬", "🎃", "🕷️", "🍭", "👻"];
+
+/**
+ * A burst of pumpkins, bats and ghosts, thrown up once when it mounts. Used
+ * on a correct answer. Place it inside a positioned container.
+ *
+ * @return The burst, or nothing on an ordinary day.
+ */
+export function SeasonalBurst() {
+  const season = useSeason();
+  if (season !== "halloween") return null;
+  return (
+    <div className="season-burst" aria-hidden>
+      {PARTICLES.map((emoji, index) => {
+        // Fanned over the upper half-circle, alternating near and far.
+        const angle = Math.PI * (0.12 + (0.76 * index) / (PARTICLES.length - 1));
+        const reach = index % 2 === 0 ? 130 : 88;
+        return (
+          <span
+            key={index}
+            style={
+              {
+                "--dx": `${(-Math.cos(angle) * reach).toFixed(0)}px`,
+                "--dy": `${(-Math.sin(angle) * reach).toFixed(0)}px`,
+                "--rot": `${index % 2 ? 40 : -40}deg`,
+                animationDelay: `${index * 25}ms`,
+              } as React.CSSProperties
+            }
+          >
+            {emoji}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Pumpkins, sweets and ghosts drifting down the window, for a finished
+ * lesson.
+ *
+ * @return The rain, or nothing on an ordinary day.
+ */
+export function SeasonalRain() {
+  const season = useSeason();
+  if (season !== "halloween") return null;
+  return (
+    <div className="season-rain" aria-hidden>
+      {Array.from({ length: 16 }, (_, i) => (
+        <span
+          key={i}
+          style={{
+            // Spread evenly, nudged so the columns don't line up.
+            left: `${((i + 0.5) / 16) * 100 + (((i * 37) % 7) - 3)}%`,
+            animationDelay: `${(i * 613) % 4000}ms`,
+            animationDuration: `${5200 + ((i * 1337) % 3000)}ms`,
+          }}
+        >
+          {PARTICLES[i % PARTICLES.length]}
+        </span>
+      ))}
     </div>
   );
 }

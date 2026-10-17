@@ -24,6 +24,7 @@ import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { StreakBadge } from '@/components/ui/StatusPills';
+import { SeasonalFooter, SeasonalScreenCorner } from '@/components/ui/SeasonalDecor';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { useCourse } from '@/hooks/useCourse';
 import { useReview } from '@/hooks/useReview';
@@ -57,7 +58,10 @@ export default function ProfileScreen() {
         ]}
         scrollIndicatorInsets={{ bottom: TAB_BAR_SPACE }}
       >
-        <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{t('profile.title')}</Text>
+        <View>
+          <SeasonalScreenCorner />
+          <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{t('profile.title')}</Text>
+        </View>
 
         {/* ---- the numbers --------------------------------------------- */}
         <View style={styles.stats}>
@@ -163,6 +167,8 @@ export default function ProfileScreen() {
         </View>
 
         <DangerZone />
+
+        <SeasonalFooter />
       </ScrollView>
       <TopScrim />
     </View>
