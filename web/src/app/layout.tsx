@@ -13,6 +13,7 @@ import { SmoothAnchors } from "@/components/site/smooth-anchors";
 import { ActivityHeartbeat } from "@/components/app/activity-heartbeat";
 import { SeasonalDecor } from "@/components/site/seasonal-decor";
 import { SeasonalWelcome } from "@/components/site/seasonal-welcome";
+import { SeasonsProvider } from "@/components/site/seasons/provider";
 import { SEASON_SCRIPT } from "@/lib/season-script";
 import { SEASON_STYLES } from "@/lib/season-palette";
 
@@ -148,6 +149,8 @@ export default async function RootLayout({
         </a>
         <SmoothAnchors />
         <LocaleProvider initialLocale={locale}>
+          {/* Seasons for every page, in the visitor's language. */}
+          <SeasonsProvider>
           {/* Inert when no Supabase project is configured — see lib/supabase.ts. */}
           <AuthProvider>
             <MotionPreferences>{children}</MotionPreferences>
@@ -157,6 +160,7 @@ export default async function RootLayout({
             <SeasonalWelcome />
           </AuthProvider>
           <SeasonalDecor />
+          </SeasonsProvider>
         </LocaleProvider>
       </body>
     </html>

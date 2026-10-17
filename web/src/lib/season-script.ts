@@ -1,4 +1,4 @@
-import { createBootScript } from "@openmacro/seasons/web";
+import { createBootScript } from "@openmacro/seasons/web/boot";
 import { SEASONS, SEASONS_KEY_PREFIX } from "@openmacro/core/season";
 
 /**

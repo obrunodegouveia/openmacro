@@ -201,8 +201,15 @@ html {
  * layout.tsx, from the calendar in `@openmacro/core/season`. A season's
  * palette is not written here: it lives in its pack, and lib/season-palette.ts
  * writes the `:root[data-season]` rules from it, inlined by the layout. The
- * decorations are `components/site/seasonal-decor.tsx`.
+ * decorations are `@openmacro/seasons/web`, placed by
+ * `components/site/seasonal-decor.tsx`, with the package's own stylesheet
+ * (loaded with them, by components/site/seasons/renderer.ts). What is here is where OpenMacro puts them.
  */
+
+/* The decoration layer starts under the fixed header. */
+:root {
+  --sv-layer-top: var(--header-total);
+}
 
 /* Switching the seasonal look cross-fades the whole page (season-settings.tsx).
    Slower than the browser's default, so the palette visibly dissolves. */
@@ -212,25 +219,13 @@ html {
   animation-timing-function: ease-in-out;
 }
 
-/* Seasonal decorations live with their components, in
-   components/site/seasons/*.css, and load only while their season is on.
-   What stays here is what an ordinary page might need at once: the footer
-   row. The welcome's staging loads with it (visuals/welcome-stage.css). */
+/* The season's row of ornaments, sitting on the footer's top edge. */
 .season-patch {
   position: absolute;
   top: 0;
   right: clamp(1.25rem, 6vw, 5rem);
-  display: flex;
-  align-items: flex-end;
-  gap: 0.25rem;
   transform: translateY(-82%);
-  pointer-events: none;
 }
-.season-ornament { line-height: 1; }
-.season-ornament[data-size="s"] { font-size: 1.75rem; }
-.season-ornament[data-size="m"] { font-size: 2.1rem; }
-.season-ornament[data-size="l"] { font-size: 2.6rem; }
-.season-ornament[data-lift] { margin-bottom: 0.9rem; }
 
 
 

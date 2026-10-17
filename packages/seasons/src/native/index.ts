@@ -20,6 +20,7 @@ export {
   useSeason,
   useSeasonContext,
   useSeasonEmoji,
+  useSeasonMusic,
   useSeasonScheme,
   useSeasonSettings,
   type ActiveSeason,

@@ -1,37 +1,23 @@
 "use client";
 
-import type * as React from "react";
 import dynamic from "next/dynamic";
+import type { WebSeasonArt } from "@openmacro/seasons/web/provider";
 import type { SeasonId } from "@openmacro/core/season";
-import type { ActiveSeason } from "@/components/site/seasonal-decor";
 
 /**
- * Bespoke artwork a season may draw on the site in place of its pack's
- * emoji: SVG, mostly, where the site has a renderer the app does not.
+ * Bespoke artwork a season draws on the site in place of its pack's emoji,
+ * through the package's `art` hook. Entirely optional: a season with
+ * nothing here is drawn from its pack and looks complete.
  *
- * Entirely optional. A season with nothing here is drawn from its pack by
- * the generic layer (`layer.tsx`), and looks complete; this is where the
- * site may spend a little extra on a season it wants to make a fuss of.
- * Each piece is its own lazily loaded component, so the artwork is fetched
- * only while its season is on.
+ * Halloween uses the package's own SVG artwork (cobwebs, a spider, bats and
+ * lit pumpkins). Each piece is its own lazily loaded component, so the
+ * artwork is fetched only while Halloween is on.
  */
-export interface SeasonArt {
-  /** Strung across the top corners of the window. */
-  readonly corners?: React.ComponentType;
-  /** Drawn as the toy instead of its emoji. */
-  readonly toy?: React.ComponentType;
-  /** Drawn as each flyer instead of its emoji, filling the flyer's width. */
-  readonly flyer?: React.ComponentType;
-  /** Width of one flyer when drawn with `flyer`, as a CSS length. */
-  readonly flyerWidth?: string;
-  /** Set on the footer's top edge instead of the pack's row. */
-  readonly footer?: React.ComponentType<{ season: ActiveSeason }>;
-}
 
-const halloween = () => import("./halloween-art");
+const halloween = () => import("@openmacro/seasons/web/art/halloween");
 
 /** Each season's artwork, if it has any. */
-export const SEASON_ART: Partial<Record<SeasonId, SeasonArt>> = {
+export const SEASON_ART: Partial<Record<SeasonId, WebSeasonArt>> = {
   halloween: {
     corners: dynamic(() => halloween().then((m) => m.Cobwebs), { ssr: false }),
     toy: dynamic(() => halloween().then((m) => m.SpiderArt), { ssr: false }),

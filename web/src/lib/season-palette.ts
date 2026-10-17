@@ -1,12 +1,15 @@
-import { SEASON_IDS, SEASON_PACKS, type SeasonColors, type SeasonId } from "@openmacro/core/season";
+import { SEASON_PACKS, type SeasonColors, type SeasonId } from "@openmacro/core/season";
+import { paletteCss } from "@openmacro/seasons/web/boot";
 
 /**
  * The site's seasonal palettes, written from the season packs.
  *
  * A season's colours live once, in its pack (`SeasonPack.palette` in
  * `@openmacro/core/season`), by role. This maps the roles onto the site's
- * CSS variables and writes one stylesheet for every season, which the root
- * layout inlines (`SEASON_STYLES`). The app maps the same roles onto its own
+ * CSS variables (`seasonVariables`), and the package's `paletteCss` writes
+ * one stylesheet for every season from it, with the palette-role variables
+ * the decorations read (`--sv-ink` and the rest) alongside; the root layout
+ * inlines it (`SEASON_STYLES`). The app maps the same roles onto its own
  * tokens (`seasonal` in `src/theme/palette.ts`), so both clients paint one
  * palette and a new season needs no CSS.
  *
@@ -16,8 +19,9 @@ import { SEASON_IDS, SEASON_PACKS, type SeasonColors, type SeasonId } from "@ope
  *
  * Mint and coral are never mapped: they mean "correct" and "wrong" all year.
  *
- * Imports nothing at runtime but the packs, so `npm run check:seasons` can
- * load it directly and measure exactly what the site paints.
+ * Imports nothing at runtime but the packs and the package's dependency-free
+ * generator, so `npm run check:seasons` can load it directly and measure
+ * exactly what the site paints.
  */
 
 /** The light theme's own abyss, kept by every season: it is the scrim's colour, not a surface. */
@@ -51,40 +55,14 @@ export function seasonVariables(colors: SeasonColors, scheme: "light" | "dark"):
   return vars;
 }
 
-/**
- * One CSS rule.
- *
- * @param selector The selector.
- * @param vars The declarations.
- * @param indent Leading spaces, for a rule inside a media query.
- * @return The rule.
- */
-function rule(selector: string, vars: Record<string, string>, indent = ""): string {
-  const body = Object.entries(vars)
-    .map(([name, value]) => `${indent}  ${name}: ${value};`)
-    .join("\n");
-  return `${indent}${selector} {\n${body}\n${indent}}`;
-}
-
-/**
- * The stylesheet for one season: its dark values, its light values inside
- * the light media query (a token set only in the dark block would stay dark
- * in light mode, because `:root[data-season]` outranks the plain light
- * `:root`), and the dark accents kept on `.on-dark` surfaces.
- *
- * @param id The season.
- * @return Its CSS.
- */
-export function seasonStylesFor(id: SeasonId): string {
-  const { palette } = SEASON_PACKS[id];
-  const selector = `:root[data-season="${id}"]`;
-  return [
-    rule(selector, seasonVariables(palette.dark, "dark")),
-    `@media (prefers-color-scheme: light) {\n${rule(selector, seasonVariables(palette.light, "light"), "  ")}\n}`,
-    // A dark surface keeps the season's dark accents in either theme.
-    rule(`${selector} .on-dark`, { "--color-gold": palette.dark.accent, "--color-azure-text": palette.dark.coolText }),
-  ].join("\n");
-}
-
 /** Every season's stylesheet, for the root layout to inline. */
-export const SEASON_STYLES: string = SEASON_IDS.map(seasonStylesFor).join("\n");
+export const SEASON_STYLES: string = paletteCss(SEASON_PACKS, {
+  map: seasonVariables,
+  // The site is dark by default, light under the media query.
+  base: "dark",
+  // A dark surface keeps the season's dark accents in either theme.
+  extra: (id: SeasonId, selector) => {
+    const { dark } = SEASON_PACKS[id].palette;
+    return `${selector} .on-dark {\n  --color-gold: ${dark.accent};\n  --color-azure-text: ${dark.coolText};\n}`;
+  },
+});

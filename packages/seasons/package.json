@@ -9,10 +9,13 @@
     ".": "./src/index.ts",
     "./presets": "./src/presets/index.ts",
     "./native": "./src/native/index.ts",
-    "./react": "./src/react.ts",
-    "./types": "./src/types.ts",
     "./web": "./src/web.ts",
-    "./web/boot": "./src/web/boot.ts"
+    "./web/boot": "./src/web/boot.ts",
+    "./web/provider": "./src/web/provider.ts",
+    "./web/art/halloween": "./src/web/art/halloween.tsx",
+    "./web/styles.css": "./src/web/styles.css",
+    "./react": "./src/react.ts",
+    "./types": "./src/types.ts"
   },
   "scripts": {
     "test": "node --test 'test/**/*.test.ts'",
@@ -47,5 +50,7 @@
       "optional": true
     }
   },
-  "sideEffects": false
+  "sideEffects": [
+    "*.css"
+  ]
 }

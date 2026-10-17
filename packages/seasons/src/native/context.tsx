@@ -18,6 +18,7 @@ import { AppState, useColorScheme, type ColorValue } from 'react-native';
 import { useReducedMotion } from 'react-native-reanimated';
 
 import type { SeasonController } from '../controller.ts';
+import { musicFor, type HasMusic, type SeasonTrack } from '../music.ts';
 import { createTranslator, type Translate } from '../presets/strings.ts';
 import type { SeasonPack } from '../presets/types.ts';
 import { useSeasonDecision, useSeasonPreference } from '../react.ts';
@@ -274,4 +275,19 @@ export function useSeasonSettings<Id extends string = string>(): {
     setPreference: controller.setPreference,
     changedSinceLaunch: decision.season !== controller.boot.season,
   };
+}
+
+/**
+ * The seasonal music to play now, or `null` for the app's own default
+ * music: the live season's `music`, only in the full look with the
+ * preference On (see `musicFor`). Re-renders when that changes, so an app's
+ * player can switch playlists in an effect. The package plays nothing.
+ *
+ * @return The tracks, or `null`.
+ */
+export function useSeasonMusic<Asset = unknown>(): readonly SeasonTrack<Asset>[] | null {
+  const { controller, packs } = useSeasonContext();
+  const decision = useSeasonDecision(controller);
+  const preference = useSeasonPreference(controller);
+  return useMemo(() => musicFor(decision, preference, packs as Record<string, HasMusic<Asset>>), [decision, preference, packs]);
 }

@@ -1,10 +1,18 @@
+/**
+ * The server half of `@openmacro/seasons/web`, with no React: the inline
+ * boot script that dresses <html> before first paint, the palette
+ * stylesheet generator, and the small DOM helpers the runtime uses. Safe to
+ * import from a server component, a build script or plain Node.
+ */
+
 import { decide } from '../engine.ts';
 import type { SeasonStorage } from '../controller.ts';
 import type { SeasonDecision, SeasonWindow } from '../types.ts';
 
-/** The attributes a season sets on the root element. */
-export const SEASON_ATTRIBUTE = 'data-season';
-export const LOOK_ATTRIBUTE = 'data-season-look';
+import { LOOK_ATTRIBUTE, SEASON_ATTRIBUTE } from './attributes.ts';
+
+export { LOOK_ATTRIBUTE, SEASON_ATTRIBUTE };
+export { paletteCss, roleVariable, roleVariables, type PaletteCssOptions } from './palette.ts';
 
 /** Options shared by the boot script and the runtime helpers. */
 export interface WebSeasonOptions<Id extends string> {

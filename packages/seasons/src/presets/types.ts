@@ -12,6 +12,8 @@
  * measure the text on top.
  */
 
+import type { SeasonTrack } from '../music.ts';
+
 /**
  * A colour that differs by appearance. `#rrggbb` only, so `checkPack`
  * can composite it over the canvas and measure the text on top.
@@ -411,4 +413,10 @@ export interface SeasonPack<Key extends string = string> {
   readonly footer: readonly FooterOrnament[];
   /** The light, the air and the signature details. */
   readonly look: SeasonScene;
+  /**
+   * Music for the season, if any: tracks whose audio the app supplies (the
+   * presets ship none). Played only in the full look with the preference On;
+   * see `musicFor` and the hooks `useSeasonMusic`.
+   */
+  readonly music?: readonly SeasonTrack[];
 }
