@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
   moduleBody: { flex: 1, gap: 2 },
   currentTag: {
     ...typography.overline,
-    fontSize: 10,
     color: palette.mintDark,
     textTransform: 'uppercase',
   },
@@ -242,7 +241,6 @@ const styles = StyleSheet.create({
   lessonCardNext: { borderColor: palette.mint, borderWidth: 2 },
   nextTag: {
     ...typography.overline,
-    fontSize: 10,
     color: palette.mintDark,
     textTransform: 'uppercase',
   },

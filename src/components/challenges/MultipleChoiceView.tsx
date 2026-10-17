@@ -13,7 +13,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import type { ChallengeComponentProps } from '@/components/challenges/types';
 import { tapCue } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, radius, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import { seededShuffle } from '@openmacro/core/format';
 
 export function MultipleChoiceView({
@@ -88,6 +88,7 @@ export function MultipleChoiceView({
                 ]}
               >
                 <Text
+                  maxFontSizeMultiplier={fontScale.chrome}
                   style={[
                     styles.markerText,
                     ((isSelected && !locked) || revealCorrect || revealWrong) &&
@@ -97,7 +98,9 @@ export function MultipleChoiceView({
                   {revealCorrect ? '✓' : revealWrong ? '✕' : String.fromCharCode(65 + index)}
                 </Text>
               </View>
+              {/* Capped like the prompt, so an answer never outgrows the question. */}
               <Text
+                maxFontSizeMultiplier={fontScale.title}
                 style={[
                   styles.optionLabel,
                   isSelected && !locked && styles.optionLabelSelected,
@@ -143,9 +146,12 @@ const styles = StyleSheet.create({
     borderColor: palette.coral,
     backgroundColor: palette.coralSoft,
   },
+  // A minimum, not a size, so a letter at a larger text size grows the box
+  // rather than spilling out of it.
   marker: {
-    width: 28,
-    height: 28,
+    minWidth: 28,
+    minHeight: 28,
+    paddingHorizontal: spacing.xs,
     borderRadius: radius.sm,
     borderWidth: 2,
     borderColor: palette.border,

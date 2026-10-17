@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     // segment should look raised, not highlighted.
     borderWidth: 1,
     borderColor: palette.borderStrong,
-    shadowColor: '#1F2933',
+    shadowColor: palette.shadow,
     shadowOpacity: 0.08,
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 1 },

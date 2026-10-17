@@ -104,7 +104,9 @@ function ActionButtonComponent({
         <Text
           maxFontSizeMultiplier={fontScale.title}
           style={[styles.label, { color: toneStyle.label }]}
-          numberOfLines={1}
+          // Two lines rather than one truncated, for long labels such as
+          // "Next lesson · {title}" at a large text size.
+          numberOfLines={2}
         >
           {label}
         </Text>
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
   // shout; the labels are already written the way they should appear.
   label: {
     ...typography.bodyStrong,
-    fontSize: 17,
+    textAlign: 'center',
   },
 });
 

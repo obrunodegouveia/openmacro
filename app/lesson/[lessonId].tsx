@@ -261,7 +261,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
   }
 
   if (state.status === 'failed') {
-    return <LessonFailed lesson={lesson} onExit={handleExit} onRestart={handleRestart} />;
+    return <LessonFailed lesson={lesson} onRestart={handleRestart} />;
   }
 
   // -- in progress --------------------------------------------------------
@@ -276,7 +276,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
           hitSlop={12}
           onPress={handleClose}
         >
-          <Text style={styles.close}>✕</Text>
+          <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.close}>✕</Text>
         </Pressable>
 
         <View style={styles.progressWrap}>
@@ -505,20 +505,20 @@ function LessonComplete({
 
 function LessonFailed({
   lesson,
-  onExit,
   onRestart,
 }: {
   lesson: Lesson;
-  onExit: () => void;
   onRestart: () => void;
 }) {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
 
+  // Scrolls, like LessonComplete: at the largest text sizes the buttons
+  // would otherwise be pushed off the bottom of the screen.
   return (
-    <View
-      style={[
-        styles.screen,
+    <ScrollView
+      style={styles.endRoot}
+      contentContainerStyle={[
         styles.endContent,
         { paddingTop: insets.top + spacing.xxxl, paddingBottom: insets.bottom + spacing.xl },
       ]}
@@ -527,15 +527,18 @@ function LessonFailed({
         <Text style={styles.endEmoji}>💔</Text>
         <Text style={styles.endTitle}>{t('failed.title')}</Text>
         <Text style={styles.endSubtitle}>
-          {t('failed.body', { lesson: lesson.title.toLowerCase() })}
+          {/* As written: lowercasing it turned "The ECB" into "the ecb". */}
+          {t('failed.body', { lesson: lesson.title })}
         </Text>
       </Animated.View>
 
       <View style={styles.endActions}>
         <ActionButton label={t('failed.retry')} onPress={onRestart} tone="danger" />
-        <ActionButton label={t('complete.backToPath')} onPress={onExit} tone="ghost" />
+        {/* To Today, as the label says, wherever the lesson was opened from,
+            and without stacking a second copy of the tabs. */}
+        <ActionButton label={t('complete.backToPath')} onPress={() => router.dismissTo('/')} tone="ghost" />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -543,7 +546,13 @@ function LessonNotFound({ lessonId }: { lessonId?: string }) {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
   return (
-    <View style={[styles.screen, styles.endContent, { paddingTop: insets.top + spacing.xxxl }]}>
+    <ScrollView
+      style={styles.endRoot}
+      contentContainerStyle={[
+        styles.endContent,
+        { paddingTop: insets.top + spacing.xxxl, paddingBottom: insets.bottom + spacing.xl },
+      ]}
+    >
       <Text style={styles.endEmoji}>🤔</Text>
       <Text style={styles.endTitle}>{t('notFound.title')}</Text>
       <Text style={styles.endSubtitle}>{t('notFound.body', { id: lessonId ?? '—' })}</Text>
@@ -552,7 +561,7 @@ function LessonNotFound({ lessonId }: { lessonId?: string }) {
         onPress={() => router.replace('/')}
         tone="ghost"
       />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -692,11 +701,9 @@ const styles = StyleSheet.create({
     color: palette.mint,
   },
   takeawayText: {
-    ...typography.caption,
+    ...typography.body,
     color: palette.ink,
-    fontWeight: '500',
     flex: 1,
-    lineHeight: 20,
   },
   endActions: {
     gap: spacing.md,

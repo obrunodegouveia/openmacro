@@ -32,7 +32,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { emitFeedback } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
-import { palette, season, spacing } from '@/theme/tokens';
+import { fontScale, palette, radius, season, spacing, typography } from '@/theme/tokens';
 
 /** Props that take a decoration out of the accessibility tree. */
 const HIDDEN = {
@@ -168,9 +168,11 @@ export function SeasonalBats() {
 
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill} {...HIDDEN}>
-      <Bat delay={1200} y={top + 96} size={26} />
-      <Bat delay={2000} y={top + 130} size={18} />
-      <Bat delay={7500} y={top + 260} size={22} />
+      {/* High, in the band just under the clock: lower down they crossed
+          the hero card's buttons and the Course tab's search field. */}
+      <Bat delay={1200} y={top + 8} size={26} />
+      <Bat delay={2000} y={top + 24} size={18} />
+      <Bat delay={7500} y={top + 40} size={22} />
     </View>
   );
 }
@@ -238,7 +240,7 @@ export function SeasonalGreeting() {
   if (season !== 'halloween') return null;
   return (
     <View style={styles.greeting}>
-      <Text style={styles.greetingText}>{t('season.halloween.greeting')}</Text>
+      <Text maxFontSizeMultiplier={fontScale.chrome} style={styles.greetingText}>{t('season.halloween.greeting')}</Text>
     </View>
   );
 }
@@ -380,11 +382,11 @@ const styles = StyleSheet.create({
   greeting: {
     alignSelf: 'flex-start',
     backgroundColor: palette.goldSoft,
-    borderRadius: 999,
+    borderRadius: radius.pill,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
   },
-  greetingText: { fontSize: 14, lineHeight: 19, fontWeight: '800', color: palette.goldDark },
+  greetingText: { ...typography.caption, fontWeight: '800', color: palette.goldDark },
   screenWeb: {
     position: 'absolute',
     top: -spacing.lg,

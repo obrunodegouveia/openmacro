@@ -13,9 +13,10 @@
  * destructive controls last and closed.
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SymbolView } from 'expo-symbols';
 
 import { AccountBar } from '@/components/ui/AccountBar';
 import { Chevron } from '@/components/ui/CourseRows';
@@ -23,9 +24,8 @@ import { DeleteAccount } from '@/components/ui/DeleteAccount';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { StreakBadge } from '@/components/ui/StatusPills';
 import { MusicToggle } from '@/components/ui/MusicToggle';
-import { SeasonalFooter, SeasonalScreenCorner } from '@/components/ui/SeasonalDecor';
+import { SeasonalFooter, SeasonalScreenCorner, seasonalEmoji } from '@/components/ui/SeasonalDecor';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { useCourse } from '@/hooks/useCourse';
 import { useReview } from '@/hooks/useReview';
@@ -36,6 +36,14 @@ import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens'
 
 /** Where the course is written in the open. */
 const REPOSITORY_URL = 'https://github.com/obrunodegouveia/openmacro';
+
+/**
+ * The Dynamic Type scale above which a row of three stat tiles stacks into a
+ * column. Three tiles side by side leave each about 100pt, and past this a
+ * label such as "Day streak" no longer fits a word to a line and breaks it
+ * mid-word.
+ */
+const STACK_STATS_AT = 1.3;
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -58,6 +66,8 @@ export default function ProfileScreen() {
           { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + TAB_BAR_SPACE },
         ]}
         scrollIndicatorInsets={{ bottom: TAB_BAR_SPACE }}
+        // Keeps the delete-account email field above the keyboard.
+        automaticallyAdjustKeyboardInsets
       >
         <View>
           <SeasonalScreenCorner />
@@ -65,25 +75,18 @@ export default function ProfileScreen() {
         </View>
 
         {/* ---- the numbers --------------------------------------------- */}
-        <View style={styles.stats}>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{profile?.totalXp ?? 0}</Text>
-            <Text style={styles.statLabel}>{t('progress.stat.xp')}</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{lessonsDone}</Text>
-            <Text style={styles.statLabel}>
-              {t('progress.stat.lessons', { total: lessonsTotal })}
-            </Text>
-          </View>
-          <View style={styles.stat}>
-            <StreakBadge
-              streak={profile?.dayStreak ?? 0}
-              active={profile?.streakActiveToday ?? false}
-            />
-            <Text style={styles.statLabel}>{t('progress.stat.streak')}</Text>
-          </View>
-        </View>
+        <StatRow>
+          <Stat value={profile?.totalXp ?? 0} label={t('progress.stat.xp')} />
+          <Stat value={lessonsDone} label={t('progress.stat.lessons', { total: lessonsTotal })} />
+          <Stat
+            value={profile?.dayStreak ?? 0}
+            label={t('progress.stat.streak')}
+            accessibilityLabel={t('path.streak', { count: profile?.dayStreak ?? 0 })}
+            emoji={seasonalEmoji('streak', '🔥')}
+            // Dimmed until today's goal is met, as in the Today header.
+            dimEmoji={!(profile?.streakActiveToday ?? false)}
+          />
+        </StatRow>
         {/* Labelled, so the bar says what it measures; and only once there
             is something to measure — an empty grey bar reads as broken. */}
         {lessonsDone > 0 ? (
@@ -104,20 +107,11 @@ export default function ProfileScreen() {
           <View style={styles.block}>
             <Text style={styles.sectionTitle}>{t('progress.memory.title')}</Text>
             <Text style={styles.sectionBlurb}>{t('progress.memory.blurb')}</Text>
-            <View style={styles.stats}>
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>{summary.tracked}</Text>
-                <Text style={styles.statLabel}>{t('progress.memory.tracked')}</Text>
-              </View>
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>{summary.dueThisWeek}</Text>
-                <Text style={styles.statLabel}>{t('progress.memory.week')}</Text>
-              </View>
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>{summary.lapsed}</Text>
-                <Text style={styles.statLabel}>{t('progress.memory.lapsed')}</Text>
-              </View>
-            </View>
+            <StatRow>
+              <Stat value={summary.tracked} label={t('progress.memory.tracked')} />
+              <Stat value={summary.dueThisWeek} label={t('progress.memory.week')} />
+              <Stat value={summary.lapsed} label={t('progress.memory.lapsed')} />
+            </StatRow>
             {weakest.length > 0 ? (
               <View style={styles.card}>
                 <Text style={styles.cardLabel}>{t('progress.memory.weakest')}</Text>
@@ -183,6 +177,73 @@ export default function ProfileScreen() {
 // ---------------------------------------------------------------------------
 
 /**
+ * Whether stat tiles stack into a column, at the learner's text size.
+ *
+ * @return True past `STACK_STATS_AT`.
+ */
+function useStatsStacked(): boolean {
+  return useWindowDimensions().fontScale > STACK_STATS_AT;
+}
+
+/**
+ * A row of stat tiles, stacked into a column at large Dynamic Type sizes.
+ *
+ * @param props.children The tiles.
+ * @return The row.
+ */
+function StatRow({ children }: { children: ReactNode }) {
+  const stacked = useStatsStacked();
+  return <View style={[styles.stats, stacked && styles.statsStacked]}>{children}</View>;
+}
+
+/**
+ * One stat tile: a large number over what it counts.
+ *
+ * @param props.value The number.
+ * @param props.label What it counts.
+ * @param props.accessibilityLabel Read instead of "value, label" when that would not make a sentence.
+ * @param props.emoji Shown beside the number, such as the streak flame.
+ * @param props.dimEmoji Fades the emoji, for a streak not yet kept today.
+ * @return The tile.
+ */
+function Stat({
+  value,
+  label,
+  accessibilityLabel,
+  emoji,
+  dimEmoji = false,
+}: {
+  value: number;
+  label: string;
+  accessibilityLabel?: string;
+  emoji?: string;
+  dimEmoji?: boolean;
+}) {
+  // Stacked, a tile is full width and sized by its content, not shared space.
+  const stacked = useStatsStacked();
+  return (
+    <View accessible accessibilityLabel={accessibilityLabel} style={[styles.stat, stacked && styles.statStacked]}>
+      <View style={styles.statValueRow}>
+        <Text maxFontSizeMultiplier={fontScale.display} style={styles.statValue}>
+          {value}
+        </Text>
+        {emoji ? (
+          <Text
+            maxFontSizeMultiplier={fontScale.display}
+            style={[styles.statEmoji, dimEmoji && styles.statEmojiDim]}
+          >
+            {emoji}
+          </Text>
+        ) : null}
+      </View>
+      <Text maxFontSizeMultiplier={fontScale.title} style={styles.statLabel}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+/**
  * The two controls that destroy something, behind one closed door.
  *
  * Reopens closed on every visit: a learner who opened it once to reset their
@@ -205,10 +266,22 @@ function DangerZone() {
         accessibilityState={{ expanded: open }}
         accessibilityLabel={t('account.danger')}
         onPress={() => setOpen((was) => !was)}
-        style={styles.dangerHead}
+        style={({ pressed }) => [styles.dangerHead, pressed && styles.pressed]}
       >
         <Text style={styles.dangerTitle}>{t('account.danger')}</Text>
-        <Text style={styles.dangerChevron}>{open ? '⌃' : '⌄'}</Text>
+        <SymbolView
+          // Decorative: the control around it carries the label and state.
+          accessible={false}
+          accessibilityElementsHidden
+          name={
+            open
+              ? { ios: 'chevron.up', android: 'expand_less', web: 'expand_less' }
+              : { ios: 'chevron.down', android: 'expand_more', web: 'expand_more' }
+          }
+          size={16}
+          tintColor={palette.coralDark}
+          weight="semibold"
+        />
       </Pressable>
 
       {open ? (
@@ -251,9 +324,8 @@ function ResetProgressButton() {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={armed ? t('path.reset.armedA11y') : t('path.reset')}
-      hitSlop={8}
       onPress={handlePress}
-      style={styles.reset}
+      style={({ pressed }) => [styles.reset, pressed && styles.pressed]}
     >
       <Text style={[styles.resetText, armed && styles.resetTextArmed]}>
         {armed ? t('path.reset.armed') : t('path.reset')}
@@ -269,9 +341,12 @@ const styles = StyleSheet.create({
   title: { ...typography.display, color: palette.ink },
 
   stats: { flexDirection: 'row', gap: spacing.md },
+  statsStacked: { flexDirection: 'column' },
+  statStacked: { flex: 0 },
   stat: {
     flex: 1,
     alignItems: 'center',
+    paddingHorizontal: spacing.xs,
     gap: spacing.xs,
     paddingVertical: spacing.lg,
     borderRadius: radius.lg,
@@ -279,7 +354,10 @@ const styles = StyleSheet.create({
     borderColor: palette.border,
     backgroundColor: palette.surface,
   },
-  statValue: { ...typography.title, color: palette.ink },
+  statValueRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  statValue: { ...typography.title, color: palette.ink, fontVariant: ['tabular-nums'] },
+  statEmoji: { fontSize: typography.heading.fontSize },
+  statEmojiDim: { opacity: 0.35 },
   statLabel: { ...typography.caption, color: palette.inkMuted, textAlign: 'center' },
 
   block: { gap: spacing.sm },
@@ -319,9 +397,9 @@ const styles = StyleSheet.create({
     backgroundColor: palette.surface,
   },
   aboutTitle: { ...typography.bodyStrong, color: palette.ink },
-  aboutBody: { ...typography.body, fontSize: 15, lineHeight: 21, color: palette.inkMuted },
+  aboutBody: { ...typography.body, color: palette.inkMuted },
   aboutLink: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, minHeight: 44 },
-  aboutLinkText: { ...typography.bodyStrong, fontSize: 15, color: palette.blueDark },
+  aboutLinkText: { ...typography.bodyStrong, color: palette.blueDark },
 
   danger: {
     marginTop: spacing.md,
@@ -334,13 +412,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    minHeight: 44,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
   },
   dangerTitle: { ...typography.bodyStrong, color: palette.coralDark },
-  dangerChevron: { ...typography.body, color: palette.coralDark },
   dangerBody: { gap: spacing.md, paddingHorizontal: spacing.md, paddingBottom: spacing.md },
-  reset: { alignSelf: 'flex-start', paddingVertical: spacing.sm },
+  reset: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center' },
   resetText: { ...typography.caption, color: palette.inkFaint },
   resetTextArmed: { color: palette.coralDark },
 });

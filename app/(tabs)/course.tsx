@@ -112,8 +112,8 @@ export default function CourseScreen() {
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t('course.searchClear')}
-                hitSlop={10}
                 onPress={() => setQuery('')}
+                style={({ pressed }) => [styles.clear, pressed && styles.pressed]}
               >
                 <SymbolView
                   // Decorative: the control around it carries the label.
@@ -140,7 +140,11 @@ export default function CourseScreen() {
                       if (!selected) emitFeedback('select');
                       setPicked(entry.level);
                     }}
-                    style={[styles.segment, selected && styles.segmentSelected]}
+                    style={({ pressed }) => [
+                      styles.segment,
+                      selected && styles.segmentSelected,
+                      pressed && !selected && styles.pressed,
+                    ]}
                   >
                     <Text
                       maxFontSizeMultiplier={fontScale.chrome}
@@ -262,6 +266,14 @@ const styles = StyleSheet.create({
     borderColor: palette.border,
   },
   searchInput: { flex: 1, ...typography.body, color: palette.ink, paddingVertical: 0 },
+  // A full 44pt square, run out to the field's edge so it does not widen it.
+  clear: {
+    width: 44,
+    height: 44,
+    marginRight: -spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   segments: {
     flexDirection: 'row',
     padding: 3,
@@ -270,7 +282,9 @@ const styles = StyleSheet.create({
   },
   segment: {
     flex: 1,
+    minHeight: 44,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: spacing.sm,
     borderRadius: radius.sm,
   },

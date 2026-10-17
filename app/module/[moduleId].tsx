@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: palette.border,
   },
-  ringText: { ...typography.caption, fontSize: 12, color: palette.ink, fontVariant: ['tabular-nums'] },
+  ringText: { ...typography.caption, fontSize: typography.overline.fontSize, lineHeight: typography.overline.lineHeight, color: palette.ink, fontVariant: ['tabular-nums'] },
   statsText: { ...typography.bodyStrong, color: palette.ink, flex: 1 },
 
   sectionTitle: { ...typography.heading, color: palette.ink, marginBottom: -spacing.sm },
