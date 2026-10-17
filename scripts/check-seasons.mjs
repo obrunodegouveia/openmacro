@@ -4,9 +4,9 @@
  * Season parity and contrast — `npm run check:seasons`
  * ============================================================================
  *
- * A season is one object in `packages/core/src/season.ts`, palette
- * included, so its decorations and colours reach both clients by
- * construction. Each client maps the palette onto its own tokens, though,
+ * A season is one object (a `SeasonPack` from `@openmacro/seasons/presets`,
+ * referenced by `packages/core/src/season.ts`), palette included, so its
+ * decorations and colours reach both clients by construction. Each client maps the palette onto its own tokens, though,
  * and its words live in the catalogues; a season that misses one fails
  * nowhere. A Portuguese learner simply gets English, or a text colour
  * written in a hurry turns unreadable, for the weeks the season lasts and
@@ -24,9 +24,10 @@
  * 4. Its text colours clear WCAG AA (4.5:1) on its own canvas and surfaces,
  *    in both appearances, on both clients. A season is the one time a
  *    palette is written in a hurry; it is not the time for unreadable text.
- * 5. Its look (`pack.look`) keeps that true and stays gentle: the canvas
- *    under the sky glow and the sun, and under the mist, at their brightest
- *    and all stacked up, still carries AA text on both clients; every glow
+ * 5. The pack passes the package's own `checkPack`, and its look keeps
+ *    the clients' text readable and stays gentle: the canvas under the sky
+ *    glow and the sun, and under the mist, at their brightest and all
+ *    stacked up, still carries AA text on both clients; every glow
  *    fades out inside its band; nothing twinkles, flickers, breathes or
  *    shimmers anywhere near 3 Hz; and the particle field stays within its
  *    cap.
@@ -44,28 +45,16 @@ const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const { SEASONS, SEASON_IDS, SEASON_PACKS } = await import(pathToFileURL(`${ROOT}packages/core/src/season.ts`).href);
 const { seasonVariables } = await import(pathToFileURL(`${ROOT}web/src/lib/season-palette.ts`).href);
 const { decide } = await import(pathToFileURL(`${ROOT}packages/seasons/src/engine.ts`).href);
+const { atmosphereOver, checkPack, contrast } = await import(pathToFileURL(`${ROOT}packages/seasons/src/presets/index.ts`).href);
 const { light, dark, seasonal } = await import(pathToFileURL(`${ROOT}src/theme/palette.ts`).href);
 
 const errors = [];
 const fail = (message) => errors.push(message);
 
 // ---------------------------------------------------------------------------
-// Contrast
+// Contrast: the package's own WCAG helpers, so this measures exactly as
+// `checkPack` does.
 // ---------------------------------------------------------------------------
-
-/** Relative luminance of a #rrggbb colour, per WCAG 2. */
-function luminance(hex) {
-  const value = hex.trim().replace('#', '');
-  const channels = [0, 2, 4].map((i) => parseInt(value.slice(i, i + 2), 16) / 255);
-  const [r, g, b] = channels.map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-/** The contrast ratio between two #rrggbb colours. */
-function contrast(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return (hi + 0.05) / (lo + 0.05);
-}
 
 /**
  * Asserts each text token clears 4.5:1 on each background token.
@@ -160,126 +149,30 @@ for (const id of SEASON_IDS) {
 }
 
 // ---------------------------------------------------------------------------
-// 5. The look: atmosphere contrast, glow bounds, flashing, particle caps.
+// 5. The look, and the pack on its own terms: `checkPack` from the package
+// (every palette role at AA, under the sky, sun and mist too; glows inside
+// their band; nothing beating faster than once a second; the particle cap).
+// Then what each client actually paints, under the same atmosphere.
 // ---------------------------------------------------------------------------
 
-/** Parses #rrggbb to [r, g, b]. */
-const rgb = (hex) => [0, 2, 4].map((i) => parseInt(hex.trim().replace('#', '').slice(i, i + 2), 16));
-const toHex = (channels) => `#${channels.map((c) => Math.round(c).toString(16).padStart(2, '0')).join('')}`;
-
-/**
- * The canvas with tints laid over it, one after another.
- *
- * @param canvas The canvas, #rrggbb.
- * @param tints Each `{ color, alpha }`, in drawing order.
- * @return The result, #rrggbb.
- */
-function tinted(canvas, tints) {
-  let out = rgb(canvas);
-  for (const { color, alpha } of tints) {
-    const over = rgb(color);
-    out = out.map((c, i) => c * (1 - alpha) + over[i] * alpha);
-  }
-  return toHex(out);
-}
-
-/** How a glow fades from centre to edge, as both clients draw it (`FALLOFF` in each `SkyGlow`). */
-const FALLOFF = [[0, 1], [0.3, 0.7], [0.55, 0.35], [0.8, 0.1], [1, 0]];
-
-/** How the sun's core fades from centre to edge (`core` in each client's `Sun`). */
-const SUN_FALLOFF = [[0, 1], [0.35, 0.7], [0.65, 0.25], [1, 0]];
-/** How a ray fades along its length, as a fraction of its reach. */
-const RAY_FALLOFF = [[0, 1], [0.55, 0.33], [1, 0]];
-/** How far the rays reach and how bright they are, against the core (`REACH` and the ray opacity in `Sun`). */
-const RAY = { reach: 2.6, strength: 0.55 };
-
-/** A glow's opacity at a point of its band, following a falloff. */
-function glowAt(glow, alpha, x, y, falloff = FALLOFF) {
-  const d = Math.hypot((x - glow.x) / glow.rx, (y - glow.y) / glow.ry);
-  if (d >= 1) return 0;
-  const i = falloff.findIndex(([at]) => at >= d);
-  const [a0, k0] = falloff[Math.max(0, i - 1)];
-  const [a1, k1] = falloff[i];
-  return alpha * (a1 === a0 ? k1 : k0 + ((d - a0) / (a1 - a0)) * (k1 - k0));
-}
-
-/**
- * The darkest or lightest the sky makes the canvas anywhere: the band is
- * sampled on a grid, every glow's opacity there (and the sun's core, if
- * any, and its rays as if they filled their crown) laid over the canvas, and the sample furthest from the canvas's own
- * luminance kept. The breath only ever dims the glow, so its peak is the
- * worst case. The sun's core is taken twice as tall as it is wide, which is
- * taller than it is on any screen, so its reach is overestimated, never
- * under.
- */
-function worstSky(canvas, glows, sun, scheme) {
-  const base = luminance(canvas);
-  let worst = canvas;
-  const core = sun && { x: sun.x, y: sun.y, rx: sun.radius, ry: sun.radius * 2 };
-  // The rays as if they filled their whole crown, which they never do.
-  const crown = sun && { x: sun.x, y: sun.y, rx: sun.radius * RAY.reach, ry: sun.radius * RAY.reach * 2 };
-  for (let gx = 0; gx <= 40; gx += 1) {
-    for (let gy = 0; gy <= 40; gy += 1) {
-      const [x, y] = [gx / 40, gy / 40];
-      const tints = glows.map((glow) => ({ color: glow.color[scheme], alpha: glowAt(glow, glow.alpha[scheme], x, y) }));
-      if (core) {
-        tints.push({ color: sun.color[scheme], alpha: glowAt(crown, sun.alpha[scheme] * RAY.strength, x, y, RAY_FALLOFF) });
-        tints.push({ color: sun.color[scheme], alpha: glowAt(core, sun.alpha[scheme], x, y, SUN_FALLOFF) });
-      }
-      const here = tinted(canvas, tints);
-      if (Math.abs(luminance(here) - base) > Math.abs(luminance(worst) - base)) worst = here;
-    }
-  }
-  return worst;
-}
-
-/** The most particles a field draws (MAX_PARTICLES in the app, MAX_FIELD on the site). */
-const PARTICLE_CAP = 40;
-/** The shortest twinkle or flicker cycle: each half stays well over 1/3 s. */
-const SLOWEST_FLASH_MS = 1000;
-
 for (const id of SEASON_IDS) {
-  const look = SEASON_PACKS[id]?.look;
-  if (!look) {
+  const pack = SEASON_PACKS[id];
+  if (!pack?.look) {
     fail(`core ${id}: no look in SEASON_PACKS`);
     continue;
   }
-  for (const [i, glow] of look.sky.glows.entries()) {
-    if (glow.y + glow.ry > 1.001) fail(`core ${id}: sky glow ${i} runs past its band (y + ry = ${(glow.y + glow.ry).toFixed(2)} > 1), so its edge would show`);
-    if (glow.alpha.light > 0.35 || glow.alpha.dark > 0.35) fail(`core ${id}: sky glow ${i} is brighter than 0.35; the sky is a tint, not a light`);
-  }
-  const total = look.motes.layers.reduce((sum, layer) => sum + layer.count, 0);
-  if (total > PARTICLE_CAP) fail(`core ${id}: ${total} particles, over the cap of ${PARTICLE_CAP}`);
-  if (!look.motes.colors.length) fail(`core ${id}: the particles have no colour`);
-  const front = look.motes.layers.filter((layer) => layer.front);
-  if (front.length > 1) fail(`core ${id}: more than one particle layer in front of the content`);
-  for (const layer of front) if (layer.opacity > 0.75) fail(`core ${id}: the front particle layer is over 0.75 opacity`);
-  const beats = [
-    ['the garland beats', look.garland?.beatMs],
-    ['the candle flickers', look.candle?.flickerMs],
-    ['the mist cycles', look.mist?.cycleMs],
-  ];
-  for (const [what, ms] of beats) {
-    if (ms !== undefined && ms < SLOWEST_FLASH_MS) fail(`core ${id}: ${what} every ${ms}ms, under ${SLOWEST_FLASH_MS}ms`);
-  }
-  if (look.garland && !look.garland.beads?.length && !look.garland.colors.length) fail(`core ${id}: the garland has neither bulbs nor beads`);
-  if (look.sun && look.sun.y + look.sun.radius > 1) fail(`core ${id}: the sun runs past the sky band`);
+  for (const problem of checkPack(pack)) fail(`core ${id}: ${problem}`);
 
   for (const scheme of ['light', 'dark']) {
-    // The mist lies along the bottom, far from the sky at the top: each is
-    // measured on its own, the mist at its densest, the sky with its sun.
-    const mist = look.mist ? [{ color: look.mist.color[scheme], alpha: look.mist.alpha[scheme] }] : [];
-    const under = (canvas) => ({ sky: worstSky(canvas, look.sky.glows, look.sun, scheme), fog: tinted(canvas, mist) });
-
     // The app: its season palette for this appearance.
     const appLight = { ...light, ...seasonal[id].light };
     const app = scheme === 'light' ? appLight : { ...appLight, ...dark, ...seasonal[id].dark };
-    measure(`app ${id} ${scheme}`, { ...app, ...under(app.canvas) }, APP_TEXT, ['sky', 'fog']);
+    measure(`app ${id} ${scheme}`, { ...app, ...atmosphereOver(pack, app.canvas, scheme) }, APP_TEXT, ['sky', 'fog']);
 
     // The site: what it paints for this appearance.
     const web = webSeason[id]?.[scheme];
     if (!web) continue;
-    measure(`web ${id} ${scheme}`, { ...web, ...under(web['--color-canvas']) }, scheme === 'light' ? WEB_LIGHT_TEXT : WEB_TEXT, ['sky', 'fog']);
+    measure(`web ${id} ${scheme}`, { ...web, ...atmosphereOver(pack, web['--color-canvas'], scheme) }, scheme === 'light' ? WEB_LIGHT_TEXT : WEB_TEXT, ['sky', 'fog']);
   }
 }
 
@@ -314,16 +207,6 @@ for (const file of catalogues) {
       if (typeof dictionary?.[key] !== 'string') fail(`i18n ${file}: missing "${key}"`);
     }
   }
-}
-
-// ---------------------------------------------------------------------------
-// The packs themselves.
-// ---------------------------------------------------------------------------
-
-for (const id of SEASON_IDS) {
-  const pack = SEASON_PACKS[id];
-  if (!pack) fail(`core: no pack for "${id}" in SEASON_PACKS`);
-  else if (pack.particles.length < 2) fail(`core ${id}: a burst needs at least two particles`);
 }
 
 if (errors.length) {

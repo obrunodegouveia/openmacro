@@ -4,7 +4,7 @@ import vm from 'node:vm';
 
 import { decide } from '../src/engine.ts';
 import type { SeasonWindow } from '../src/types.ts';
-import { applyDecision, createBootScript } from '../src/web.ts';
+import { applyDecision, createBootScript } from '../src/web/boot.ts';
 
 const CALENDAR: SeasonWindow<'halloween' | 'christmas'>[] = [
   { id: 'halloween', from: { month: 10, day: 1 }, to: { month: 11, day: 1 } },

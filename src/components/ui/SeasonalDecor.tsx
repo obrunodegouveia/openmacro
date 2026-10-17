@@ -29,7 +29,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsFocused } from 'expo-router';
 
-import { toyReaction, type DepthLayer, type SeasonLook, type SeasonPack } from '@openmacro/core/season';
+import { toyReaction, type DepthLayer, type SeasonScene as SeasonLook, type SeasonPack } from '@openmacro/core/season';
 
 import { emitFeedback, touchHaptic } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';

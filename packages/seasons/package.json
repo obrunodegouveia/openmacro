@@ -7,9 +7,11 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./presets": "./src/presets/index.ts",
     "./react": "./src/react.ts",
     "./types": "./src/types.ts",
-    "./web": "./src/web.ts"
+    "./web": "./src/web.ts",
+    "./web/boot": "./src/web/boot.ts"
   },
   "scripts": {
     "test": "node --test 'test/**/*.test.ts'",
