@@ -137,6 +137,20 @@ Every one of those steps is written to `reward_admin_events` with the email
 that did it — the only way to answer "when did this address change, and who
 changed it" after the fact.
 
+### Changing an address
+
+**Change address** on a recipient's card replaces where they are paid. What
+happens next depends on the scheme:
+
+- A **module** recipient goes back to `pending`. The new address has to pass
+  the same €1 test and activation as a new recipient before the game can pay
+  it again.
+- An **earnings** recipient stays as it was, matching what happens when the
+  learner changes the address themselves; the balance limits the damage.
+
+Either way the change is logged as `recipient.address-set-by-admin`, with the
+old address, the new one and any change of status.
+
 ## How a claim works
 
 Nothing needs wiring into the course. A module is finished when every lesson in

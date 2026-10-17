@@ -401,6 +401,12 @@ export function Treasury() {
                 </div>
               ) : null}
 
+              <AddressEditor
+                recipient={r}
+                busy={busy !== null}
+                onSave={(address) => act("set-address", { id: r.id, address }, r.id)}
+              />
+
               {r.scheme === "earnings" ? (
                 <RatesEditor
                   recipient={r}
@@ -592,6 +598,96 @@ function AddRecipient({
             setError(null);
           }}
           className="rounded-lg border border-hairline px-3 py-2 text-sm"
+        >
+          {s("treasury.cancel")}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+/**
+ * Change one recipient's EURC address on Base.
+ *
+ * Collapsed to a button until opened. Saving a per-module recipient's address
+ * returns it to pending, so the form says so before it is submitted.
+ *
+ * @param recipient  The recipient whose address is shown and edited.
+ * @param busy       True while any admin action is in flight.
+ * @param onSave     Resolves to the server's error text, or null once saved.
+ */
+function AddressEditor({
+  recipient,
+  busy,
+  onSave,
+}: {
+  recipient: Recipient;
+  busy: boolean;
+  onSave: (address: string) => Promise<string | null>;
+}) {
+  const s = useSiteText();
+  const [open, setOpen] = React.useState(false);
+  const [address, setAddress] = React.useState(recipient.address ?? "");
+  const [error, setError] = React.useState<string | null>(null);
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => {
+          // Start from what is saved, not from an earlier abandoned edit.
+          setAddress(recipient.address ?? "");
+          setError(null);
+          setOpen(true);
+        }}
+        className="mt-2 mr-4 text-xs underline underline-offset-2 text-ink-muted disabled:opacity-50"
+      >
+        {s("treasury.address.edit")}
+      </button>
+    );
+  }
+
+  return (
+    <form
+      className="mt-3 space-y-3 rounded-lg border border-hairline p-3"
+      onSubmit={async (event) => {
+        event.preventDefault();
+        setError(null);
+        const failure = await onSave(address.trim());
+        if (failure) {
+          setError(failure);
+          return;
+        }
+        setOpen(false);
+      }}
+    >
+      <Field label={s("treasury.field.address")} value={address} placeholder="0x…" mono required
+        pattern="\s*0x[0-9a-fA-F]{40}\s*" onChange={setAddress} />
+      <p className="text-xs text-gold">
+        {recipient.scheme === "module"
+          ? s("treasury.address.noteModule")
+          : s("treasury.address.noteEarnings")}
+      </p>
+
+      {error ? (
+        <p role="alert" className="rounded-lg bg-coral/10 px-3 py-2 text-sm text-coral">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={busy}
+          className="rounded-lg bg-mint px-3 py-1.5 text-xs text-abyss disabled:opacity-50"
+        >
+          {s("treasury.address.save")}
+        </button>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="rounded-lg border border-hairline px-3 py-1.5 text-xs"
         >
           {s("treasury.cancel")}
         </button>

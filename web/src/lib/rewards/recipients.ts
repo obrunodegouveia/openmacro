@@ -265,6 +265,46 @@ export async function setClaimantAddress(
 }
 
 /**
+ * Change a recipient's payout address, from the treasury dashboard.
+ *
+ * An 'earnings' recipient keeps its status, exactly as when the learner
+ * changes the address themselves (setClaimantAddress): the balance bounds what
+ * a wrong address can lose. A 'module' recipient goes back to `pending`, so
+ * the new address has to pass a test send and an explicit activation before
+ * the game can pay it — the same sequence as a newly added recipient.
+ *
+ * @param id       The recipient row.
+ * @param address  The new address, already validated by normaliseAddress.
+ * @return The updated recipient and the address it replaced, or why it was refused.
+ */
+export async function setRecipientAddress(
+  id: string,
+  address: Address,
+): Promise<{ recipient: Recipient; previous: Recipient } | { error: string }> {
+  const previous = await getRecipientById(id);
+  if (!previous) return { error: "No such recipient." };
+
+  const { data, error } = await getSupabaseAdmin()
+    .from("reward_recipients")
+    .update({
+      address: address.toLowerCase(),
+      updated_at: new Date().toISOString(),
+      ...(previous.scheme === "module" ? { status: "pending", activated_at: null } : {}),
+    })
+    .eq("id", id)
+    // Guards the status rule above against the scheme changing in between.
+    .eq("scheme", previous.scheme)
+    .select("*")
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("[rewards] admin address change failed", error);
+    return { error: "Could not save that address." };
+  }
+  return { recipient: toRecipient(data as RecipientRow), previous };
+}
+
+/**
  * Change a recipient's status.
  *
  * Activating is the moment an address becomes payable, which is why the
