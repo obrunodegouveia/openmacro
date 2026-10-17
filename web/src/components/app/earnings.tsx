@@ -37,8 +37,10 @@ interface Withdrawal {
 interface Earnings {
   label: string;
   address: string | null;
+  /** XP minted so far. */
   xp: number;
-  maxXp: number;
+  /** XP over today's mint limit, minting on a later day. */
+  xpPending: number;
   activeMinutes: number;
   activeMinutesToday: number;
   xpRateEuros: string;
@@ -377,7 +379,8 @@ export function EarningsPanel() {
           <dt className="text-sm font-bold text-ink-muted">{s("earnings.fromXp")}</dt>
           <dd className="mt-1 font-display text-xl font-extrabold tabular-nums">{money(data.earnedFromXp)}</dd>
           <dd className="mt-0.5 text-sm text-ink-muted">
-            {s("earnings.xpCount", { xp: data.xp, max: data.maxXp })}
+            {s("earnings.xpCount", { xp: data.xp })}
+            {data.xpPending > 0 ? ` · ${s("earnings.xpPending", { xp: data.xpPending })}` : null}
           </dd>
         </div>
         <div className="rounded-card border border-hairline bg-veil/[0.03] p-4">
