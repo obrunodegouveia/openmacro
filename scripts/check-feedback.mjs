@@ -55,6 +55,17 @@ writeFileSync(
    export async function notificationAsync() {}
    export async function impactAsync() {}\n`,
 );
+// The native low-latency player is absent here, as in a binary built before
+// it existed: every cue below goes through the expo-audio fallback.
+writeFileSync(
+  join(STUBS, 'expo.mjs'),
+  `export class NativeModule {}
+   export function requireOptionalNativeModule() { return null; }\n`,
+);
+writeFileSync(
+  join(STUBS, 'expo-asset.mjs'),
+  `export const Asset = { fromModule() { return { async downloadAsync() { return { localUri: 'file:///stub' }; } }; } };\n`,
+);
 const HARNESS_URL = JSON.stringify(pathToFileURL(join(STUBS, 'harness.mjs')).href);
 
 writeFileSync(
@@ -99,6 +110,8 @@ const STUB_FOR = {
   'react-native': join(STUBS, 'react-native.mjs'),
   'expo-haptics': join(STUBS, 'expo-haptics.mjs'),
   'expo-audio': join(STUBS, 'expo-audio.mjs'),
+  expo: join(STUBS, 'expo.mjs'),
+  'expo-asset': join(STUBS, 'expo-asset.mjs'),
 };
 
 function isFile(url) {
