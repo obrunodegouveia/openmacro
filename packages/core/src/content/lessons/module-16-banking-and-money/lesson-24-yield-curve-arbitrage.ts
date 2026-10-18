@@ -21,19 +21,19 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
       tags: ['yield-curve', 'critique'],
       xp: 30,
       prompt:
-        'What does the video argue fractional reserve banking plus deposit insurance actually enables?',
+        'According to the video, what does fractional reserve banking combined with deposit insurance really allow banks to do?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'arbitrage',
           label:
-            'Borrowing at the short end and lending at the long end, spread insured',
+            'Borrow short-term from depositors and lend long-term at higher rates, with the government insuring the deposits',
         },
         {
           id: 'intermediation',
           label: 'Financial intermediation — connecting savers to projects',
           feedback:
-            'The video is careful here: intermediation genuinely adds value, and venture capital and private equity do it without fractional reserve or any government backstop. The objection is to the extra layer.',
+            'The video is careful here: connecting savers to projects really adds value, and venture capital and private equity do it without fractional reserve or any government safety net. The objection is to the extra layer on top.',
         },
         {
           id: 'creation',
@@ -45,12 +45,12 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
           id: 'lending',
           label: 'Lending to households, which would otherwise be impossible',
           feedback:
-            'The proposed alternative — deposits, one-year CDs, ten-year CDs — funds lending perfectly well without demand deposits being lent out.',
+            'The proposed alternative — one-year and ten-year term deposits — funds lending perfectly well without lending out money that depositors can withdraw at any time.',
         },
       ],
       correctOptionId: 'arbitrage',
       explanation:
-        'A checking deposit is the shortest loan imaginable, renewed every second you do not withdraw. Insurance lets a bank borrow there at near-government rates and lend at five or ten years for far more. As the video puts it, no special genius is required — everyone knows long rates exceed short ones. What makes it available only to banks is the FDIC guarantee.',
+        'A current-account deposit is the shortest loan imaginable, renewed every second you do not withdraw. Insurance lets a bank borrow there at rates close to the government’s and lend for five or ten years for far more. As the video puts it, no special genius is required — everyone knows long-term rates are usually higher than short-term ones. What makes the trade available only to banks is the government-backed deposit guarantee.',
     },
     {
       id: 'mc-alternative',
@@ -58,13 +58,13 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
       tags: ['full-reserve', 'alternatives'],
       xp: 25,
       prompt:
-        'The video sketches a bank that does not do fractional reserve at all. How does it work?',
+        'The video sketches a bank that does not use fractional reserves at all. How does it work?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'cds',
           label:
-            'Demand money sits idle and unpaid; lent money is locked in term deposits',
+            'Money you can withdraw any time is kept in full and earns nothing; only money placed in term deposits is lent out',
         },
         {
           id: 'no-lending',
@@ -82,12 +82,12 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
           id: 'government',
           label: 'The government does the lending instead',
           feedback:
-            'The alternative is more market, not less — depositors judging risk directly and pricing it, without a federal backstop.',
+            'The alternative is more market, not less — depositors judging the risk themselves and pricing it, without a government safety net.',
         },
       ],
       correctOptionId: 'cds',
       explanation:
-        'The instruments already exist: current accounts and certificates of deposit. The difference is that the term is stated honestly, so the depositor knows their money is at work and prices the risk themselves. The video is candid about its own position — resigned to fractional reserve continuing, but unwilling to call a government-subsidised system capitalism.',
+        'The products already exist: current accounts and term deposits. The difference is that the term is stated honestly, so depositors know their money is at work and price the risk themselves. The video is candid about its own position — resigned to fractional reserve continuing, but unwilling to call a government-subsidised system capitalism.',
     },
     {
       id: 'mc-maturity-matching',
@@ -95,35 +95,35 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
       tags: ['maturity-transformation', 'full-reserve'],
       xp: 35,
       prompt:
-        'In Sal’s honest bank, a depositor buys a ten year CD and the bank lends that money out for eight years. Why is that safe, and where would the line be?',
+        'In Sal’s honest bank, a depositor locks money away in a ten-year term deposit and the bank lends it out for eight years. Why is that safe, and when would it stop being safe?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'matched',
-          label: 'The loan repays before the CD does. Lend it for twelve years and the bank is short',
+          label: 'The loan is repaid before the deposit is due. Lend it for twelve years and the bank would be short when the deposit is due',
         },
         {
           id: 'anylength',
           label: 'Any length is safe, since the depositor cannot withdraw early either way',
           feedback:
-            'The depositor cannot withdraw early, but the ten years do end. If the loan runs longer than the deposit, the bank has to find the money somewhere on the day.',
+            'The depositor cannot withdraw early, but the ten years do end. If the loan runs longer than the deposit, the bank has to find the money somewhere when the deposit is due.',
         },
         {
           id: 'rate',
           label: 'It is safe because the loan pays more than the CD',
           feedback:
-            'Earning a spread is how the bank profits and says nothing about whether it can pay. Profitability and being able to pay on the day are different questions.',
+            'Earning a spread is how the bank makes a profit, and says nothing about whether it can pay on time. Being profitable and having the cash on the day are different questions.',
         },
         {
           id: 'insured',
           label: 'It is safe because the deposit is insured',
           feedback:
-            'This is precisely the bank that needs no insurance. Its safety comes from the dates lining up, which is the whole point of the design.',
+            'This is exactly the bank that needs no insurance. Its safety comes from the dates lining up, which is the whole point of the design.',
         },
       ],
       correctOptionId: 'matched',
       explanation:
-        'Match the maturities and the promise is one the bank can actually keep, with no reserve ratio, no central bank and no insurance fund required. That is what makes the sketch such an effective rhetorical device: the entire apparatus of modern banking regulation exists to manage a mismatch that this bank has simply declined to create.',
+        'Match the dates and the bank can actually keep its promise, with no reserve ratio, no central bank and no insurance fund needed. That is what makes the sketch so persuasive: the whole machinery of modern banking regulation exists to manage a mismatch that this bank simply refuses to create.',
     },
     {
       id: 'mc-deposit-is-overnight',
@@ -131,18 +131,18 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
       tags: ['yield-curve', 'deposits'],
       xp: 30,
       prompt:
-        'Sal calls a checking deposit the shortest possible duration loan — renewed every second. What does that framing let you see?',
+        'Sal calls a current-account deposit the shortest possible loan — renewed every second. What does that way of looking at it help you see?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'shortend',
-          label: 'The bank funds itself at the very bottom of the yield curve and lends further along it',
+          label: 'The bank borrows at the very shortest, cheapest end of the yield curve and lends for longer, at higher rates',
         },
         {
           id: 'notloan',
           label: 'That a deposit is not really a loan at all',
           feedback:
-            'It is exactly a loan — you hand the bank money and it owes you money. The framing is there to make the duration visible, not to dissolve the debt.',
+            'It is exactly a loan — you hand the bank money and it owes you money. The point is to make the very short term visible, not to deny the debt.',
         },
         {
           id: 'risky',
@@ -152,14 +152,14 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
         },
         {
           id: 'interest',
-          label: 'That banks should pay overnight rates on checking accounts',
+          label: 'That banks should pay overnight interest rates on current accounts',
           feedback:
             'They roughly do, and that is the point rather than a proposal — the bank pays the very lowest rate on the curve.',
         },
       ],
       correctOptionId: 'shortend',
       explanation:
-        'Once you see a deposit as an overnight loan rolled continuously, the bank’s business becomes a position on the yield curve: short at the bottom, long further up, earning the slope. Everything else — branches, apps, relationship managers — is the machinery for sourcing the short leg cheaply. It is also why an inverted curve is such bad news for banks: the trade runs backwards.',
+        'Once you see a deposit as an overnight loan renewed non-stop, the bank’s business becomes a bet on the yield curve: borrow at the short, cheap end, lend at the longer, dearer end, and earn the difference. Everything else — branches, apps, account managers — is machinery for gathering the cheap short-term money. It is also why an inverted yield curve (short rates above long ones) is such bad news for banks: the trade runs backwards.',
     },
     {
       id: 'mc-strongest-objection',
@@ -167,12 +167,12 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
       tags: ['maturity-transformation', 'banking'],
       xp: 40,
       prompt:
-        'Sal argues the spread is captured without adding value. What is the strongest reply available to a defender of the system?',
+        'Sal argues that banks earn the spread without adding value. What is the strongest reply a defender of the system could give?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'transformation',
-          label: 'Bridging savers who want their money back and borrowers who need it for years is itself the service',
+          label: 'Connecting savers who want their money back at any time with borrowers who need it for years is itself a valuable service',
         },
         {
           id: 'jobs',
@@ -195,14 +195,14 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
       ],
       correctOptionId: 'transformation',
       explanation:
-        'This is the real debate, and it deserves stating at its strongest. Savers want liquidity; factories and houses need money for decades; somebody must stand between and absorb the mismatch, and doing so is genuinely risky. On that reading the spread is payment for bearing risk, not a rent. Sal’s rejoinder still bites: the risk is borne by whoever guarantees the deposits, and it is not the shareholder. Where you land turns on how much of the mismatch the bank truly carries and how much has been passed to the taxpayer — which is exactly the argument capital requirements have been having ever since.',
+        'This is the real debate, and it deserves stating at its strongest. Savers want to be able to get their money at any time; factories and houses need money for decades; somebody must stand in between and absorb the mismatch, and doing so is genuinely risky. On that reading the spread is payment for bearing risk, not an unearned rent. Sal’s reply still bites: much of the risk is borne by whoever guarantees the deposits, not by the shareholders. Where you land depends on how much of the risk the bank really carries and how much has been passed to the taxpayer — which is exactly the argument about bank capital rules ever since.',
     },
     {
       id: 'match-intermediaries',
       type: 'concept_match',
       tags: ['intermediation', 'maturity-transformation'],
       xp: 30,
-      prompt: 'The video’s central claim is that intermediation does not require fractional reserve. Match each institution to how it handles the mismatch.',
+      prompt: 'The video’s central claim is that connecting savers to borrowers does not require fractional reserve banking. Match each institution to how it handles the gap between when savers want their money and when borrowers repay.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
@@ -222,11 +222,11 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
         },
       ],
       explanation:
-        'Line the three up and the argument makes itself: the first two carry the mismatch openly or refuse to create it, and neither needs a central bank or an insurance fund to survive a bad year. Only the third requires public machinery to exist at all — which is the uncomfortable observation the video leaves you with, given how much of that industry describes itself as the free market at work.',
+        'Line the three up and the argument makes itself: the first two either tell investors plainly or avoid the mismatch altogether, and neither needs a central bank or an insurance fund to survive a bad year. Only the third needs public machinery to exist at all — the uncomfortable observation the video leaves you with, given how often that industry describes itself as the free market at work.',
     },
   ],
   keyTakeaways: [
-    'Intermediation adds value; venture capital does it with no government backstop.',
+    'Connecting savers to projects adds value; venture capital does it with no government safety net.',
     'Fractional reserve plus insurance enables a subsidised yield-curve trade.',
     'Full reserve banking with term deposits is a workable alternative.',
   ],

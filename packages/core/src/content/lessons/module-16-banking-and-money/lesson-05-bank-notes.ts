@@ -24,12 +24,12 @@ export const kabBankNotesLesson = defineLesson({
       tags: ['bank-notes', 'liabilities'],
       xp: 20,
       prompt:
-        'The bank issues a piece of paper reading "one gold piece". On the bank’s balance sheet, what is it?',
+        'The bank gives a depositor a piece of paper that says "one gold piece". Anyone who brings it back can collect a gold piece. On the bank’s balance sheet, what is that paper?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'liability',
-          label: 'A liability — whoever holds it can come back and claim a gold piece',
+          label: 'A liability — the bank owes a gold piece to whoever holds it',
         },
         {
           id: 'asset',
@@ -47,12 +47,12 @@ export const kabBankNotesLesson = defineLesson({
           id: 'neither',
           label: 'Nothing — it is only paper until redeemed',
           feedback:
-            'An obligation exists the moment it is issued, which is precisely why the bank must keep gold against it.',
+            'The bank owes the gold from the moment the note is issued, not only when it is brought back. That is why the bank must keep gold against it.',
         },
       ],
       correctOptionId: 'liability',
       explanation:
-        'A bank note is a bearer claim on the issuer. The video’s punchline is that this is not a historical curiosity: a dollar bill is a Federal Reserve note — a liability of the Federal Reserve — and before central banking, individual banks each issued their own, which is why colonial America had dozens of competing currencies.',
+        'A bank note is a claim on the issuer that belongs to whoever holds it (a bearer claim). The video’s punchline is that this is not a historical curiosity: a dollar bill is a Federal Reserve note — a liability of the Federal Reserve. Before central banks, ordinary banks each issued their own notes, so many different notes circulated side by side.',
     },
     {
       id: 'match-note-anatomy',
@@ -77,7 +77,7 @@ export const kabBankNotesLesson = defineLesson({
           id: 'hard-to-forge',
           term: 'Hard to counterfeit',
           definition:
-            'Without this the bank would be redeeming gold against notes it never issued',
+            'Without this the bank would be paying out gold for notes it never issued',
         },
         {
           id: 'bearer',
@@ -87,7 +87,7 @@ export const kabBankNotesLesson = defineLesson({
         },
       ],
       explanation:
-        'Each property solves a practical problem with using metal directly. Together they turn a vault receipt into something more useful than the thing it is a receipt for — which is why the gold eventually stopped moving at all.',
+        'Each property solves a practical problem of paying with metal directly. Together they turn a vault receipt into something more useful than the gold it stands for — which is why the gold eventually stopped moving at all.',
     },
     {
       id: 'taccount-issue-note',
@@ -95,10 +95,10 @@ export const kabBankNotesLesson = defineLesson({
       tags: ['bank-notes', 'balance-sheets'],
       xp: 35,
       prompt:
-        'Villager A has 500 gold pieces on deposit and asks for 100 of it in Bank of Sal notes.',
+        'Villager A has 500 gold pieces on deposit and asks to take 100 of them as Bank of Sal notes.',
       instructions: 'Place every posting this operation requires',
       scenario:
-        'No gold leaves the vault and nobody lends anything. The villager simply swaps one claim on the bank for another: a balance he can write cheques against becomes paper he can hand over. Post what that does to both sheets.',
+        'No gold leaves the vault and nobody lends anything. The villager simply swaps one claim on the bank for another: part of his account balance becomes paper he can hand to someone else. Post what that does to both balance sheets.',
       entities: [
         {
           id: 'bank',
@@ -168,7 +168,7 @@ export const kabBankNotesLesson = defineLesson({
         },
       ],
       explanation:
-        'Two liabilities trade places and the asset side never moves — which is exactly what happens today when you take cash out of an ATM. Your bank’s deposit liability falls and it hands you a Federal Reserve note instead; the reason it feels like "getting your own money" is that both sides of the swap were always somebody’s promise.',
+        'One liability (deposits) shrinks, another (notes) grows by the same amount, and the asset side never moves. Taking cash from an ATM today is the descendant of this swap, with one difference: your bank no longer prints its own notes. It hands you Federal Reserve notes from its own cash, so its deposits and its cash both fall. Either way, what you hold before and after is somebody’s promise.',
     },
     {
       id: 'mc-dollar-is-a-note',
@@ -176,7 +176,7 @@ export const kabBankNotesLesson = defineLesson({
       tags: ['bank-notes', 'central-banking'],
       xp: 25,
       prompt:
-        'Sal points out that the thing he has just drawn is in your wallet. A US dollar bill is a Federal Reserve note — so whose liability is it, and what stands behind it?',
+        'Sal points out that the thing he has just drawn is in your wallet. A US dollar bill is a Federal Reserve note. Whose liability is it, and which assets stand behind it today?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -187,13 +187,13 @@ export const kabBankNotesLesson = defineLesson({
           id: 'fed-gold',
           label: 'The Federal Reserve’s liability, backed by gold at Fort Knox',
           feedback:
-            'The first half is right. The backing has not been gold since 1971 — the video says so directly, and the assets behind the note are overwhelmingly government debt.',
+            'The first half is right. But dollars have not been convertible into gold since 1971, and the assets behind the note today are overwhelmingly government debt.',
         },
         {
           id: 'treasury',
           label: 'The Treasury’s liability, since the Treasury prints it',
           feedback:
-            'The Bureau of Engraving and Printing does manufacture the paper, but read what is printed on it. The note is issued by, and owed by, the Federal Reserve.',
+            'The Treasury’s Bureau of Engraving and Printing does print the notes, but read the top of one: "Federal Reserve Note". The Federal Reserve issues it and owes it.',
         },
         {
           id: 'nobody',
@@ -204,7 +204,7 @@ export const kabBankNotesLesson = defineLesson({
       ],
       correctOptionId: 'fed-treasuries',
       explanation:
-        'Every dollar note is a line item on the Federal Reserve’s balance sheet, and the assets on the other side are mostly Treasuries and mortgage-backed securities. The chain the video is building runs straight to this: Bank of Sal notes backed by gold become central bank notes backed by government debt, and video 17 makes the case that the second is the better collateral.',
+        'Every dollar note is a line on the Federal Reserve’s balance sheet, and the assets on the other side are mostly Treasuries and mortgage-backed securities. The chain the video is building leads straight here: Bank of Sal notes backed by gold become central bank notes backed by government debt. Video 17 returns to what happened to the gold.',
     },
     {
       id: 'mc-forgery',
@@ -212,35 +212,35 @@ export const kabBankNotesLesson = defineLesson({
       tags: ['bank-notes', 'counterfeiting'],
       xp: 25,
       prompt:
-        'Sal keeps saying the note must be impossible to forge. Whose problem is a convincing forgery, in the first instance?',
+        'Sal keeps saying the note must be impossible to forge. Suppose a perfect forgery is never spotted, and someone hands it to the bank and collects a gold piece. Who loses?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'bank',
-          label: 'The bank’s. A forged note is a claim on gold the bank never received gold for',
+          label: 'The bank. It pays out real gold for a note it never issued and never received anything for',
         },
         {
           id: 'holder',
-          label: 'Whoever ends up holding it when the fraud is discovered',
+          label: 'Whoever is holding the fake note when it is discovered',
           feedback:
-            'That is who bears the loss if the forgery is caught. But while it circulates undetected it is a perfectly good claim, and the bank will pay gold against it.',
+            'That is who loses if the forgery is caught. In this case it is never caught: the bank treats it as genuine and pays gold for it.',
         },
         {
           id: 'forger',
-          label: 'The forger’s, since counterfeiting is a crime',
+          label: 'The forger, since counterfeiting is a crime',
           feedback:
-            'Asking who profits is not the same as asking who loses. Work out which balance sheet shrinks when a forged note is redeemed.',
+            'The forger is the one who gains. Ask instead whose gold leaves the vault when the forged note is exchanged.',
         },
         {
           id: 'nobody',
-          label: 'Nobody’s, as long as it circulates and is accepted',
+          label: 'Nobody, as long as the note circulates and is accepted',
           feedback:
-            'It circulates on the promise that the bank will honour it. Every forgery quietly lowers the reserve ratio behind every genuine note.',
+            'It circulates because people trust the bank to pay gold for it. Every forgery quietly lowers the gold standing behind each genuine note.',
         },
       ],
       correctOptionId: 'bank',
       explanation:
-        'Each genuine note went out in exchange for gold coming in. A forged one is a liability with no matching asset, so it dilutes the reserves standing behind every real note in circulation — counterfeiting is theft from the issuer, and from every honest holder by degrees. This is why the right to issue notes was eventually taken away from private banks and given to one institution that could be watched.',
+        'Each genuine note went out in exchange for gold coming in. A forged one is a claim with no matching gold, so it dilutes the reserves behind every real note — counterfeiting steals from the issuer and, little by little, from every honest note holder. That is why issuers fight forgery so hard.',
     },
   ],
   keyTakeaways: [

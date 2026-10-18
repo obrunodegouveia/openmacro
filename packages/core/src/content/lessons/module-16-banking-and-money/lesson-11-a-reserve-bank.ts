@@ -21,19 +21,19 @@ export const kabAReserveBankLesson = defineLesson({
       tags: ['central-banking', 'contagion'],
       xp: 25,
       prompt:
-        'One bank keeps 8% reserves; the others keep 10% and 12%. The 8% bank fails when 9% of depositors want their money. Why is that everyone’s problem?',
+        'Three banks keep reserves of 8%, 10% and 12% of their deposits. One day, depositors at the 8% bank ask for 9% of its deposits. It cannot pay, and it fails. Why is that a problem for the other two banks?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'contagion',
           label:
-            'Depositors cannot tell prudent banks from reckless ones, so they run on all of them',
+            'Depositors cannot tell careful banks from reckless ones, so they rush to withdraw from all of them',
         },
         {
           id: 'lent-to',
           label: 'Because the other banks had lent to it',
           feedback:
-            'Interbank exposure is a real channel, but not the one in this example. The contagion here is pure confidence: the buildings all look alike.',
+            'Banks lending to each other is a real way for trouble to spread, but not the one in this example. Here it spreads through confidence alone: from the outside, all banks look alike.',
         },
         {
           id: 'same-gold',
@@ -50,33 +50,33 @@ export const kabAReserveBankLesson = defineLesson({
       ],
       correctOptionId: 'contagion',
       explanation:
-        'The bitter detail is that the failure was avoidable: the 12% bank had surplus gold and would gladly have lent 1% to prevent a systemic run. What is missing is a mechanism for that lending to happen — which is precisely what a reserve bank provides.',
+        'The bitter detail is that the failure was avoidable: the 12% bank had spare gold and would gladly have lent the missing 1% to prevent a run on every bank. What is missing is a way for that loan to happen — which is exactly what a reserve bank provides.',
     },
     {
       id: 'order-central-bank',
       type: 'order_flow',
       tags: ['central-banking', 'reserves'],
       xp: 25,
-      prompt: 'Put the invention of a reserve bank in order.',
+      prompt: 'Put the invention of a reserve bank in order, as the video tells it: the problems first, then the shared vault, then the fix for runs, then the fix for the currency.',
       instructions: 'Drag the steps into order',
       events: [
         { id: 'problems', label: 'Three problems appear', detail: 'Inconsistent ratios, contagious runs, competing currencies' },
         { id: 'pool', label: 'All banks move their gold to one vault' },
         { id: 'accounts', label: 'Their reserves become accounts at the reserve bank', detail: 'Rather than metal in their own vaults' },
-        { id: 'lend', label: 'A short bank borrows from the pool', detail: 'Instead of failing while others sit on surplus' },
+        { id: 'lend', label: 'A bank short of gold borrows from the pool', detail: 'Instead of failing while others sit on spare gold' },
         { id: 'monopoly', label: 'Only the reserve bank may issue notes', detail: 'One currency instead of three' },
         { id: 'shift', label: 'Reserves come to mean those notes, not gold' },
       ],
       correctOrder: ['problems', 'pool', 'accounts', 'lend', 'monopoly', 'shift'],
       explanation:
-        'The last step is the quiet one that matters most. Once commercial banks hold central bank notes as their reserves, the gold is an ornament sitting in a vault — and the system has already become fiat in everything but name. Video 17 returns to finish that thought.',
+        'The last step is the quiet one that matters most. Once commercial banks hold central bank notes as their reserves, the gold just sits in a vault as decoration — and the system is already fiat money in everything but name. Video 17 returns to finish that thought.',
     },
     {
       id: 'match-problems-fixes',
       type: 'concept_match',
       tags: ['central-banking', 'regulation'],
       xp: 30,
-      prompt: 'The video finds three separate faults in a world of independent banks. Match each to the part of a reserve bank that answers it.',
+      prompt: 'The video finds three separate faults in a world of independent banks. Match each fault to the part of a reserve bank that fixes it.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
@@ -92,11 +92,11 @@ export const kabAReserveBankLesson = defineLesson({
         {
           id: 'currency',
           term: 'Three banks, three currencies',
-          definition: 'Only one institution may issue, so there is a single currency and no exchange rates between hometown banks',
+          definition: 'Only one institution may issue notes, so there is a single currency and no exchange rates between the notes of different local banks',
         },
       ],
       explanation:
-        'A central bank is not one invention but three, bolted together for three different reasons — regulator, lender of last resort, and monopoly issuer. They are separable in principle and history has tried them apart; the Federal Reserve of 1913 was assembled from exactly these three complaints, and the last of them is why American currency stopped saying the name of a local bank.',
+        'A central bank is not one invention but three, joined together for three different reasons — regulator, lender of last resort, and sole issuer of notes. They can be separated in principle, and history has tried them apart. The Federal Reserve, created in 1913, answered complaints very like these, and the last of them is why US notes eventually stopped carrying the names of local banks.',
     },
     {
       id: 'mc-reserves-become-accounts',
@@ -104,12 +104,12 @@ export const kabAReserveBankLesson = defineLesson({
       tags: ['central-banking', 'reserves'],
       xp: 35,
       prompt:
-        'Once the three banks pool their gold, the video says something quiet with enormous consequences. What has happened to what the word "reserves" means for an ordinary bank?',
+        'Once the three banks pool their gold, the video says something quiet with enormous consequences. What does the word "reserves" now mean for an ordinary bank?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'accounts',
-          label: 'They are a balance at the reserve bank, not metal in its vault',
+          label: 'A balance it holds at the reserve bank, not metal in its own vault',
         },
         {
           id: 'gone',
@@ -140,18 +140,18 @@ export const kabAReserveBankLesson = defineLesson({
       tags: ['central-banking', 'contagion', 'liquidity'],
       xp: 35,
       prompt:
-        'Sal points out the 12% bank would obviously rather lend the 8% bank 1% of gold than face a run on itself. If it is so obviously in its interest, why does it need a central bank to make it happen?',
+        'Sal points out that the 12% bank would clearly rather lend the 8% bank the missing gold than face a run itself. If that is so clearly in its interest, why is a central bank needed to make it happen?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'cannottell',
-          label: 'In a panic it cannot tell a bank short for a day from one that is bust',
+          label: 'In a panic, it cannot tell a bank that is only short of cash for a day from one that is bust',
         },
         {
           id: 'greedy',
           label: 'Because banks compete, and would rather watch a rival go under',
           feedback:
-            'The video’s own argument rules this out: the rival’s failure brings a run on you too, so letting it fail is not in your interest. Something other than appetite is blocking the loan.',
+            'The video’s own argument rules this out: the rival’s failure brings a run on you too, so letting it fail is not in your interest. Something other than rivalry is blocking the loan.',
         },
         {
           id: 'illegal',
@@ -163,12 +163,12 @@ export const kabAReserveBankLesson = defineLesson({
           id: 'nogold',
           label: 'Because the 12% bank would not have enough spare gold',
           feedback:
-            'It holds 12% precisely to be able to cover a bad day, and the shortfall is 1%. The gold is there; the willingness to part with it, on that day, to that borrower, is not.',
+            'It holds 12% precisely to cover a bad day, and the shortfall is only 1%. The gold is there; what is missing is the confidence to hand it over, on that day, to that borrower.',
         },
       ],
       correctOptionId: 'cannottell',
       explanation:
-        'Everything is obvious afterwards and nothing is obvious at the time. The lender cannot value another bank’s loan book overnight, and a panic gives it hours. So the rational move is to keep your own gold and let the neighbour fall, even knowing the fall may take you with it — a coordination failure, not a failure of nerve. A central bank solves it by being the one institution that can inspect the books, lend instantly against them, and accept the risk of being wrong. Bagehot’s rule, written forty years before the Fed existed, is the same idea: lend freely, against good collateral, at a penalty rate.',
+        'Everything is obvious afterwards and nothing is obvious at the time. A bank cannot check another bank’s loans overnight, and a panic gives it only hours. So the sensible move for each bank alone is to keep its gold and let the neighbour fall, even knowing the fall may take it down too — a failure of coordination, not of nerve. A central bank solves this by being the one institution that can inspect the books, lend at once, and accept the risk of being wrong. Bagehot’s rule, written forty years before the Fed existed, is the same idea: in a panic, lend freely, against good collateral, at a high (penalty) rate.',
     },
   ],
   keyTakeaways: [
