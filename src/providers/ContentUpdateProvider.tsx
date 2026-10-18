@@ -40,6 +40,9 @@ import {
 import { AppState } from 'react-native';
 import * as Updates from 'expo-updates';
 
+import { releaseSounds } from '@/feedback';
+import { resumeMusicAfterFailedReload, stopMusicForReload } from '@/feedback/music';
+
 interface ContentUpdateValue {
   /** A newer bundle is downloaded and waiting to be applied. */
   ready: boolean;
@@ -79,10 +82,16 @@ export function ContentUpdateProvider({ children }: { children: ReactNode }) {
   const apply = useCallback(async () => {
     if (!ENABLED || !ready || applying || !safeToReload.current) return;
     setApplying(true);
+    // Native audio players outlive the JavaScript runtime; release them first
+    // or the old runtime's music keeps playing under the new one's.
+    stopMusicForReload();
+    releaseSounds();
     try {
       await Updates.reloadAsync();
     } catch {
-      // A failed reload leaves the current bundle running, which is fine.
+      // A failed reload leaves the current bundle running, which is fine,
+      // once its music is back. Feedback players rebuild on the next cue.
+      resumeMusicAfterFailedReload();
       setApplying(false);
     }
   }, [ready, applying]);
