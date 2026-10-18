@@ -15,9 +15,11 @@ import { InteractiveSimView } from '@/components/challenges/InteractiveSimView';
 import { MultipleChoiceView } from '@/components/challenges/MultipleChoiceView';
 import { OrderFlowView } from '@/components/challenges/OrderFlowView';
 import { TAccountFlowView } from '@/components/challenges/TAccountFlowView';
+import { CharacterAvatar } from '@/components/ui/CharacterAvatar';
 import type { Challenge } from '@openmacro/core/content/schema';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
 import type { GradeResult } from '@openmacro/core/engine/grading';
+import { speakerReaction } from '@openmacro/core/engine/speaker';
 import { fontScale, palette, spacing, typography } from '@/theme/tokens';
 
 export interface ChallengeViewProps {
@@ -100,6 +102,8 @@ function assertNever(challenge: never): never {
 
 function ChallengeViewComponent(props: ChallengeViewProps) {
   const { challenge, transitionKey } = props;
+  // The question face. The reaction to the answer is the feedback sheet's.
+  const speaker = speakerReaction(challenge, 'question');
 
   return (
     <Animated.View
@@ -110,11 +114,16 @@ function ChallengeViewComponent(props: ChallengeViewProps) {
       exiting={FadeOutLeft.duration(160)}
       style={styles.container}
     >
-      <View style={styles.header}>
-        <Text maxFontSizeMultiplier={fontScale.title} style={styles.prompt}>{challenge.prompt}</Text>
-        {challenge.instructions ? (
-          <Text maxFontSizeMultiplier={fontScale.title} style={styles.instructions}>{challenge.instructions}</Text>
+      <View style={styles.headerRow}>
+        {speaker ? (
+          <CharacterAvatar character={speaker.character} expression={speaker.expression} size={SPEAKER_SIZE} />
         ) : null}
+        <View style={styles.header}>
+          <Text maxFontSizeMultiplier={fontScale.title} style={styles.prompt}>{challenge.prompt}</Text>
+          {challenge.instructions ? (
+            <Text maxFontSizeMultiplier={fontScale.title} style={styles.instructions}>{challenge.instructions}</Text>
+          ) : null}
+        </View>
       </View>
 
       <ChallengeBody {...props} />
@@ -122,11 +131,22 @@ function ChallengeViewComponent(props: ChallengeViewProps) {
   );
 }
 
+/** The speaker beside the prompt, in points: present without crowding it. */
+const SPEAKER_SIZE = 64;
+
 const styles = StyleSheet.create({
   container: {
     gap: spacing.xl,
   },
+  // Speaker on the left, prompt beside it, as in a chat. Without a speaker
+  // the row holds the prompt alone and looks exactly as it did.
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+  },
   header: {
+    flex: 1,
     gap: spacing.xs,
   },
   prompt: {

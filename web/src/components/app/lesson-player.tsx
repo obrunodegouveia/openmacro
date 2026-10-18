@@ -27,6 +27,8 @@ import {
 } from "@openmacro/core/engine/lessonSession";
 import { Button } from "@/components/ui/button";
 import { ChallengeView } from "@/components/challenges/challenge-view";
+import { CharacterAvatar, usePreloadSpeakers } from "@/components/challenges/character-avatar";
+import { speakerReaction, verdictMoment, type SpeakerReaction } from "@openmacro/core/engine/speaker";
 import { ModuleVideo } from "@/components/app/module-video";
 import { SeasonalBurst, SeasonalIcon, SeasonalRain } from "@/components/site/seasonal-decor";
 import { useAuth } from "@/components/site/auth-provider";
@@ -87,6 +89,8 @@ export function LessonPlayer({
     lesson,
     createSession,
   );
+  // Every face this run can show, fetched before the first answer.
+  usePreloadSpeakers(lesson);
 
   /**
    * Resume a run left part-way, then keep the stored copy current — the same
@@ -291,21 +295,24 @@ export function LessonPlayer({
               <OutOfHearts lesson={lesson} onRestart={() => dispatch({ kind: "restart" })} />
             ) : challenge ? (
               <section className="glass rounded-card p-5 sm:p-7">
-                <header className="mb-5">
-                  <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
-                    {t(`challenge.kind.${challenge.type}`)}
-                  </p>
-                  <h2 className="mt-2 font-display text-xl font-extrabold leading-snug tracking-tight sm:text-2xl">
-                    {challenge.prompt}
-                    {/* Links to this question specifically — the recipient
-                        lands on it, and still answers the rest afterwards. */}
-                    <Permalink
-                      href={`/learn/${lesson.id}#q=${encodeURIComponent(challenge.id)}`}
-                      label={t("lesson.permalink")}
-                      size="sm"
-                      className="ml-2 translate-y-[-0.1em]"
-                    />
-                  </h2>
+                <header className="mb-5 flex items-start gap-3 sm:gap-4">
+                  <SpeakerFace challenge={challenge} />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
+                      {t(`challenge.kind.${challenge.type}`)}
+                    </p>
+                    <h2 className="mt-2 font-display text-xl font-extrabold leading-snug tracking-tight sm:text-2xl">
+                      {challenge.prompt}
+                      {/* Links to this question specifically — the recipient
+                          lands on it, and still answers the rest afterwards. */}
+                      <Permalink
+                        href={`/learn/${lesson.id}#q=${encodeURIComponent(challenge.id)}`}
+                        label={t("lesson.permalink")}
+                        size="sm"
+                        className="ml-2 translate-y-[-0.1em]"
+                      />
+                    </h2>
+                  </div>
                 </header>
 
                 <ChallengeView
@@ -349,6 +356,7 @@ export function LessonPlayer({
                 : t("lesson.outOfHearts")
           }
           onContinue={() => dispatch({ kind: "continue" })}
+          speaker={challenge ? speakerReaction(challenge, verdictMoment(state.feedback.correct)) : null}
         />
       ) : playing ? (
         <ActionBar hint={answer ? t("lesson.hint.ready") : t("lesson.hint.answer")}>
@@ -510,6 +518,7 @@ function FeedbackSheet({
   detail,
   continueLabel,
   onContinue,
+  speaker,
 }: {
   correct: boolean;
   title: string;
@@ -517,6 +526,8 @@ function FeedbackSheet({
   detail?: string;
   continueLabel: string;
   onContinue: () => void;
+  /** The challenge's speaker reacting to the answer, from core. */
+  speaker?: SpeakerReaction | null;
 }) {
   const button = React.useRef<HTMLButtonElement>(null);
   React.useEffect(() => {
@@ -557,6 +568,16 @@ function FeedbackSheet({
           >
             {title}
           </p>
+          {speaker ? (
+            <CharacterAvatar
+              character={speaker.character}
+              expression={speaker.expression}
+              size={56}
+              pop
+              // Lifted into the sheet's top padding so the row is no taller.
+              className="-my-3 ml-auto"
+            />
+          ) : null}
         </div>
         {detail ? (
           <p className={cn("font-bold leading-relaxed", correct ? "text-mint-bright" : "text-coral")}>
@@ -577,6 +598,17 @@ function FeedbackSheet({
       </div>
     </motion.div>
   );
+}
+
+/**
+ * The speaker beside the prompt, with the question face from core — as the
+ * app's ChallengeView does. Renders nothing for a challenge without one, so
+ * the header looks exactly as it did.
+ */
+function SpeakerFace({ challenge }: { challenge: Pick<Lesson["challenges"][number], "speaker" | "prompt"> }) {
+  const speaker = speakerReaction(challenge, "question");
+  if (!speaker) return null;
+  return <CharacterAvatar character={speaker.character} expression={speaker.expression} size={64} />;
 }
 
 /** Ran out of hearts. Not a punishment screen — a retry screen. */

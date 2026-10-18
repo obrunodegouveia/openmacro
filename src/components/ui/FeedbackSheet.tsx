@@ -16,9 +16,11 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActionButton } from '@/components/ui/ActionButton';
+import { CharacterAvatar } from '@/components/ui/CharacterAvatar';
 import { SeasonalBurst } from '@/components/ui/SeasonalDecor';
 import { useLocale } from '@/providers/LocaleProvider';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
+import type { SpeakerReaction } from '@openmacro/core/engine/speaker';
 
 /** How far below its resting place the sheet starts, in px. */
 const SHEET_TRAVEL = 420;
@@ -45,6 +47,11 @@ export interface FeedbackSheetProps {
    * under the sheet and cannot be scrolled into view.
    */
   onHeightChange?: (height: number) => void;
+  /**
+   * The challenge's speaker reacting to the answer — excited or oops, from
+   * `speakerReaction` in core. Omitted for a challenge with no speaker.
+   */
+  speaker?: SpeakerReaction | null;
 }
 
 function FeedbackSheetComponent({
@@ -55,6 +62,7 @@ function FeedbackSheetComponent({
   continueLabel,
   onContinue,
   onHeightChange,
+  speaker,
 }: FeedbackSheetProps) {
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
@@ -106,6 +114,15 @@ function FeedbackSheetComponent({
           <Text allowFontScaling={false} style={styles.badgeIcon}>{correct ? '✓' : '✕'}</Text>
         </View>
         <Text maxFontSizeMultiplier={fontScale.title} style={[styles.title, { color: accent }]}>{title}</Text>
+        {speaker ? (
+          <CharacterAvatar
+            character={speaker.character}
+            expression={speaker.expression}
+            size={SPEAKER_SIZE}
+            pop
+            style={styles.speaker}
+          />
+        ) : null}
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} bounces={false}>
@@ -123,6 +140,9 @@ function FeedbackSheetComponent({
     </Animated.View>
   );
 }
+
+/** The reacting speaker, in points. Larger than the badge, smaller than the prompt's. */
+const SPEAKER_SIZE = 56;
 
 const styles = StyleSheet.create({
   sheet: {
@@ -165,6 +185,13 @@ const styles = StyleSheet.create({
   title: {
     ...typography.title,
     flexShrink: 1,
+  },
+  // Pushed to the far end of the row and lifted into the sheet's top
+  // padding, so the face does not make the header row any taller.
+  speaker: {
+    marginLeft: 'auto',
+    marginTop: -spacing.xl,
+    marginBottom: -spacing.sm,
   },
   // Shrinks to fit under the sheet's maxHeight; grows no further than its text.
   scroll: {

@@ -12,6 +12,7 @@
  * their mistake the moment they hot-reload.
  */
 
+import { CHARACTER_IDS, isCharacterId } from './characters';
 import { isKnownFormulaId } from './formulas';
 import { MODULE_LEVELS } from './schema';
 import type { BalanceSheetShift, Challenge, Lesson, Module } from './schema';
@@ -70,6 +71,15 @@ function validateChallenge(challenge: Challenge, path: string): ContentIssue[] {
 
   if (!challenge.explanation.trim()) {
     at('`explanation` is empty — this is the text the learner actually learns from.');
+  }
+
+  // Types catch a typo in a `.ts` lesson; this catches one in JSON or a CMS
+  // row, where a client would otherwise look up an image that does not exist.
+  if (challenge.speaker !== undefined && !isCharacterId(challenge.speaker)) {
+    at(
+      `speaker "${String(challenge.speaker)}" is not a registered character. ` +
+        `Use one of ${CHARACTER_IDS.join(', ')}, or add it to content/characters.ts.`,
+    );
   }
 
   switch (challenge.type) {
