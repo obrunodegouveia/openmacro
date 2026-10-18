@@ -71,7 +71,7 @@ export const capitalAndWhatItBuildsLesson = defineLesson({
             { account: 'Loans', side: 'asset', amount: 500000000 },
             { account: 'Reserves at the Fed', side: 'asset', amount: 60000000 },
             { account: 'Customer deposits', side: 'liability', amount: 540000000 },
-            { account: 'Equity', side: 'liability', amount: 20_000_000 },
+            { account: 'Equity', side: 'liability', amount: 20_000_000, equity: true },
           ],
         },
         {
@@ -82,7 +82,7 @@ export const capitalAndWhatItBuildsLesson = defineLesson({
           openingLines: [
             { account: 'Plant and equipment', side: 'asset', amount: 80000000 },
             { account: 'Deposit at the bank', side: 'asset', amount: 4000000 },
-            { account: 'Equity', side: 'liability', amount: 84000000 },
+            { account: 'Equity', side: 'liability', amount: 84000000, equity: true },
           ],
         },
       ],
@@ -136,6 +136,7 @@ export const capitalAndWhatItBuildsLesson = defineLesson({
             side: 'liability',
             account: 'Equity',
             delta: 10000000,
+            equity: true,
           },
           feedback:
             'Borrowing does not make the firm richer. It has $10m more of assets and $10m more of debt — the owners’ stake is exactly what it was this morning.',

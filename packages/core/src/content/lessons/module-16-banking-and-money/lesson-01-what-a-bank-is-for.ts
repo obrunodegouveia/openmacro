@@ -11,13 +11,192 @@ export const kabWhatABankIsForLesson = defineLesson({
     'Savings buried in a mattress and an irrigation ditch nobody can fund. A bank is what stands between them.',
   icon: '🏛️',
   difficulty: 'intro',
-  estimatedMinutes: 16,
+  estimatedMinutes: 18,
   video: {
     url: 'https://www.youtube.com/watch?v=E-HOz8T6tAo',
     minutes: 12,
     source: 'Khan Academy — Banking 1',
   },
   challenges: [
+    // ---- Olivia warm-ups --------------------------------------------------
+    // Sal draws a bank's balance sheet in this video. These four ask the same
+    // three questions — what you own, what you owe, what is truly yours — about
+    // a 12-year-old with a guitar, before the challenges below ask them about
+    // a bank. Olivia and Breno are fictional, and her numbers carry on into
+    // lesson 2.
+    {
+      id: 'olivia-what-is-an-asset',
+      type: 'multiple_choice',
+      xp: 10,
+      tags: ['basics', 'assets'],
+      prompt:
+        'An asset is something you own that is worth money. Olivia is 12, writes songs on her guitar and dreams of her first gig. Which of these is one of her assets?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'tshirts', label: 'The T-shirts she printed and has not sold yet' },
+        {
+          id: 'tune',
+          label: 'The new tune stuck in her head',
+          feedback:
+            'It might become a great song one day. But today nobody can buy a tune she is still humming, so it is not worth money yet.',
+        },
+        {
+          id: 'compliment',
+          label: 'Her music teacher saying she sang brilliantly',
+          feedback:
+            'A compliment feels great, but she cannot sell it or spend it. An asset has to be worth money.',
+        },
+        {
+          id: 'ticket',
+          label: 'The €10 she spent on a cinema ticket last week',
+          feedback:
+            'That money is gone and the film is over. There is nothing left for her to own.',
+        },
+      ],
+      correctOptionId: 'tshirts',
+      explanation:
+        'An asset does not have to be cash. Her unsold T-shirts are worth money because she can sell them at the talent show — just as Sal’s bank counts its building and its loans as assets, not only its gold.',
+    },
+    {
+      id: 'olivia-iou',
+      type: 'multiple_choice',
+      xp: 10,
+      tags: ['basics', 'assets', 'liabilities'],
+      prompt:
+        'Olivia’s friend borrows €5 for the bus and promises to pay it back on Friday. For Olivia, what is that promise?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'asset', label: 'An asset — money she is owed' },
+        {
+          id: 'liability',
+          label: 'A liability — money she owes',
+          feedback:
+            'Olivia does not owe anybody here. Her friend does. The €5 is her friend’s liability.',
+        },
+        {
+          id: 'nothing',
+          label: 'Nothing, until the €5 is back in her hand',
+          feedback:
+            'Even before Friday, the promise is worth €5 to her: it is money she is owed and can ask for. Money you are owed counts already.',
+        },
+        {
+          id: 'friends',
+          label: 'Nothing for Olivia — it is her friend’s asset',
+          feedback:
+            'Her friend spent the €5 on the bus. What her friend has left is a promise to pay, and a promise to pay is a debt, not an asset.',
+        },
+      ],
+      correctOptionId: 'asset',
+      explanation:
+        'Surprise: a promise to pay you is an asset. The same €5 is a liability for her friend. One person’s IOU (“I owe you”) is always somebody else’s asset.',
+    },
+    {
+      id: 'olivia-amp-pay-later',
+      type: 't_account_flow',
+      xp: 15,
+      tags: ['basics', 'balance-sheet', 'liabilities'],
+      prompt:
+        'Olivia buys a €40 amp at Breno’s music shop, and Breno lets her pay later. Post it on both their lists.',
+      instructions: 'Pick an entry, then choose whose list it belongs on. Four entries in total.',
+      scenario:
+        'Breno takes a €40 amp off his shelf and hands it to Olivia for her first gig. She promises to pay him the €40 later. The right-hand column shows what each of them owes, and underneath, their equity — what is truly theirs.',
+      currency: 'EUR',
+      entities: [
+        {
+          id: 'olivia',
+          label: 'Olivia',
+          tier: 'person',
+          role: 'Singer-songwriter, 12, saving for her first gig',
+          openingLines: [
+            { account: 'Guitar', side: 'asset', amount: 30 },
+            { account: 'Piggy bank', side: 'asset', amount: 20 },
+            { account: 'T-shirts', side: 'asset', amount: 10 },
+            { account: 'Equity', side: 'liability', amount: 60, equity: true },
+          ],
+        },
+        {
+          id: 'breno',
+          label: 'Breno’s music shop',
+          tier: 'small_business',
+          role: 'Guitars, amps and strings — and a big friendly beard',
+          openingLines: [
+            { account: 'Shop stock', side: 'asset', amount: 200 },
+            { account: 'Equity', side: 'liability', amount: 200, equity: true },
+          ],
+        },
+      ],
+      options: [
+        {
+          id: 'olivia-amp-up',
+          shift: { entityId: 'olivia', side: 'asset', account: 'Amp', delta: 40 },
+        },
+        {
+          id: 'olivia-owes-up',
+          shift: { entityId: 'olivia', side: 'liability', account: 'Owed to Breno', delta: 40 },
+        },
+        {
+          id: 'breno-shelf-down',
+          shift: { entityId: 'breno', side: 'asset', account: 'Shop stock', delta: -40 },
+        },
+        {
+          id: 'breno-owed-up',
+          shift: { entityId: 'breno', side: 'asset', account: 'Owed by Olivia', delta: 40 },
+        },
+        {
+          id: 'olivia-piggy-down',
+          shift: { entityId: 'olivia', side: 'asset', account: 'Piggy bank', delta: -40 },
+          feedback:
+            'Her piggy bank was not touched — she is paying later. That is exactly why she now owes Breno €40.',
+        },
+        {
+          id: 'olivia-equity-up',
+          shift: { entityId: 'olivia', side: 'liability', account: 'Equity', delta: 40, equity: true },
+          feedback:
+            'A new amp feels like being richer, but she has not paid for any of it yet. What is truly hers does not change.',
+        },
+      ],
+      expectedShifts: [
+        { entityId: 'olivia', side: 'asset', account: 'Amp', delta: 40 },
+        { entityId: 'olivia', side: 'liability', account: 'Owed to Breno', delta: 40 },
+        { entityId: 'breno', side: 'asset', account: 'Shop stock', delta: -40 },
+        { entityId: 'breno', side: 'asset', account: 'Owed by Olivia', delta: 40 },
+      ],
+      explanation:
+        'Olivia now owns the amp and owes €40 — owning and owing at the same time. Breno has one amp fewer on his shelf but €40 that Olivia owes the shop, so neither of them got richer or poorer. Olivia’s €40 debt is Breno’s €40 asset.',
+    },
+    {
+      id: 'olivia-whats-truly-hers',
+      type: 'multiple_choice',
+      xp: 10,
+      tags: ['basics', 'equity'],
+      prompt:
+        'Before the amp, what was truly Olivia’s was €60. Now her things are worth €100, and she owes Breno €40. What is truly hers now?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'sixty', label: '€60' },
+        {
+          id: 'hundred',
+          label: '€100',
+          feedback:
+            'That counts the amp as if it were paid for. It is not yet: she still owes €40 for it.',
+        },
+        {
+          id: 'hundredforty',
+          label: '€140',
+          feedback:
+            'Debts do not add to what is yours. Take what you owe away from what you own: €100 − €40.',
+        },
+        {
+          id: 'forty',
+          label: '€40',
+          feedback: '€40 is what she owes. Take it away from the €100 she owns to see what is left.',
+        },
+      ],
+      correctOptionId: 'sixty',
+      explanation:
+        'What is truly yours — your equity — is what you own minus what you owe: €100 − €40 = €60. Borrowing gave Olivia an amp, not extra wealth. Sal’s bank works the same way: its gold, loans and building are assets, its deposits are what it owes, and what is left is the owner’s equity.',
+    },
+    // ---- Sal’s bank ---------------------------------------------------------
     {
       id: 'mc-what-problem',
       type: 'multiple_choice',
@@ -190,5 +369,6 @@ export const kabWhatABankIsForLesson = defineLesson({
     'A bank exists to connect idle savings with projects that cannot otherwise be funded.',
     'Its profit is the spread between the interest it earns and the interest it pays.',
     'Deposits are liabilities. The bank owes every one of them back.',
+    'Assets are what you own, liabilities what you owe, and equity — what is truly yours — is the difference.',
   ],
 });

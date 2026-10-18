@@ -60,7 +60,7 @@ export type ModuleLevel = 'beginner' | 'intermediate' | 'advanced';
 export const MODULE_LEVELS: readonly ModuleLevel[] = ['beginner', 'intermediate', 'advanced'];
 
 /**
- * The four balance-sheet tiers OpenMacro models.
+ * The balance-sheet tiers OpenMacro models.
  *
  * Every entity in a `t_account_flow` belongs to exactly one tier, and the tier
  * is what makes a scenario legible: money behaves differently depending on
@@ -72,12 +72,20 @@ export const MODULE_LEVELS: readonly ModuleLevel[] = ['beginner', 'intermediate'
  *   | `commercial_bank`  | deposit-taking banks that create M1/M2            |
  *   | `shadow_bank`      | MMFs, dealers, repo desks, the eurodollar system  |
  *   | `fiduciary_core`   | the state, taxpayers, and the legal tender frame  |
+ *   | `person`           | one household or individual, e.g. a 12-year-old   |
+ *   | `small_business`   | a shop, a stall, a firm with a handful of people  |
+ *
+ * The last two exist for the beginner warm-ups. Badging a 12-year-old's
+ * piggy bank as "Fiduciary core" told her nothing; "Person" tells her whose
+ * sheet she is looking at.
  */
 export type MonetaryTier =
   | 'central_bank'
   | 'commercial_bank'
   | 'shadow_bank'
-  | 'fiduciary_core';
+  | 'fiduciary_core'
+  | 'person'
+  | 'small_business';
 
 /**
  * Fields shared by every challenge.
@@ -254,9 +262,10 @@ export interface InteractiveSimChallenge extends BaseChallenge {
 /**
  * Which side of a T-account a line sits on.
  *
- * Deliberately only two values. Equity is folded into liabilities, because at
- * the level OpenMacro teaches, "what it owes" and "what it owns" is the
- * distinction that carries the mechanics.
+ * Deliberately only two values: the left column (`asset`) and the right one
+ * (`liability`). Equity sits in the right column too, because assets =
+ * liabilities + equity, but it is not a debt, so a right-hand line that is the
+ * owner's own stake carries `equity: true` (see `TAccountLine.equity`).
  */
 export type BalanceSheetSide = 'asset' | 'liability';
 
@@ -267,6 +276,22 @@ export interface TAccountLine {
   side: BalanceSheetSide;
   /** Opening balance in the challenge's currency units. */
   amount: number;
+  /**
+   * This right-hand line is equity — what is truly the owner's — rather than
+   * something the entity owes. Only valid with `side: 'liability'`.
+   *
+   * It changes how the sheet reads, not how it is graded: the line still
+   * counts on the right-hand side, so the balance check stays assets =
+   * liabilities + equity and answer keys do not change. The renderers put
+   * equity lines in their own sub-section of the right column and retitle it
+   * "Liabilities + equity", so a learner is never told that equity is a debt.
+   *
+   * Every line, option and expected shift for the same account on the same
+   * entity must agree on this flag; `lint:content` checks that, and that an
+   * account named like equity ("Equity", "Net worth", "Shareholders’ equity")
+   * is flagged.
+   */
+  equity?: boolean;
 }
 
 /**
@@ -301,6 +326,11 @@ export interface BalanceSheetShift {
   side: BalanceSheetSide;
   account: string;
   delta: number;
+  /**
+   * The account is equity, as on `TAccountLine.equity`. Display only: grading
+   * matches entity, side and account, and ignores this flag.
+   */
+  equity?: boolean;
 }
 
 /**

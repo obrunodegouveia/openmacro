@@ -163,7 +163,7 @@ export const theNightCashCostTenPercentLesson = defineLesson({
             { account: 'US Treasuries', side: 'asset', amount: 400e9 },
             { account: 'Reserves at the Fed', side: 'asset', amount: 300e9 },
             { account: 'Customer deposits', side: 'liability', amount: 650e9 },
-            { account: 'Equity', side: 'liability', amount: 50_000_000_000 },
+            { account: 'Equity', side: 'liability', amount: 50_000_000_000, equity: true },
           ],
         },
       ],
