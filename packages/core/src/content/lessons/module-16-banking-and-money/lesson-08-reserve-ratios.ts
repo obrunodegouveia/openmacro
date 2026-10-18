@@ -21,25 +21,25 @@ export const kabReserveRatiosLesson = defineLesson({
       tags: ['reserve-ratio', 'liquidity'],
       xp: 25,
       prompt:
-        'The reserve ratio is reserves divided by what, exactly? The bank has 500 gold and 700 of claims against it.',
+        'The bank holds 500 gold pieces of reserves. Its depositors and note holders could ask for 700 at any moment. The reserve ratio is reserves divided by what?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'demand',
           label:
-            'Demand liabilities — checking accounts and notes outstanding',
+            'Demand liabilities — deposits and notes that can be claimed at any moment',
         },
         {
           id: 'all-liabilities',
           label: 'Total liabilities of every kind',
           feedback:
-            'A ten-year loan taken by the bank is a liability but cannot be demanded tomorrow, so no reserve need sit against it. The ratio is about what could be asked for at once.',
+            'A ten-year loan the bank has taken is a liability, but nobody can demand it tomorrow, so no reserves are needed for it. The ratio is about what could be asked for at once.',
         },
         {
           id: 'assets',
           label: 'Total assets, since reserves are held against what the bank owns',
           feedback:
-            'That would measure something closer to leverage. The reserve ratio is about meeting demands, not about solvency.',
+            'That would tell you what share of the bank’s assets is gold, not whether it can pay what may be demanded today. The reserve ratio is about meeting demands for cash.',
         },
         {
           id: 'equity',
@@ -50,7 +50,7 @@ export const kabReserveRatiosLesson = defineLesson({
       ],
       correctOptionId: 'demand',
       explanation:
-        '500 over 700 is about 71%, an unusually cautious bank. The denominator matters: only obligations that can come due immediately require liquid cover, which is why the definition says demand liabilities rather than liabilities.',
+        '500 over 700 is about 71%, an unusually cautious bank. The denominator matters: only debts that can be claimed immediately need cash ready to cover them, which is why the definition says demand liabilities rather than all liabilities.',
     },
     {
       id: 'mc-run-vs-solvency',
@@ -58,13 +58,13 @@ export const kabReserveRatiosLesson = defineLesson({
       tags: ['bank-run', 'liquidity'],
       xp: 25,
       prompt:
-        'Holders of 600 gold pieces of claims all demand metal at once, but the bank holds only 500. Its loans are good. What is the situation?',
+        'People holding 600 gold pieces’ worth of deposits and notes all ask for gold at once, but the bank holds only 500. Its loans are sound and will be repaid in time. What is the situation?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'liquidity',
           label:
-            'A liquidity failure, not an insolvency — the bank is good for the money but not today',
+            'A liquidity problem, not insolvency — the bank can pay everyone in time, but not today',
         },
         {
           id: 'insolvent',
@@ -76,18 +76,18 @@ export const kabReserveRatiosLesson = defineLesson({
           id: 'fine',
           label: 'No problem, since the loans will be repaid eventually',
           feedback:
-            'Eventually is the difficulty. Confidence is what keeps a fractional system standing, and a depositor turned away is how confidence ends.',
+            '"Eventually" is the problem. Confidence is what keeps a fractional reserve system standing, and a depositor turned away at the counter is how confidence ends.',
         },
         {
           id: 'fraud',
           label: 'Fraud, because the bank promised money it did not hold',
           feedback:
-            'The video raises this discomfort honestly and returns to it in the commentary videos — but as a description of the balance sheet, the word for this is illiquid.',
+            'The video admits this discomfort and returns to it in Sal’s commentary videos — but as a description of the balance sheet, the word for this is illiquid.',
         },
       ],
       correctOptionId: 'liquidity',
       explanation:
-        'Solvent but illiquid is the distinction the whole rest of the module depends on. A solvent bank can be destroyed by a run; that is why a lender of last resort is eventually invented. Note also how contagious the failure is — a run on one bank teaches everyone to doubt the buildings that look just like it.',
+        'Solvent but illiquid is a distinction the rest of the module depends on. A solvent bank can be destroyed by a run; that is why a lender of last resort is eventually invented. Note also how contagious the failure is — a run on one bank teaches everyone to doubt every bank that looks like it.',
     },
     {
       id: 'mc-why-demand',
@@ -95,12 +95,12 @@ export const kabReserveRatiosLesson = defineLesson({
       tags: ['reserves', 'liquidity'],
       xp: 30,
       prompt:
-        'Sal deliberately defines the ratio against demand liabilities rather than total liabilities. Why does a ten year loan the bank itself has taken out need no reserves behind it?',
+        'Sal deliberately measures the ratio against demand liabilities rather than all liabilities. Why does a ten-year loan that the bank itself has taken out need no reserves behind it?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'notondemand',
-          label: 'Because nobody can ask for it tomorrow. Reserves exist for claims that can arrive without warning',
+          label: 'Because nobody can ask for that money back tomorrow. Reserves exist for claims that can arrive without warning',
         },
         {
           id: 'notdebt',
@@ -112,18 +112,18 @@ export const kabReserveRatiosLesson = defineLesson({
           id: 'smaller',
           label: 'Because such borrowings are small compared with deposits',
           feedback:
-            'Size is not the test. A billion of ten year funding still needs no liquidity buffer; a million of deposits does.',
+            'Size is not the test. A billion borrowed for ten years still needs no reserves; a million of demand deposits does.',
         },
         {
           id: 'interest',
           label: 'Because it pays interest, and deposits do not',
           feedback:
-            'The deposits in this very example pay 5%. The distinction the ratio cares about is maturity, not cost.',
+            'Deposits can pay interest too — Sal’s paid 5% in the first video. What the ratio cares about is when the money can be claimed, not what it costs.',
         },
       ],
       correctOptionId: 'notondemand',
       explanation:
-        'Reserves answer one question only: can you pay what might be demanded today? A liability with ten years to run cannot be demanded today, so it needs no cash standing behind it. This is the seed of what modern regulators separate into two distinct rules — liquidity coverage against short-dated claims, and capital against losses on any claim at all.',
+        'Reserves answer one question only: can you pay what might be demanded today? A debt that is not due for ten years cannot be demanded today, so it needs no cash standing behind it. This is the seed of two separate rules that modern regulators use: liquidity rules for claims that can come due soon, and capital rules for losses on the bank’s assets.',
     },
     {
       id: 'mc-lending-lowers-ratio',
@@ -131,7 +131,7 @@ export const kabReserveRatiosLesson = defineLesson({
       tags: ['reserves', 'lending'],
       xp: 30,
       prompt:
-        'The bank holds 500 gold against 700 of demand liabilities — about 71%. It now makes another 500 of loans by creating deposits. What is the ratio afterwards?',
+        'The bank holds 500 gold against 700 of demand liabilities — a ratio of about 71%. It now makes another 500 of loans by creating new deposits for the borrowers. What is the ratio afterwards?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -158,7 +158,7 @@ export const kabReserveRatiosLesson = defineLesson({
       ],
       correctOptionId: 'fortytwo',
       explanation:
-        '500 / 1,200 is roughly 42%. Every loan a bank makes dilutes its own reserve ratio without a single coin moving, because the loan creates a new claim on the same unchanged pile of gold. That is the mechanism by which a reserve requirement caps lending: not by rationing the gold, but by capping how many promises it may stand behind.',
+        '500 / 1,200 is about 42%. Every loan a bank makes lowers its own reserve ratio without a single coin moving, because the loan creates a new claim on the same pile of gold. That is how a reserve requirement limits lending: not by rationing the gold, but by limiting how many promises the gold may stand behind.',
     },
     {
       id: 'mc-headroom',
@@ -166,7 +166,7 @@ export const kabReserveRatiosLesson = defineLesson({
       tags: ['reserves', 'regulation'],
       xp: 25,
       prompt:
-        'Sal floats a 20% reserve requirement for this world. With 500 gold in the vault, what is the most the bank could ever owe on demand?',
+        'Suppose the reserve requirement is 20%. With 500 gold in the vault, what is the most the bank may owe in demand liabilities?',
       instructions: 'Pick the best answer',
       options: [
         { id: 'twofive', label: '2,500 — the gold divided by the requirement' },
@@ -174,24 +174,24 @@ export const kabReserveRatiosLesson = defineLesson({
           id: 'onek',
           label: '100 — twenty per cent of the 500 it holds',
           feedback:
-            'That is the reserve you would hold against 500 of deposits. The question runs the other way: 500 of gold is the 20%, so what is the whole?',
+            'That is the reserve you would need against 500 of deposits. The question runs the other way: the 500 of gold is the 20%, so what is the whole?',
         },
         {
           id: 'sixhundred',
-          label: '600 — it already owes 700, so it is over the limit',
+          label: 'Nothing more — it already owes 700 against 500 of gold, so it is over the limit',
           feedback:
-            '700 of claims against 500 of gold is a 71% ratio, comfortably above 20%. The bank has a great deal of room left, not none.',
+            '700 of demand liabilities against 500 of gold is a 71% ratio, comfortably above 20%. The bank has a great deal of room left, not none.',
         },
         {
           id: 'fivehundred',
           label: '500 — a bank cannot owe on demand more than it holds',
           feedback:
-            'Then there would be no banking. The entire business is owing more on demand than you hold, in the confident expectation that not everyone asks at once.',
+            'Then there would be no fractional reserve banking. The whole business is owing more on demand than you hold, expecting that not everyone asks at once.',
         },
       ],
       correctOptionId: 'twofive',
       explanation:
-        '500 / 0.20 = 2,500, against the 700 it owes today — so it could create another 1,800 of deposits before the rule bit. Two useful habits come out of this: read the ratio in both directions, and notice that the constraint binds on the *liability* side. The regulator is not telling the bank how much gold to buy; it is telling it how many promises it may sell.',
+        '500 / 0.20 = 2,500, against the 700 it owes today — so it could create another 1,800 of deposits before hitting the rule. Two useful habits come out of this: read the ratio in both directions, and notice that the limit applies to the *liability* side. The regulator is not telling the bank how much gold to buy; it is telling it how many promises it may make.',
     },
     {
       id: 'order-bank-run',
@@ -202,15 +202,15 @@ export const kabReserveRatiosLesson = defineLesson({
       instructions: 'Drag the steps into order',
       events: [
         { id: 'lend', label: 'The bank lends by creating deposits', detail: '700 of claims against 500 of gold' },
-        { id: 'doubt', label: 'Something makes holders want metal instead' },
-        { id: 'drain', label: 'Demands pass 500 and the vault empties' },
+        { id: 'doubt', label: 'Something makes depositors and note holders want gold instead' },
+        { id: 'drain', label: 'Requests for gold pass 500 and the vault runs dry' },
         { id: 'refuse', label: 'Someone is turned away at the counter', detail: 'A demand deposit that cannot be demanded' },
-        { id: 'confidence', label: 'Holders with no reason to worry acquire one' },
+        { id: 'confidence', label: 'People who had no reason to worry now have one' },
         { id: 'fail', label: 'Everyone asks at once and a solvent bank fails' },
       ],
       correctOrder: ['lend', 'doubt', 'drain', 'refuse', 'confidence', 'fail'],
       explanation:
-        'The step that does the damage is the fifth, not the third. Running out of gold is survivable — the loans are good and given time they pay. What is not survivable is the counter refusing someone in public, because the only thing holding the other 600 of claims in place was the belief that they could be redeemed. A bank run is a failure of confidence that arrives dressed as a failure of liquidity, which is why the cure has always been to make the refusal impossible: first a reserve bank to lend the gold, later deposit insurance to make asking pointless.',
+        'The step that does the damage is the loss of confidence, not the empty vault. Running out of gold is survivable — the loans are good and, given time, they are repaid. What is not survivable is the counter refusing someone in public, because the only thing keeping everyone else’s claims in place was the belief that they could be paid. A bank run is a loss of confidence that looks like a shortage of cash, which is why the cure has always been to make the refusal impossible: first a reserve bank to lend the gold, later deposit insurance to make queuing pointless.',
     },
   ],
   keyTakeaways: [

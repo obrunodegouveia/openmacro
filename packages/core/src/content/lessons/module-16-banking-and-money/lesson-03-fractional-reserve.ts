@@ -24,30 +24,30 @@ export const kabFractionalReserveLesson = defineLesson({
       tags: ['money-creation', 'money-supply'],
       xp: 20,
       prompt:
-        'After the lending cycle, deposits total 2,710 gold pieces. How much gold is actually in the vault?',
+        'After the chain of lending and redepositing, deposits total 2,710 gold pieces. How much gold is physically in the vault?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'thousand',
-          label: '1,000 — exactly what the farmers brought in',
+          label: '1,000 — exactly what was first deposited',
         },
         {
           id: 'twenty-seven',
-          label: '2,710, because each deposit is backed by gold',
+          label: '2,710, because every deposit is backed by its own gold',
           feedback:
-            'That is precisely the illusion the example is built to break. Count the vault: 100 plus 90 plus 810. The gold never multiplied — only the claims on it did.',
+            'That is exactly the illusion the example is built to break. Count the vault: 100 + 90 + 810 = 1,000. The gold never multiplied — only the claims on it did.',
         },
         {
           id: 'seventeen',
-          label: '1,710, the original gold plus what was lent',
+          label: '1,710 — the 900 and the 810 that were lent out',
           feedback:
-            'Lending moved gold out and deposits brought it back; it was never added to. Every coin lent was a coin that had been deposited.',
+            'Those 1,710 are the same coins counted again: each was lent out and then redeposited. No gold was ever added, so the vault still holds the original 1,000.',
         },
         {
           id: 'nine-hundred',
-          label: '900, because the rest was lent out and is gone',
+          label: '900, because the rest was lent out and has left the bank',
           feedback:
-            'The gold came back. Workers paid with it redeposited it, which is exactly what lets the cycle continue.',
+            'The gold came back. The workers who were paid with it deposited it again, which is exactly what keeps the chain going.',
         },
       ],
       correctOptionId: 'thousand',
@@ -59,7 +59,7 @@ export const kabFractionalReserveLesson = defineLesson({
       type: 'order_flow',
       tags: ['money-creation', 'multiplier'],
       xp: 25,
-      prompt: 'Put one full turn of the multiplier in order.',
+      prompt: 'Put the first steps of the lending chain in order, as the video draws them.',
       instructions: 'Drag the steps into order',
       events: [
         { id: 'deposit', label: 'Farmers deposit 1,000 gold', detail: 'A liability for the bank' },
@@ -71,17 +71,17 @@ export const kabFractionalReserveLesson = defineLesson({
       ],
       correctOrder: ['deposit', 'reserve', 'lend', 'pay', 'redeposit', 'again'],
       explanation:
-        'Each turn is smaller than the last — 1,000, then 900, then 810 — which is why the total converges rather than running away. The reserve ratio sets how fast it shrinks, and therefore how large the money supply can get.',
+        'Each new deposit is smaller than the last — 1,000, then 900, then 810 — which is why the total levels off instead of growing forever. The reserve ratio sets how fast the deposits shrink, and so how large the money supply can get.',
     },
     {
       id: 'sim-rounds',
       type: 'interactive_sim',
       tags: ['money-creation', 'multiplier'],
       xp: 30,
-      prompt: 'How far did Sal actually get?',
-      instructions: 'Set the rounds to 3 to rebuild the video, then keep going',
+      prompt: 'How far did Sal’s chain actually get?',
+      instructions: 'Set the deposits to 3 to rebuild the video, then keep going',
       narrative:
-        'The video lends, re-deposits and lends again exactly three times, then stops and keeps the last 810 in the vault. Each round re-lends whatever fraction the reserve ratio leaves, so the total after n rounds is D x (1 − (1 − R)^n) / R. Put the ratio at 10% and the rounds at 3 and you should see the video’s own 2,710 — then push the rounds up and watch how slowly the last of it arrives.',
+        'The video’s chain has three deposits — 1,000, then 900, then 810 — and stops there, with the last 810 kept in the vault. Each new deposit is what is left after the bank holds back R of the previous one, so the total after n deposits is D x (1 − (1 − R)^n) / R. Put the ratio at 10% and the deposits at 3 and you should see the video’s 2,710. Then add more deposits and watch how slowly the rest arrives.',
       constants: {
         initialDeposit: 1000,
       },
@@ -98,13 +98,13 @@ export const kabFractionalReserveLesson = defineLesson({
         },
         {
           key: 'rounds',
-          label: 'Lending rounds completed',
+          label: 'Deposits in the chain (n)',
           min: 1,
           max: 40,
           step: 1,
           defaultValue: 3,
           format: 'number',
-          hint: 'The video stops at three',
+          hint: 'The video stops at three: 1,000, 900 and 810',
         },
       ],
       readouts: [
@@ -139,11 +139,11 @@ export const kabFractionalReserveLesson = defineLesson({
         },
       ],
       objective: {
-        description: 'Rebuild the video at 3 rounds, then see how far 20 gets you',
+        description: 'Rebuild the video with 3 deposits, then see how far 20 gets you',
         requiredObservations: [{ sliderKey: 'rounds', values: [3, 20] }],
       },
       explanation:
-        'Three rounds at a 10% ratio reach 2,710 — only 27% of the 10,000 the multiplier promises. Twenty rounds reach 8,784. The textbook figure of "ten times base money" is a destination the system is always walking towards and never arrives at, because every round is smaller than the last. Notice too that the gold never moves off 1,000 no matter where you put the sliders.',
+        'Three deposits at a 10% ratio reach 2,710 — only 27% of the 10,000 ceiling. Twenty reach 8,784. The textbook figure of "ten times the gold" is a limit the chain keeps approaching and never quite reaches, because every new deposit is smaller than the last. Notice too that the gold stays at 1,000 wherever you put the sliders.',
     },
     {
       id: 'mc-the-limit',
@@ -151,15 +151,15 @@ export const kabFractionalReserveLesson = defineLesson({
       tags: ['money-creation', 'multiplier'],
       xp: 25,
       prompt:
-        'Sal stops the chain by choice — he keeps the last 810 as reserves instead of lending 729 of it. Had he carried on at 10% forever, what would deposits have approached?',
+        'Sal stops the chain by choice: he keeps the last 810 as reserves instead of lending 729 of it. If he had kept lending 90% of every new deposit forever, what total would deposits have approached?',
       instructions: 'Pick the best answer',
       options: [
         { id: 'tenk', label: '10,000 — the original 1,000 divided by the reserve ratio' },
         {
           id: 'infinite',
-          label: 'They would grow without limit, since each round creates more',
+          label: 'They would grow without limit, since each loan creates another deposit',
           feedback:
-            'Each round is 90% of the one before, so the total is a geometric series with a finite sum. 1,000 + 900 + 810 + 729 … converges on 10,000.',
+            'Each new deposit is 90% of the one before, so the additions keep shrinking and the total has a limit: 1,000 + 900 + 810 + 729 + … gets ever closer to 10,000.',
         },
         {
           id: 'fivek',
@@ -171,12 +171,12 @@ export const kabFractionalReserveLesson = defineLesson({
           id: 'twok',
           label: 'About 3,000 — it was already slowing down at 2,710',
           feedback:
-            'It is slowing, but slowly. The next rounds add 729, 656, 590 and so on; the tail is long and sums to another 7,290.',
+            'It is slowing, but slowly. The next deposits add 729, 656, 590 and so on; together they add up to another 7,290.',
         },
       ],
       correctOptionId: 'tenk',
       explanation:
-        'M = D / R = 1,000 / 0.1 = 10,000. The number that matters here is how far 2,710 is from it: the video’s dramatic near-tripling of the money supply is barely a quarter of what the same 1,000 gold pieces could support. Real systems sit well below the ceiling too, because borrowers must want the loans and banks must want to make them.',
+        'Limit = D / R = 1,000 / 0.1 = 10,000. Compare that with 2,710: the video’s dramatic near-tripling of the money supply is barely a quarter of what the same 1,000 gold pieces could support. Real systems sit well below the ceiling too, because borrowers must want the loans and banks must want to make them.',
     },
     {
       id: 'mc-slack',
@@ -184,35 +184,35 @@ export const kabFractionalReserveLesson = defineLesson({
       tags: ['reserves', 'money-creation'],
       xp: 30,
       prompt:
-        'With the chain stopped, the vault holds 1,000 gold against 2,710 of deposits. If the requirement is 10%, what does that tell you about Sal’s position?',
+        'With the chain stopped, the vault holds 1,000 gold pieces against 2,710 of deposits. If the rule says reserves must be at least 10% of deposits, what does that tell you about Sal’s position?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'slack',
-          label: 'He is holding about 37% — far more than required, so he could lend a great deal more',
+          label: 'His reserves are about 37% of deposits — far more than required, so he could lend a great deal more',
         },
         {
           id: 'tight',
-          label: 'He is at the limit, since 1,000 of gold backs 2,710 of claims',
+          label: 'He is exactly at the limit, since 1,000 of gold backs 2,710 of deposits',
           feedback:
-            'Work out the ratio: 1,000 divided by 2,710 is roughly 37%, not 10%. He has nearly four times the gold the rule demands.',
+            'Work out the ratio: 1,000 divided by 2,710 is about 37%, not 10%. He holds nearly four times the gold the rule demands.',
         },
         {
           id: 'breach',
-          label: 'He is in breach — he owes 2,710 and has only 1,000',
+          label: 'He is breaking the rule — he owes 2,710 and has only 1,000',
           feedback:
-            'Owing more than you hold in cash is the definition of the business, not a breach of it. The rule asks for 10% of demand deposits, and he has 37%.',
+            'Owing more than you hold in cash is how fractional reserve banking works, not a breach of it. The rule asks for 10% of deposits, and he has 37%.',
         },
         {
           id: 'depends',
           label: 'You cannot say without knowing whether the loans are good',
           feedback:
-            'Loan quality decides whether he is solvent. The reserve ratio is a separate question about liquidity, and it is answerable from these two numbers alone.',
+            'Loan quality decides whether he is solvent — whether his assets cover what he owes. The reserve ratio is a separate question, and these two numbers are enough to answer it.',
         },
       ],
       correctOptionId: 'slack',
       explanation:
-        '1,000 / 2,710 is about 37%. Sal is sitting on roughly 730 gold pieces of reserves he is not required to hold — what a modern balance sheet would call excess reserves. He stopped lending because he chose to, not because a rule stopped him, and that distinction between a binding constraint and a voluntary one runs all the way to the modern Fed.',
+        '1,000 / 2,710 is about 37%. The rule requires only 271 (10% of 2,710), so Sal holds about 729 gold pieces more than he must — what a modern balance sheet calls excess reserves. He stopped lending because he chose to, not because a rule stopped him. That difference between a limit that binds and one that does not comes back with the modern Fed.',
     },
   ],
   keyTakeaways: [

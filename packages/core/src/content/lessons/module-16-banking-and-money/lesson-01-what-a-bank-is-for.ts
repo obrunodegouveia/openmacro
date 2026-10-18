@@ -24,36 +24,36 @@ export const kabWhatABankIsForLesson = defineLesson({
       tags: ['banking', 'intermediation'],
       xp: 15,
       prompt:
-        'In the village, savers have gold under their mattresses and entrepreneurs have projects with no funding. What is the problem a bank actually solves?',
+        'In the village, savers keep gold under their mattresses while entrepreneurs have projects nobody funds. What problem does a bank solve here?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'matching',
           label:
-            'Nobody can find, judge or pool with enough counterparties to fund a canal',
+            'Savers and entrepreneurs cannot find each other, judge each project, or pool enough savings for something as big as a canal',
         },
         {
           id: 'storage',
           label: 'Savings need safekeeping, and a vault is safer than a mattress',
           feedback:
-            'Gold famously does not corrode — that is part of why it was chosen. Safekeeping is a service the bank sells, but it is not the problem that made a bank worth inventing.',
+            'A vault is safer, and a bank does offer that. But gold kept safe in a vault is just as idle as gold under a mattress. The problem is that savings never reach the projects.',
         },
         {
           id: 'printing',
           label: 'The village has too little money for the projects it wants to build',
           feedback:
-            'No printing happens in this video. The village already has its 1,000 gold pieces; the trouble is that they are doing nothing.',
+            'The village is not short of gold. The trouble is that the gold it has is sitting idle instead of funding anything. No new money is needed to fix that.',
         },
         {
           id: 'interest',
           label: 'Savers want interest, and only a bank is legally allowed to pay it',
           feedback:
-            'Interest is how the bank attracts deposits, not the underlying problem. A saver could in principle lend directly — the difficulty is finding, judging and pooling with enough other savers to fund a canal.',
+            'Nothing stops a saver from lending and charging interest directly. Interest is how the bank attracts deposits, not the problem it solves. The hard part is finding a borrower, judging the project and gathering enough savings for it.',
         },
       ],
       correctOptionId: 'matching',
       explanation:
-        'A bank is an intermediary: it aggregates many small savings, evaluates borrowers on the savers’ behalf, and spreads the risk across many loans. Every part of that is something an individual saver cannot do alone — and, as the video points out, a saver advertising that they have gold buried in the garden mostly attracts robbers.',
+        'A bank is an intermediary: it pools many small savings, judges borrowers on the savers’ behalf, and spreads the risk across many loans. A single saver cannot do any of that alone — and, as the video points out, a saver who announces they have gold buried in the garden mostly attracts robbers.',
     },
     {
       id: 'mc-where-the-profit-comes-from',
@@ -61,49 +61,49 @@ export const kabWhatABankIsForLesson = defineLesson({
       tags: ['banking', 'spread'],
       xp: 20,
       prompt:
-        'The bank holds 10 million in deposits, keeps 1 million as cash and lends 9 million at 10%, while paying depositors 5%. Where does its profit come from?',
+        'Sal’s bank holds 10 million of deposits. It keeps 1 million as cash and lends the other 9 million at 10% a year. It pays depositors 5% a year. Where does its profit come from?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'spread',
           label:
-            'The spread: 900,000 of interest earned, less 500,000 paid to depositors, less running costs',
+            'The spread: 900,000 of interest earned on loans, minus 500,000 paid to depositors, minus running costs',
         },
         {
           id: 'fees',
           label: 'Fees charged for safekeeping',
           feedback:
-            'The bank pays depositors for the privilege of holding their money rather than charging them. The safekeeping is the bait, not the business.',
+            'In this video the bank charges no fees — it pays depositors 5% to hold their money. Safekeeping is what attracts deposits, not what earns the profit.',
         },
         {
           id: 'reserves',
           label: 'Interest earned on the 1 million held as cash reserves',
           feedback:
-            'Idle reserves earn nothing. That is exactly why a bank keeps as little of them as it dares — a tension that runs through the rest of this module.',
+            'Cash in the vault earns nothing. That is exactly why a bank keeps as little of it as it dares — a tension that runs through the rest of this module.',
         },
         {
           id: 'deposits',
           label: 'The deposits themselves, which belong to the bank once deposited',
           feedback:
-            'Deposits are a liability, not income. The bank owes every one of those 10 million back on demand, which is the whole reason reserves exist.',
+            'Deposits are a liability, not income. The bank must repay all 10 million whenever depositors ask, which is the whole reason it keeps cash in reserve.',
         },
       ],
       correctOptionId: 'spread',
       explanation:
-        'Lending 9 million at 10% brings in 900,000. Paying 5% on 10 million of deposits costs 500,000. That leaves 400,000, and about 100,000 goes on salaries and guards — roughly 300,000 a year on a 1 million investment. The bank earns the gap between what money costs it and what money earns it, which is the definition of a spread.',
+        'Lending 9 million at 10% brings in 900,000. Paying 5% on 10 million of deposits costs 500,000. That leaves 400,000, and about 100,000 goes on salaries and guards — roughly 300,000 a year before tax, on the 1 million Sal put in himself. The bank earns the gap between the interest it receives and the interest it pays. That gap is the spread.',
     },
     {
       id: 'match-frictions',
       type: 'concept_match',
       tags: ['intermediation', 'banking'],
       xp: 25,
-      prompt: 'The video names three separate reasons the savers and the entrepreneurs cannot simply find each other. Match each to what it costs them.',
+      prompt: 'The video gives three reasons why savers and entrepreneurs cannot simply do business with each other. Match each reason to what it means in the village.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'judging',
           term: 'Judging a project',
-          definition: 'A farmer cannot tell a canal that will pay from one that will not — and would have to learn that skill for every borrower who asked',
+          definition: 'A farmer cannot tell a canal that will pay off from one that will not — and would have to learn to judge every borrower who asked',
         },
         {
           id: 'size',
@@ -117,7 +117,7 @@ export const kabWhatABankIsForLesson = defineLesson({
         },
       ],
       explanation:
-        'All three are information problems, and that is the whole business. A bank is not a vault with better walls — it is a specialist at assessing borrowers, a pool deep enough to fund things no single saver could, and a place where lending your money does not require telling the village you have any.',
+        'A bank solves all three at once. It is not just a vault with better walls: it is a specialist at judging borrowers, a pool big enough to fund what no single saver could, and a way to lend your money without telling the village you have any.',
     },
     {
       id: 'mc-cost-of-reserves',
@@ -125,10 +125,10 @@ export const kabWhatABankIsForLesson = defineLesson({
       tags: ['reserves', 'bank-profit'],
       xp: 25,
       prompt:
-        'Sal keeps 1 million of the 10 million in cash and lends the other 9 million. He earns 10% on the loans and pays 5% on deposits. What does the cash in the vault cost him each year?',
+        'Sal keeps 1 million of the 10 million of deposits as cash and lends the other 9 million. He earns 10% a year on the loans and pays 5% a year on every deposit. Counting only money that actually leaves his pocket, what does that idle 1 million cost him each year?',
       instructions: 'Pick the best answer',
       options: [
-        { id: 'fifty', label: '50,000 — he pays 5% on it and earns nothing on it' },
+        { id: 'fifty', label: '50,000 — he pays depositors 5% on it and it earns nothing' },
         {
           id: 'nothing',
           label: 'Nothing. It is sitting there doing no harm',
@@ -139,18 +139,18 @@ export const kabWhatABankIsForLesson = defineLesson({
           id: 'hundred',
           label: '100,000 — the 10% he could have earned by lending it',
           feedback:
-            'That is the forgone income, not the cost. Ask what actually leaves his pocket: 5% of a million. The 10% was never his to begin with.',
+            'That is the opportunity cost: income he gives up by not lending the cash. It matters, but no money leaves his pocket for it. What he actually pays out is 5% of 1 million.',
         },
         {
           id: 'fivehundred',
           label: '500,000 — the whole interest bill',
           feedback:
-            'That is what he pays on all 10 million of deposits. The question is only about the million he chose not to lend.',
+            'That is what he pays on all 10 million of deposits. The question is only about the 1 million he keeps as cash.',
         },
       ],
       correctOptionId: 'fifty',
       explanation:
-        'Reserves are not free storage — they are borrowed money earning nothing. This is the pressure that runs through the whole of banking: every gold piece held back for safety is a gold piece being paid for and not working, which is exactly why a bank left to itself holds as few as it dares.',
+        'Reserves are not free: they are borrowed money that earns nothing. On top of the 50,000 he pays, Sal also gives up the 100,000 he could have earned by lending that cash. This is the pressure that runs through all of banking: every coin held back for safety is paid for and not working, which is why a bank left to itself holds as little as it dares.',
     },
     {
       id: 'mc-ratio-to-profit',
@@ -158,7 +158,7 @@ export const kabWhatABankIsForLesson = defineLesson({
       tags: ['reserves', 'bank-profit', 'regulation'],
       xp: 30,
       prompt:
-        'The village regulator doubles the reserve requirement to 20%. Deposits stay at 10 million, the rates stay at 10% and 5%, and salaries and upkeep stay at 100,000. What happens to Sal’s profit?',
+        'Until now Sal kept 10% of deposits as cash. The village regulator now requires 20%. Deposits stay at 10 million, rates stay at 10% on loans and 5% on deposits, and salaries and upkeep stay at 100,000. What happens to Sal’s profit before tax?',
       instructions: 'Pick the best answer',
       options: [
         { id: 'twohundred', label: 'It falls from 300,000 to 200,000' },
@@ -166,24 +166,24 @@ export const kabWhatABankIsForLesson = defineLesson({
           id: 'unchanged',
           label: 'Nothing changes — he still has the same 10 million of deposits',
           feedback:
-            'Deposits are what he pays for, not what he earns on. He now lends 8 million instead of 9, so 100,000 of interest income simply disappears while the 500,000 interest bill does not move.',
+            'He pays interest on deposits; he earns it only on loans. He now lends 8 million instead of 9, so 100,000 of interest income disappears while the 500,000 interest bill does not move.',
         },
         {
           id: 'half',
-          label: 'It halves, because the reserve requirement doubled',
+          label: 'It halves, because the reserve requirement doubled from 10% to 20%',
           feedback:
-            'The ratio doubled; the loan book did not halve. It went from 9 million to 8 million — a ninth less lending, not half.',
+            'The cash requirement doubled, but lending did not halve. Loans went from 9 million to 8 million — one ninth less, not half.',
         },
         {
           id: 'rises',
           label: 'It rises, because a safer bank attracts more depositors',
           feedback:
-            'That may be true over years, but the arithmetic of this year is fixed: less lent at 10%, the same paid at 5%.',
+            'That might happen over the years, but this year’s arithmetic is fixed: less lent at 10%, the same paid at 5%.',
         },
       ],
       correctOptionId: 'twohundred',
       explanation:
-        'Loans fall to 8 million, so interest income falls to 800,000 while the 500,000 owed to depositors is untouched. The spread drops to 300,000 and the 100,000 of running costs takes it to 200,000. A third of the profit, gone, from one number moved by a regulator — which is why reserve requirements were a real policy lever and why banks lobbied hard over them.',
+        'Loans fall to 8 million, so interest income falls to 800,000 while the 500,000 paid to depositors does not change. The spread drops to 300,000, and the 100,000 of running costs takes profit to 200,000. A third of the profit is gone because a regulator changed one number — which is why reserve requirements were a real policy lever.',
     },
   ],
   keyTakeaways: [

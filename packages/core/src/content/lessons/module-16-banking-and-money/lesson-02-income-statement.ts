@@ -24,12 +24,12 @@ export const kabIncomeStatementLesson = defineLesson({
       tags: ['accounting', 'equity'],
       xp: 20,
       prompt:
-        'The bank starts the year with 1 million of equity and ends with 1.2 million. Its net income for the year was 200,000. Is that a coincidence?',
+        'Sal’s bank starts the year with 1 million of equity and ends it with 1.2 million. Its net income for the year was 200,000. Sal paid himself no dividend and put in no new money. Is it a coincidence that the two numbers match?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'identity',
-          label: 'No — net income *is* the change in equity over the period',
+          label: 'No — profit the bank keeps has nowhere to go but equity, so the two must match',
         },
         {
           id: 'coincidence',
@@ -52,14 +52,14 @@ export const kabIncomeStatementLesson = defineLesson({
       ],
       correctOptionId: 'identity',
       explanation:
-        'Equity is assets minus liabilities. Earnings that are not paid out raise assets without raising liabilities, so they land in equity pound for pound. That is why you can hand someone two balance sheets and they can reconstruct the income statement that must have happened in between.',
+        'Equity is assets minus liabilities. Profit that is not paid out raises assets without raising liabilities, so it adds to equity one for one. That is why, when the owner takes nothing out and puts nothing in, two balance sheets tell you the net income earned in between.',
     },
     {
       id: 'order-income-statement',
       type: 'order_flow',
       tags: ['accounting', 'income-statement'],
       xp: 25,
-      prompt: 'Put the income statement back in order, from revenue down to what the owner keeps.',
+      prompt: 'Put Sal’s income statement back in order, as the video builds it: interest first, then running costs, then tax, down to what the owner keeps.',
       instructions: 'Drag the lines into order',
       events: [
         { id: 'interest-income', label: 'Interest income', detail: '900,000 — 10% on 9 million of loans' },
@@ -79,16 +79,16 @@ export const kabIncomeStatementLesson = defineLesson({
       tags: ['return-on-equity', 'accounting'],
       xp: 25,
       prompt:
-        'Sal put in 1,000,000 of his own gold and the bank earned 200,000 in its first year. What was his return on equity, and why does he watch that rather than the 200,000?',
+        'Sal put in 1,000,000 of his own money and the bank earned 200,000 of net income in its first year. What was his return on equity, and why does it matter more than the 200,000 alone?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'twenty',
-          label: '20% — because 200,000 is only impressive relative to what he had to put up to earn it',
+          label: '20% — a profit only means something compared with what the owner put in to earn it',
         },
         {
           id: 'two',
-          label: '2% — 200,000 against the 11.2 million of assets he controls',
+          label: 'About 2% — 200,000 against the 11.2 million of assets the bank holds',
           feedback:
             'That is return on assets, and it is a real measure — but most of those assets were bought with depositors’ money. Return on equity asks what the owner’s own stake earned.',
         },
@@ -107,7 +107,7 @@ export const kabIncomeStatementLesson = defineLesson({
       ],
       correctOptionId: 'twenty',
       explanation:
-        'Return on equity is change in equity over starting equity: 200,000 on 1,000,000 is 20%. Profit on its own says nothing about whether a business is worth owning — only profit measured against what was staked does. Hold that number in mind for the leverage video, where the way to raise it turns out to be to stake less and borrow more.',
+        'Return on equity is net income divided by the equity at the start of the year: 200,000 on 1,000,000 is 20%. Profit on its own says nothing about whether a business is worth owning — only profit measured against what the owner put in does. Keep that number in mind for the leverage video, where the way to raise it turns out to be: put in less of your own money and borrow more.',
     },
     {
       id: 'mc-equity-identity-breaks',
@@ -115,35 +115,35 @@ export const kabIncomeStatementLesson = defineLesson({
       tags: ['accounting', 'equity'],
       xp: 30,
       prompt:
-        'The video shows that the change in equity equals net income, and says you could reconstruct the income statement from two balance sheets. When would that fail?',
+        'In the video, the change in equity equals net income, so two balance sheets are enough to work out the year’s profit. In which case would that shortcut give the wrong answer?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'dividends',
-          label: 'If the owner took money out or put more in during the year',
+          label: 'If the owner took money out (a dividend) or put new money in during the year',
         },
         {
           id: 'never',
           label: 'Never — it is an accounting identity',
           feedback:
-            'It is an identity only for a business whose owners neither withdraw nor contribute. Equity moves for two reasons: profits earned, and capital paid in or taken out.',
+            'It only holds when the owners neither take money out nor put money in. Equity moves for two reasons: profit or loss, and money the owners put in or take out.',
         },
         {
           id: 'loss',
           label: 'If the bank made a loss rather than a profit',
           feedback:
-            'A loss works the same way in reverse — equity falls by the amount of the loss. The identity holds fine.',
+            'A loss works the same way in reverse: equity falls by the amount of the loss. The shortcut still works.',
         },
         {
           id: 'defaults',
           label: 'If some borrowers defaulted',
           feedback:
-            'A default is a real expense: the loan is written down, that flows through the income statement, and equity falls by the same amount. The identity survives.',
+            'A default is a real expense: the loan is written down, the loss goes through the income statement, and equity falls by the same amount. The shortcut still works.',
         },
       ],
       correctOptionId: 'dividends',
       explanation:
-        'Equity rises by profits and by capital paid in, and falls by losses and by dividends. Sal’s bank happens to pay no dividend and raise no capital, so his two balance sheets do tell you net income — but read a real bank the same way and a dividend will make a profitable year look like a flat one. This is exactly why a cash flow statement exists alongside the other two.',
+        'Equity rises with profits and with new money from the owners, and falls with losses and with dividends. Sal’s bank pays no dividend and raises no new capital, so its two balance sheets do tell you net income. Read a real bank the same way and a dividend can make a profitable year look like a flat one — which is why real accounts also include a statement of changes in equity.',
     },
     {
       id: 'mc-where-profit-sits',
@@ -151,7 +151,7 @@ export const kabIncomeStatementLesson = defineLesson({
       tags: ['accounting', 'balance-sheets'],
       xp: 20,
       prompt:
-        'Equity ends the year at 1.2 million instead of 1 million. On the asset side of the closing balance sheet, where is that extra 200,000 actually sitting?',
+        'Equity ends the year at 1.2 million instead of 1 million, and deposits have not changed. On the asset side of the year-end balance sheet, where is that extra 200,000?',
       instructions: 'Pick the best answer',
       options: [
         { id: 'cash', label: 'In cash — the vault holds 1.2 million instead of 1 million' },
@@ -165,18 +165,18 @@ export const kabIncomeStatementLesson = defineLesson({
           id: 'building',
           label: 'In the building, which is worth more now',
           feedback:
-            'The building is still worth a million — the 50,000 of upkeep went on keeping it there rather than on making it worth more.',
+            'The building is still worth 1 million. The upkeep money kept it in shape; it did not make it worth more.',
         },
         {
           id: 'nowhere',
           label: 'Nowhere in particular. Equity is a residual, not a thing you can point at',
           feedback:
-            'Equity is indeed a residual, but the balance sheet must still balance. If the right-hand side grew by 200,000 and liabilities did not move, something concrete on the left grew by 200,000.',
+            'Equity is indeed a residual, but the balance sheet must still balance. If equity grew by 200,000 and liabilities did not move, some asset must have grown by 200,000 too.',
         },
       ],
       correctOptionId: 'cash',
       explanation:
-        'Profit is not an abstraction floating above the balance sheet — it lands somewhere specific. Borrowers paid 900,000 of interest in coin and depositors were paid 500,000 in coin, and what was left after wages, upkeep and tax stayed in the vault. Equity went up because an asset did.',
+        'Profit is not an abstraction floating above the balance sheet — it lands somewhere specific. Borrowers paid 900,000 of interest in cash and depositors were paid 500,000 in cash, and what was left after wages, upkeep and tax stayed in the vault. Equity went up because an asset did.',
     },
   ],
   keyTakeaways: [

@@ -24,25 +24,25 @@ export const kabNotesAndChequesLesson = defineLesson({
       tags: ['payments', 'cheques'],
       xp: 20,
       prompt:
-        'A writes B a cheque for 200 gold pieces. Both bank with the Bank of Sal. What actually happens?',
+        'A writes B a cheque for 200 gold pieces. Both have accounts at the Bank of Sal. What happens when B hands the cheque to the bank?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'ledger',
           label:
-            'The bank moves 200 from A’s account to B’s. No gold moves and the bank’s totals are unchanged',
+            'The bank moves 200 from A’s account to B’s. No gold moves and the bank’s total deposits are unchanged',
         },
         {
           id: 'gold-moves',
           label: 'The bank takes 200 in gold from the vault and hands it to B',
           feedback:
-            'That is what a cheque exists to avoid. B is not asking for metal; B is asking for the claim to be reassigned.',
+            'That is what a cheque exists to avoid. B is not asking for metal; B is asking for 200 of A’s balance to become B’s.',
         },
         {
           id: 'new-money',
           label: 'The bank creates 200 of new deposits for B',
           feedback:
-            'Nothing is created. A has 200 less and B has 200 more — the bank’s liabilities are exactly as large as they were.',
+            'Nothing is created. A has 200 less and B has 200 more, so the bank owes exactly as much as before.',
         },
         {
           id: 'notes',
@@ -53,39 +53,39 @@ export const kabNotesAndChequesLesson = defineLesson({
       ],
       correctOptionId: 'ledger',
       explanation:
-        'A cheque is an instruction to reassign a liability. Total deposits are unchanged; only the names attached to them move. This is the first appearance of an idea the rest of the module leans on hard — that most payment is bookkeeping, not transport.',
+        'A cheque is an instruction to move part of a deposit from one name to another. Total deposits are unchanged; only who owns them changes. This is the first appearance of an idea the rest of the module relies on — that most payment is bookkeeping, not transport.',
     },
     {
       id: 'match-note-vs-cheque',
       type: 'concept_match',
       tags: ['payments', 'money'],
       xp: 25,
-      prompt: 'Match each instrument to the property that distinguishes it.',
+      prompt: 'Each property below belongs either to a bank note or to a cheque. Match each property to what it means in practice.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'note-bearer',
-          term: 'Bank note',
-          definition: 'Belongs to whoever holds it — stealable, and nobody records who has which',
+          term: 'Payable to the bearer',
+          definition: 'The note belongs to whoever holds it — easy to steal, and nobody records who has which note',
         },
         {
           id: 'cheque-named',
-          term: 'Cheque',
-          definition: 'Only the account holder can write one, and the bank verifies the signature',
+          term: 'Signed by the account holder',
+          definition: 'Only the owner of the account can write one, and the bank checks the signature',
         },
         {
           id: 'note-small',
-          term: 'Instant settlement',
-          definition: 'The note is the payment — the bank does nothing and need not be told',
+          term: 'Settles on the spot',
+          definition: 'Handing over the note is the payment — the bank does nothing and need not be told',
         },
         {
           id: 'cheque-large',
-          term: 'Arbitrary amount',
-          definition: 'Any sum can be written without carrying anything worth stealing',
+          term: 'Any amount at all',
+          definition: 'Any sum can be written, with nothing worth stealing to carry around',
         },
       ],
       explanation:
-        'The pair covers the range: notes for the apple, cheques for the house. The bank does nothing at all for the first and a little paperwork for the second, and in neither case does the gold leave the vault.',
+        'Paying the bearer and settling on the spot are what a note does; a signature and any amount at all are what a cheque offers. Together they cover the range: notes for an apple, cheques for a house. The bank does nothing for the first and a little paperwork for the second, and in neither case does the gold leave the vault.',
     },
     {
       id: 'mc-note-vs-cheque',
@@ -93,24 +93,24 @@ export const kabNotesAndChequesLesson = defineLesson({
       tags: ['bank-notes', 'payments'],
       xp: 30,
       prompt:
-        'A pays B two gold pieces with notes, and later pays B 200 gold pieces by cheque. Both customers bank with Sal. What does each payment do to the bank’s balance sheet?',
+        'A pays B two gold pieces with notes, and later pays B 200 gold pieces by cheque. Both have accounts at Sal’s bank. What does each payment change in the bank’s books?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'notes-nothing',
-          label: 'The notes, nothing at all. The cheque, two entries that cancel',
+          label: 'The notes: nothing. The cheque: A’s deposit falls by 200 and B’s rises by 200, so the total does not change',
         },
         {
           id: 'both-nothing',
           label: 'Neither does anything, since no gold moves in either case',
           feedback:
-            'Half right. No gold moves either way — but the bank does have to write the cheque down, because it tracks who owns each deposit. It does not track who holds which note.',
+            'Half right. No gold moves either way — but the bank must record the cheque, because it keeps track of who owns each deposit. It does not keep track of who holds which note.',
         },
         {
           id: 'both-move',
           label: 'Both reduce A’s balance and raise B’s by the same amount',
           feedback:
-            'Only the cheque does. Once the notes left the bank it stopped knowing where they were; A handing them to B is invisible to the ledger.',
+            'Only the cheque does. Once the notes left the bank, it stopped knowing where they were; A handing them to B never shows up in its books.',
         },
         {
           id: 'notes-liability',
@@ -121,14 +121,14 @@ export const kabNotesAndChequesLesson = defineLesson({
       ],
       correctOptionId: 'notes-nothing',
       explanation:
-        'This is the real distinction between the two instruments. A note is a bearer claim — the bank owes whoever is holding it and has no idea who that is, so the note circulating is not a banking event. A deposit is a registered claim, so every transfer is a ledger entry. The same split exists today between cash and a bank transfer, and it is why one leaves a trail and the other does not.',
+        'This is the real difference between the two. A note is a bearer claim: the bank owes whoever holds it and has no idea who that is, so passing a note from hand to hand involves no bank at all. A deposit is a claim registered in someone’s name, so every transfer is an entry in the bank’s books. The same split exists today between cash and a bank transfer, and it is why a transfer leaves a trail and cash does not.',
     },
     {
       id: 'match-instruments',
       type: 'concept_match',
       tags: ['payments', 'bank-notes'],
       xp: 25,
-      prompt: 'Match each way of paying to the specific problem it solves and the one it leaves open.',
+      prompt: 'Match each way of paying to what it does well and what it still does badly.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
@@ -139,23 +139,23 @@ export const kabNotesAndChequesLesson = defineLesson({
         {
           id: 'note',
           term: 'Handing over notes',
-          definition: 'Light and divisible into any denomination the bank cares to print — but still just as stealable, because anyone holding it can claim it',
+          definition: 'Light, and printed in whatever denominations are useful — but just as easy to steal, because anyone holding a note can claim the gold',
         },
         {
           id: 'cheque',
           term: 'Writing a cheque',
-          definition: 'Works for amounts too large to carry and only the account holder can sign one — but it settles on the bank’s ledger, not in your hand',
+          definition: 'Works for amounts too large to carry, and only the account holder can sign one — but it needs the bank to complete the payment, and it leaves a record',
         },
       ],
       explanation:
-        'Each instrument fixes what the previous one could not and introduces its own weakness. Notes solved gold’s weight and divisibility while keeping its anonymity, good and bad. Cheques solved theft and size by making the payer identifiable — which is precisely the property that made them useless for anyone who wanted no record.',
+        'Each way of paying fixes what the previous one could not and brings its own weakness. Notes solved gold’s weight and divisibility but kept its anonymity, for better and worse. Cheques solved theft and size by making the payer identifiable — the very property that made them useless to anyone who wanted no record.',
     },
     {
       id: 'order-cheque',
       type: 'order_flow',
       tags: ['payments', 'clearing'],
       xp: 25,
-      prompt: 'Put A’s 200 gold piece payment to B, by cheque, in order.',
+      prompt: 'B builds A a house, and A pays B 200 gold pieces by cheque. Before the payment, A has 400 in his account and B has 100. Put the steps in order.',
       instructions: 'Drag the steps into order',
       events: [
         { id: 'build', label: 'B builds A a house', detail: 'The real transaction happens first' },
@@ -167,7 +167,7 @@ export const kabNotesAndChequesLesson = defineLesson({
       ],
       correctOrder: ['build', 'write', 'hand', 'present', 'verify', 'move'],
       explanation:
-        'Notice how much of this is bookkeeping and how little is money moving. The house was built before any payment existed, and the payment itself is one clerk adjusting two numbers. The verification step is what a note never needs and what makes a cheque safe to write for an amount you would never carry in coin.',
+        'Notice how much of this is bookkeeping and how little is money moving. The house came first, and the payment itself is one clerk changing two numbers. The signature check is what a note never needs, and it is what makes a cheque safe to write for an amount you would never carry in coin.',
     },
   ],
   keyTakeaways: [
