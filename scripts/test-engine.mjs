@@ -6,7 +6,8 @@
  *
  * Runs the pure grading rules in `packages/core/src/engine/tAccounts.ts` and
  * the `t_account_flow` content rules in `validate.ts` against small fixtures,
- * plus a few facts about the Olivia warm-up that a 12-year-old meets first.
+ * plus a few facts about the Olivia warm-up that a 12-year-old meets first,
+ * and the speaker reactions in `engine/speaker.ts`.
  *
  * The equity flag is display-only by design: these tests pin that it never
  * changes a grade, and that the balance check stays assets = liabilities +
@@ -197,4 +198,61 @@ test('Olivia’s amp: person and shop tiers, two traps, equity shown apart', () 
   const verdict = evaluateTAccount(amp, amp.expectedShifts);
   assert.equal(verdict.correct, true);
   assert.equal(verdict.allBalanced, true);
+});
+
+// ---- speakers --------------------------------------------------------------
+
+const { speakerExpression, speakerReaction, promptAsks } = await import('@openmacro/core/engine/speaker');
+const { CHARACTER_EXPRESSIONS, CHARACTER_IDS } = await import('@openmacro/core/content/characters');
+
+test('speaker reactions: one mapping, decided in core', () => {
+  assert.equal(speakerExpression('question', 'What is truly hers now?'), 'thinking');
+  assert.equal(speakerExpression('question', 'O que é dela agora?'), 'thinking');
+  assert.equal(speakerExpression('question', 'Match each word to what happens at her table.'), 'happy');
+  assert.equal(speakerExpression('correct'), 'excited');
+  assert.equal(speakerExpression('incorrect'), 'oops');
+  assert.equal(speakerExpression('idle'), 'happy');
+  assert.ok(promptAsks('Is it “an asset?”'));
+  for (const moment of ['question', 'correct', 'incorrect', 'idle']) {
+    assert.ok(CHARACTER_EXPRESSIONS.includes(speakerExpression(moment, 'x?')));
+  }
+});
+
+test('a challenge without a speaker draws nobody', () => {
+  assert.equal(speakerReaction({ prompt: 'Why?' }, 'question'), null);
+  assert.deepEqual(speakerReaction({ prompt: 'Why?', speaker: 'breno' }, 'incorrect'), {
+    character: 'breno',
+    expression: 'oops',
+  });
+});
+
+test('the validator rejects an unregistered speaker', () => {
+  const lesson = {
+    id: 'speaker-fixture',
+    challenges: [{ ...fixture(), speaker: 'sal' }],
+  };
+  const issues = validateLesson(lesson);
+  assert.ok(issues.some((issue) => issue.message.includes('speaker "sal"')), JSON.stringify(issues));
+  assert.deepEqual(CHARACTER_IDS, ['olivia', 'breno']);
+});
+
+test('Olivia and Breno voice the module-16 warm-ups', () => {
+  const speakers = (lessonId) =>
+    Object.fromEntries(
+      getLessonById(lessonId)
+        .challenges.filter((challenge) => challenge.speaker)
+        .map((challenge) => [challenge.id, challenge.speaker]),
+    );
+  assert.deepEqual(speakers('kab-what-a-bank-is-for'), {
+    'olivia-what-is-an-asset': 'olivia',
+    'olivia-iou': 'olivia',
+    'olivia-amp-pay-later': 'olivia',
+    'olivia-whats-truly-hers': 'olivia',
+  });
+  assert.deepEqual(speakers('kab-income-statement'), {
+    'olivia-merch-words': 'olivia',
+    'olivia-profit': 'olivia',
+    'olivia-breno-shop-profit': 'breno',
+    'olivia-profit-grows-equity': 'olivia',
+  });
 });

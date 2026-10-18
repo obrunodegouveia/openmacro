@@ -14,4 +14,5 @@
 export * from './schema';
 export * from './registry';
 export * from './formulas';
+export * from './characters';
 export { validateModules } from './validate';

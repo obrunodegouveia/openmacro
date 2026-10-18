@@ -22,6 +22,8 @@
  * `src/content/lessons/README.md`. You should not need to touch the engine.
  */
 
+import type { CharacterId } from './characters';
+
 // ---------------------------------------------------------------------------
 // Shared primitives
 // ---------------------------------------------------------------------------
@@ -109,6 +111,15 @@ export interface BaseChallenge {
   xp?: number;
   /** Free-form taxonomy, e.g. ['money-creation', 'central-banking']. */
   tags?: string[];
+  /**
+   * The character voicing this challenge, from `content/characters.ts`.
+   *
+   * Both clients draw them beside the prompt and again in the feedback sheet,
+   * reacting to the answer (`engine/speaker.ts` picks the face). Purely
+   * presentational: it changes nothing that is asked or graded. Leave it out
+   * for a challenge with nobody in it — most of the course.
+   */
+  speaker?: CharacterId;
 }
 
 // ---------------------------------------------------------------------------
