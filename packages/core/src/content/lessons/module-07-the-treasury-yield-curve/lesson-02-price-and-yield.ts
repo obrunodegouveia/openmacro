@@ -126,7 +126,7 @@ export const priceAndYieldLesson = defineLesson({
             { account: 'Treasury securities', side: 'asset', amount: 100000000 },
             { account: 'Reserves at the Fed', side: 'asset', amount: 40000000 },
             { account: 'Customer deposits', side: 'liability', amount: 130000000 },
-            { account: 'Equity', side: 'liability', amount: 10000000 },
+            { account: 'Equity', side: 'liability', amount: 10000000, equity: true },
           ],
         },
         {
@@ -166,6 +166,7 @@ export const priceAndYieldLesson = defineLesson({
             side: 'liability',
             account: 'Equity',
             delta: -15000000,
+            equity: true,
           },
         },
         {
@@ -227,6 +228,7 @@ export const priceAndYieldLesson = defineLesson({
           side: 'liability',
           account: 'Equity',
           delta: -15000000,
+          equity: true,
         },
         {
           entityId: 'fund',

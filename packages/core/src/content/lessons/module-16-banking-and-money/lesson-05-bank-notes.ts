@@ -109,7 +109,7 @@ export const kabBankNotesLesson = defineLesson({
             { account: 'Gold in the vault', side: 'asset', amount: 1000 },
             { account: 'Building', side: 'asset', amount: 100 },
             { account: 'Demand deposits', side: 'liability', amount: 1000 },
-            { account: 'Equity', side: 'liability', amount: 100 },
+            { account: 'Equity', side: 'liability', amount: 100, equity: true },
           ],
         },
         {
@@ -119,7 +119,7 @@ export const kabBankNotesLesson = defineLesson({
           role: 'Holds a claim either way',
           openingLines: [
             { account: 'Deposit at Bank of Sal', side: 'asset', amount: 500 },
-            { account: 'Net worth', side: 'liability', amount: 500 },
+            { account: 'Net worth', side: 'liability', amount: 500, equity: true },
           ],
         },
       ],

@@ -63,6 +63,12 @@ jobs:
       # readout.
       - run: npm run lint:content
 
+      # The T-account grading rules and their content checks: equity counts on
+      # the right-hand side for balance but is never filed as a debt, and the
+      # equity flag never changes a grade.
+      - name: T-account engine tests
+        run: npm run test:engine
+
       # Quality rather than validity: duplicated content, a correctOptionId
       # pointing at nothing, two options reading the same. Exits non-zero only
       # on those errors — the style warnings are advisory and reported, not

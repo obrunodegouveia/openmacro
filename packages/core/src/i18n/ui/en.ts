@@ -257,6 +257,14 @@ export const en = {
   'challenge.taccount.liabilities': 'liabilities',
   'challenge.taccount.assetsTitle': 'Assets',
   'challenge.taccount.liabilitiesTitle': 'Liabilities',
+  'challenge.taccount.equity': 'equity',
+  'challenge.taccount.equityTitle': 'Equity',
+  // The right column when the sheet has equity in it. Equity is not a debt,
+  // so a column headed only "Liabilities" mislabels it.
+  'challenge.taccount.liabilitiesEquityTitle': 'Liabilities + equity',
+  'challenge.taccount.assetsHint': 'What it owns',
+  'challenge.taccount.liabilitiesHint': 'What it owes',
+  'challenge.taccount.liabilitiesEquityHint': 'What it owes + what’s truly its own',
   'challenge.taccount.balanced': 'Balanced',
   'challenge.taccount.offBy': 'Off by {amount}',
   'challenge.taccount.placed': '{done, number} of {total, number} entries placed',
@@ -276,6 +284,8 @@ export const en = {
   'entity.commercial_bank': 'Commercial bank',
   'entity.shadow_bank': 'Shadow bank',
   'entity.fiduciary_core': 'Fiduciary core',
+  'entity.person': 'Person',
+  'entity.small_business': 'Small business',
 
   // ---- grading feedback ---------------------------------------------------
   // Several titles per verdict so a long lesson does not read like a broken
@@ -297,6 +307,7 @@ export const en = {
   'grade.taccount.wrongAmount': 'The amount on {entity}’s “{account}” is off.',
   'grade.taccount.missingAsset': '{entity} is still missing a posting on the asset side.',
   'grade.taccount.missingLiability': '{entity} is still missing a posting on the liability side.',
+  'grade.taccount.missingEquity': '{entity} is still missing a posting in its equity.',
 
   // ---- finishing ----------------------------------------------------------
   'complete.flawless': 'Flawless run!',

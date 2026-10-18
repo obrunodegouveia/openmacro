@@ -147,7 +147,7 @@ export const boringMoneyLeveredMoneyLesson = defineLesson({
           role: 'Borrowing against the bonds it just bought',
           openingLines: [
             { account: 'Cash', side: 'asset', amount: 50e6 },
-            { account: 'Partners’ capital', side: 'liability', amount: 50e6 },
+            { account: 'Partners’ capital', side: 'liability', amount: 50e6, equity: true },
           ],
         },
         {
@@ -184,7 +184,7 @@ export const boringMoneyLeveredMoneyLesson = defineLesson({
         },
         {
           id: 'fund-capital-up',
-          shift: { entityId: 'fund', side: 'liability', account: 'Partners’ capital', delta: 98e6 },
+          shift: { entityId: 'fund', side: 'liability', account: 'Partners’ capital', delta: 98e6, equity: true },
           feedback:
             'Nobody invested in the fund. It borrowed the $98m — which is the entire point. Capital is what the partners put in; this is what the money fund lent.',
         },

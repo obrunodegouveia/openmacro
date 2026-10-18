@@ -48,7 +48,7 @@ export const defendingAPegLesson = defineLesson({
             { account: 'Sterling deposits', side: 'asset', amount: 10000000000 },
             { account: 'D-mark deposits', side: 'asset', amount: 2000000000 },
             { account: 'Sterling borrowings', side: 'liability', amount: 10000000000 },
-            { account: 'Investors’ capital', side: 'liability', amount: 2_000_000_000 },
+            { account: 'Investors’ capital', side: 'liability', amount: 2_000_000_000, equity: true },
           ],
         },
       ],

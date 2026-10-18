@@ -8,8 +8,14 @@ import type {
   BalanceSheetSide,
   BalanceSheetShift,
   TAccountEntity,
+  TAccountLine,
 } from "@openmacro/core/content/schema";
-import { entityBalance, openingTotal } from "@openmacro/core/engine/tAccounts";
+import {
+  entityBalance,
+  entityHasEquity,
+  isEquity,
+  openingTotal,
+} from "@openmacro/core/engine/tAccounts";
 import { formatCompactCurrency, formatSignedCompactCurrency } from "@openmacro/core/format";
 import type { ChallengeComponentProps } from "./types";
 import { cn } from "@/lib/utils";
@@ -144,6 +150,7 @@ export function TAccountFlowView({
           <EntitySheet
             key={entity.id}
             entity={entity}
+            hasEquity={entityHasEquity(challenge, entity)}
             currency={currency}
             shifts={shifts}
             armed={Boolean(activeOption) && !locked}
@@ -221,6 +228,7 @@ function AggregateIcon({ direction }: { direction: "expand" | "contract" | "unch
 /** One entity's T-account: assets on the left, liabilities on the right. */
 function EntitySheet({
   entity,
+  hasEquity,
   currency,
   shifts,
   armed,
@@ -230,6 +238,8 @@ function EntitySheet({
   placedOptions,
 }: {
   entity: TAccountEntity;
+  /** Whether the right column has an equity section (see `entityHasEquity`). */
+  hasEquity: boolean;
   currency: string;
   shifts: readonly BalanceSheetShift[];
   armed: boolean;
@@ -239,32 +249,42 @@ function EntitySheet({
   placedOptions: readonly { id: string; shift: BalanceSheetShift }[];
 }) {
   const s = useSiteText();
+  const { t } = useLocale();
   const balance = entityBalance(entity.id, shifts);
   const touched = balance.assetDelta !== 0 || balance.liabilityDelta !== 0;
 
   return (
     <section className="rounded-2xl border border-hairline bg-veil/[0.02] p-4">
       <header className="flex items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <h3 className="font-display text-base font-extrabold tracking-tight">
             {entity.label}
           </h3>
           {entity.role ? (
             <p className="text-xs text-ink-faint">{entity.role}</p>
           ) : null}
-        </div>
-        {touched ? (
-          <span
-            className={cn(
-              "shrink-0 rounded-full border px-2 py-0.5 text-xs font-extrabold uppercase tracking-wider",
-              balance.balanced
-                ? "border-mint/40 bg-mint/10 text-mint-bright"
-                : "border-coral/40 bg-coral/10 text-coral",
-            )}
-          >
-            {balance.balanced ? s("tflow.balanced") : s("tflow.offBalance")}
+          {/* Whose sheet this is — the same badge, from the same catalogue
+              key, as the app's. Under the name rather than beside it, so a
+              long tier («Pequena empresa») never squeezes the name and role
+              into a narrow column on a phone. */}
+          <span className="mt-1.5 inline-block rounded-full border border-hairline px-2 py-0.5 text-[0.6875rem] font-extrabold uppercase tracking-wider text-ink-faint">
+            {t(`entity.${entity.tier}`)}
           </span>
-        ) : null}
+        </div>
+        <div className="shrink-0">
+          {touched ? (
+            <span
+              className={cn(
+                "rounded-full border px-2 py-0.5 text-xs font-extrabold uppercase tracking-wider",
+                balance.balanced
+                  ? "border-mint/40 bg-mint/10 text-mint-bright"
+                  : "border-coral/40 bg-coral/10 text-coral",
+              )}
+            >
+              {balance.balanced ? s("tflow.balanced") : s("tflow.offBalance")}
+            </span>
+          ) : null}
+        </div>
       </header>
 
       <div className="mt-3 grid grid-cols-2 gap-3">
@@ -272,6 +292,7 @@ function EntitySheet({
           <SheetColumn
             key={side}
             entity={entity}
+            withEquity={side === "liability" && hasEquity}
             side={side}
             currency={currency}
             armed={armed}
@@ -290,6 +311,7 @@ function EntitySheet({
 
 function SheetColumn({
   entity,
+  withEquity,
   side,
   currency,
   armed,
@@ -299,6 +321,8 @@ function SheetColumn({
   postings,
 }: {
   entity: TAccountEntity;
+  /** Right column only: show equity as its own section under the debts. */
+  withEquity: boolean;
   side: BalanceSheetSide;
   currency: string;
   armed: boolean;
@@ -314,45 +338,46 @@ function SheetColumn({
   // `${side}s` produced "liabilitys" in every one of these labels, which is
   // what a screen reader actually said out loud.
   const sideNoun = side === "asset" ? "assets" : "liabilities";
+  // Equity sits in the right column — assets = liabilities + equity — but in
+  // its own section under the debts, so the sheet never files what is truly
+  // the owner's under "what it owes".
+  const debtLines = openingLines.filter((line) => !isEquity(line));
+  const equityLines = openingLines.filter(isEquity);
+  const debtPostings = postings.filter((posting) => !isEquity(posting.shift));
+  const equityPostings = postings.filter((posting) => isEquity(posting.shift));
 
-  return (
-    <div className="rounded-xl border border-hairline bg-veil/[0.03] p-3">
-      <p className="text-xs font-extrabold uppercase tracking-wider text-ink">
-        {side === "asset" ? s("tflow.assets") : s("tflow.liabilities")}
-      </p>
-      <p className="text-xs text-ink-faint">
-        {side === "asset" ? s("tflow.assetsHint") : s("tflow.liabilitiesHint")}
-      </p>
+  const renderLines = (lines: readonly TAccountLine[]) =>
+    lines.length ? (
+      <ul className="mt-2 flex flex-col gap-1">
+        {lines.map((line) => (
+          <li
+            key={line.account}
+            className="flex flex-wrap items-baseline justify-between gap-x-2 text-xs text-ink-faint"
+          >
+            {/* Wraps rather than truncates: a clipped account name
+                («Reservas dos bancos co…») hides the one word that tells
+                two similar accounts apart. The row wraps too, so a name
+                that does not fit beside its amount pushes the amount to
+                the next line instead of being broken mid-word. */}
+            <span className="break-words">{line.account}</span>
+            <span className="shrink-0 font-mono">
+              {formatCompactCurrency(line.amount, currency, locale)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    ) : null;
 
-      {openingLines.length ? (
-        <ul className="mt-2 flex flex-col gap-1 border-b border-hairline pb-2">
-          {openingLines.map((line) => (
-            <li
-              key={line.account}
-              className="flex flex-wrap items-baseline justify-between gap-x-2 text-xs text-ink-faint"
-            >
-              {/* Wraps rather than truncates: a clipped account name
-                  («Reservas dos bancos co…») hides the one word that tells
-                  two similar accounts apart. The row wraps too, so a name
-                  that does not fit beside its amount pushes the amount to
-                  the next line instead of being broken mid-word. */}
-              <span className="break-words">{line.account}</span>
-              <span className="shrink-0 font-mono">
-                {formatCompactCurrency(line.amount, currency, locale)}
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
+  const renderPostings = (list: typeof postings, noun: string) =>
+    list.length ? (
       <ul className="mt-2 flex flex-col gap-1.5">
-        {postings.map((posting) => (
+        {list.map((posting) => (
           <li key={posting.id}>
             <button
               type="button"
               disabled={locked}
               onClick={() => onRemove(posting.id)}
-              aria-label={s("tflow.removeA11y", { account: posting.shift.account, entity: entity.label, side: sideNoun })}
+              aria-label={s("tflow.removeA11y", { account: posting.shift.account, entity: entity.label, side: noun })}
               className="flex w-full flex-wrap items-baseline justify-between gap-x-2 rounded-lg border border-mint/40 bg-mint/10 px-2 py-1.5 text-left disabled:cursor-default"
             >
               <span className="break-words text-xs font-bold text-ink">
@@ -370,6 +395,36 @@ function SheetColumn({
           </li>
         ))}
       </ul>
+    ) : null;
+
+  return (
+    <div className="rounded-xl border border-hairline bg-veil/[0.03] p-3">
+      <p className="text-xs font-extrabold uppercase tracking-wider text-ink">
+        {side === "asset"
+          ? s("tflow.assets")
+          : withEquity
+            ? s("tflow.liabilitiesEquity")
+            : s("tflow.liabilities")}
+      </p>
+      <p className="text-xs text-ink-faint">
+        {side === "asset"
+          ? s("tflow.assetsHint")
+          : withEquity
+            ? s("tflow.liabilitiesEquityHint")
+            : s("tflow.liabilitiesHint")}
+      </p>
+
+      {renderLines(debtLines)}
+      {renderPostings(debtPostings, sideNoun)}
+      {withEquity ? (
+        <div className="mt-2 border-t border-dashed border-hairline pt-2">
+          <p className="text-[0.6875rem] font-extrabold uppercase tracking-wider text-mint-bright">
+            {s("tflow.equity")}
+          </p>
+          {renderLines(equityLines)}
+          {renderPostings(equityPostings, "equity")}
+        </div>
+      ) : null}
 
       <button
         type="button"

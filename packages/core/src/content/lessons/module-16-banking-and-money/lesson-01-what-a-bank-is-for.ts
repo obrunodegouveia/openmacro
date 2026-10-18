@@ -99,29 +99,29 @@ export const kabWhatABankIsForLesson = defineLesson({
         'Olivia buys a €40 amp at Breno’s music shop, and Breno lets her pay later. Post it on both their lists.',
       instructions: 'Pick an entry, then choose whose list it belongs on. Four entries in total.',
       scenario:
-        'Breno takes a €40 amp off his shelf and hands it to Olivia for her first gig. She promises to pay him the €40 later. What each of them owes goes in the right-hand column, next to their equity — what is truly theirs.',
+        'Breno takes a €40 amp off his shelf and hands it to Olivia for her first gig. She promises to pay him the €40 later. The right-hand column shows what each of them owes, and underneath, their equity — what is truly theirs.',
       currency: 'EUR',
       entities: [
         {
           id: 'olivia',
           label: 'Olivia',
-          tier: 'fiduciary_core',
+          tier: 'person',
           role: 'Singer-songwriter, 12, saving for her first gig',
           openingLines: [
             { account: 'Guitar', side: 'asset', amount: 30 },
             { account: 'Piggy bank', side: 'asset', amount: 20 },
             { account: 'T-shirts', side: 'asset', amount: 10 },
-            { account: 'Equity', side: 'liability', amount: 60 },
+            { account: 'Equity', side: 'liability', amount: 60, equity: true },
           ],
         },
         {
           id: 'breno',
           label: 'Breno’s music shop',
-          tier: 'fiduciary_core',
+          tier: 'small_business',
           role: 'Guitars, amps and strings — and a big friendly beard',
           openingLines: [
             { account: 'Shop stock', side: 'asset', amount: 200 },
-            { account: 'Equity', side: 'liability', amount: 200 },
+            { account: 'Equity', side: 'liability', amount: 200, equity: true },
           ],
         },
       ],
@@ -150,21 +150,9 @@ export const kabWhatABankIsForLesson = defineLesson({
         },
         {
           id: 'olivia-equity-up',
-          shift: { entityId: 'olivia', side: 'liability', account: 'Equity', delta: 40 },
+          shift: { entityId: 'olivia', side: 'liability', account: 'Equity', delta: 40, equity: true },
           feedback:
             'A new amp feels like being richer, but she has not paid for any of it yet. What is truly hers does not change.',
-        },
-        {
-          id: 'breno-equity-down',
-          shift: { entityId: 'breno', side: 'liability', account: 'Equity', delta: -40 },
-          feedback:
-            'Letting her pay later is not losing. Breno swapped a €40 amp for Olivia’s promise to pay €40, which is worth €40 to him.',
-        },
-        {
-          id: 'breno-owes-up',
-          shift: { entityId: 'breno', side: 'liability', account: 'Owed to Olivia', delta: 40 },
-          feedback:
-            'Breno does not owe Olivia anything. He is the one who is owed, so for him the €40 is an asset, not a liability.',
         },
       ],
       expectedShifts: [

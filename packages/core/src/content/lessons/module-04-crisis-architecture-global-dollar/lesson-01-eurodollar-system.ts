@@ -94,7 +94,7 @@ export const eurodollarSystemLesson = defineLesson({
             { account: 'Dollar loans', side: 'asset', amount: 8e9 },
             { account: 'Nostro at US correspondent', side: 'asset', amount: 400e6 },
             { account: 'Dollar deposits', side: 'liability', amount: 8.2e9 },
-            { account: 'Equity', side: 'liability', amount: 200_000_000 },
+            { account: 'Equity', side: 'liability', amount: 200_000_000, equity: true },
           ],
         },
         {
@@ -104,7 +104,7 @@ export const eurodollarSystemLesson = defineLesson({
           role: 'Borrowing dollars for a vessel',
           openingLines: [
             { account: 'Vessels', side: 'asset', amount: 300e6 },
-            { account: 'Equity', side: 'liability', amount: 120e6 },
+            { account: 'Equity', side: 'liability', amount: 120e6, equity: true },
             { account: 'Other debts', side: 'liability', amount: 180_000_000 },
           ],
         },
@@ -139,7 +139,7 @@ export const eurodollarSystemLesson = defineLesson({
         },
         {
           id: 'firm-equity-up',
-          shift: { entityId: 'shipping-firm', side: 'liability', account: 'Equity', delta: 50e6 },
+          shift: { entityId: 'shipping-firm', side: 'liability', account: 'Equity', delta: 50e6, equity: true },
           feedback:
             'Borrowing does not make the firm richer. It gained an asset and an equal liability; equity is unchanged.',
         },

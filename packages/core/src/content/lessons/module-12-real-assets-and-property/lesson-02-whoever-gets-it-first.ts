@@ -46,7 +46,7 @@ export const whoeverGetsItFirstLesson = defineLesson({
           role: 'Puts in 60,000, borrows the rest',
           openingLines: [
             { account: 'Deposit at the bank', side: 'asset', amount: 60000 },
-            { account: 'Equity', side: 'liability', amount: 60000 },
+            { account: 'Equity', side: 'liability', amount: 60000, equity: true },
           ],
         },
         {
@@ -56,7 +56,7 @@ export const whoeverGetsItFirstLesson = defineLesson({
           role: 'Owns the flat this morning',
           openingLines: [
             { account: 'The flat', side: 'asset', amount: 300000 },
-            { account: 'Equity', side: 'liability', amount: 300000 },
+            { account: 'Equity', side: 'liability', amount: 300000, equity: true },
           ],
         },
       ],
@@ -117,7 +117,7 @@ export const whoeverGetsItFirstLesson = defineLesson({
         },
         {
           id: 'buyer-equity-up',
-          shift: { entityId: 'buyer', side: 'liability', account: 'Equity', delta: 240000 },
+          shift: { entityId: 'buyer', side: 'liability', account: 'Equity', delta: 240000, equity: true },
           feedback:
             'Borrowing does not make the buyer richer. They hold a €300,000 flat against a €240,000 debt and a €60,000 deposit they no longer have — their stake is exactly the €60,000 it was this morning.',
         },

@@ -156,7 +156,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
             { account: 'US Treasuries', side: 'asset', amount: 5000e9 },
             { account: 'Bank reserves', side: 'liability', amount: 3200e9 },
             { account: 'Notes in circulation', side: 'liability', amount: 1700e9 },
-            { account: 'Capital and reserves', side: 'liability', amount: 100e9 },
+            { account: 'Capital and reserves', side: 'liability', amount: 100e9, equity: true },
           ],
         },
         {
@@ -168,7 +168,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
             { account: 'US Treasuries', side: 'asset', amount: 20e9 },
             { account: 'Reserves at the Fed', side: 'asset', amount: 8e9 },
             { account: 'Customer deposits', side: 'liability', amount: 25e9 },
-            { account: 'Equity', side: 'liability', amount: 3_000_000_000 },
+            { account: 'Equity', side: 'liability', amount: 3_000_000_000, equity: true },
           ],
         },
       ],
@@ -191,7 +191,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
         },
         {
           id: 'fed-capital-up',
-          shift: { entityId: 'fed', side: 'liability', account: 'Capital and reserves', delta: 1e9 },
+          shift: { entityId: 'fed', side: 'liability', account: 'Capital and reserves', delta: 1e9, equity: true },
           feedback:
             'The Fed is no richer for having done this. It paid full price for the bond, so its net worth is exactly what it was — that is the whole point of the pairing.',
         },
@@ -290,7 +290,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
             { account: 'Government bonds', side: 'asset', amount: 500e9 },
             { account: 'Treasury deposit', side: 'liability', amount: 50e9 },
             { account: 'Bank reserves', side: 'liability', amount: 400e9 },
-            { account: 'Capital and reserves', side: 'liability', amount: 50e9 },
+            { account: 'Capital and reserves', side: 'liability', amount: 50e9, equity: true },
           ],
         },
         {
@@ -311,7 +311,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
         },
         {
           id: 'capital-down',
-          shift: { entityId: 'centralbank', side: 'liability', account: 'Capital and reserves', delta: -1e9 },
+          shift: { entityId: 'centralbank', side: 'liability', account: 'Capital and reserves', delta: -1e9, equity: true },
         },
         {
           id: 'gov-deposit-up',
@@ -335,14 +335,14 @@ export const theMoneyIsTheIouLesson = defineLesson({
         },
         {
           id: 'capital-up',
-          shift: { entityId: 'centralbank', side: 'liability', account: 'Capital and reserves', delta: 1e9 },
+          shift: { entityId: 'centralbank', side: 'liability', account: 'Capital and reserves', delta: 1e9, equity: true },
           feedback:
             'Backwards. The bank gave away $1B and got nothing, so its net worth fell. Giving money away does not build capital.',
         },
       ],
       expectedShifts: [
         { entityId: 'centralbank', side: 'liability', account: 'Treasury deposit', delta: 1e9 },
-        { entityId: 'centralbank', side: 'liability', account: 'Capital and reserves', delta: -1e9 },
+        { entityId: 'centralbank', side: 'liability', account: 'Capital and reserves', delta: -1e9, equity: true },
         { entityId: 'treasury', side: 'asset', account: 'Deposit at the central bank', delta: 1e9 },
         { entityId: 'treasury', side: 'liability', account: 'Net position', delta: 1e9 },
       ],
