@@ -15,6 +15,9 @@ import { useSeason as usePackageSeason, useSeasonSettings as usePackageSettings,
 import type { SeasonId } from '@openmacro/core/season';
 import type { UiKey } from '@openmacro/core/i18n';
 
+import { releaseSounds } from '@/feedback';
+import { resumeMusicAfterFailedReload, stopMusicForReload } from '@/feedback/music';
+
 import { seasons } from './controller';
 
 export { seasons };
@@ -56,5 +59,12 @@ export function restartForSeason(): void {
     DevSettings.reload();
     return;
   }
-  void Updates.reloadAsync().catch(() => DevSettings.reload());
+  // Native audio players outlive the runtime; release them first or the old
+  // runtime's music keeps playing under the new one's.
+  stopMusicForReload();
+  releaseSounds();
+  void Updates.reloadAsync().catch(() => {
+    resumeMusicAfterFailedReload();
+    DevSettings.reload();
+  });
 }
