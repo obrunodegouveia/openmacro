@@ -161,6 +161,29 @@ function validateChallenge(challenge: Challenge, path: string): ContentIssue[] {
         }
       }
 
+      // The opening sheets must balance too. The renderers judge "Balanced"
+      // from the postings alone, so a sheet that opened with $80B of assets
+      // against $640B of liabilities was still shown as balanced after the
+      // trade — teaching double entry on a balance sheet that breaks it.
+      // Equity is entered as a liability-side line, as on the sheets.
+      for (const entity of challenge.entities) {
+        const lines = entity.openingLines ?? [];
+        if (lines.length === 0) continue;
+        let assets = 0;
+        let liabilities = 0;
+        for (const line of lines) {
+          if (line.side === 'asset') assets += line.amount;
+          else liabilities += line.amount;
+        }
+        if (Math.abs(assets - liabilities) > AMOUNT_TOLERANCE) {
+          at(
+            `The opening sheet of "${entity.id}" does not balance: assets total ${assets}, ` +
+              `liabilities total ${liabilities}. Add the missing line (for example ` +
+              '"Other assets" or "Equity") so the sheet the learner starts from obeys double entry.',
+          );
+        }
+      }
+
       // Distractors are what make the challenge a test rather than a sort.
       if (challenge.options.length <= challenge.expectedShifts.length) {
         at('Every option is a correct one — add distractors, or this is just sorting.');

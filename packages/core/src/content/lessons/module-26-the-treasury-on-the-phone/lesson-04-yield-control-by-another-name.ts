@@ -81,6 +81,7 @@ export const yieldControlByAnotherNameLesson = defineLesson({
             { account: 'Cash at the central bank', side: 'asset', amount: 800e9 },
             { account: '10-year bonds', side: 'liability', amount: 9000e9 },
             { account: 'Bills', side: 'liability', amount: 6000e9 },
+            { account: 'Accumulated deficits', side: 'asset', amount: 14_200_000_000_000 },
           ],
         },
         {

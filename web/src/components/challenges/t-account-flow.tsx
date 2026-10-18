@@ -54,6 +54,10 @@ export function TAccountFlowView({
   }, [placed, shifts, onAnswerChange]);
 
   const remaining = challenge.options.filter((option) => !placed.includes(option.id));
+  // Once the answer is right, whatever is left in the pool is a trap. Leaving
+  // it looking live made a finished exercise read as unfinished, so it is
+  // dimmed and labelled instead.
+  const retired = locked && Boolean(result?.correct);
 
   function place(entityId: string, side: BalanceSheetSide) {
     if (locked || !activeOption) return;
@@ -82,7 +86,10 @@ export function TAccountFlowView({
             {s("tflow.entries")}
           </p>
           <p className="text-xs font-bold text-ink-faint">
-            {s("tflow.placed", { done: placed.length, total: challenge.options.length })}
+            {/* Counted against the postings the trade needs, not the pool:
+                the pool includes traps, and "4 of 7" on a correct answer
+                told the learner three entries were still missing. */}
+            {s("tflow.placed", { done: placed.length, total: challenge.expectedShifts.length })}
           </p>
         </div>
 
@@ -93,6 +100,7 @@ export function TAccountFlowView({
                 type="button"
                 disabled={locked}
                 aria-pressed={activeOption === option.id}
+                title={option.shift.account}
                 onClick={() =>
                   setActiveOption((current) => (current === option.id ? null : option.id))
                 }
@@ -102,6 +110,7 @@ export function TAccountFlowView({
                   activeOption === option.id
                     ? "border-mint bg-mint/15"
                     : "border-hairline bg-veil/5 hover:border-veil/25",
+                  retired && "border-dashed opacity-45 line-through decoration-ink-faint",
                 )}
               >
                 <span
@@ -121,9 +130,11 @@ export function TAccountFlowView({
         </ul>
 
         <p className="mt-3 text-xs leading-relaxed text-ink-faint">
-          {activeOption
-            ? s("tflow.chooseSide")
-            : s("tflow.pickEntry")}
+          {retired && remaining.length
+            ? s("tflow.decoys")
+            : activeOption
+              ? s("tflow.chooseSide")
+              : s("tflow.pickEntry")}
         </p>
       </div>
 
@@ -184,7 +195,7 @@ export function TAccountFlowView({
                     }
                   >
                     {s(`tflow.effect.${effect.direction}`, {
-                      aggregate: effect.aggregate,
+                      aggregate: s(`tflow.aggregate.${effect.aggregate}`),
                     })}
                   </span>
                 </p>
@@ -318,9 +329,14 @@ function SheetColumn({
           {openingLines.map((line) => (
             <li
               key={line.account}
-              className="flex items-baseline justify-between gap-2 text-xs text-ink-faint"
+              className="flex flex-wrap items-baseline justify-between gap-x-2 text-xs text-ink-faint"
             >
-              <span className="min-w-0 truncate">{line.account}</span>
+              {/* Wraps rather than truncates: a clipped account name
+                  («Reservas dos bancos co…») hides the one word that tells
+                  two similar accounts apart. The row wraps too, so a name
+                  that does not fit beside its amount pushes the amount to
+                  the next line instead of being broken mid-word. */}
+              <span className="break-words">{line.account}</span>
               <span className="shrink-0 font-mono">
                 {formatCompactCurrency(line.amount, currency, locale)}
               </span>
@@ -337,9 +353,9 @@ function SheetColumn({
               disabled={locked}
               onClick={() => onRemove(posting.id)}
               aria-label={s("tflow.removeA11y", { account: posting.shift.account, entity: entity.label, side: sideNoun })}
-              className="flex w-full items-baseline justify-between gap-2 rounded-lg border border-mint/40 bg-mint/10 px-2 py-1.5 text-left disabled:cursor-default"
+              className="flex w-full flex-wrap items-baseline justify-between gap-x-2 rounded-lg border border-mint/40 bg-mint/10 px-2 py-1.5 text-left disabled:cursor-default"
             >
-              <span className="min-w-0 truncate text-xs font-bold text-ink">
+              <span className="break-words text-xs font-bold text-ink">
                 {posting.shift.account}
               </span>
               <span
