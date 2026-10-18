@@ -95,12 +95,15 @@ export function ModuleVideo({
         </div>
       )}
 
-      <div className="flex items-center">
+      {/* On a phone the caption button drops to its own line under the meta
+          row. Sharing one 390px row with "Esconder" and "Legendas: Auto" left
+          the meta text a column a few words wide. */}
+      <div className="flex flex-wrap items-center sm:flex-nowrap">
       <button
         type="button"
         onClick={toggle}
         aria-expanded={!collapsed}
-        className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 py-3 pl-4 pr-2 text-left"
+        className="flex min-w-0 flex-1 basis-full cursor-pointer items-center gap-3 py-3 pl-4 pr-4 text-left sm:basis-0 sm:pr-2"
       >
         <Chevron className="size-4 shrink-0 text-mint-bright" aria-hidden />
         <span className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-ink-faint">
@@ -123,7 +126,7 @@ export function ModuleVideo({
         <button
           type="button"
           onClick={() => setCaptions(nextCaptions(captions))}
-          className="shrink-0 cursor-pointer px-4 py-3 text-xs font-bold text-mint-bright"
+          className="-mt-2 shrink-0 cursor-pointer pb-3 pl-11 pr-4 text-xs font-bold text-mint-bright sm:mt-0 sm:px-4 sm:py-3"
         >
           {t("lesson.video.captions", { choice: t(`lesson.video.captions.${captions}`) })}
         </button>
