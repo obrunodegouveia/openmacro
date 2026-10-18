@@ -204,6 +204,36 @@ export function isMusicEnabled(): boolean {
 }
 
 /**
+ * Stops the music and releases its player, for just before the JavaScript
+ * runtime is restarted to apply an update.
+ *
+ * The player is a native object and outlives the runtime that made it: left
+ * alone, it went on playing through `Updates.reloadAsync()` while the new
+ * runtime started a player of its own, so two tunes played at once until the
+ * app was killed. This is the only chance to release it, because the new
+ * runtime has no handle on the old player.
+ */
+export function stopMusicForReload(): void {
+  const current = player;
+  player = null;
+  if (!current) return;
+  try {
+    current.pause();
+    current.remove();
+  } catch {
+    // Already gone.
+  }
+}
+
+/**
+ * Starts the music again after a reload that did not happen, so a failed
+ * `reloadAsync` does not leave the app silent.
+ */
+export function resumeMusicAfterFailedReload(): void {
+  sync();
+}
+
+/**
  * Follows the on/off choice, for a settings switch that must update when the
  * saved value arrives after it has rendered.
  *
