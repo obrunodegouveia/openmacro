@@ -21,15 +21,15 @@ export const kabFedBalanceSheetLesson = defineLesson({
       tags: ['central-banking', 'balance-sheet'],
       xp: 25,
       prompt:
-        'Of $871 billion of Federal Reserve assets in February 2007, what was the overwhelming majority?',
+        'In February 2007 the Federal Reserve had $871 billion of assets. What made up the overwhelming majority of them?',
       instructions: 'Pick the best answer',
       options: [
-        { id: 'treasuries', label: 'Treasuries — roughly $780 billion of bills, notes and bonds' },
+        { id: 'treasuries', label: 'US Treasury securities — roughly $780 billion of bills, notes and bonds' },
         {
           id: 'gold',
           label: 'Gold, held since the founding of the system',
           feedback:
-            'About $12 billion including certificates and coin — well under 2%. The video pauses on exactly this: for an institution founded on metal, there is remarkably little of it.',
+            'About $12 billion including gold certificates and coin — well under 2%. The video pauses on exactly this: for a system that started on metal, there is remarkably little of it.',
         },
         {
           id: 'loans',
@@ -46,7 +46,7 @@ export const kabFedBalanceSheetLesson = defineLesson({
       ],
       correctOptionId: 'treasuries',
       explanation:
-        'This is the earlier videos made literal: the central bank creates reserves and buys government debt with them, so its assets are overwhelmingly that debt. The $30 billion of repurchase agreements is the discount window in action, and the gold is a residue nobody found a use for.',
+        'This is the earlier videos made real: the central bank creates reserves and buys government debt with them, so its assets are overwhelmingly that debt. The $30 billion of repurchase agreements were short-term loans to the market made through repos, and the discount window itself shows up as just $39 million of loans. The gold is a leftover nobody found a use for.',
     },
     {
       id: 'mc-how-it-earns',
@@ -54,19 +54,19 @@ export const kabFedBalanceSheetLesson = defineLesson({
       tags: ['central-banking', 'seigniorage'],
       xp: 25,
       prompt:
-        'The Fed paid no interest on its notes or on the $17 billion of bank deposits it held. How did it fund itself?',
+        'In 2007 the Fed paid no interest on its notes or on the $17 billion that banks kept in their accounts with it. How did it pay its way?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'spread',
           label:
-            'Interest on its treasuries, against liabilities that pay none',
+            'Interest earned on its Treasuries, while its own liabilities cost it nothing',
         },
         {
           id: 'fees',
           label: 'Fees charged to member banks for holding their reserves',
           feedback:
-            'Not the mechanism described. The asymmetry is the point: interest-bearing assets funded by non-interest-bearing liabilities.',
+            'Not the mechanism described. The point is the imbalance: assets that earn interest, paid for with liabilities that pay none.',
         },
         {
           id: 'taxes',
@@ -76,14 +76,14 @@ export const kabFedBalanceSheetLesson = defineLesson({
         },
         {
           id: 'private',
-          label: 'Profits distributed to its private shareholders',
+          label: 'Profits paid out to private shareholders',
           feedback:
-            'It is officially a private institution with a government-appointed board, but the surplus does not enrich anyone. As the video puts it, Bernanke was not driving a Bentley on it.',
+            'Member banks do receive a small fixed dividend on the Fed stock they must hold, but that is not how the Fed pays its way, and the rest of the surplus goes to the Treasury. As the video puts it, Bernanke was not driving a Bentley on it.',
         },
       ],
       correctOptionId: 'spread',
       explanation:
-        'Liabilities that cost nothing, assets that pay interest — the widest spread in finance, and the reason the arrangement is described as easy money. The obligation runs both ways: were the Fed to become insolvent, Congress would stand behind it, which is what "obligations of the United States government" means.',
+        'Liabilities that cost nothing, assets that pay interest — the widest spread in finance, which is why the video calls it easy money. The arrangement runs both ways: if the Fed became insolvent, the US government would stand behind it, which is what "obligations of the United States" on the notes means.',
     },
     {
       id: 'mc-fed-leverage',
@@ -91,35 +91,35 @@ export const kabFedBalanceSheetLesson = defineLesson({
       tags: ['central-banking', 'leverage', 'solvency'],
       xp: 35,
       prompt:
-        '$871 billion of assets on $31 billion of capital. Apply the leverage lesson: roughly what write-down wipes the Fed out, and why does nobody worry about it?',
+        'The Fed had $871 billion of assets and $31 billion of capital (equity). Apply the leverage lesson: roughly what loss on its assets would wipe out that capital, and why does nobody worry about it?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'insolvency-fine',
-          label: 'About 3.6%, and it does not matter — it cannot run out of its own liabilities',
+          label: 'About 3.6%, and it hardly matters — what people can demand from it is money it issues itself',
         },
         {
           id: 'cantfail',
-          label: 'No write-down can, because the Fed holds only risk-free assets',
+          label: 'No loss can, because the Fed holds only risk-free assets',
           feedback:
-            'Treasuries carry no default risk and plenty of price risk — a rate rise marks them down hard, which is exactly what happened to the Fed’s book after 2022.',
+            'Treasuries carry no default risk but plenty of price risk — a rise in interest rates cuts their market value hard, which is exactly what happened to the Fed’s holdings from 2022.',
         },
         {
           id: 'fifty',
           label: 'About 50%, because central banks hold far more capital than banks',
           feedback:
-            'Run the numbers: 31 divided by 871. The Fed is levered roughly 28 to 1, thinner than most of the banks it regulates.',
+            'Do the sum: 31 divided by 871 is about 3.6%. The Fed is levered roughly 28 to 1, with a thinner cushion than most of the banks it regulates.',
         },
         {
           id: 'bailout',
           label: 'About 3.6%, and Congress would have to recapitalise it immediately',
           feedback:
-            'Congress stands behind it, but no recapitalisation is *needed*. A central bank with negative equity keeps paying in the money it issues, and several have run that way for years.',
+            'The government stands behind it, but no new capital is *needed*. A central bank with negative equity can keep paying in the money it issues, and several have run that way for years.',
         },
       ],
       correctOptionId: 'insolvency-fine',
       explanation:
-        'On paper the Fed is levered about twenty-eight times, which in any commercial bank would be alarming. It is not, for the reason video 13 gave: what people demand of it is its own liability, so it can always pay. This stopped being hypothetical in 2022, when rising rates put the Fed deep into operating losses; it recorded a deferred asset and carried on, because the only thing insolvency would cost it is the remittance it sends the Treasury.',
+        '31 / 871 is about 3.6%, so on paper the Fed is levered about 28 to 1, which in an ordinary bank would be alarming. It is not, for the reason video 13 gave: what people can demand from it is its own liability, so it can always pay. This stopped being hypothetical in 2022, when rising rates pushed the Fed into large operating losses. It recorded them as a "deferred asset" and carried on; the main cost was that it stopped sending profits to the Treasury until the losses are made up.',
     },
     {
       id: 'mc-gold-share',
@@ -127,7 +127,7 @@ export const kabFedBalanceSheetLesson = defineLesson({
       tags: ['central-banking', 'gold-standard'],
       xp: 30,
       prompt:
-        'Gold certificates and coin come to roughly $12 billion of the $871 billion. What does that proportion tell you?',
+        'Gold certificates and coin come to roughly $12 billion of the Fed’s $871 billion of assets. What does that proportion tell you?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -138,24 +138,24 @@ export const kabFedBalanceSheetLesson = defineLesson({
           id: 'backing',
           label: 'The dollar is roughly 1.4% gold-backed, by design',
           feedback:
-            'There is no design here and no ratio being defended. Nothing obliges the Fed to hold any gold at all, and nobody chose 1.4%.',
+            'There is no design here and no ratio being defended. No rule ties the amount of dollars to this gold, and nobody chose 1.4%.',
         },
         {
           id: 'undervalued',
           label: 'The Fed’s gold is worth far more than stated, so the figure means little',
           feedback:
-            'The certificates are indeed carried at a statutory $42.22 an ounce rather than market. Mark it to market and it is still a rounding error against $871 billion.',
+            'The certificates are indeed valued at a legal price of $42.22 an ounce rather than the market price. Value the gold at market prices and it is still small next to $871 billion.',
         },
         {
           id: 'reserve',
           label: 'It is the reserve behind the notes, as under the gold standard',
           feedback:
-            'Video 17 makes the point that it stopped being that. The assets actually standing behind the notes are the $780 billion of treasuries.',
+            'Video 17 makes the point that it stopped being that. The assets actually standing behind the notes are the $780 billion of Treasuries.',
         },
       ],
       correctOptionId: 'vestigial',
       explanation:
-        'This is video 17’s argument as a number rather than an argument. What stands behind a dollar in February 2007 is $780 billion of claims on the US government and about $12 billion of metal — and the metal is there because nobody decided what else to do with it. Sal’s phrase was that it was just sitting there; the balance sheet says the same thing to three decimal places.',
+        'This is video 17’s argument turned into a number. What stood behind the dollar in February 2007 was $780 billion of claims on the US government and about $12 billion of gold — and the gold was there because nobody decided what else to do with it. Sal says it was just sitting there; the balance sheet says the same.',
     },
     {
       id: 'mc-then-and-now',
@@ -163,12 +163,12 @@ export const kabFedBalanceSheetLesson = defineLesson({
       tags: ['central-banking', 'quantitative-easing', 'reserves'],
       xp: 35,
       prompt:
-        'In February 2007, notes outstanding were $769 billion of $839 billion of liabilities, while bank deposits at the Fed were $17 billion. What happened to that shape after 2008?',
+        'In February 2007, notes outstanding were $769 billion of the Fed’s $839 billion of liabilities, while banks’ deposits at the Fed (their reserves) were only $17 billion. What happened to that picture after 2008?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'inverted',
-          label: 'It inverted — reserves became the Fed’s largest liability',
+          label: 'It flipped — bank reserves grew into the Fed’s largest liability for years',
         },
         {
           id: 'notes',
@@ -191,25 +191,25 @@ export const kabFedBalanceSheetLesson = defineLesson({
       ],
       correctOptionId: 'inverted',
       explanation:
-        'Every asset the Fed buys is paid for by crediting a bank’s reserve account, so a balance sheet that grows by trillions grows its reserves by trillions. The $17 billion line on this 2007 statement became the defining feature of the modern Fed, peaking above $4 trillion — which is also why paying interest on reserves stopped being a technicality and became the main instrument of policy. Pull up today’s H.4.1 beside this one and you can read the whole of the last two decades off two columns.',
+        'Every asset the Fed buys is paid for by crediting a bank’s reserve account, so a balance sheet that grows by trillions grows its reserves by trillions. The $17 billion line on this 2007 statement became the defining feature of the modern Fed, peaking above $4 trillion — which is also why paying interest on reserves stopped being a technicality and became the main policy tool. Put today’s weekly statement (the H.4.1) beside this one and you can read the last two decades off two columns.',
     },
     {
       id: 'match-fed-lines',
       type: 'concept_match',
       tags: ['central-banking', 'balance-sheets'],
       xp: 30,
-      prompt: 'Match each line on the February 2007 statement to what it actually is.',
+      prompt: 'Match each line of the Fed’s February 2007 balance sheet to what it actually is.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'treasuries',
-          term: 'US treasury securities, $780bn',
+          term: 'US Treasury securities, $780bn',
           definition: 'What the Fed bought with money it created, and what now stands behind the currency',
         },
         {
           id: 'repos',
           term: 'Repurchase agreements, $30bn',
-          definition: 'Collateral bought under an agreement to sell it back — lending to banks, wearing a purchase’s clothes',
+          definition: 'Securities bought under an agreement to sell them back — short-term lending, dressed up as a purchase',
         },
         {
           id: 'notes',
@@ -223,7 +223,7 @@ export const kabFedBalanceSheetLesson = defineLesson({
         },
       ],
       explanation:
-        'Four lines and you have the entire module: the Fed owns government debt, lends to banks against collateral, owes the public its banknotes and owes the banks their reserves. Everything the course has built by hand is a real line item with a real number beside it, and the statement is published weekly as the H.4.1 if you want to check what it says today.',
+        'Four lines and you have the whole module: the Fed owns government debt, lends against collateral, owes the public its banknotes and owes the banks their reserves. Everything the course has built by hand is a real line with a real number beside it, and the statement is published weekly as the H.4.1 if you want to check what it says today.',
     },
   ],
   keyTakeaways: [

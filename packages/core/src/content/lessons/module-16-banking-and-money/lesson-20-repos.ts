@@ -21,19 +21,19 @@ export const kabReposLesson = defineLesson({
       tags: ['repo', 'collateral'],
       xp: 25,
       prompt:
-        'Economically a repo is identical to a collateralised loan. What is the actual difference?',
+        'Economically, a repo works just like a loan backed by collateral. What is the actual difference?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'ownership',
           label:
-            'Legal ownership of the collateral actually transfers',
+            'In a repo, the lender becomes the legal owner of the collateral',
         },
         {
           id: 'interest',
           label: 'A repo charges no interest, only a fee for the service',
           feedback:
-            'It does — buried in the price. The borrower repurchases for more than was paid, and the difference is the interest.',
+            'It does charge interest — hidden in the price. The borrower buys the asset back for more than it was sold for, and the difference is the interest.',
         },
         {
           id: 'no-collateral',
@@ -50,26 +50,26 @@ export const kabReposLesson = defineLesson({
       ],
       correctOptionId: 'ownership',
       explanation:
-        'The pawnbroker analogy makes the motive plain: the lender wants unambiguous title, not a claim to be argued over later. In a default there is no seizing to be done — the lender already owns the asset. That is why the central bank lends through repos at the discount window rather than taking a pledge.',
+        'The pawnbroker analogy makes the motive plain: the lender wants clear ownership, not a claim to be argued over later. If the borrower defaults there is nothing to seize — the lender already owns the asset. Sal presents central bank lending this way; in practice the Fed’s discount window lends against pledged collateral, while repos are what the Fed uses in its open market operations.',
     },
     {
       id: 'order-repo',
       type: 'order_flow',
       tags: ['repo', 'discount-window'],
       xp: 25,
-      prompt: 'Put a repo with the central bank in order.',
+      prompt: 'Put a repo with the central bank in order, as the video draws it.',
       instructions: 'Drag the steps into order',
       events: [
-        { id: 'need', label: 'A bank needs cash', detail: 'It holds treasuries but will not dump them into a falling market' },
-        { id: 'print', label: 'The central bank creates reserves', detail: 'With notes outstanding as the matching liability' },
-        { id: 'sell', label: 'The bank sells its treasuries to the central bank', detail: 'Title genuinely transfers' },
+        { id: 'need', label: 'A bank needs cash', detail: 'It holds Treasuries but does not want to sell them cheaply in a falling market' },
+        { id: 'print', label: 'The central bank agrees to lend and creates new reserves to pay with', detail: 'A new liability for the central bank' },
+        { id: 'sell', label: 'The bank sells its Treasuries to the central bank', detail: 'Ownership really transfers' },
         { id: 'cash', label: 'The bank receives the cash it needed' },
-        { id: 'buyback', label: 'Later, the bank repurchases the same treasuries', detail: 'At a higher price' },
-        { id: 'interest', label: 'The price difference is the interest', detail: 'Set by the discount rate' },
+        { id: 'buyback', label: 'Later, the bank buys the same Treasuries back', detail: 'At a higher price' },
+        { id: 'interest', label: 'The price difference is the interest', detail: 'In the video, set by the discount rate' },
       ],
       correctOrder: ['need', 'print', 'sell', 'cash', 'buyback', 'interest'],
       explanation:
-        'From the other side it is a reverse repo. The structure lets a bank turn illiquid-but-sound assets into cash without selling them into a market that is not paying what they are worth — which is exactly the situation a liquidity crisis creates.',
+        'Seen from the central bank’s side, it is a reverse repo. The structure lets a bank turn sound assets into cash without selling them into a market that is not paying what they are worth — which is exactly the situation a liquidity crisis creates.',
     },
     {
       id: 'mc-repo-or-reverse',
@@ -77,24 +77,24 @@ export const kabReposLesson = defineLesson({
       tags: ['repo', 'terminology'],
       xp: 25,
       prompt:
-        'Sal ends up holding the watch and the agreement; you end up holding the cash. Both of you are in the same trade. Who is in a repo and who is in a reverse repo?',
+        'You sell Sal your watch for cash and agree to buy it back later at a higher price. Sal ends up holding the watch; you end up holding the cash. Who is doing a repo and who is doing a reverse repo?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'seller',
-          label: 'You are, since you sold and will repurchase. Sal is in the reverse',
+          label: 'You are doing the repo, since you sold and will buy back. Sal is doing the reverse repo',
         },
         {
           id: 'lender',
-          label: 'Sal is, since he lent the money',
+          label: 'Sal is doing the repo, since he lent the money',
           feedback:
-            'Naming follows the collateral, not the cash. The party who sells the asset and agrees to buy it back is the one doing the repurchasing.',
+            'The name follows the asset, not the cash. The side that sells the asset and agrees to buy it back is the one doing the repurchase.',
         },
         {
           id: 'both',
-          label: 'Both are repos — the word describes the trade, not a side of it',
+          label: 'Both are doing a repo — the word describes the trade, not a side of it',
           feedback:
-            'It is one trade with two names precisely so you can tell which side someone is on. Reading a report that says "the Fed did reverse repos" only means something if the side is fixed.',
+            'It is one trade with two names precisely so you can tell which side someone is on. A report saying "the Fed did reverse repos" only means something once you know whose side the name describes.',
         },
         {
           id: 'neither',
@@ -105,7 +105,7 @@ export const kabReposLesson = defineLesson({
       ],
       correctOptionId: 'seller',
       explanation:
-        'Repo is short for repurchase agreement, so the repo party is whoever is doing the repurchasing — the one who starts with the asset, hands it over for cash, and buys it back. The cash lender is on the reverse side. Getting this the right way round matters when you read the Fed: its reverse repo facility drains reserves by *selling* collateral to money funds overnight, which is the opposite of what the name suggests to most people.',
+        'Repo is short for repurchase agreement, so the repo side is whoever does the repurchasing — the one who starts with the asset, hands it over for cash, and buys it back. The cash lender is on the reverse repo side. One trap when you read about the Fed: it names its operations from the other side’s point of view. In its "reverse repo" facility the Fed *sells* securities to money market funds overnight and buys them back, which drains reserves.',
     },
     {
       id: 'mc-why-ownership-matters',
@@ -113,7 +113,7 @@ export const kabReposLesson = defineLesson({
       tags: ['repo', 'collateral', 'bankruptcy'],
       xp: 35,
       prompt:
-        'Economically the pawn and the repo are identical. Sal wants legal ownership anyway. What does that actually get him if you never come back?',
+        'Sal lends you 10,000 and holds your watch, worth about 30,000. Economically, a pawn and a repo are the same, but Sal wants to own the watch outright. What does that get him if you never come back?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -124,13 +124,13 @@ export const kabReposLesson = defineLesson({
           id: 'moreworth',
           label: 'He gets to keep the full 30,000, rather than only the 10,000 he lent',
           feedback:
-            'A secured lender generally has to return the surplus over the debt either way. The advantage is about speed and certainty, not about keeping the excess.',
+            'A lender with collateral generally has to hand back anything above the debt either way. The advantage is speed and certainty, not keeping the extra.',
         },
         {
           id: 'interest',
           label: 'He can charge a higher rate of interest',
           feedback:
-            'Better security usually means he charges *less* — the whole point of collateral is that safer lending is cheaper.',
+            'Better security usually means he charges *less* — the point of collateral is that safer lending is cheaper.',
         },
         {
           id: 'tax',
@@ -141,7 +141,7 @@ export const kabReposLesson = defineLesson({
       ],
       correctOptionId: 'sell',
       explanation:
-        'When a borrower fails, an ordinary secured creditor waits for a court and, in the United States, is frozen by the automatic stay. A repo counterparty already owns the collateral and simply sells it. That carve-out is why repo became the plumbing of the entire financial system — and why it failed the way it did in 2008, when everybody exercised that right at once and the forced selling drove down the price of the very collateral everyone else was holding.',
+        'When a borrower goes bust, an ordinary lender with collateral must wait for a court and, in the United States, is frozen by bankruptcy rules (the "automatic stay"). A repo lender already owns the collateral and simply sells it. That exception is why repo became the plumbing of the whole financial system — and why it broke the way it did in 2008, when everybody used that right at once and the forced selling drove down the price of the very collateral everyone else was holding.',
     },
     {
       id: 'mc-haircut',
@@ -164,7 +164,7 @@ export const kabReposLesson = defineLesson({
         },
         {
           id: 'rules',
-          label: 'Regulations cap how much can be lent against jewellery',
+          label: 'Regulations limit how much can be lent against a watch',
           feedback:
             'Sal is not a regulated lender in this story, and the practice long predates any rule. It is self-protection rather than compliance.',
         },
@@ -177,7 +177,7 @@ export const kabReposLesson = defineLesson({
       ],
       correctOptionId: 'haircut',
       explanation:
-        'That gap is the haircut, and it is the single most important number in repo. Raise the haircut and the same collateral supports less borrowing — so a market-wide rise in haircuts drains funding from the system without anyone withdrawing a deposit. That is precisely how the 2008 run happened: not depositors queueing at branches, but repo lenders quietly demanding more collateral for the same cash, which Gary Gorton named the run on repo.',
+        'That gap is the haircut, and it is the most important number in repo. Raise the haircut and the same collateral supports less borrowing — so a market-wide rise in haircuts drains funding from the system without anyone withdrawing a deposit. That is a large part of how the 2008 run happened: not depositors queuing at branches, but repo lenders quietly demanding more collateral for the same cash — what the economist Gary Gorton called the run on repo.',
     },
   ],
   keyTakeaways: [
