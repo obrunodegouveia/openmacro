@@ -78,44 +78,10 @@ function hz(name) {
  * ==========================================================================
  *
  * A minor, the relative minor of the feedback cues' C, so a correct-answer
- * chime over the music never clashes. 140 BPM, 4/4, thirty-two bars, about
- * 55 seconds:
- *
- *   A   the folk melody, eight bars, a soft pulse-wave lead
- *   A'  the same, with a quiet triangle countermelody in half notes under it
- *   B   a slow bridge in half and whole notes, eight bars (see below)
- *   A'  the folk melody with its countermelody again
- *
- * The loop point is the rest at the end of the last bar: the lead and the bass
- * are both silent on the final eighth, so it repeats without a seam.
- *
- * ---------------------------------------------------------------------------
- * THE BRIDGE IS ORIGINAL, AND WHY
- * ---------------------------------------------------------------------------
- *
- * The folk song is just the eight-bar tune. The slow, long-note "second part"
- * people remember from Tetris was written for the Game Boy version and belongs
- * to that copyrighted arrangement, so it is not used, transcribed or imitated
- * here. Section B fills the same role (slower, calmer, a breath before the
- * tune returns) with its own melody: an arch in half and whole notes, rising
- * from A4 to G5 over Dm Am E Am | F C Dm E and leaning back onto the dominant.
- * Its contour, rhythm and harmony are this file's own, under the repository's
- * licence like the rest of the arrangement.
- *
- * ---------------------------------------------------------------------------
- * THE BASS
- * ---------------------------------------------------------------------------
- *
- * Written out bar by bar rather than generated, so it is deterministic and can
- * be read: each bar is an eight-character pattern of eighth notes,
- *
- *   r  the chord's root        R  the root an octave up
- *   f  the fifth               g  a ghost note: the root, very soft and short
- *   a  a chromatic approach: a semitone into the next bar's root
- *   -  a rest
- *
- * Syncopation, rests and the odd octave jump keep it moving without the
- * metronome feel of constant octave eighths. In the bridge it thins out.
+ * chime over the music never clashes. 140 BPM. The eight-bar A theme twice:
+ * a soft pulse-wave melody over a triangle-ish bass in octave eighths. Sixteen
+ * bars of 4/4 is about 27 seconds, and the loop point is the rest at the end
+ * of bar 16, so it repeats without a seam.
  */
 
 /**
@@ -140,51 +106,8 @@ const THEME = [
   ['C5', 1], ['A4', 1], ['A4', 1], [null, 1],
 ];
 
-/** The countermelody for A': chord tones in half notes, well under the lead. */
-const COUNTER = [
-  ['C4', 2], ['B3', 2], // 1  Am E
-  ['C4', 2], ['E4', 2], // 2  Am
-  ['D4', 2], ['B3', 2], // 3  E7
-  ['C4', 3], [null, 1], // 4  Am
-  ['F4', 2], ['D4', 2], // 5  Dm
-  ['E4', 2], ['G4', 2], // 6  C
-  ['E4', 2], ['G#4', 2], // 7  E
-  ['E4', 3], [null, 1], // 8  Am
-];
-
-/** The bridge: original, see above. */
-const BRIDGE = [
-  ['A4', 2], ['D5', 2], // 1  Dm
-  ['C5', 4], //            2  Am
-  ['B4', 2], ['G#4', 2], // 3  E
-  ['A4', 4], //            4  Am
-  ['A4', 2], ['C5', 2], // 5  F
-  ['E5', 2], ['G5', 2], // 6  C
-  ['F5', 2], ['D5', 2], // 7  Dm
-  ['B4', 2], ['D5', 2], // 8  E7, back to the tune's E
-];
-
-/** Bass roots per bar, [first half, second half]. */
-const THEME_ROOTS = [
-  ['A2', 'E2'], ['A2', 'A2'], ['E2', 'E2'], ['A2', 'A2'],
-  ['D2', 'D2'], ['C2', 'C2'], ['E2', 'E2'], ['A2', 'A2'],
-];
-const BRIDGE_ROOTS = [
-  ['D2', 'D2'], ['A2', 'A2'], ['E2', 'E2'], ['A2', 'A2'],
-  ['F2', 'F2'], ['C2', 'C2'], ['D2', 'D2'], ['E2', 'E2'],
-];
-
-/** The bass, one pattern per bar, in the order the sections play. */
-const BASS_PATTERNS = [
-  // A
-  'r-gr-fR-', 'r--Rg-fa', 'r-gr-Rf-', 'r--rg-Ra', 'r-gf-rR-', 'r--Rg-fa', 'r-gr-fR-', 'r--rg-R-',
-  // A'
-  'r-Rr-gf-', 'r-g-r-fa', 'r--rR-g-', 'r-gr-fRa', 'r--fR-g-', 'r-gR-rfa', 'r-gr-Rf-', 'r--rg-Ra',
-  // B
-  'r---f-g-', 'r--r-R--', 'r---f--a', 'r--R-g--', 'r---f-g-', 'r--r-R-a', 'r---f-R-', 'r-gr-fRa',
-  // A' (the last bar ends on a rest: the loop seam)
-  'r-Rr-gf-', 'r-g-r-fa', 'r--rR-g-', 'r-gr-fRa', 'r--fR-g-', 'r-gR-rfa', 'r-gr-Rf-', 'r--rg-R-',
-];
+/** One bass root per bar: Am E Am E | Dm C E Am, voiced low. */
+const BASS_ROOTS = ['E2', 'A2', 'E2', 'A2', 'D2', 'C2', 'E2', 'A2'];
 
 /**
  * Adds one note to the buffer: a waveform under a short attack and an
@@ -196,9 +119,8 @@ const BASS_PATTERNS = [
  * @param {number} dur Length, in seconds.
  * @param {number} gain Peak level.
  * @param {(phase: number) => number} wave One cycle, phase in [0, 1).
- * @param {number} [decay] Exponential decay per second over the note.
  */
-function note(buf, at, freq, dur, gain, wave, decay = 1.6) {
+function note(buf, at, freq, dur, gain, wave) {
   const start = Math.floor(at * SAMPLE_RATE);
   const len = Math.floor(dur * SAMPLE_RATE);
   const attack = Math.floor(0.006 * SAMPLE_RATE);
@@ -209,7 +131,7 @@ function note(buf, at, freq, dur, gain, wave, decay = 1.6) {
     if (i < attack) env = i / attack;
     else if (i > len - release) env = (len - i) / release;
     // A gentle decay over the note keeps long notes from droning.
-    env *= Math.exp(-decay * t);
+    env *= Math.exp(-1.6 * t);
     buf[start + i] += gain * env * wave((freq * t) % 1);
   }
 }
@@ -220,71 +142,36 @@ const pulse = (p) => (p < 0.25 ? 0.8 : -0.27) * 0.9 + Math.sin(2 * Math.PI * p) 
 /** A triangle, for a round bass that sits under the lead. */
 const triangle = (p) => (p < 0.5 ? 4 * p - 1 : 3 - 4 * p);
 
-/**
- * Plays a [note, beats] line from a given bar.
- *
- * @param {Float64Array} buf The mix.
- * @param {Array<[string | null, number]>} line The melody.
- * @param {number} bar The bar it starts on.
- * @param {(phase: number) => number} wave The voice.
- * @param {number} gain Level.
- * @param {number} legato Fraction of each note that sounds.
- * @param {number} [decay] Decay per second.
- */
-function melody(buf, line, bar, wave, gain, legato, decay) {
-  let at = bar * BAR;
-  for (const [name, beats] of line) {
-    const freq = hz(name);
-    if (freq) note(buf, at, freq, beats * BEAT * legato, gain, wave, decay);
-    at += beats * BEAT;
-  }
-}
-
-/** Renders the loop: A A' B A', with the written-out bass. */
+/** Renders the loop: the theme twice, with bass. */
 function renderKorobeiniki() {
-  const sections = [
-    { lead: THEME, counter: null, roots: THEME_ROOTS },
-    { lead: THEME, counter: COUNTER, roots: THEME_ROOTS },
-    { lead: BRIDGE, counter: null, roots: BRIDGE_ROOTS },
-    { lead: THEME, counter: COUNTER, roots: THEME_ROOTS },
-  ];
-  const bars = sections.length * 8;
-  const buf = new Float64Array(Math.round(bars * BAR * SAMPLE_RATE));
-  const roots = sections.flatMap((s) => s.roots);
-  const eighth = BEAT / 2;
+  const bars = 16;
+  const buf = new Float64Array(Math.ceil(bars * BAR * SAMPLE_RATE));
 
-  sections.forEach((section, index) => {
-    const bar = index * 8;
-    if (section.lead === BRIDGE) {
-      // Long notes: a slower decay and full length, so they sing rather than pluck.
-      melody(buf, BRIDGE, bar, pulse, 0.27, 0.96, 0.55);
-    } else {
+  for (let pass = 0; pass < 2; pass++) {
+    let at = pass * 8 * BAR;
+    for (const [name, beats] of THEME) {
+      const freq = hz(name);
       // Slightly detached, like a plucked note, so repeated pitches articulate.
-      melody(buf, THEME, bar, pulse, 0.32, 0.9);
+      if (freq) note(buf, at, freq, beats * BEAT * 0.9, 0.32, pulse);
+      at += beats * BEAT;
     }
-    if (section.counter) melody(buf, section.counter, bar, triangle, 0.15, 0.92, 0.9);
-  });
-
-  BASS_PATTERNS.forEach((pattern, bar) => {
-    const next = hz(roots[(bar + 1) % bars][0]);
-    [...pattern].forEach((symbol, step) => {
-      if (symbol === '-') return;
-      const root = hz(roots[bar][step < 4 ? 0 : 1]);
-      const at = bar * BAR + step * eighth;
-      const semitone = 2 ** (1 / 12);
-      const voice = {
-        r: [root, 0.24, 0.8],
-        R: [root * 2, 0.19, 0.7],
-        f: [root * 1.5, 0.18, 0.7],
-        g: [root, 0.08, 0.35],
-        // From below when the next root is higher, from above when it is lower.
-        a: [next >= root ? next / semitone : next * semitone, 0.17, 0.8],
-      }[symbol];
-      note(buf, at, voice[0], eighth * voice[2], voice[1], triangle);
+    BASS_ROOTS.forEach((root, bar) => {
+      const low = hz(root);
+      for (let eighth = 0; eighth < 8; eighth++) {
+        // The very last eighth is left empty, so the loop seam is silence.
+        if (pass === 1 && bar === 7 && eighth === 7) continue;
+        const freq = eighth % 2 === 0 ? low : low * 2;
+        note(buf, (pass * 8 + bar) * BAR + eighth * (BEAT / 2), freq, BEAT / 2 * 0.85, 0.22, triangle);
+      }
     });
-  });
+  }
 
-  return { loop: level(buf) };
+  // One gain stage for the whole loop, peaking at -3 dBFS.
+  let peak = 0;
+  for (const sample of buf) peak = Math.max(peak, Math.abs(sample));
+  const scale = 0.707 / peak;
+  for (let i = 0; i < buf.length; i++) buf[i] *= scale;
+  return { loop: buf };
 }
 
 /* ==========================================================================
@@ -305,14 +192,11 @@ function renderKorobeiniki() {
  *
  * Every partial is weighted by `soften`, a gentle low-pass, so a high note
  * never gets bright or harsh. A short, dark reverb puts all three in the same
- * room. Then `level` brings the loop to the shared target loudness (RMS), so
- * the app's single VOLUME constant suits every track.
+ * room. Then one gain stage brings the loop to Korobeiniki's loudness (RMS),
+ * so the app's single VOLUME constant suits every track.
  */
 
-/**
- * Every loop's loudness: that of the first, sixteen-bar `korobeiniki.m4a`
- * (measured RMS -14.0 dBFS, peak -3.0 dBFS), which the app's VOLUME was tuned to.
- */
+/** Loudness of `korobeiniki.m4a`, measured: RMS -14.0 dBFS, peak -3.0 dBFS. */
 const TARGET_RMS_DB = -14;
 
 /** Nothing may go above this; a soft knee catches the odd stacked chord. */
@@ -503,7 +387,7 @@ function reverb(dry, mix) {
 /**
  * Finishes a Halloween loop: folds everything that rang past the end back
  * onto the start (that is what the start sounds like when the loop repeats),
- * adds the reverb, and levels it.
+ * adds the reverb, and brings it to Korobeiniki's loudness.
  *
  * @param {Float64Array} buf The mix, `length` samples plus a tail.
  * @param {number} length The loop's length, in samples.
@@ -513,29 +397,19 @@ function finish(buf, length) {
   const loop = buf.slice(0, length);
   for (let i = length; i < buf.length; i++) loop[i % length] += buf[i];
 
-  return level(reverb(loop, 0.32));
-}
+  const wet = reverb(loop, 0.32);
 
-/**
- * The one gain stage every loop goes through: scales it to the target RMS,
- * so all tracks play equally loud at the app's single VOLUME, and rounds off
- * the rare peak above the ceiling with a soft knee.
- *
- * @param {Float64Array} buf The finished loop; scaled in place.
- * @returns {Float64Array} The same buffer.
- */
-function level(buf) {
   let sum = 0;
-  for (const s of buf) sum += s * s;
-  const scale = 10 ** (TARGET_RMS_DB / 20) / Math.sqrt(sum / buf.length);
+  for (const s of wet) sum += s * s;
+  const scale = 10 ** (TARGET_RMS_DB / 20) / Math.sqrt(sum / wet.length);
   const knee = CEILING * 0.7;
-  for (let i = 0; i < buf.length; i++) {
-    const s = buf[i] * scale;
+  for (let i = 0; i < wet.length; i++) {
+    const s = wet[i] * scale;
     // Soft knee: untouched below 70% of the ceiling, rounded off above.
     const a = Math.abs(s);
-    buf[i] = a <= knee ? s : Math.sign(s) * (knee + (CEILING - knee) * Math.tanh((a - knee) / (CEILING - knee)));
+    wet[i] = a <= knee ? s : Math.sign(s) * (knee + (CEILING - knee) * Math.tanh((a - knee) / (CEILING - knee)));
   }
-  return buf;
+  return wet;
 }
 
 /* ==========================================================================
