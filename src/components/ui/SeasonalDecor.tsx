@@ -45,6 +45,23 @@ export function SeasonalAtmosphere({ mist = false }: { mist?: boolean }) {
 }
 
 /**
+ * Where the toy hangs across Today: centred in the gap between the lockup
+ * (which ends near half the width) and the streak and XP column (which
+ * starts near 84%), so it never crowds either. It used to hang at 66%, a
+ * little closer to the pills than to the lockup.
+ */
+const TOY_LEFT = '63%';
+
+/**
+ * The band the flyers cross, below the safe-area inset: the strip above
+ * Today's header row (the garland's, at Christmas), so a sleigh or a flight
+ * of bats passes over the lockup, the toy and the streak rather than
+ * through them. It used to be `{ top: 8, depth: 40 }`, the header's own
+ * height.
+ */
+const FLIGHT_BAND = { top: 0, depth: 22 } as const;
+
+/**
  * The toy hanging over the Today screen, in the gap between the lockup and
  * the streak. Place it last inside the screen's root view.
  *
@@ -52,7 +69,7 @@ export function SeasonalAtmosphere({ mist = false }: { mist?: boolean }) {
  * @return The toy, or nothing on an ordinary day.
  */
 export function SeasonalOverlay({ top }: { top: number }) {
-  return <SeasonToy top={top} left="66%" />;
+  return <SeasonToy top={top} left={TOY_LEFT} />;
 }
 
 /**
@@ -63,7 +80,7 @@ export function SeasonalOverlay({ top }: { top: number }) {
  */
 export function SeasonalSky() {
   const { top } = useSafeAreaInsets();
-  return <SeasonSky top={top} />;
+  return <SeasonSky top={top} band={FLIGHT_BAND} />;
 }
 
 /**

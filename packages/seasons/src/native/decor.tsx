@@ -41,6 +41,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { toyReaction } from '../presets/packs.ts';
 import type { DepthLayer, SeasonScene } from '../presets/types.ts';
 import { useSeason, useSeasonContext, useSeasonScheme, type ActiveSeason } from './context.tsx';
+import { BeachBall } from './visuals/BeachBall.tsx';
 import { Burst } from './visuals/Burst.tsx';
 import { CandleGlow } from './visuals/CandleGlow.tsx';
 import { DraggableToy } from './visuals/DraggableToy.tsx';
@@ -61,6 +62,9 @@ const THREAD = 30;
 
 /** The toy's touch box, in points. */
 const TOY_SIZE = 32;
+
+/** A drawn ball's diameter: about the size the emoji's glyph is drawn. */
+const TOY_BALL = 24;
 
 /** How far a tap drops the toy, and how far it can be pulled. */
 const TOY_DROP = 220;
@@ -274,7 +278,13 @@ function HangingToy({ season, top }: { season: ActiveSeason; top: number }) {
         </>
       }
     >
-      {Art ? <Art season={season} size={TOY_SIZE} /> : <Text style={styles.toy} allowFontScaling={false}>{toy.emoji}</Text>}
+      {Art ? (
+        <Art season={season} size={TOY_SIZE} />
+      ) : toy.shape === 'beach-ball' ? (
+        <BeachBall size={TOY_BALL} />
+      ) : (
+        <Text style={styles.toy} allowFontScaling={false}>{toy.emoji}</Text>
+      )}
     </DraggableToy>
   );
 }

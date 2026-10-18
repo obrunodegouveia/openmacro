@@ -104,7 +104,7 @@ export const ptPT: UiDictionary = {
   'season.summer.greeting': '☀️ Bom verão!',
   'season.summer.welcome': 'Dia de sol, {name}!',
   'season.summer.toy.1': 'Boing!',
-  'season.summer.toy.2': 'Alguém para um voleibol de praia?',
+  'season.summer.toy.2': 'Sou uma bola de praia, não de vólei.',
   'season.summer.toy.3': 'Não te esqueças do protetor solar.',
   'season.autumn.name': 'Outono',
   'season.autumn.greeting': '🍁 Bom outono!',

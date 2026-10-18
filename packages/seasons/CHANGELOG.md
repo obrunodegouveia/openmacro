@@ -49,6 +49,9 @@ a component or two and mapping its colours.
   app-supplied asset), `musicFor` (the season's tracks only while it is on,
   in the full look, with the preference On; otherwise `null` for the app's
   default music) and `useSeasonMusic` on both renderers. No playback.
+- Drawn toys: `toy.shape: 'beach-ball'` draws a beach ball (there is no
+  emoji for one) on both renderers from one spec, `BEACH_BALL`; summer uses
+  it, and its toy says "I'm a beach ball, not a volleyball."
 - `data-sv-scheme` on `<html>` overrides `prefers-color-scheme` for the web
   visuals, for apps with their own theme switch.
 - `verify:dist` now also renders the web entry with `react-dom/server`

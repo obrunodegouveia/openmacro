@@ -47,6 +47,7 @@ export { expoHaptics, type HapticsModule } from './haptics.ts';
 export { SeasonWelcome } from './welcome.tsx';
 
 // The primitives: plain props in, pixels out.
+export { BeachBall } from './visuals/BeachBall.tsx';
 export { Burst } from './visuals/Burst.tsx';
 export { CandleGlow } from './visuals/CandleGlow.tsx';
 export { DraggableToy } from './visuals/DraggableToy.tsx';

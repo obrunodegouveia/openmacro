@@ -289,6 +289,10 @@ const translate = createTranslator('en', { 'season.carnival.name': 'Carnival', '
 checkPack(carnival); // [] — or every contrast and motion problem, in words
 ```
 
+A toy with no good emoji can be drawn instead: `toy: { emoji: '🏐', shape:
+'beach-ball', … }` draws a beach ball on both platforms (summer does). The
+emoji stays as the fallback.
+
 Date points are fixed days (`{ month, day }`), Easter-relative
 (`{ easter: -47 }` is Shrove Tuesday), or the nth weekday of a month
 (`{ month, weekday, nth }`, `nth: -1` for the last), each with an `offset`

@@ -97,7 +97,7 @@ export const en = {
   'season.summer.greeting': '☀️ Happy summer!',
   'season.summer.welcome': 'Sunny day, {name}!',
   'season.summer.toy.1': 'Boing!',
-  'season.summer.toy.2': 'Beach volleyball, anyone?',
+  'season.summer.toy.2': 'I’m a beach ball, not a volleyball.',
   'season.summer.toy.3': 'Don’t forget the sunscreen.',
   'season.autumn.name': 'Autumn',
   'season.autumn.greeting': '🍁 Happy autumn!',

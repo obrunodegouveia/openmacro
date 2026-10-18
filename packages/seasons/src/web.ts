@@ -21,6 +21,7 @@ export { SeasonBurst, SeasonCardEdge, SeasonFooter, SeasonRain, SeasonWelcome } 
 export { SeasonLayer } from './web/layer.tsx';
 
 // The primitives: plain props in, pixels out.
+export { BeachBall } from './web/visuals/beach-ball.tsx';
 export { Burst } from './web/visuals/burst.tsx';
 export { CandleGlow } from './web/visuals/candle-glow.tsx';
 export { DraggableToy } from './web/visuals/draggable-toy.tsx';

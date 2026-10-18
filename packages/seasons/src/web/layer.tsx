@@ -17,6 +17,7 @@ import * as React from "react";
 
 import { toyReaction } from "../presets/packs.ts";
 import { useSeason, useSeasonContext, type ActiveSeason } from "./context.tsx";
+import { BeachBall } from "./visuals/beach-ball.tsx";
 import { Burst } from "./visuals/burst.tsx";
 import { DraggableToy } from "./visuals/draggable-toy.tsx";
 import { FairyLights } from "./visuals/fairy-lights.tsx";
@@ -156,7 +157,7 @@ function HangingToy({ season, children }: { season: ActiveSeason; children?: Rea
         </>
       }
     >
-      {children ?? <span className="sv-toy-emoji">{season.pack.toy.emoji}</span>}
+      {children ?? (season.pack.toy.shape === "beach-ball" ? <BeachBall size="1.9rem" /> : <span className="sv-toy-emoji">{season.pack.toy.emoji}</span>)}
     </DraggableToy>
   );
 }

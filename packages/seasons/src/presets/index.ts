@@ -11,6 +11,7 @@
  * can import this without React.
  */
 
+export { BEACH_BALL, type ToyShape } from './drawings.ts';
 export { NORTHERN_CALENDAR, SOUTHERN_CALENDAR, presetCalendar, type Hemisphere } from './calendar.ts';
 export { AA, atmosphereOver, checkPack, composite, contrast, luminance, worstSky, type CheckOptions } from './check.ts';
 export {

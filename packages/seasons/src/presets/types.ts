@@ -13,6 +13,7 @@
  */
 
 import type { SeasonTrack } from '../music.ts';
+import type { ToyShape } from './drawings.ts';
 
 /**
  * A colour that differs by appearance. `#rrggbb` only, so `checkPack`
@@ -370,7 +371,13 @@ export interface SeasonPack<Key extends string = string> {
    * `strings.toy`, in turn), and every tenth it throws a burst.
    */
   readonly toy: {
+    /** The toy, as an emoji. Also its fallback where `shape` is drawn. */
     readonly emoji: string;
+    /**
+     * Drawn instead of the emoji, for a toy with no good emoji (there is no
+     * beach ball, only a volleyball). Both renderers know every shape.
+     */
+    readonly shape?: ToyShape;
     readonly move: ToyMove;
     /** Hidden in the calm look. Spiders and bees are; bells are not. */
     readonly creepy: boolean;

@@ -219,9 +219,10 @@ export const PRESET_PACKS: Readonly<{ [Id in PresetId]: SeasonPack<PresetSeasonK
       },
     },
     emoji: { streak: '☀️', complete: '🍉', perfect: '🌞' },
-    particles: ['☀️', '🍉', '🐚', '🌴', '🍦', '🌊', '🏐', '🐠'],
+    particles: ['☀️', '🍉', '🐚', '🌴', '🍦', '🌊', '🏖️', '🐠'],
     welcome: '🌞',
-    toy: { emoji: '🏐', move: 'bounce', creepy: false },
+    // A beach ball, drawn: there is no emoji for one, and 🏐 is a volleyball.
+    toy: { emoji: '🏐', shape: 'beach-ball', move: 'bounce', creepy: false },
     flyer: null,
     cardCorner: '🕶️',
     screenCorner: '☀️',
