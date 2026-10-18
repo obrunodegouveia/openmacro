@@ -21,6 +21,8 @@ import { LessonVideo } from '@/components/ui/LessonVideo';
 import { SignedOutWarning } from '@/components/ui/SignedOutWarning';
 import { ActionButton } from '@/components/ui/ActionButton';
 import { FeedbackSheet } from '@/components/ui/FeedbackSheet';
+import { usePreloadSpeakers } from '@/components/ui/CharacterAvatar';
+import { speakerReaction, verdictMoment } from '@openmacro/core/engine/speaker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { SeasonalRain, useSeasonalEmoji } from '@/components/ui/SeasonalDecor';
 import { ComboPill, HeartsIndicator, StreakBadge } from '@/components/ui/StatusPills';
@@ -85,6 +87,8 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
   }, [setSafeToReload]);
 
   const [state, dispatch] = useReducer(lessonSessionReducer, lesson, createSession);
+  // Every face this run can show, loaded before the first answer.
+  usePreloadSpeakers(lesson);
 
   /**
    * Resume a run left part-way, then keep the stored copy current.
@@ -370,6 +374,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
           }
           onContinue={handleContinue}
           onHeightChange={setSheetHeight}
+          speaker={challenge ? speakerReaction(challenge, verdictMoment(state.feedback.correct)) : null}
         />
       ) : null}
     </View>

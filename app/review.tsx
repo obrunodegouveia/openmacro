@@ -27,6 +27,8 @@ import { router } from 'expo-router';
 import { ChallengeView } from '@/components/challenges/ChallengeView';
 import { ActionButton } from '@/components/ui/ActionButton';
 import { FeedbackSheet } from '@/components/ui/FeedbackSheet';
+import { usePreloadSpeakers } from '@/components/ui/CharacterAvatar';
+import { speakerReaction, verdictMoment } from '@openmacro/core/engine/speaker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import type { Lesson } from '@openmacro/core/content/schema';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
@@ -108,6 +110,8 @@ function ReviewSession({
   );
 
   const [state, dispatch] = useReducer(lessonSessionReducer, lesson, createSession);
+  // Every face this run can show, loaded before the first answer.
+  usePreloadSpeakers(lesson);
   const [draft, setDraft] = useState<ChallengeAnswer | null>(null);
   const [sheetHeight, setSheetHeight] = useState(0);
 
@@ -227,6 +231,7 @@ function ReviewSession({
           continueLabel={state.feedback.correct ? t('lesson.continue') : t('lesson.gotIt')}
           onContinue={handleContinue}
           onHeightChange={setSheetHeight}
+          speaker={challenge ? speakerReaction(challenge, verdictMoment(state.feedback.correct)) : null}
         />
       ) : null}
     </View>
