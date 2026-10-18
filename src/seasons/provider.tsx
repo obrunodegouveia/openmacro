@@ -2,6 +2,8 @@
  * OpenMacro's season provider: `SeasonProvider` from
  * `@openmacro/seasons/native`, given this app's controller, packs, words,
  * colours, feedback and navigator. The same five lines another app writes.
+ * The packs are the presets plus this app's music (`./music.ts`), so
+ * `useSeasonMusic()` returns what the player plays.
  *
  * Mounted once in the root layout, inside the locale provider (for the
  * words). It also keeps the season current while the app runs: midnight,
@@ -11,7 +13,6 @@
 import { useCallback, type ReactNode } from 'react';
 import { useIsFocused } from 'expo-router';
 
-import { SEASON_PACKS } from '@openmacro/core/season';
 import type { UiKey } from '@openmacro/core/i18n';
 import { SeasonProvider, type FeedbackKind, type SeasonChrome } from '@openmacro/seasons/native';
 import type { TranslateValues } from '@openmacro/seasons/presets';
@@ -21,6 +22,7 @@ import { useLocale } from '@/providers/LocaleProvider';
 import { palette, resolvePalette } from '@/theme/tokens';
 
 import { seasons } from './controller';
+import { SEASON_PACKS_WITH_MUSIC } from './music';
 
 /**
  * The chrome in the app's own tokens, which were painted at launch (see
@@ -64,7 +66,7 @@ export function SeasonsProvider({ children }: { children: ReactNode }) {
   const { t } = useLocale();
   const translate = useCallback((key: string, values?: TranslateValues) => t(key as UiKey, values), [t]);
   return (
-    <SeasonProvider controller={seasons} packs={SEASON_PACKS} translate={translate} chrome={chrome} feedback={feedback} useFocused={useIsFocused}>
+    <SeasonProvider controller={seasons} packs={SEASON_PACKS_WITH_MUSIC} translate={translate} chrome={chrome} feedback={feedback} useFocused={useIsFocused}>
       {children}
     </SeasonProvider>
   );

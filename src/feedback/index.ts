@@ -11,6 +11,10 @@
  * The clips in `assets/audio/` are generated, not sampled — see
  * `scripts/generate-sounds.mjs`. To change how something sounds, edit the
  * recipe there and re-run `npm run gen:sounds`.
+ *
+ * Background music is next door, in `./music.ts`: Korobeiniki most of the
+ * year, a season's own tracks while it is on (`npm run gen:music`). It shares
+ * the session set up by `configureAudio` below.
  */
 
 import { Platform } from 'react-native';
@@ -175,6 +179,9 @@ let audioConfigured: Promise<void> | null = null;
  * switch silences us, which is what a person flicking that switch is asking
  * for. `interruptionMode: 'mixWithOthers'` means we duck nothing — someone
  * doing a lesson on a walk keeps their podcast.
+ *
+ * The background music (`./music.ts`) plays in this same session, so the
+ * same two choices hold for every track it plays, seasonal or not.
  */
 export function configureAudio(): Promise<void> {
   audioConfigured ??= setAudioModeAsync({

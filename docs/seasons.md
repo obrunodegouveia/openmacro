@@ -40,7 +40,7 @@ it exactly as another app would. Its README is the porting guide.
 | **Seasons as data** | `@openmacro/seasons/presets` | The six packs (palette, sky, particles, details, toy, string keys), calendars for both hemispheres, bundled strings, `checkPack`. |
 | **Renderers** | `@openmacro/seasons/native` (React Native, Reanimated, Gesture Handler); `@openmacro/seasons/web` (React and one stylesheet) | A provider, drop-in decorations and the primitives under them. Any pack, any app. |
 | **OpenMacro's choices** | `packages/core/src/season.ts` | Which calendar and packs (all six presets, northern), typed against our UI keys; the remote URL; the storage prefix. Shared by both clients. |
-| **OpenMacro's wiring** | App: `src/seasons/` (controller, `SeasonsProvider`), `src/components/ui/Seasonal*.tsx`, `src/theme/palette.ts`. Site: `web/src/components/site/seasons/` (provider, art, lazy renderer), `seasonal-*.tsx`, `web/src/lib/season*.ts` | Our words, colours (the role mapping), feedback, navigator, and where each decoration goes on our screens. Nothing here names a season, except the site's opt-in Halloween artwork (`seasons/art.ts`). |
+| **OpenMacro's wiring** | App: `src/seasons/` (controller, `SeasonsProvider`, seasonal music), `src/components/ui/Seasonal*.tsx`, `src/theme/palette.ts`. Site: `web/src/components/site/seasons/` (provider, art, lazy renderer), `seasonal-*.tsx`, `web/src/lib/season*.ts` | Our words, colours (the role mapping), feedback, navigator, and where each decoration goes on our screens. Nothing here names a season, except the site's opt-in Halloween artwork (`seasons/art.ts`) and the app's Halloween music (`src/seasons/music.ts`). |
 
 ## How a season is decided
 
@@ -104,11 +104,43 @@ package's `art` hook (`seasons/art.ts`): Halloween's SVG cobwebs, spider,
 bats and pumpkins, which ship with the package. That is optional; a season
 without it is complete.
 
+## Music
+
 A pack may also carry `music` (tracks with an app-supplied asset). The
 package only decides: `musicFor` / `useSeasonMusic` return a season's
 tracks while it is on, in the full look, with the learner's switch On, and
-`null` otherwise, meaning the app's default music. The app's player
-(`src/feedback/music.ts`) is where that answer gets wired in.
+`null` otherwise, meaning the app's default music.
+
+In OpenMacro, only Halloween has music, and only the app plays it:
+
+| Track | Source | File |
+| --- | --- | --- |
+| "Funeral March of a Marionette" | Gounod, Lemoine 1882 piano edition | `assets/audio/music/funeral-march.m4a` |
+| "In the Hall of the Mountain King" | Grieg, Schirmer 1899 piano edition, played in A minor (a whole tone down) | `assets/audio/music/mountain-king.m4a` |
+
+Both are public domain, synthesised from the printed scores by
+`scripts/generate-music.mjs` (`npm run gen:music`; the header explains the
+sources and the keys), and mastered to Korobeiniki's loudness.
+
+- `src/seasons/music.ts` lists them (title, credit, `require`d asset) as
+  `SEASON_MUSIC`, and adds them to the packs handed to `SeasonsProvider`,
+  so `useSeasonMusic()` agrees with the player. They are not in
+  `@openmacro/core/season`: the website shares that and has no music.
+- `src/feedback/music.ts` plays them. It asks `musicFor` directly from the
+  controller (no React) and follows `seasons.subscribe`: Halloween on, in
+  the full look, switch On, and the two pieces alternate, each played
+  through once; anything else (Calm, Off, a remote calm, the rest of the
+  year) and it is Korobeiniki, looping. A change switches at once to the
+  new playlist's first track. The music on/off switch, the pause in the
+  background, the volume and the audio session are the same for every
+  track.
+
+Music is not exercise content, so the parity rule does not apply: the
+website has none, seasonal or otherwise.
+
+To add music to another season: generate or add the files, list them under
+that season in `src/seasons/music.ts`, and keep them at Korobeiniki's
+loudness (RMS -14 dBFS) and in a key that sits with the C major chimes.
 
 ## Switching a season off, now
 
