@@ -124,6 +124,10 @@ export function TAccountFlowView({
   );
 
   const unplaced = options.filter((option) => !placed.includes(option.id));
+  // Once the answer is right, whatever is left in the pool is a trap. It is
+  // dimmed and labelled so a finished exercise does not read as unfinished —
+  // the same treatment the website gives it.
+  const retired = locked && Boolean(result?.correct);
 
   return (
     <View style={styles.container}>
@@ -149,7 +153,19 @@ export function TAccountFlowView({
       {/* ---- the entries still to post --------------------------------- */}
       {unplaced.length > 0 ? (
         <View style={styles.pool}>
-          <Text style={styles.poolHeading}>{t('challenge.taccount.entries')}</Text>
+          <View style={styles.poolHeader}>
+            <Text style={styles.poolHeading}>
+              {retired ? t('challenge.taccount.decoys') : t('challenge.taccount.entries')}
+            </Text>
+            {/* Counted against the postings the trade needs, not the pool,
+                which includes traps. */}
+            <Text style={styles.poolCount}>
+              {t('challenge.taccount.placed', {
+                done: placed.length,
+                total: challenge.expectedShifts.length,
+              })}
+            </Text>
+          </View>
           {unplaced.map((option) => (
             <Animated.View
               key={option.id}
@@ -174,10 +190,12 @@ export function TAccountFlowView({
                 onPressIn={tapCue}
                 onPress={() => place(option.id)}
                 disabled={locked}
-                style={styles.poolChip}
+                style={[styles.poolChip, retired && styles.poolChipRetired]}
               >
                 <View style={styles.poolChipBody}>
-                  <Text style={styles.poolChipAccount}>{option.shift.account}</Text>
+                  <Text style={[styles.poolChipAccount, retired && styles.poolChipAccountRetired]}>
+                    {option.shift.account}
+                  </Text>
                   <Text style={styles.poolChipMeta}>
                     {entityLabel(challenge.entities, option.shift.entityId)} ·{' '}
                     {t(
@@ -208,15 +226,16 @@ export function TAccountFlowView({
           {challenge.aggregateEffects.map((effect) => (
             <View key={effect.aggregate} style={styles.aggregateRow}>
               <View style={[styles.aggregateBadge, aggregateStyle(effect.direction)]}>
-                <Text style={styles.aggregateBadgeText}>{effect.aggregate}</Text>
+                <Text style={styles.aggregateBadgeText}>{aggregateGlyph(effect.direction)}</Text>
               </View>
               <View style={styles.aggregateBody}>
+                {/* One sentence per effect — «M0 aumentou» — read from the
+                    same catalogue shape as the website, rather than a raw
+                    aggregate id ("collateral") beside a bare verb. */}
                 <Text style={styles.aggregateDirection}>
-                  {effect.direction === 'expand'
-                    ? t('challenge.taccount.expands')
-                    : effect.direction === 'contract'
-                      ? t('challenge.taccount.contracts')
-                      : t('challenge.taccount.unchanged')}
+                  {t(`challenge.taccount.effect.${effect.direction}`, {
+                    aggregate: t(`challenge.taccount.aggregate.${effect.aggregate}`),
+                  })}
                 </Text>
                 <Text style={styles.aggregateNote}>{effect.note}</Text>
               </View>
@@ -273,7 +292,7 @@ function EntityCard({
 
         {opening.map((line) => (
           <View key={`${line.account}-${line.amount}`} style={styles.openingLine}>
-            <Text style={styles.openingAccount} numberOfLines={2}>
+            <Text style={styles.openingAccount}>
               {line.account}
             </Text>
             <Text style={styles.openingAmount}>
@@ -309,7 +328,7 @@ function EntityCard({
                   wrong && styles.postedWrong,
                 ]}
               >
-                <Text style={styles.postedAccount} numberOfLines={2}>
+                <Text style={styles.postedAccount}>
                   {option.shift.account}
                 </Text>
                 <Text
@@ -372,6 +391,12 @@ function EntityCard({
       ) : null}
     </View>
   );
+}
+
+function aggregateGlyph(direction: 'expand' | 'contract' | 'unchanged'): string {
+  if (direction === 'expand') return '▲';
+  if (direction === 'contract') return '▼';
+  return '–';
 }
 
 function aggregateStyle(direction: 'expand' | 'contract' | 'unchanged') {
@@ -525,10 +550,30 @@ const styles = StyleSheet.create({
   pool: {
     gap: spacing.sm,
   },
+  poolHeader: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+  },
   poolHeading: {
     ...typography.overline,
     color: palette.inkFaint,
     textTransform: 'uppercase',
+    flexShrink: 1,
+  },
+  poolCount: {
+    ...typography.caption,
+    color: palette.inkFaint,
+    fontVariant: ['tabular-nums'],
+  },
+  poolChipRetired: {
+    opacity: 0.45,
+    borderStyle: 'dashed',
+    borderBottomWidth: 2,
+  },
+  poolChipAccountRetired: {
+    textDecorationLine: 'line-through',
   },
   poolChip: {
     flexDirection: 'row',
