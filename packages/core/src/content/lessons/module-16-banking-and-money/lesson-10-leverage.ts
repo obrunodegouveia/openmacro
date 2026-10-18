@@ -21,7 +21,7 @@ export const kabLeverageLesson = defineLesson({
       tags: ['leverage', 'solvency'],
       xp: 20,
       prompt:
-        'The bank controls 1,000 of assets on 300 of equity. What is its leverage, in the sense people mean by "2:1 leverage"?',
+        'The bank holds 1,000 of assets, paid for with 700 of borrowed money (deposits) and 300 of the owner’s equity. When people say a bank is "levered 10 to 1", which two numbers are they comparing?',
       instructions: 'Pick the best answer',
       options: [
         { id: 'assets-equity', label: 'Assets to equity — 1,000 to 300, or 10:3' },
@@ -29,13 +29,13 @@ export const kabLeverageLesson = defineLesson({
           id: 'debt-assets',
           label: 'Debt to assets — 700 to 1,000',
           feedback:
-            'A real ratio, but not the one meant by "10:1 leverage". Assets over equity is the usual convention; debt over equity, here 7:3, is the other one the video mentions.',
+            'A real ratio, but not the one meant by "levered 10 to 1". Assets over equity is the usual convention; debt over equity, here 7:3, is the other one the video mentions.',
         },
         {
           id: 'reserves',
           label: 'Reserves to deposits',
           feedback:
-            'That is the reserve ratio, which is about liquidity. Leverage is about how much cushion stands between losses and insolvency.',
+            'That is the reserve ratio, which is about liquidity. Leverage is about how much of the owner’s money stands between losses and insolvency.',
         },
         {
           id: 'loans-deposits',
@@ -46,7 +46,7 @@ export const kabLeverageLesson = defineLesson({
       ],
       correctOptionId: 'assets-equity',
       explanation:
-        'Leverage asks how many assets are being controlled per unit of owner’s money. The bank wants it high, because every extra asset earns the spread; the danger is that the same multiple applies on the way down.',
+        'Leverage asks how many assets the bank holds for each unit of the owner’s money. The bank wants it high, because every extra asset earns the spread; the danger is that the same multiple applies to losses.',
     },
     {
       id: 'mc-wiped-out',
@@ -54,7 +54,7 @@ export const kabLeverageLesson = defineLesson({
       tags: ['leverage', 'insolvency'],
       xp: 30,
       prompt:
-        'Assets of 1,000 fall by half to 500. Liabilities are 700. What is equity, and what does that mean?',
+        'Half the loans go bad, and the bank’s assets fall from 1,000 to 500. It still owes 700. What is its equity now, and what does that mean?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -65,24 +65,24 @@ export const kabLeverageLesson = defineLesson({
           id: 'one-fifty',
           label: '150 — equity falls by the same 50%',
           feedback:
-            'That is what happens with no leverage at all. With liabilities of 700 fixed in place, the entire loss lands on the 300 of equity and then keeps going.',
+            'That is what would happen with no debt at all. But the 700 owed does not shrink, so the whole loss lands on the 300 of equity — and the loss is bigger than the equity.',
         },
         {
           id: 'zero',
-          label: 'Zero — equity is wiped out exactly',
+          label: 'Zero — equity is exactly wiped out',
           feedback:
-            'A 300 loss would wipe it out exactly. The loss here is 500, so it goes 200 past the cushion.',
+            'A loss of 300 would wipe it out exactly. The loss here is 500, so it goes 200 beyond the equity.',
         },
         {
           id: 'illiquid',
           label: 'Still 300 — this is a liquidity problem, not a loss',
           feedback:
-            'Reserves being short is a liquidity problem. Loans genuinely worth less than was lent is a loss, and it comes straight out of equity.',
+            'Being short of reserves is a liquidity problem. Loans that will never be repaid in full are a loss, and the loss comes straight out of equity.',
         },
       ],
       correctOptionId: 'negative',
       explanation:
-        'Liabilities do not shrink when assets do. At 10:3 leverage a 50% fall destroys the bank; at 10:1 a 10% fall would do it. Leverage is a direct measure of how much bad news you can absorb before your depositors are owed more than you own — and this is insolvency, not illiquidity.',
+        'Liabilities do not shrink when assets do. 500 − 700 = −200: the bank owes its depositors more than everything it owns. That is insolvency, not illiquidity. At 10:3 leverage it takes a 30% loss to get there; at 10:1, just 10%.',
     },
     {
       id: 'mc-two-ratios',
@@ -118,7 +118,7 @@ export const kabLeverageLesson = defineLesson({
       ],
       correctOptionId: 'plusone',
       explanation:
-        'A = D + E, so A/E = D/E + 1. Worth knowing because the two conventions are used interchangeably in practice and a factor of one is enough to make a bank sound dramatically safer or riskier than the one you are comparing it with. When someone quotes a leverage number, the first question is always which ratio they mean.',
+        'Assets = debt + equity, so assets/equity = debt/equity + 1. Here: 10/3 = 7/3 + 1. Worth knowing because both conventions are used in practice, and a difference of one can make a bank sound safer or riskier than the one you compare it with. When someone quotes a leverage number, first ask which ratio they mean.',
     },
     {
       id: 'mc-wipeout',
@@ -126,22 +126,22 @@ export const kabLeverageLesson = defineLesson({
       tags: ['leverage', 'solvency'],
       xp: 30,
       prompt:
-        'Sal says a bank at 10:1 leverage is wiped out by a 10% loss. What is the general rule, and what does it give for this bank at 10:3?',
+        'Sal says a bank at 10:1 leverage is wiped out by a 10% loss on its assets. What is the general rule, and what loss wipes out this bank at 10:3?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'reciprocal',
-          label: 'Equity over assets — here 3/10, so a 30% write-down',
+          label: 'Equity divided by assets — here 3/10, so a 30% loss',
         },
         {
           id: 'fifty',
           label: '50%, since that is the loss the video applies',
           feedback:
-            '50% is the loss Sal chooses to illustrate, and it leaves the bank 200 in the hole rather than exactly at zero. The break-even point is lower.',
+            '50% is the loss Sal chooses as an example, and it leaves the bank 200 below zero rather than exactly at zero. The loss that takes equity to exactly zero is smaller.',
         },
         {
           id: 'tenpercent',
-          label: '10%, which is the same for any levered bank',
+          label: '10%, which is the same for any bank that borrows',
           feedback:
             '10% is the answer for 10:1. This bank holds three units of equity per ten of assets rather than one, so it can absorb three times as much.',
         },
@@ -149,12 +149,12 @@ export const kabLeverageLesson = defineLesson({
           id: 'leverage',
           label: 'The leverage ratio itself: 10:3 means a 3.3% loss',
           feedback:
-            'That inverts it. More equity per unit of assets means more cushion, so the wipeout loss rises with equity rather than falling.',
+            'That gets it backwards. More equity per unit of assets means more cushion, so the loss needed to wipe the bank out gets bigger as equity grows, not smaller.',
         },
       ],
       correctOptionId: 'reciprocal',
       explanation:
-        'Equity divided by assets — 300/1,000 — is 30%, and losing 30% of 1,000 leaves exactly nothing. This single reciprocal is the most portable thing in the whole module: a bank levered 20 times is gone on a 5% write-down, 30 times on 3.3%, and the investment banks of 2008 were running well past 30. You now have the arithmetic of that crisis in one line.',
+        'Equity divided by assets — 300/1,000 — is 30%, and losing 30% of 1,000 (300) leaves exactly nothing. This one rule travels everywhere: a bank levered 20 to 1 is wiped out by a 5% loss, one levered 30 to 1 by about 3.3%, and the largest US investment banks were running at around 30 to 1 before 2008. That is the arithmetic of that crisis in one line.',
     },
     {
       id: 'sim-leverage',
@@ -162,9 +162,9 @@ export const kabLeverageLesson = defineLesson({
       tags: ['leverage', 'solvency'],
       xp: 30,
       prompt: 'How much cushion is enough?',
-      instructions: 'Move the equity down and watch what a small loss starts doing',
+      instructions: 'Try 50 and 300 of equity, then find how much equity survives a 50% loss',
       narrative:
-        'The bank controls 1,000 of assets. Change how much of that is the owner’s own money rather than borrowed, and watch two numbers move together: how levered it is, and how small a write-down it takes to leave nothing. Sal’s bank sits at 300 of equity. The investment banks of 2007 sat nearer 30.',
+        'The bank holds 1,000 of assets. Change how much of that was paid for with the owner’s own money rather than borrowed money, and watch two numbers move together: how levered the bank is, and how small a loss it takes to leave nothing. Sal’s bank has 300 of equity. The big investment banks of 2007 had nearer 30 per 1,000 of assets.',
       constants: {
         assets: 1000,
       },
@@ -181,7 +181,7 @@ export const kabLeverageLesson = defineLesson({
         },
         {
           key: 'lossRate',
-          label: 'Write-down on the assets',
+          label: 'Loss on the assets',
           min: 0,
           max: 0.5,
           step: 0.05,
@@ -193,7 +193,7 @@ export const kabLeverageLesson = defineLesson({
       readouts: [
         {
           key: 'equityAfter',
-          label: 'Equity after the write-down',
+          label: 'Equity after the loss',
           formulaId: 'equity_after_loss',
           format: 'currency',
           emphasis: true,
@@ -208,19 +208,19 @@ export const kabLeverageLesson = defineLesson({
         },
         {
           key: 'wipeout',
-          label: 'Write-down that wipes it out',
+          label: 'Loss that wipes it out',
           formulaId: 'wipeout_loss_rate',
           format: 'percent',
           caption: 'Equity / assets',
         },
       ],
       objective: {
-        description: 'Find a capital cushion that survives a 50% write-down',
+        description: 'Try 50 and 300 of equity, then find an amount that survives a 50% loss',
         requiredObservations: [{ sliderKey: 'equity', values: [50, 300] }],
         target: { readoutKey: 'equityAfter', comparator: 'gte', value: 0 },
       },
       explanation:
-        'At 300 of equity a 50% loss leaves minus 200 — the video’s own result. To survive losing half your assets you need to have funded half of them yourself, which no bank does, because a bank funded half by equity earns a fraction of the return on it. That is the trade in one screen: every point of leverage raises the return on the owner’s money in good years and shortens the distance to zero in bad ones.',
+        'At 300 of equity a 50% loss leaves minus 200 — the video’s own result. To survive losing half your assets you need to have paid for half of them (500) with your own money. No bank does that, because a bank funded half by equity earns a much lower return on that equity. That is the trade-off in one screen: more leverage raises the return on the owner’s money in good years and brings zero closer in bad ones.',
     },
   ],
   keyTakeaways: [
