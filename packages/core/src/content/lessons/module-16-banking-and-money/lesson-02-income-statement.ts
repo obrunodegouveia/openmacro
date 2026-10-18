@@ -11,13 +11,141 @@ export const kabIncomeStatementLesson = defineLesson({
     'A balance sheet is a photograph. An income statement is the film between two photographs — and it ends at the change in equity.',
   icon: '📄',
   difficulty: 'intro',
-  estimatedMinutes: 16,
+  estimatedMinutes: 18,
   video: {
     url: 'https://www.youtube.com/watch?v=h3lMANILkw0',
     minutes: 12,
     source: 'Khan Academy — Banking 2',
   },
   challenges: [
+    // ---- Olivia warm-ups --------------------------------------------------
+    // Sal builds an income statement in this video and shows that the profit
+    // a bank keeps is exactly the rise in its equity. These four do the same at
+    // Olivia's merch table and Breno's music shop, picking up her €60 of equity
+    // from lesson 1.
+    {
+      id: 'olivia-merch-words',
+      type: 'concept_match',
+      xp: 10,
+      tags: ['basics', 'income-statement'],
+      prompt:
+        'Olivia runs a merch table at the school talent show, selling badges and bracelets. Match each word to what happens at her table.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'income',
+          term: 'Income',
+          definition: 'Money coming in: €2 for every bracelet she sells',
+        },
+        {
+          id: 'costs',
+          term: 'Costs',
+          definition: 'Money going out to make them: the beads, the pins, the sign',
+        },
+        {
+          id: 'profit',
+          term: 'Profit',
+          definition: 'What is left over for her when the show is done',
+        },
+      ],
+      explanation:
+        'Income is what comes in, costs are what she pays to make it happen, and profit is what is left. Sal’s income statement is the same list, with interest instead of bracelets.',
+    },
+    {
+      id: 'olivia-profit',
+      type: 'multiple_choice',
+      xp: 10,
+      tags: ['basics', 'income-statement'],
+      prompt:
+        'At the talent show Olivia sells €40 of badges and bracelets. The beads and pins cost her €10, and printing a sign cost €5. What is her profit?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'twentyfive', label: '€25' },
+        {
+          id: 'forty',
+          label: '€40',
+          feedback:
+            '€40 is her income — everything that came in. Profit is what is left after the costs are paid.',
+        },
+        {
+          id: 'thirty',
+          label: '€30',
+          feedback: 'You took off the beads and pins but not the sign. Every cost comes off.',
+        },
+        {
+          id: 'fiftyfive',
+          label: '€55',
+          feedback: 'Costs come off, not on: €40 − €10 − €5.',
+        },
+      ],
+      correctOptionId: 'twentyfive',
+      explanation:
+        'Profit is income minus costs: €40 − €10 − €5 = €25. Grown-ups call it net income, and it is the bottom line of Sal’s income statement too.',
+    },
+    {
+      id: 'olivia-breno-shop-profit',
+      type: 'multiple_choice',
+      xp: 10,
+      tags: ['basics', 'income-statement'],
+      prompt:
+        'Breno’s music shop has its own list. This week he sells €200 of strings and picks. Buying them from the factory cost him €100, and the shop’s rent is €60. What is the shop’s profit this week?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'forty', label: '€40' },
+        {
+          id: 'twohundred',
+          label: '€200',
+          feedback:
+            '€200 is the shop’s income — everything customers paid. Breno still has to pay for the strings and the rent.',
+        },
+        {
+          id: 'hundred',
+          label: '€100',
+          feedback: 'You took off what the strings cost him but not the rent. Rent is a cost too.',
+        },
+        {
+          id: 'sixty',
+          label: '€60',
+          feedback: '€60 is the rent, one of his costs. Profit is what is left after all of them.',
+        },
+      ],
+      correctOptionId: 'forty',
+      explanation:
+        'Income minus costs: €200 − €100 − €60 = €40. A merch table, a music shop and Sal’s bank all use the same list — only the lines change.',
+    },
+    {
+      id: 'olivia-profit-grows-equity',
+      type: 'multiple_choice',
+      xp: 10,
+      tags: ['basics', 'equity', 'income-statement'],
+      prompt:
+        'Before the show, what was truly Olivia’s was €60. She puts her €25 profit in her piggy bank and owes nobody anything new. What is truly hers now?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'eightyfive', label: '€85' },
+        {
+          id: 'sixty',
+          label: '€60',
+          feedback:
+            'The profit is hers to keep. Nobody is owed it, so what is truly hers goes up.',
+        },
+        {
+          id: 'twentyfive',
+          label: '€25',
+          feedback: '€25 is only what she made at the show. Add it to the €60 she already had.',
+        },
+        {
+          id: 'thirtyfive',
+          label: '€35',
+          feedback:
+            'Profit is money coming in, so it adds to what is yours. Only a loss would take away.',
+        },
+      ],
+      correctOptionId: 'eightyfive',
+      explanation:
+        'Her piggy bank grew by €25 and she owes nothing new, so what is truly hers grew by €25 too: €60 + €25 = €85. Sal shows the same thing below — the bank keeps 200,000 of net income, and its equity rises from 1 million to 1.2 million.',
+    },
+    // ---- Sal’s bank ---------------------------------------------------------
     {
       id: 'mc-net-income-equals',
       type: 'multiple_choice',
@@ -183,5 +311,6 @@ export const kabIncomeStatementLesson = defineLesson({
     'A balance sheet is a snapshot; an income statement explains the gap between two of them.',
     'Net income equals the change in equity when nothing is paid out.',
     'Return on equity is net income over starting equity — here, 20%.',
+    'Profit is income minus costs, and profit you keep makes what is truly yours grow.',
   ],
 });

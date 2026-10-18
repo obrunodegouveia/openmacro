@@ -105,7 +105,7 @@ export const openMarketOperationsLesson = defineLesson({
             { account: 'Government bonds', side: 'asset', amount: 80e9 },
             { account: 'Reserves at the central bank', side: 'asset', amount: 20e9 },
             { account: 'Customer deposits', side: 'liability', amount: 95e9 },
-            { account: 'Equity', side: 'liability', amount: 5_000_000_000 },
+            { account: 'Equity', side: 'liability', amount: 5_000_000_000, equity: true },
           ],
         },
       ],

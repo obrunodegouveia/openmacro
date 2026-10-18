@@ -24,8 +24,9 @@ import type {
   MonetaryTier,
   TAccountEntity,
   TAccountEntryOption,
+  TAccountLine,
 } from '@openmacro/core/content/schema';
-import { entityBalance, openingTotal } from '@openmacro/core/engine/tAccounts';
+import { entityBalance, entityHasEquity, isEquity } from '@openmacro/core/engine/tAccounts';
 import { tapCue } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
@@ -35,7 +36,7 @@ import { formatCompactCurrency, formatSignedCompactCurrency, seededShuffle } fro
 /**
  * The tier badge on each sheet.
  *
- * A `MonetaryTier` is one of four fixed values from the schema, and the
+ * A `MonetaryTier` is one of a fixed set of values from the schema, and the
  * catalogue has a key per value — `entity.central_bank` and so on. Deriving
  * the key from the tier rather than keeping a second lookup table means
  * adding a tier to the schema fails to compile until its key exists, instead
@@ -50,6 +51,8 @@ const TIER_COLORS: Readonly<Record<MonetaryTier, ColorValue>> = {
   commercial_bank: palette.mintDark,
   shadow_bank: palette.goldDark,
   fiduciary_core: palette.inkMuted,
+  person: palette.ink,
+  small_business: palette.inkMuted,
 };
 
 /** Same slot identity the engine uses, for post-grading colouring. */
@@ -138,6 +141,7 @@ export function TAccountFlowView({
         <EntityCard
           key={entity.id}
           entity={entity}
+          hasEquity={entityHasEquity(challenge, entity)}
           currency={currency}
           shifts={shifts}
           placedOptions={placed
@@ -184,7 +188,9 @@ export function TAccountFlowView({
                   side: t(
                     option.shift.side === 'asset'
                       ? 'challenge.taccount.assets'
-                      : 'challenge.taccount.liabilities',
+                      : isEquity(option.shift)
+                        ? 'challenge.taccount.equity'
+                        : 'challenge.taccount.liabilities',
                   ),
                 })}
                 onPressIn={tapCue}
@@ -201,7 +207,9 @@ export function TAccountFlowView({
                     {t(
                       option.shift.side === 'asset'
                         ? 'challenge.taccount.assetsTitle'
-                        : 'challenge.taccount.liabilitiesTitle',
+                        : isEquity(option.shift)
+                          ? 'challenge.taccount.equityTitle'
+                          : 'challenge.taccount.liabilitiesTitle',
                     )}
                   </Text>
                 </View>
@@ -255,6 +263,8 @@ function entityLabel(entities: readonly TAccountEntity[], entityId: string): str
 
 interface EntityCardProps {
   entity: TAccountEntity;
+  /** Whether the right column has an equity section (see `entityHasEquity`). */
+  hasEquity: boolean;
   currency: string;
   shifts: readonly BalanceSheetShift[];
   placedOptions: readonly TAccountEntryOption[];
@@ -265,6 +275,7 @@ interface EntityCardProps {
 
 function EntityCard({
   entity,
+  hasEquity,
   currency,
   shifts,
   placedOptions,
@@ -276,73 +287,101 @@ function EntityCard({
   const balance = entityBalance(entity.id, shifts);
   const touched = placedOptions.length > 0;
 
+  const renderOpening = (lines: readonly TAccountLine[]) =>
+    lines.map((line) => (
+      <View key={`${line.account}-${line.amount}`} style={styles.openingLine}>
+        <Text style={styles.openingAccount}>{line.account}</Text>
+        <Text style={styles.openingAmount}>
+          {formatCompactCurrency(line.amount, currency, locale)}
+        </Text>
+      </View>
+    ));
+
+  const renderPosted = (posted: readonly TAccountEntryOption[]) =>
+    posted.map((option) => {
+      const correct = locked && isShiftCorrect(option.shift);
+      const wrong = locked && !correct;
+      return (
+        <Animated.View
+          key={option.id}
+          entering={FadeIn.duration(180)}
+          layout={LinearTransition.duration(200)}
+        >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('challenge.taccount.remove', {
+              account: option.shift.account,
+            })}
+            onPressIn={tapCue}
+            onPress={() => onRemove(option.id)}
+            disabled={locked}
+            style={[
+              styles.postedLine,
+              correct && styles.postedCorrect,
+              wrong && styles.postedWrong,
+            ]}
+          >
+            <Text style={styles.postedAccount}>{option.shift.account}</Text>
+            <Text
+              style={[
+                styles.postedDelta,
+                option.shift.delta < 0 ? styles.deltaDown : styles.deltaUp,
+              ]}
+            >
+              {formatSignedCompactCurrency(option.shift.delta, currency, locale)}
+            </Text>
+          </Pressable>
+        </Animated.View>
+      );
+    });
+
   const renderSide = (side: BalanceSheetSide) => {
-    const opening = (entity.openingLines ?? []).filter((line) => line.side === side);
+    const lines = (entity.openingLines ?? []).filter((line) => line.side === side);
     const posted = placedOptions.filter((option) => option.shift.side === side);
+    // Equity sits in the right column — assets = liabilities + equity — but
+    // in its own section under the debts, so the sheet never files what is
+    // truly the owner's under "what it owes".
+    const debtLines = lines.filter((line) => !isEquity(line));
+    const debtPosted = posted.filter((option) => !isEquity(option.shift));
+    const equityLines = lines.filter(isEquity);
+    const equityPosted = posted.filter((option) => isEquity(option.shift));
+    const withEquity = side === 'liability' && hasEquity;
+
+    const title =
+      side === 'asset'
+        ? 'challenge.taccount.assetsTitle'
+        : withEquity
+          ? 'challenge.taccount.liabilitiesEquityTitle'
+          : 'challenge.taccount.liabilitiesTitle';
+    const hint =
+      side === 'asset'
+        ? 'challenge.taccount.assetsHint'
+        : withEquity
+          ? 'challenge.taccount.liabilitiesEquityHint'
+          : 'challenge.taccount.liabilitiesHint';
 
     return (
       <View style={styles.column}>
-        <Text style={styles.columnHeading}>
-          {t(
-            side === 'asset'
-              ? 'challenge.taccount.assetsTitle'
-              : 'challenge.taccount.liabilitiesTitle',
-          )}
-        </Text>
+        <View style={styles.columnHeader}>
+          <Text style={styles.columnHeading}>{t(title)}</Text>
+          <Text style={styles.columnHint}>{t(hint)}</Text>
+        </View>
 
-        {opening.map((line) => (
-          <View key={`${line.account}-${line.amount}`} style={styles.openingLine}>
-            <Text style={styles.openingAccount}>
-              {line.account}
-            </Text>
-            <Text style={styles.openingAmount}>
-              {formatCompactCurrency(line.amount, currency, locale)}
-            </Text>
-          </View>
-        ))}
+        {renderOpening(debtLines)}
 
-        {opening.length === 0 && posted.length === 0 ? (
+        {debtLines.length === 0 && debtPosted.length === 0 && !withEquity ? (
           <Text style={styles.emptySide}>—</Text>
         ) : null}
 
-        {posted.map((option) => {
-          const correct = locked && isShiftCorrect(option.shift);
-          const wrong = locked && !correct;
-          return (
-            <Animated.View
-              key={option.id}
-              entering={FadeIn.duration(180)}
-              layout={LinearTransition.duration(200)}
-            >
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t('challenge.taccount.remove', {
-                  account: option.shift.account,
-                })}
-                onPressIn={tapCue}
-                onPress={() => onRemove(option.id)}
-                disabled={locked}
-                style={[
-                  styles.postedLine,
-                  correct && styles.postedCorrect,
-                  wrong && styles.postedWrong,
-                ]}
-              >
-                <Text style={styles.postedAccount}>
-                  {option.shift.account}
-                </Text>
-                <Text
-                  style={[
-                    styles.postedDelta,
-                    option.shift.delta < 0 ? styles.deltaDown : styles.deltaUp,
-                  ]}
-                >
-                  {formatSignedCompactCurrency(option.shift.delta, currency, locale)}
-                </Text>
-              </Pressable>
-            </Animated.View>
-          );
-        })}
+        {renderPosted(debtPosted)}
+
+        {withEquity ? (
+          <View style={styles.equitySection}>
+            <Text style={styles.equityHeading}>{t('challenge.taccount.equityTitle')}</Text>
+            {renderOpening(equityLines)}
+            {renderPosted(equityPosted)}
+          </View>
+        ) : null}
 
         {/* Running total for this side, once anything has been posted. */}
         {touched ? (
@@ -360,14 +399,17 @@ function EntityCard({
         <View style={styles.entityIdentity}>
           <Text style={styles.entityLabel}>{entity.label}</Text>
           {entity.role ? <Text style={styles.entityRole}>{entity.role}</Text> : null}
-        </View>
-        <View style={[styles.tierBadge, { borderColor: TIER_COLORS[entity.tier] }]}>
-          <Text
-            maxFontSizeMultiplier={fontScale.chrome}
-            style={[styles.tierText, { color: TIER_COLORS[entity.tier] }]}
-          >
-            {tierLabel(t, entity.tier)}
-          </Text>
+          {/* Under the name rather than beside it, as on the website: a long
+              tier («Pequena empresa») beside the name squeezed the name and
+              role into a narrow column on a phone. */}
+          <View style={[styles.tierBadge, { borderColor: TIER_COLORS[entity.tier] }]}>
+            <Text
+              maxFontSizeMultiplier={fontScale.chrome}
+              style={[styles.tierText, { color: TIER_COLORS[entity.tier] }]}
+            >
+              {tierLabel(t, entity.tier)}
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -441,6 +483,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   tierBadge: {
+    alignSelf: 'flex-start',
+    marginTop: spacing.xs,
     borderWidth: 1,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.sm,
@@ -463,11 +507,33 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.xs,
   },
+  columnHeader: {
+    marginBottom: 2,
+  },
   columnHeading: {
     ...typography.overline,
     color: palette.inkFaint,
     textTransform: 'uppercase',
-    marginBottom: 2,
+  },
+  columnHint: {
+    ...typography.caption,
+    color: palette.inkFaint,
+    fontWeight: '500',
+  },
+  equitySection: {
+    // Set apart from the debts above it: a rule, a little air and its own
+    // label, so equity reads as a different kind of thing in the same column.
+    borderTopWidth: 1,
+    borderTopColor: palette.border,
+    borderStyle: 'dashed',
+    paddingTop: spacing.xs,
+    marginTop: spacing.xs,
+    gap: spacing.xs,
+  },
+  equityHeading: {
+    ...typography.overline,
+    color: palette.mintDark,
+    textTransform: 'uppercase',
   },
   openingLine: {
     gap: 0,

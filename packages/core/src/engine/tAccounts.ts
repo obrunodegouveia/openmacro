@@ -225,9 +225,13 @@ export function describeVerdict(
   // word changes the rest of the sentence cannot be served by substitution.
   const [firstMissing] = verdict.missing;
   if (firstMissing) {
-    return firstMissing.side === 'asset'
-      ? t('grade.taccount.missingAsset', { entity: labelOf(firstMissing.entityId) })
-      : t('grade.taccount.missingLiability', { entity: labelOf(firstMissing.entityId) });
+    const entity = labelOf(firstMissing.entityId);
+    if (firstMissing.side === 'asset') return t('grade.taccount.missingAsset', { entity });
+    // "Missing a posting on the liability side" about equity would tell the
+    // learner the very thing the sheet now avoids saying: that equity is owed.
+    return firstMissing.equity
+      ? t('grade.taccount.missingEquity', { entity })
+      : t('grade.taccount.missingLiability', { entity });
   }
 
   return undefined;
@@ -241,4 +245,33 @@ export function openingTotal(
   return (entity.openingLines ?? [])
     .filter((line: TAccountLine) => line.side === side)
     .reduce((sum, line) => sum + line.amount, 0);
+}
+
+/**
+ * Whether a right-hand line or posting is equity rather than a debt.
+ *
+ * Display only — grading and balancing treat equity as part of the right-hand
+ * side, so assets = liabilities + equity holds without special cases.
+ */
+export function isEquity(item: { side: BalanceSheetSide; equity?: boolean }): boolean {
+  return item.side === 'liability' && item.equity === true;
+}
+
+/**
+ * Whether an entity's sheet has an equity section at all: an opening line, or
+ * any entry the learner could post to it, flagged as equity.
+ *
+ * Both clients use this to decide whether the right column reads
+ * "Liabilities" or "Liabilities + equity". Counting offered entries, traps
+ * included, keeps the heading the same before and after a learner posts.
+ */
+export function entityHasEquity(
+  challenge: Pick<TAccountFlowChallenge, 'options' | 'expectedShifts'>,
+  entity: TAccountEntity,
+): boolean {
+  return (
+    (entity.openingLines ?? []).some(isEquity) ||
+    challenge.options.some((option) => option.shift.entityId === entity.id && isEquity(option.shift)) ||
+    challenge.expectedShifts.some((shift) => shift.entityId === entity.id && isEquity(shift))
+  );
 }

@@ -140,7 +140,7 @@ export const bailInBailOutLesson = defineLesson({
             { account: 'Loans and securities', side: 'asset', amount: 98e9 },
             { account: 'Customer deposits', side: 'liability', amount: 95e9 },
             { account: 'Junior bonds', side: 'liability', amount: 5e9 },
-            { account: 'Shareholders’ equity', side: 'liability', amount: -2e9 },
+            { account: 'Shareholders’ equity', side: 'liability', amount: -2e9, equity: true },
           ],
         },
         {
@@ -150,7 +150,7 @@ export const bailInBailOutLesson = defineLesson({
           role: 'About to become shareholders',
           openingLines: [
             { account: 'Bank junior bonds', side: 'asset', amount: 5e9 },
-            { account: 'Investors’ capital', side: 'liability', amount: 5_000_000_000 },
+            { account: 'Investors’ capital', side: 'liability', amount: 5_000_000_000, equity: true },
           ],
         },
       ],
@@ -161,7 +161,7 @@ export const bailInBailOutLesson = defineLesson({
         },
         {
           id: 'bank-equity-up',
-          shift: { entityId: 'bank', side: 'liability', account: 'Shareholders’ equity', delta: 5e9 },
+          shift: { entityId: 'bank', side: 'liability', account: 'Shareholders’ equity', delta: 5e9, equity: true },
         },
         {
           id: 'holders-bonds-down',
@@ -192,7 +192,7 @@ export const bailInBailOutLesson = defineLesson({
       ],
       expectedShifts: [
         { entityId: 'bank', side: 'liability', account: 'Junior bonds', delta: -5e9 },
-        { entityId: 'bank', side: 'liability', account: 'Shareholders’ equity', delta: 5e9 },
+        { entityId: 'bank', side: 'liability', account: 'Shareholders’ equity', delta: 5e9, equity: true },
         { entityId: 'bondholders', side: 'asset', account: 'Bank junior bonds', delta: -5e9 },
         { entityId: 'bondholders', side: 'asset', account: 'Bank shares', delta: 5e9 },
       ],

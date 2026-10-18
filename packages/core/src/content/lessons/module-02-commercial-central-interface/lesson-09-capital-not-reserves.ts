@@ -94,7 +94,7 @@ export const capitalNotReservesLesson = defineLesson({
             { account: 'Loans to customers', side: 'asset', amount: 90e9 },
             { account: 'Reserves at the central bank', side: 'asset', amount: 10e9 },
             { account: 'Customer deposits', side: 'liability', amount: 88e9 },
-            { account: 'Shareholders’ equity', side: 'liability', amount: 12e9 },
+            { account: 'Shareholders’ equity', side: 'liability', amount: 12e9, equity: true },
           ],
         },
         {
@@ -105,7 +105,7 @@ export const capitalNotReservesLesson = defineLesson({
           openingLines: [
             { account: 'Property under development', side: 'asset', amount: 6e9 },
             { account: 'Bank loans', side: 'liability', amount: 4e9 },
-            { account: 'Shareholders’ equity', side: 'liability', amount: 2e9 },
+            { account: 'Shareholders’ equity', side: 'liability', amount: 2e9, equity: true },
           ],
         },
       ],
@@ -116,7 +116,7 @@ export const capitalNotReservesLesson = defineLesson({
         },
         {
           id: 'bank-equity-down',
-          shift: { entityId: 'bank', side: 'liability', account: 'Shareholders’ equity', delta: -4e9 },
+          shift: { entityId: 'bank', side: 'liability', account: 'Shareholders’ equity', delta: -4e9, equity: true },
         },
         {
           id: 'dev-property-down',
@@ -124,7 +124,7 @@ export const capitalNotReservesLesson = defineLesson({
         },
         {
           id: 'dev-equity-down',
-          shift: { entityId: 'developer', side: 'liability', account: 'Shareholders’ equity', delta: -4e9 },
+          shift: { entityId: 'developer', side: 'liability', account: 'Shareholders’ equity', delta: -4e9, equity: true },
         },
         {
           id: 'bank-deposits-down',
@@ -147,9 +147,9 @@ export const capitalNotReservesLesson = defineLesson({
       ],
       expectedShifts: [
         { entityId: 'bank', side: 'asset', account: 'Loans to customers', delta: -4e9 },
-        { entityId: 'bank', side: 'liability', account: 'Shareholders’ equity', delta: -4e9 },
+        { entityId: 'bank', side: 'liability', account: 'Shareholders’ equity', delta: -4e9, equity: true },
         { entityId: 'developer', side: 'asset', account: 'Property under development', delta: -4e9 },
-        { entityId: 'developer', side: 'liability', account: 'Shareholders’ equity', delta: -4e9 },
+        { entityId: 'developer', side: 'liability', account: 'Shareholders’ equity', delta: -4e9, equity: true },
       ],
       aggregateEffects: [
         {

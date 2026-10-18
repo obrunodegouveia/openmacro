@@ -24,6 +24,22 @@ function slotKey(shift: BalanceSheetShift): string {
   return `${shift.entityId}::${shift.side}::${shift.account.trim().toLowerCase()}`;
 }
 
+/**
+ * Account names that read as the owner's own stake rather than a debt.
+ *
+ * "Other liabilities and capital" and "Other deposits and equity" are left
+ * out on purpose: they lump debts and equity into one line, and calling the
+ * whole line equity would be as wrong as calling it a debt.
+ */
+const EQUITY_NAME = /\b(equity|net worth)\b|’ capital$|'s capital$|^capital and reserves$/i;
+const MIXED_LINE = /\bother\b|\bliabilit|\bdeposit/i;
+
+/** True for an account name that should carry `equity: true`. */
+export function looksLikeEquity(account: string): boolean {
+  const name = account.trim();
+  return EQUITY_NAME.test(name) && !MIXED_LINE.test(name);
+}
+
 export interface ContentIssue {
   /** Dotted path to the offending node, e.g. `lesson[x].challenge[y].options`. */
   path: string;
@@ -165,7 +181,8 @@ function validateChallenge(challenge: Challenge, path: string): ContentIssue[] {
       // from the postings alone, so a sheet that opened with $80B of assets
       // against $640B of liabilities was still shown as balanced after the
       // trade — teaching double entry on a balance sheet that breaks it.
-      // Equity is entered as a liability-side line, as on the sheets.
+      // Equity is a right-hand line (flagged `equity`), so this checks
+      // assets = liabilities + equity.
       for (const entity of challenge.entities) {
         const lines = entity.openingLines ?? [];
         if (lines.length === 0) continue;
@@ -182,6 +199,46 @@ function validateChallenge(challenge: Challenge, path: string): ContentIssue[] {
               '"Other assets" or "Equity") so the sheet the learner starts from obeys double entry.',
           );
         }
+      }
+
+      // Equity is shown apart from debts, in its own part of the right
+      // column. That only works if every line, option and expected posting
+      // for the same account agrees on whether it is equity — otherwise a
+      // posting would land in a different section from its opening line.
+      {
+        const equityBySlot = new Map<string, { flagged: boolean; where: string }>();
+        const visit = (
+          item: { side: string; account: string; equity?: boolean },
+          entityId: string,
+          where: string,
+        ) => {
+          if (item.equity && item.side !== 'liability') {
+            at(`${where}: "${item.account}" is flagged \`equity\` but sits on the asset side. Equity belongs on the right.`);
+            return;
+          }
+          if (item.side !== 'liability') return;
+          if (!item.equity && looksLikeEquity(item.account)) {
+            at(
+              `${where}: "${item.account}" on "${entityId}" reads as equity but is not flagged \`equity: true\`, ` +
+                'so the sheet would list it under what the entity owes.',
+            );
+          }
+          const key = `${entityId}::${item.account.trim().toLowerCase()}`;
+          const flagged = item.equity === true;
+          const seen = equityBySlot.get(key);
+          if (!seen) equityBySlot.set(key, { flagged, where });
+          else if (seen.flagged !== flagged) {
+            at(
+              `"${item.account}" on "${entityId}" is flagged \`equity\` in ${flagged ? where : seen.where} ` +
+                `but not in ${flagged ? seen.where : where}. Flag every occurrence or none.`,
+            );
+          }
+        };
+        for (const entity of challenge.entities) {
+          for (const line of entity.openingLines ?? []) visit(line, entity.id, `entity "${entity.id}" opening line`);
+        }
+        for (const option of challenge.options) visit(option.shift, option.shift.entityId, `option "${option.id}"`);
+        for (const shift of challenge.expectedShifts) visit(shift, shift.entityId, 'expectedShifts');
       }
 
       // Distractors are what make the challenge a test rather than a sort.

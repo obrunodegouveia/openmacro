@@ -69,7 +69,7 @@ export const whatABankIsLesson = defineLesson({
           openingLines: [
             { account: 'Cash in your pocket', side: 'asset', amount: 1500 },
             { account: 'Money in the bank', side: 'asset', amount: 2400 },
-            { account: 'Net worth', side: 'liability', amount: 3_900 },
+            { account: 'Net worth', side: 'liability', amount: 3_900, equity: true },
           ],
         },
         {

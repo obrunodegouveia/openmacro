@@ -108,7 +108,7 @@ export const goldAndRevaluationLesson = defineLesson({
             { account: 'Gold and gold receivables', side: 'asset', amount: 1232838000000 },
             { account: 'Securities held for monetary policy purposes', side: 'asset', amount: 3363311000000 },
             { account: 'Revaluation accounts', side: 'liability', amount: 1208186000000 },
-            { account: 'Capital and reserves', side: 'liability', amount: 28202000000 },
+            { account: 'Capital and reserves', side: 'liability', amount: 28202000000, equity: true },
             { account: 'Banknotes and other liabilities', side: 'liability', amount: 3_359_761_000_000 },
           ],
         },
@@ -119,7 +119,7 @@ export const goldAndRevaluationLesson = defineLesson({
           role: 'Where the price is set — and nothing is traded here today',
           openingLines: [
             { account: 'Bullion held by others', side: 'asset', amount: 5000000000000 },
-            { account: 'Owners’ net worth', side: 'liability', amount: 5_000_000_000_000 },
+            { account: 'Owners’ net worth', side: 'liability', amount: 5_000_000_000_000, equity: true },
           ],
         },
       ],
@@ -149,6 +149,7 @@ export const goldAndRevaluationLesson = defineLesson({
             side: 'liability',
             account: 'Capital and reserves',
             delta: 123000000000,
+            equity: true,
           },
           feedback:
             'This is the entry the rules exist to prevent. An unrealised gain that flowed into capital could be paid out to governments as profit — which would mean distributing money the Eurosystem has not actually received, on the strength of a price that can fall again.',

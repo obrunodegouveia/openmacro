@@ -58,6 +58,7 @@
     "audit:content": "node ./scripts/audit-content.mjs",
     "lint:content": "node ./scripts/validate-content.mjs",
     "check:exam": "node ./scripts/check-exam.mjs",
+    "test:engine": "node --test ./scripts/test-engine.mjs",
     "check:feedback": "node ./scripts/check-feedback.mjs",
     "test:e2e": "maestro test .maestro",
     "check:review": "node ./scripts/check-review.mjs",

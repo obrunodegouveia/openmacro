@@ -630,6 +630,11 @@ export const en = {
   'tflow.liabilities': 'Liabilities',
   'tflow.assetsHint': 'What it owns',
   'tflow.liabilitiesHint': 'What it owes',
+  // The right column when the sheet has equity in it. Equity is not a debt,
+  // so a column headed only "Liabilities" mislabels it.
+  'tflow.liabilitiesEquity': 'Liabilities + equity',
+  'tflow.liabilitiesEquityHint': 'What it owes + what’s truly its own',
+  'tflow.equity': 'Equity',
   'tflow.removeA11y': 'Remove {account} from {entity} {side}',
   'tflow.placeA11y': 'Place the selected entry on {entity}’s {side}',
   'tflow.placeHere': 'Place here',

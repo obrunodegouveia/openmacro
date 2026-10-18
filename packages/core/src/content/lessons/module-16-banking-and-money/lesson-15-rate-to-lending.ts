@@ -226,7 +226,7 @@ export const kabRateToLendingLesson = defineLesson({
           role: 'Held the bond, wanted a better price',
           openingLines: [
             { account: 'Treasuries', side: 'asset', amount: 100 },
-            { account: 'Net worth', side: 'liability', amount: 100 },
+            { account: 'Net worth', side: 'liability', amount: 100, equity: true },
           ],
         },
       ],
