@@ -60,6 +60,21 @@ restate that it was correct.
 or where an aggregate depends on a definitional choice, say so in the note.
 Precision is the product.
 
+## Giving a challenge a speaker
+
+A challenge told through one of the course's recurring characters can name
+them in `speaker` — `'olivia'` or `'breno'`, from `content/characters.ts`.
+Both clients then draw them beside the prompt, thinking (or smiling, when the
+prompt is an instruction rather than a question), and again in the feedback
+sheet: excited after a right answer, sheepish after a wrong one. The faces
+are chosen in `engine/speaker.ts`, never in a client.
+
+It is presentation only and changes nothing that is asked or graded. Leave it
+out of challenges with nobody in them, which is most of the course.
+`lint:content` rejects an id that is not registered. A new character is an
+entry in `characters.ts` plus its four faces in each client — see the header
+of that file.
+
 ## Before you open a PR
 
 ```bash
