@@ -94,6 +94,7 @@ export const quantitativeTighteningLesson = defineLesson({
             { account: 'Government bonds', side: 'asset', amount: 3e12 },
             { account: 'Commercial bank reserves', side: 'liability', amount: 2.5e12 },
             { account: 'Government deposit', side: 'liability', amount: 200e9 },
+            { account: 'Other liabilities and capital', side: 'liability', amount: 300_000_000_000 },
           ],
         },
         {
@@ -104,6 +105,7 @@ export const quantitativeTighteningLesson = defineLesson({
           openingLines: [
             { account: 'Deposit at the central bank', side: 'asset', amount: 200e9 },
             { account: 'Bonds outstanding', side: 'liability', amount: 2.4e12 },
+            { account: 'Accumulated deficits', side: 'asset', amount: 2_200_000_000_000 },
           ],
         },
       ],

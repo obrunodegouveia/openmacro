@@ -224,7 +224,10 @@ export const kabRateToLendingLesson = defineLesson({
           label: 'Sal’s uncle',
           tier: 'fiduciary_core',
           role: 'Held the bond, wanted a better price',
-          openingLines: [{ account: 'Treasuries', side: 'asset', amount: 100 }],
+          openingLines: [
+            { account: 'Treasuries', side: 'asset', amount: 100 },
+            { account: 'Net worth', side: 'liability', amount: 100 },
+          ],
         },
       ],
       options: [

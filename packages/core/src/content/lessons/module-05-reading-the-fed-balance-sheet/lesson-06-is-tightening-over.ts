@@ -75,6 +75,7 @@ export const isTighteningOverLesson = defineLesson({
             { account: 'Securities held outright', side: 'asset', amount: 6468278000000 },
             { account: 'Federal Reserve notes', side: 'liability', amount: 2430305000000 },
             { account: 'Reserve balances', side: 'liability', amount: 2929285000000 },
+            { account: 'Other liabilities and capital', side: 'liability', amount: 1_108_688_000_000 },
           ],
         },
         {
@@ -86,6 +87,7 @@ export const isTighteningOverLesson = defineLesson({
             { account: 'Reserve deposits at the Fed', side: 'asset', amount: 40000000000 },
             { account: 'Vault cash', side: 'asset', amount: 2000000000 },
             { account: 'Customer deposits', side: 'liability', amount: 500000000000 },
+            { account: 'Loans and other assets', side: 'asset', amount: 458_000_000_000 },
           ],
         },
       ],

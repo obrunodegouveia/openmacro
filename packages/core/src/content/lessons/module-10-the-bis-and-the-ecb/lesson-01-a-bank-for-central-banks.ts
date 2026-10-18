@@ -120,6 +120,7 @@ export const aBankForCentralBanksLesson = defineLesson({
           openingLines: [
             { account: 'Government securities', side: 'asset', amount: 140000000000 },
             { account: 'Currency deposits', side: 'liability', amount: 428000000000 },
+            { account: 'Other assets', side: 'asset', amount: 288_000_000_000 },
           ],
         },
       ],

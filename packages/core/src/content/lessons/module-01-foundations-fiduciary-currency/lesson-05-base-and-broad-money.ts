@@ -133,6 +133,7 @@ export const baseAndBroadMoneyLesson = defineLesson({
             { account: 'Vault cash', side: 'asset', amount: 20e6 },
             { account: 'Reserves at the central bank', side: 'asset', amount: 300e6 },
             { account: 'Customer deposits', side: 'liability', amount: 1.2e9 },
+            { account: 'Loans and other assets', side: 'asset', amount: 880_000_000 },
           ],
         },
         {

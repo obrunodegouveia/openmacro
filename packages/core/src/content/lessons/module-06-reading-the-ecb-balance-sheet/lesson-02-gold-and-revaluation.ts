@@ -109,6 +109,7 @@ export const goldAndRevaluationLesson = defineLesson({
             { account: 'Securities held for monetary policy purposes', side: 'asset', amount: 3363311000000 },
             { account: 'Revaluation accounts', side: 'liability', amount: 1208186000000 },
             { account: 'Capital and reserves', side: 'liability', amount: 28202000000 },
+            { account: 'Banknotes and other liabilities', side: 'liability', amount: 3_359_761_000_000 },
           ],
         },
         {
@@ -118,6 +119,7 @@ export const goldAndRevaluationLesson = defineLesson({
           role: 'Where the price is set — and nothing is traded here today',
           openingLines: [
             { account: 'Bullion held by others', side: 'asset', amount: 5000000000000 },
+            { account: 'Owners’ net worth', side: 'liability', amount: 5_000_000_000_000 },
           ],
         },
       ],

@@ -50,6 +50,7 @@ export const theBisAndTheEcbPtPT: ContentDictionary = {
   'what-the-bis-is.reserve-placement.entity.bis.role': 'Aceita o depósito, investe o produto',
   'what-the-bis-is.reserve-placement.account.government-securities': 'Títulos de dívida pública',
   'what-the-bis-is.reserve-placement.account.currency-deposits': 'Depósitos em moeda',
+  'what-the-bis-is.reserve-placement.account.other-assets': 'Outros ativos',
   'what-the-bis-is.reserve-placement.option.ncb-notes-up.feedback': 'Não foi emitido nada. O banco central nacional trocou um ativo por outro; o seu passivo é exatamente o que era esta manhã.',
   'what-the-bis-is.reserve-placement.effect.0.note': 'Não se criou nem destruiu moeda de base em euros. Isto é um gestor de reservas a mudar um depósito de sítio.',
   'what-the-bis-is.reserve-placement.effect.1.note': 'Nada na massa monetária da área do euro se mexeu.',

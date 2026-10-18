@@ -71,6 +71,7 @@ export const capitalAndWhatItBuildsLesson = defineLesson({
             { account: 'Loans', side: 'asset', amount: 500000000 },
             { account: 'Reserves at the Fed', side: 'asset', amount: 60000000 },
             { account: 'Customer deposits', side: 'liability', amount: 540000000 },
+            { account: 'Equity', side: 'liability', amount: 20_000_000 },
           ],
         },
         {

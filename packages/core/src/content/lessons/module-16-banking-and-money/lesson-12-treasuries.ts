@@ -170,6 +170,7 @@ export const kabTreasuriesLesson = defineLesson({
             { account: 'Gold', side: 'asset', amount: 100 },
             { account: 'Loans', side: 'asset', amount: 150 },
             { account: 'Demand deposits', side: 'liability', amount: 200 },
+            { account: 'Equity', side: 'liability', amount: 50 },
           ],
         },
       ],

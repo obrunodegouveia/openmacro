@@ -180,6 +180,7 @@ export const theTreasuryOnThePhonePtPT: ContentDictionary = {
   'yield-control-by-another-name.tacc-post-the-buyback.account.cash-at-the-central-bank': 'Depósito no banco central',
   'yield-control-by-another-name.tacc-post-the-buyback.account.10-year-bonds': 'Obrigações a 10 anos',
   'yield-control-by-another-name.tacc-post-the-buyback.account.bills': 'Bilhetes do Tesouro',
+  'yield-control-by-another-name.tacc-post-the-buyback.account.accumulated-deficits': 'Défices acumulados',
   'yield-control-by-another-name.tacc-post-the-buyback.entity.pension.label': 'Fundo de Pensões',
   'yield-control-by-another-name.tacc-post-the-buyback.entity.pension.role': 'Investidor de longo prazo, a vender obrigações',
   'yield-control-by-another-name.tacc-post-the-buyback.account.cash': 'Liquidez',

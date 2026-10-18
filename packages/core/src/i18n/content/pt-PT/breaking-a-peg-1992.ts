@@ -129,6 +129,7 @@ export const breakingAPeg1992PtPT: ContentDictionary = {
   'defending-a-peg.intervention-posting.account.sterling-deposits': 'Depósitos em libras',
   'defending-a-peg.intervention-posting.account.d-mark-deposits': 'Depósitos em marcos alemães',
   'defending-a-peg.intervention-posting.account.sterling-borrowings': 'Financiamento em libras',
+  'defending-a-peg.intervention-posting.account.investors-capital': 'Capital dos investidores',
   'defending-a-peg.intervention-posting.option.boe-domestic-up.feedback': 'Este é o lançamento da esterilização, e é o instinto certo no momento errado. Comprar ativos domésticos repunha as libras e desfazia o aperto automático — que é o que os bancos centrais costumam fazer, e exatamente o que retira à defesa o seu único efeito auto-corretor.',
   'defending-a-peg.intervention-posting.option.fund-borrowings-down.feedback': 'O fundo não reembolsou nada. Continua a dever todas as libras que pediu emprestadas — é essa a posição inteira. Limitou-se a trocar as libras que tinha por marcos.',
   'defending-a-peg.intervention-posting.effect.0.note': 'Foi destruída moeda de base em libras. Comprar a tua própria moeda extingue-a — a defesa aperta a política monetária automaticamente, numa recessão.',

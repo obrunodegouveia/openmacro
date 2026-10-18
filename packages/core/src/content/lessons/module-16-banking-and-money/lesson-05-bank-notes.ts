@@ -109,6 +109,7 @@ export const kabBankNotesLesson = defineLesson({
             { account: 'Gold in the vault', side: 'asset', amount: 1000 },
             { account: 'Building', side: 'asset', amount: 100 },
             { account: 'Demand deposits', side: 'liability', amount: 1000 },
+            { account: 'Equity', side: 'liability', amount: 100 },
           ],
         },
         {
@@ -116,7 +117,10 @@ export const kabBankNotesLesson = defineLesson({
           label: 'Villager A',
           tier: 'fiduciary_core',
           role: 'Holds a claim either way',
-          openingLines: [{ account: 'Deposit at Bank of Sal', side: 'asset', amount: 500 }],
+          openingLines: [
+            { account: 'Deposit at Bank of Sal', side: 'asset', amount: 500 },
+            { account: 'Net worth', side: 'liability', amount: 500 },
+          ],
         },
       ],
       options: [
