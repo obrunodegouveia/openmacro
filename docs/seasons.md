@@ -8,7 +8,7 @@ next one.
 ## The calendar
 
 In the learner's local time, both ends inclusive (`SEASONS` in
-`packages/core/src/season.ts`). The nature seasons follow the northern
+`packages/core/src/season.ts`, which is the package's `NORTHERN_CALENDAR`). The nature seasons follow the northern
 hemisphere's astronomical seasons, rounded to fixed days, and between them
 cover every day of the year (`check:seasons` proves there are no gaps). The
 holidays have `priority: 1`, so they win the days they share.
@@ -30,12 +30,17 @@ progress, so the parity rule (CONTRIBUTING.md) holds by construction.
 
 ## The layers
 
+Everything about seasons is the reusable package `packages/seasons`
+(`@openmacro/seasons`), which knows nothing about OpenMacro; OpenMacro uses
+it exactly as another app would. Its README is the porting guide.
+
 | Layer | Where | Knows about |
 |---|---|---|
-| **Engine** | `packages/seasons` (`@openmacro/seasons`) | Calendars, preferences, remote config. Nothing about OpenMacro; reusable in any app. |
-| **Catalogue** | `packages/core/src/season.ts` | Which seasons, when, and everything each one is (a *pack*: palette, sky, particles, details, toy, strings). Shared by both clients. |
-| **Visuals** | `src/seasons/visuals` (app: React Native, Reanimated, Gesture Handler); `web/src/components/site/seasons/visuals` (site: React and CSS) | App-agnostic primitives: plain props in, pixels out. No OpenMacro imports, so they can move into `packages/seasons` or another app as they are. |
-| **Wrappers** | `src/components/ui/Seasonal*.tsx`, `src/theme/palette.ts` (app); `web/src/components/site/seasonal-*.tsx`, `web/src/components/site/seasons/*.tsx`, `web/src/lib/season*.ts` (site) | Read the live season, its pack, the theme and the strings, and hand plain values to the visuals. Nothing here names a season, except the site's optional artwork (`seasons/art.ts`). |
+| **Engine** | `@openmacro/seasons` | Calendars, preferences, remote config, which music may play. |
+| **Seasons as data** | `@openmacro/seasons/presets` | The six packs (palette, sky, particles, details, toy, string keys), calendars for both hemispheres, bundled strings, `checkPack`. |
+| **Renderers** | `@openmacro/seasons/native` (React Native, Reanimated, Gesture Handler); `@openmacro/seasons/web` (React and one stylesheet) | A provider, drop-in decorations and the primitives under them. Any pack, any app. |
+| **OpenMacro's choices** | `packages/core/src/season.ts` | Which calendar and packs (all six presets, northern), typed against our UI keys; the remote URL; the storage prefix. Shared by both clients. |
+| **OpenMacro's wiring** | App: `src/seasons/` (controller, `SeasonsProvider`), `src/components/ui/Seasonal*.tsx`, `src/theme/palette.ts`. Site: `web/src/components/site/seasons/` (provider, art, lazy renderer), `seasonal-*.tsx`, `web/src/lib/season*.ts` | Our words, colours (the role mapping), feedback, navigator, and where each decoration goes on our screens. Nothing here names a season, except the site's opt-in Halloween artwork (`seasons/art.ts`). |
 
 ## How a season is decided
 
@@ -94,9 +99,16 @@ glinting ice, icicled frost and breathing mist in winter; fog, embers,
 candlelit pumpkins and bats at Halloween; fairy lights, snow and a sleigh at
 Christmas.
 
-The site may draw a part with its own artwork instead (`seasons/art.ts`):
-Halloween's SVG cobwebs, spider, bats and pumpkins. That is optional; a
-season without it is complete.
+The site may draw a part with its own artwork instead, through the
+package's `art` hook (`seasons/art.ts`): Halloween's SVG cobwebs, spider,
+bats and pumpkins, which ship with the package. That is optional; a season
+without it is complete.
+
+A pack may also carry `music` (tracks with an app-supplied asset). The
+package only decides: `musicFor` / `useSeasonMusic` return a season's
+tracks while it is on, in the full look, with the learner's switch On, and
+`null` otherwise, meaning the app's default music. The app's player
+(`src/feedback/music.ts`) is where that answer gets wired in.
 
 ## Switching a season off, now
 
@@ -154,23 +166,28 @@ the native fingerprint is unchanged, and seasons go out as an EAS Update.
 
 ## Adding a season
 
-1. In `packages/core/src/season.ts`: add the id to `SeasonId`, a window to
-   `SEASONS` and a pack to `SEASON_PACKS`. Windows can be fixed days
+1. A pack. One the package should ship to every app goes in
+   `packages/seasons/src/presets/packs.ts` (with its strings in
+   `presets/strings.ts`, English and Portuguese); one only OpenMacro wants
+   can be written in `packages/core/src/season.ts` and merged into
+   `SEASON_PACKS`. Start from the nearest preset; see the package README's
+   "Define your own season".
+2. A window in the calendar. Windows can be fixed days
    (`{ month: 12, day: 1 }`), relative to Easter (`{ easter: -47 }` is
    Carnival), or the nth weekday (`{ month: 11, weekday: 4, nth: 4 }`), each
    with an `offset` in days. A window may wrap the new year. Give a holiday
    `priority: 1` to sit inside a nature season.
-2. Strings: `season.<id>.name`, `.greeting`, `.welcome` and `.toy.1` to `.3` in
-   every catalogue under `packages/core/src/i18n/ui/`.
-3. `npm run check:seasons`. It fails if a catalogue misses a string, any text
-   falls under WCAG AA on either client (on the canvas, the surfaces, under
-   the sky and sun at their brightest, and under the mist), a glow runs past
-   its band, anything twinkles, flickers or breathes faster than once a
-   second, the particles exceed their cap, or the calendar leaves a day
-   uncovered. The type checker covers the rest.
+3. Strings: `season.<id>.name`, `.greeting`, `.welcome` and `.toy.1` to `.3` in
+   every catalogue under `packages/core/src/i18n/ui/`. `SEASON_PACKS` is
+   typed against `UiKey`, so a missing English string does not compile.
+4. `npm run check:seasons`. It runs the package's `checkPack` on every pack
+   (AA text on every surface and under the sky, sun and mist; glows inside
+   their band; nothing faster than once a second; the particle cap), then
+   measures what each client actually paints with our token mapping, every
+   catalogue's strings, and that the calendar leaves no day uncovered.
 
 That is all: no component, no CSS, no palette file. Both clients draw the new
-pack at once, with the same primitives.
+pack at once, with the same renderers.
 
 Preview it any day with `?season=<id>` (or `?season=<id>:calm`) on the site,
 or `EXPO_PUBLIC_SEASON=<id>` in a development build.

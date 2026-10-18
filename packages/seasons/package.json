@@ -1,8 +1,8 @@
 {
   "name": "@openmacro/seasons",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Seasonal themes for any app: a calendar with movable feasts, a viewer preference, a remote kill switch and a pre-paint boot script, decided by one dependency-free function.",
+  "description": "Seasonal themes for any React Native or React web app: six seasons as data, renderers for both, a calendar with movable feasts, a viewer preference, a remote kill switch and a pre-paint boot script.",
   "license": "MIT",
   "type": "module",
   "exports": {
