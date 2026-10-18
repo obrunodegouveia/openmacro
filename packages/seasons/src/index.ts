@@ -8,6 +8,7 @@
 
 export { decide } from './engine.ts';
 export { createSeasonController, type SeasonController, type SeasonControllerOptions, type SeasonStorage } from './controller.ts';
+export { musicFor, type HasMusic, type SeasonTrack } from './music.ts';
 export { EMPTY_REMOTE_CONFIG, fetchRemoteConfig, isDatePoint, parseRemoteConfig, type RemoteSource } from './remote.ts';
 export type {
   DatePoint,

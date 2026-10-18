@@ -173,7 +173,7 @@ are in saves a lot of confusion:
 | **`packages/core`** | The course itself: content, schema, grading engine, progress rules, i18n. Imported by both clients, so a lesson is written once. |
 | **`web/`** | `openmacro.org` — Next.js 16, App Router, Tailwind v4, deployed to Cloud Run. The web course, the marketing site, the glossary and the dashboard. |
 | **repository root** | The Expo app (`app/` routes, `src/` providers, components, services, theme). |
-| **`packages/seasons`** | The seasonal-theme engine (Halloween, Christmas): calendar, the learner's On/Calm/Off, a remote kill switch. Knows nothing about OpenMacro; see `docs/seasons.md`. |
+| **`packages/seasons`** | The seasonal-theme engine (the four seasons, Halloween, Christmas): calendar, the learner's On/Calm/Off, a remote kill switch. Knows nothing about OpenMacro; see `docs/seasons.md`. |
 
 `packages/core` must keep compiling without DOM *or* React Native globals —
 the website, the mobile app and the content validator all import it, and CI

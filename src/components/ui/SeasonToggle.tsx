@@ -11,19 +11,59 @@
  * rather than leaving a learner to wonder why the screen is still orange.
  */
 
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeOut, LinearTransition, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import type { SeasonPreference } from '@openmacro/seasons';
 
+import { SeasonalBurst } from '@/components/ui/SeasonalDecor';
+import { emitFeedback } from '@/feedback';
 import { useLocale } from '@/providers/LocaleProvider';
 import { restartForSeason, useSeasonSettings } from '@/seasons';
 import { palette, radius, spacing, typography } from '@/theme/tokens';
 
 const OPTIONS: readonly SeasonPreference[] = ['auto', 'calm', 'off'];
 
+/** The selection's slide from one option to the next: quick, with a little settle. */
+const SLIDE = { damping: 18, stiffness: 220, mass: 0.8 } as const;
+
+/**
+ * The switch. The selection slides between the options on a spring, and the
+ * notes below it fade in and out, so a change of look is felt as well as
+ * seen; the decorations themselves fade in and out where they hang. Turning
+ * the season on throws a burst of it out of the switch, with a cheer.
+ *
+ * @return The switch, or nothing while no season is on the calendar.
+ */
 export function SeasonToggle() {
   const { t } = useLocale();
   const { available, preference, setPreference, needsRestart } = useSeasonSettings();
+  const [width, setWidth] = useState(0);
+  const index = OPTIONS.indexOf(preference);
+  const slot = width > 0 ? (width - spacing.xs * 2 - spacing.xs * (OPTIONS.length - 1)) / OPTIONS.length : 0;
+  const x = useSharedValue(0);
+  const placed = useRef(false);
+  // Counts each time the season is turned on, so every one gets a burst.
+  const [cheer, setCheer] = useState(0);
+
+  const choose = (option: SeasonPreference) => {
+    if (option === 'auto' && preference !== 'auto') {
+      setCheer((n) => n + 1);
+      emitFeedback('complete');
+    }
+    setPreference(option);
+  };
+
+  useEffect(() => {
+    if (slot === 0) return;
+    const target = index * (slot + spacing.xs);
+    // The first placement jumps; every change after it slides.
+    x.value = placed.current ? withSpring(target, SLIDE) : target;
+    placed.current = true;
+  }, [index, slot, x]);
+
+  const thumb = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
   if (!available) return null;
 
   return (
@@ -35,7 +75,13 @@ export function SeasonToggle() {
         </Text>
       </View>
 
-      <View accessibilityRole="radiogroup" accessibilityLabel={t('season.settings.label')} style={styles.track}>
+      <View
+        accessibilityRole="radiogroup"
+        accessibilityLabel={t('season.settings.label')}
+        style={styles.track}
+        onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
+      >
+        {slot > 0 ? <Animated.View pointerEvents="none" style={[styles.thumb, { width: slot }, thumb]} /> : null}
         {OPTIONS.map((option) => {
           const selected = option === preference;
           return (
@@ -44,8 +90,10 @@ export function SeasonToggle() {
               accessibilityRole="radio"
               accessibilityState={{ selected }}
               accessibilityHint={option === 'calm' ? t('season.mode.calmHint') : undefined}
-              onPress={() => setPreference(option)}
-              style={({ pressed }) => [styles.option, selected && styles.optionSelected, pressed && !selected && styles.optionPressed]}
+              onPress={() => choose(option)}
+              // Before the track is measured, the selected option draws its own
+              // thumb; after, the sliding one does.
+              style={({ pressed }) => [styles.option, selected && slot === 0 && styles.optionSelected, pressed && !selected && styles.optionPressed]}
             >
               <Text numberOfLines={1} style={[styles.optionText, selected && styles.optionTextSelected]}>
                 {t(`season.mode.${option}`)}
@@ -53,12 +101,22 @@ export function SeasonToggle() {
             </Pressable>
           );
         })}
+        {/* Out of the "On" option, which sits first. */}
+        {cheer > 0 && slot > 0 ? (
+          <View pointerEvents="none" style={[styles.cheer, { left: spacing.xs + slot / 2 }]}>
+            <SeasonalBurst key={cheer} />
+          </View>
+        ) : null}
       </View>
 
-      {preference === 'calm' ? <Text style={styles.note}>{t('season.mode.calmHint')}</Text> : null}
+      {preference === 'calm' ? (
+        <Animated.Text entering={FadeIn.duration(250)} exiting={FadeOut.duration(150)} style={styles.note}>
+          {t('season.mode.calmHint')}
+        </Animated.Text>
+      ) : null}
 
       {needsRestart ? (
-        <View style={styles.restart}>
+        <Animated.View entering={FadeIn.duration(250)} exiting={FadeOut.duration(150)} layout={LinearTransition} style={styles.restart}>
           <Text style={[styles.note, styles.restartText]}>{t('season.restart.body')}</Text>
           <Pressable
             accessibilityRole="button"
@@ -68,7 +126,7 @@ export function SeasonToggle() {
           >
             <Text style={styles.restartLabel}>{t('season.restart.action')}</Text>
           </Pressable>
-        </View>
+        </Animated.View>
       ) : null}
     </View>
   );
@@ -104,6 +162,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: spacing.sm,
     borderRadius: radius.sm,
+  },
+  cheer: { position: 'absolute', top: '50%', width: 0, height: 0 },
+  thumb: {
+    position: 'absolute',
+    top: spacing.xs,
+    bottom: spacing.xs,
+    left: spacing.xs,
+    borderRadius: radius.sm,
+    backgroundColor: palette.surface,
+    borderWidth: 1,
+    borderColor: palette.borderStrong,
+    shadowColor: palette.shadow,
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   optionSelected: {
     backgroundColor: palette.surface,

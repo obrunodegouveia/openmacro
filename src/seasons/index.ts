@@ -1,36 +1,27 @@
 /**
- * Seasons in the app: the hooks every decoration reads.
+ * Seasons in the app.
  *
- * The decision itself is `@openmacro/seasons`; the calendar and the packs
- * are `@openmacro/core/season`, shared with the website. See
- * `docs/seasons.md` for how it all fits.
+ * The decision is `@openmacro/seasons`, the six seasons are its presets
+ * (referenced by `@openmacro/core/season`, shared with the website), and
+ * the decorations are its native renderer, given this app's words, colours
+ * and feedback by `SeasonsProvider`. What is left here is OpenMacro's own:
+ * restarting to repaint the palette. See `docs/seasons.md`.
  */
 
-import { useEffect, useMemo } from 'react';
-import { AppState, DevSettings } from 'react-native';
-import { useReducedMotion } from 'react-native-reanimated';
+import { DevSettings } from 'react-native';
 import * as Updates from 'expo-updates';
 
-import { useSeasonDecision, useSeasonPreference } from '@openmacro/seasons/react';
-import { SEASON_PACKS, type SeasonId, type SeasonPack } from '@openmacro/core/season';
+import { useSeason as usePackageSeason, useSeasonSettings as usePackageSettings, type ActiveSeason as PackageSeason } from '@openmacro/seasons/native';
+import type { SeasonId } from '@openmacro/core/season';
+import type { UiKey } from '@openmacro/core/i18n';
 
 import { seasons } from './controller';
 
 export { seasons };
+export { SeasonsProvider } from './provider';
 
 /** The season on screen right now, with everything needed to draw it. */
-export interface ActiveSeason {
-  readonly id: SeasonId;
-  readonly pack: SeasonPack;
-  /** The calm look: colours and still ornaments only. */
-  readonly calm: boolean;
-  /**
-   * Whether anything may move: the full look, and Reduce Motion off. A
-   * decoration that only makes sense moving (bats, rain, a burst) renders
-   * nothing when this is false; one that can stand still does.
-   */
-  readonly motion: boolean;
-}
+export type ActiveSeason = PackageSeason<SeasonId, UiKey>;
 
 /**
  * The season to decorate for, live: it follows the learner's own setting,
@@ -39,33 +30,7 @@ export interface ActiveSeason {
  * @return The season, or `null` on an ordinary day.
  */
 export function useSeason(): ActiveSeason | null {
-  const decision = useSeasonDecision(seasons);
-  const reduceMotion = useReducedMotion();
-  return useMemo(() => {
-    if (!decision.season) return null;
-    const calm = decision.look === 'calm';
-    return { id: decision.season, pack: SEASON_PACKS[decision.season], calm, motion: !calm && !reduceMotion };
-  }, [decision, reduceMotion]);
-}
-
-/**
- * Keeps the season current while the app runs: decides again on returning to
- * the foreground (a phone left on the table overnight), at midnight, and
- * fetches the remote config. Mount once, in the root layout.
- */
-export function useSeasonLifecycle(): void {
-  useEffect(() => {
-    const stop = seasons.start();
-    const subscription = AppState.addEventListener('change', (state) => {
-      if (state !== 'active') return;
-      seasons.update();
-      void seasons.refresh();
-    });
-    return () => {
-      stop();
-      subscription.remove();
-    };
-  }, []);
+  return usePackageSeason<SeasonId, UiKey>();
 }
 
 /**
@@ -76,15 +41,9 @@ export function useSeasonLifecycle(): void {
  *     screen are stale until a restart.
  */
 export function useSeasonSettings() {
-  const decision = useSeasonDecision(seasons);
-  const preference = useSeasonPreference(seasons);
-  return {
-    available: decision.available,
-    preference,
-    setPreference: seasons.setPreference,
-    // The palette was painted at launch; decorations follow at once.
-    needsRestart: decision.season !== seasons.boot.season,
-  };
+  const { available, preference, setPreference, changedSinceLaunch } = usePackageSettings<SeasonId>();
+  // The palette was painted at launch; decorations follow at once.
+  return { available, preference, setPreference, needsRestart: changedSinceLaunch };
 }
 
 /**

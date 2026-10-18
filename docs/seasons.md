@@ -1,19 +1,46 @@
 # Seasons
 
-For a few weeks a year the app and the site dress up: Halloween in October,
-Christmas in December. This is how that works, how to switch a season off in
-a hurry, and how to add the next one.
+All year round the app and the site wear the season: spring, summer, autumn
+and winter, with Halloween and Christmas on top when they come round. This
+is how that works, how to switch a season off in a hurry, and how to add the
+next one.
+
+## The calendar
+
+In the learner's local time, both ends inclusive (`SEASONS` in
+`packages/core/src/season.ts`, which is the package's `NORTHERN_CALENDAR`). The nature seasons follow the northern
+hemisphere's astronomical seasons, rounded to fixed days, and between them
+cover every day of the year (`check:seasons` proves there are no gaps). The
+holidays have `priority: 1`, so they win the days they share.
+
+| Season | From | To | Notes |
+|---|---|---|---|
+| Spring | 20 March | 20 June | |
+| Summer | 21 June | 22 September | |
+| Autumn | 23 September | 20 December | Halloween and the start of Advent sit inside it |
+| Winter | 21 December | 19 March | Wraps the new year; Christmas covers its first days |
+| Halloween | 1 October | 1 November | Priority 1, over autumn |
+| Christmas | 1 December | 26 December | Priority 1, over the end of autumn and the start of winter |
+
+Switch a holiday off remotely and the nature season beneath it shows
+instead: with Halloween disabled, October is autumn.
 
 A season changes how things **look**. It never touches content, grading or
 progress, so the parity rule (CONTRIBUTING.md) holds by construction.
 
-## The three layers
+## The layers
+
+Everything about seasons is the reusable package `packages/seasons`
+(`@openmacro/seasons`), which knows nothing about OpenMacro; OpenMacro uses
+it exactly as another app would. Its README is the porting guide.
 
 | Layer | Where | Knows about |
 |---|---|---|
-| **Engine** | `packages/seasons` (`@openmacro/seasons`) | Calendars, preferences, remote config. Nothing about OpenMacro; reusable in any app. |
-| **Catalogue** | `packages/core/src/season.ts` | Which seasons, when, and what each one hangs up (a *pack*). Shared by both clients. |
-| **Clients** | `src/seasons`, `src/components/ui/Seasonal*.tsx` (app); `web/src/lib/season*.ts`, `web/src/components/site/seasonal-*.tsx`, `web/src/components/site/seasons/` (site) | How a pack is drawn, and the palette. |
+| **Engine** | `@openmacro/seasons` | Calendars, preferences, remote config, which music may play. |
+| **Seasons as data** | `@openmacro/seasons/presets` | The six packs (palette, sky, particles, details, toy, string keys), calendars for both hemispheres, bundled strings, `checkPack`. |
+| **Renderers** | `@openmacro/seasons/native` (React Native, Reanimated, Gesture Handler); `@openmacro/seasons/web` (React and one stylesheet) | A provider, drop-in decorations and the primitives under them. Any pack, any app. |
+| **OpenMacro's choices** | `packages/core/src/season.ts` | Which calendar and packs (all six presets, northern), typed against our UI keys; the remote URL; the storage prefix. Shared by both clients. |
+| **OpenMacro's wiring** | App: `src/seasons/` (controller, `SeasonsProvider`, seasonal music), `src/components/ui/Seasonal*.tsx`, `src/theme/palette.ts`. Site: `web/src/components/site/seasons/` (provider, art, lazy renderer), `seasonal-*.tsx`, `web/src/lib/season*.ts` | Our words, colours (the role mapping), feedback, navigator, and where each decoration goes on our screens. Nothing here names a season, except the site's opt-in Halloween artwork (`seasons/art.ts`) and the app's Halloween music (`src/seasons/music.ts`). |
 
 ## How a season is decided
 
@@ -27,7 +54,8 @@ wins:
    `disabled`. It beats a learner's own "On", because it exists for the day a
    season breaks something.
 3. **The learner's choice**: On, Calm or Off. In Profile in the app, in the
-   footer on the site. Kept on the device.
+   footer on the site. Kept on the device. Turning it on throws a burst of
+   the season out of the switch; on the site the page cross-fades into it.
 4. **The calendar**, as moved by any remote `windows`, or a remote `force`.
 
 The same function runs everywhere: in the app, in the site's runtime, and in
@@ -36,10 +64,83 @@ the site's inline pre-paint script, which is `decide` itself serialised with
 
 ### Calm
 
-The calm look keeps the colours and the still ornaments (corners, footer row,
-emoji swaps, the greeting) and drops everything that moves, every popup, and
-anything marked `creepy` (the spider). Reduce Motion gets the same stillness
-automatically, without losing the spider.
+The calm look keeps the colours and the still ornaments (the sky, the sun,
+corners, the garland, the footer row, emoji swaps, the greeting) and drops
+everything that moves, every popup, and anything marked `creepy` (the
+spider, the bee). Flyers only ever appear in the full look, so calm has no
+bats or butterflies either. Reduce Motion gets the same stillness
+automatically, without losing the toy.
+
+## One season, one object
+
+A season is one plain `SeasonPack`, and both clients draw any pack with the
+same components:
+
+| Part | What it is | Drawn by |
+|---|---|---|
+| `strings` | Keys of its name, greeting, welcome and toy lines | the wrappers |
+| `palette` | Its colours by role (`canvas`, `ink`, `accent`, `cool`…), light and dark | `seasonal` (app), `seasonStyles` (site) |
+| `look.sky` | A few soft radial glows behind the top of each tab, breathing | `SkyGlow` |
+| `look.sun` | A warm core and slowly turning rays | `Sun` |
+| `look.motes` | Particles in depth, each layer a size, speed, sway and shape or emoji, with one motion character: `drift` (snow), `tumble` (petals), `flutter` (leaves), `pulse` (fireflies), `glint` (ice) | `ParticleField` |
+| `look.garland` | Lights or emoji beads strung along the top of Today | `FairyLights` |
+| `look.edge` | Snow, frost or fallen leaves on the hero card's top edge | `SnowCap`, `FrostRim`, `Scatter` |
+| `look.mist` | Fog drifting, mist breathing or heat shimmering along the bottom of Today | `Mist` |
+| `look.candle` | A flicker inside the footer's lit ornaments | `CandleGlow` |
+| `look.burst` | The ring, gravity and spin of the burst on a correct answer | `Burst` |
+| `toy` | The thing on a thread at the top of Today: `drop`, `swing`, `bounce` or `buzz` | `DraggableToy` |
+| `flyer` | What crosses the top now and then: its path's wobble and waves, spin, wing beat, a gust's spacing | `Flyer` |
+| `emoji`, `particles`, `welcome`, corners, `footer` | Emoji swaps, the burst and rain, the welcome, the ornaments | the wrappers |
+
+Each season has its own signature: blossom garland, tumbling petals and
+butterflies in spring; a turning sun, heat shimmer and fireflies in summer;
+fluttering leaves, a gust and leaves settled on the hero card in autumn;
+glinting ice, icicled frost and breathing mist in winter; fog, embers,
+candlelit pumpkins and bats at Halloween; fairy lights, snow and a sleigh at
+Christmas.
+
+The site may draw a part with its own artwork instead, through the
+package's `art` hook (`seasons/art.ts`): Halloween's SVG cobwebs, spider,
+bats and pumpkins, which ship with the package. That is optional; a season
+without it is complete.
+
+## Music
+
+A pack may also carry `music` (tracks with an app-supplied asset). The
+package only decides: `musicFor` / `useSeasonMusic` return a season's
+tracks while it is on, in the full look, with the learner's switch On, and
+`null` otherwise, meaning the app's default music.
+
+In OpenMacro, only Halloween has music, and only the app plays it:
+
+| Track | Source | File |
+| --- | --- | --- |
+| "Funeral March of a Marionette" | Gounod, Lemoine 1882 piano edition | `assets/audio/music/funeral-march.m4a` |
+| "In the Hall of the Mountain King" | Grieg, Schirmer 1899 piano edition, played in A minor (a whole tone down) | `assets/audio/music/mountain-king.m4a` |
+
+Both are public domain, synthesised from the printed scores by
+`scripts/generate-music.mjs` (`npm run gen:music`; the header explains the
+sources and the keys), and mastered to Korobeiniki's loudness.
+
+- `src/seasons/music.ts` lists them (title, credit, `require`d asset) as
+  `SEASON_MUSIC`, and adds them to the packs handed to `SeasonsProvider`,
+  so `useSeasonMusic()` agrees with the player. They are not in
+  `@openmacro/core/season`: the website shares that and has no music.
+- `src/feedback/music.ts` plays them. It asks `musicFor` directly from the
+  controller (no React) and follows `seasons.subscribe`: Halloween on, in
+  the full look, switch On, and the two pieces alternate, each played
+  through once; anything else (Calm, Off, a remote calm, the rest of the
+  year) and it is Korobeiniki, looping. A change switches at once to the
+  new playlist's first track. The music on/off switch, the pause in the
+  background, the volume and the audio session are the same for every
+  track.
+
+Music is not exercise content, so the parity rule does not apply: the
+website has none, seasonal or otherwise.
+
+To add music to another season: generate or add the files, list them under
+that season in `src/seasons/music.ts`, and keep them at Korobeiniki's
+loudness (RMS -14 dBFS) and in a key that sits with the C major chimes.
 
 ## Switching a season off, now
 
@@ -52,6 +153,10 @@ build, no release, no app update:
 gcloud run services update openmacro-web --region <region> \
   --update-env-vars '^|^SEASONS_CONFIG={"version":1,"enabled":false}'
 
+# Just one season off (a holiday falls back to the season beneath it)
+gcloud run services update openmacro-web --region <region> \
+  --update-env-vars '^|^SEASONS_CONFIG={"version":1,"disabled":["summer"]}'
+
 # Back to the calendar
 gcloud run services update openmacro-web --region <region> \
   --remove-env-vars SEASONS_CONFIG
@@ -63,7 +168,7 @@ gcloud run services update openmacro-web --region <region> \
 |---|---|
 | `"version": 1` | Required. Anything else is ignored. |
 | `"enabled": false` | Every season off, for everyone. |
-| `"disabled": ["halloween"]` | Those seasons off. |
+| `"disabled": ["halloween"]` | Those seasons off. A disabled holiday gives way to the nature season it sits inside. |
 | `"calm": true` | Everyone gets the calm look: the fix for a misbehaving animation. |
 | `"force": "christmas"` | That season on for everyone, whatever the date. |
 | `"windows": { "christmas": { "from": {...}, "to": {...} } }` | Moves a season. Date points as in `SEASONS`. |
@@ -93,22 +198,31 @@ the native fingerprint is unchanged, and seasons go out as an EAS Update.
 
 ## Adding a season
 
-1. In `packages/core/src/season.ts`: add the id to `SeasonId`, a window to
-   `SEASONS` and a pack to `SEASON_PACKS`. Windows can be fixed days
+1. A pack. One the package should ship to every app goes in
+   `packages/seasons/src/presets/packs.ts` (with its strings in
+   `presets/strings.ts`, English and Portuguese); one only OpenMacro wants
+   can be written in `packages/core/src/season.ts` and merged into
+   `SEASON_PACKS`. Start from the nearest preset; see the package README's
+   "Define your own season".
+2. A window in the calendar. Windows can be fixed days
    (`{ month: 12, day: 1 }`), relative to Easter (`{ easter: -47 }` is
    Carnival), or the nth weekday (`{ month: 11, weekday: 4, nth: 4 }`), each
-   with an `offset` in days. A window may wrap the new year. Give a short
-   season `priority: 1` to sit inside a longer one.
-2. Strings: `season.<id>.name`, `.greeting`, `.welcome` and `.toy.1` to `.3` in
-   every catalogue under `packages/core/src/i18n/ui/`.
-3. Palettes: `seasonal.<id>` in `src/theme/palette.ts`, and
-   `:root[data-season="<id>"]` (dark, then a light block in the light media
-   query that sets every same token) in `web/src/app/globals.css`. Keep mint
-   and coral alone: they mean correct and wrong all year.
-4. The site's artwork: a `seasons/<id>-layer.tsx` and its CSS, registered in
-   `LAYERS` in `seasonal-decor.tsx`. It loads only while the season is on.
-5. `npm run check:seasons`. It fails if either client lacks a palette, a light
-   block misses a token, a catalogue misses a string, or any text falls under
-   WCAG AA. The type checker covers the rest.
+   with an `offset` in days. A window may wrap the new year. Give a holiday
+   `priority: 1` to sit inside a nature season.
+3. Strings: `season.<id>.name`, `.greeting`, `.welcome` and `.toy.1` to `.3` in
+   every catalogue under `packages/core/src/i18n/ui/`. `SEASON_PACKS` is
+   typed against `UiKey`, so a missing English string does not compile.
+4. `npm run check:seasons`. It runs the package's `checkPack` on every pack
+   (AA text on every surface and under the sky, sun and mist; glows inside
+   their band; nothing faster than once a second; the particle cap), then
+   measures what each client actually paints with our token mapping, every
+   catalogue's strings, and that the calendar leaves no day uncovered.
 
-Preview it any day with `?season=<id>` or `EXPO_PUBLIC_SEASON=<id>`.
+That is all: no component, no CSS, no palette file. Both clients draw the new
+pack at once, with the same renderers.
+
+Preview it any day with `?season=<id>` (or `?season=<id>:calm`) on the site,
+or `EXPO_PUBLIC_SEASON=<id>` in a development build.
+
+The app is light only (`userInterfaceStyle` in `app.json`), so its seasons are
+seen in their light palette; the site follows the system in both.

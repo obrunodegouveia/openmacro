@@ -4,25 +4,35 @@
  * Season parity and contrast — `npm run check:seasons`
  * ============================================================================
  *
- * A season is data in `packages/core/src/season.ts`, so its decorations
- * reach both clients by construction. Its colours and its words do not:
- * they live in four places, and a season missing from one of them fails
- * nowhere. The app simply paints the ordinary palette, or the site leaves
- * its CSS variables alone, or a Portuguese learner gets English, for the few
- * weeks the season lasts and then never again until next year, which is the
- * worst possible time to find out.
+ * A season is one object (a `SeasonPack` from `@openmacro/seasons/presets`,
+ * referenced by `packages/core/src/season.ts`), palette included, so its
+ * decorations and colours reach both clients by construction. Each client maps the palette onto its own tokens, though,
+ * and its words live in the catalogues; a season that misses one fails
+ * nowhere. A Portuguese learner simply gets English, or a text colour
+ * written in a hurry turns unreadable, for the weeks the season lasts and
+ * then never again until next year, which is the worst possible time to
+ * find out.
  *
  * So for every season on the calendar this asserts:
  *
- * 1. The app has a light and a dark palette for it (`src/theme/palette.ts`).
- * 2. The site has a dark block and a light block for it, and the light block
- *    sets every token the dark one does: `:root[data-season]` outranks the
- *    plain light block, so a token set in the dark block only would stay
- *    dark in light mode (`web/src/app/globals.css`).
+ * 1. The app's palette for it, as `src/theme/palette.ts` maps the pack.
+ * 2. The site's, as `web/src/lib/season-palette.ts` maps the pack: the
+ *    light rule sets every variable the dark one does, because
+ *    `:root[data-season]` outranks the plain light block, so a variable set
+ *    in the dark rule only would stay dark in light mode.
  * 3. Every UI catalogue has every one of its strings, not just English.
  * 4. Its text colours clear WCAG AA (4.5:1) on its own canvas and surfaces,
  *    in both appearances, on both clients. A season is the one time a
  *    palette is written in a hurry; it is not the time for unreadable text.
+ * 5. The pack passes the package's own `checkPack`, and its look keeps
+ *    the clients' text readable and stays gentle: the canvas under the sky
+ *    glow and the sun, and under the mist, at their brightest and all
+ *    stacked up, still carries AA text on both clients; every glow
+ *    fades out inside its band; nothing twinkles, flickers, breathes or
+ *    shimmers anywhere near 3 Hz; and the particle field stays within its
+ *    cap.
+ * 6. The calendar covers every day of the year with some season, so the
+ *    nature seasons have no gaps between them.
  *
  * The ordinary palettes are measured too, as the baseline the seasons are
  * held to.
@@ -32,29 +42,19 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
-const { SEASON_IDS, SEASON_PACKS, TOY_LINES } = await import(pathToFileURL(`${ROOT}packages/core/src/season.ts`).href);
+const { SEASONS, SEASON_IDS, SEASON_PACKS } = await import(pathToFileURL(`${ROOT}packages/core/src/season.ts`).href);
+const { seasonVariables } = await import(pathToFileURL(`${ROOT}web/src/lib/season-palette.ts`).href);
+const { decide } = await import(pathToFileURL(`${ROOT}packages/seasons/src/engine.ts`).href);
+const { atmosphereOver, checkPack, contrast } = await import(pathToFileURL(`${ROOT}packages/seasons/src/presets/index.ts`).href);
 const { light, dark, seasonal } = await import(pathToFileURL(`${ROOT}src/theme/palette.ts`).href);
 
 const errors = [];
 const fail = (message) => errors.push(message);
 
 // ---------------------------------------------------------------------------
-// Contrast
+// Contrast: the package's own WCAG helpers, so this measures exactly as
+// `checkPack` does.
 // ---------------------------------------------------------------------------
-
-/** Relative luminance of a #rrggbb colour, per WCAG 2. */
-function luminance(hex) {
-  const value = hex.trim().replace('#', '');
-  const channels = [0, 2, 4].map((i) => parseInt(value.slice(i, i + 2), 16) / 255);
-  const [r, g, b] = channels.map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-/** The contrast ratio between two #rrggbb colours. */
-function contrast(a, b) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return (hi + 0.05) / (lo + 0.05);
-}
 
 /**
  * Asserts each text token clears 4.5:1 on each background token.
@@ -99,7 +99,8 @@ for (const [id, overrides] of appPalettes) {
 }
 
 // ---------------------------------------------------------------------------
-// 2 and 4 (site). Parse the season blocks out of globals.css.
+// 2 and 4 (site). The ordinary palette from globals.css; each season's as
+// lib/season-palette.ts writes it from the pack.
 // ---------------------------------------------------------------------------
 
 const css = readFileSync(`${ROOT}web/src/app/globals.css`, 'utf8');
@@ -129,37 +130,74 @@ measure('web ordinary dark', baseDark, WEB_TEXT, WEB_BACKGROUNDS);
 // only the seasons are held to it here.
 measure('web ordinary light', baseLight, WEB_TEXT, WEB_BACKGROUNDS);
 
+/** What the site paints for a season, by appearance. */
+const webSeason = {};
 for (const id of SEASON_IDS) {
-  const selector = `:root[data-season="${id}"]`;
-  const darkBlock = block(selector);
-  if (!darkBlock) {
-    fail(`web: no ${selector} block in web/src/app/globals.css`);
+  const palette = SEASON_PACKS[id]?.palette;
+  if (!palette?.light || !palette?.dark) {
+    fail(`core ${id}: no light and dark palette in its pack`);
     continue;
   }
-  // The light block is the same selector again, inside a light media query.
-  const lightBlock = block(`  ${selector}`, darkBlock.start + selector.length);
-  const media = css.lastIndexOf('@media (prefers-color-scheme: light)', lightBlock?.start ?? 0);
-  if (!lightBlock || media < darkBlock.start) {
-    fail(`web: no light block for ${selector} inside @media (prefers-color-scheme: light)`);
+  const darkVars = seasonVariables(palette.dark, 'dark');
+  const lightVars = seasonVariables(palette.light, 'light');
+  for (const token of Object.keys(darkVars)) {
+    if (!(token in lightVars)) fail(`web ${id}: ${token} is set for dark but not light, so light mode keeps the dark value`);
+  }
+  webSeason[id] = { dark: { ...baseDark, ...darkVars }, light: { ...baseLight, ...lightVars } };
+  measure(`web ${id} dark`, webSeason[id].dark, WEB_TEXT, WEB_BACKGROUNDS);
+  measure(`web ${id} light`, webSeason[id].light, WEB_LIGHT_TEXT, WEB_BACKGROUNDS);
+}
+
+// ---------------------------------------------------------------------------
+// 5. The look, and the pack on its own terms: `checkPack` from the package
+// (every palette role at AA, under the sky, sun and mist too; glows inside
+// their band; nothing beating faster than once a second; the particle cap).
+// Then what each client actually paints, under the same atmosphere.
+// ---------------------------------------------------------------------------
+
+for (const id of SEASON_IDS) {
+  const pack = SEASON_PACKS[id];
+  if (!pack?.look) {
+    fail(`core ${id}: no look in SEASON_PACKS`);
     continue;
   }
-  for (const token of Object.keys(darkBlock.tokens)) {
-    if (!(token in lightBlock.tokens)) fail(`web ${id}: ${token} is set for dark but not light, so light mode keeps the dark value`);
+  for (const problem of checkPack(pack)) fail(`core ${id}: ${problem}`);
+
+  for (const scheme of ['light', 'dark']) {
+    // The app: its season palette for this appearance.
+    const appLight = { ...light, ...seasonal[id].light };
+    const app = scheme === 'light' ? appLight : { ...appLight, ...dark, ...seasonal[id].dark };
+    measure(`app ${id} ${scheme}`, { ...app, ...atmosphereOver(pack, app.canvas, scheme) }, APP_TEXT, ['sky', 'fog']);
+
+    // The site: what it paints for this appearance.
+    const web = webSeason[id]?.[scheme];
+    if (!web) continue;
+    measure(`web ${id} ${scheme}`, { ...web, ...atmosphereOver(pack, web['--color-canvas'], scheme) }, scheme === 'light' ? WEB_LIGHT_TEXT : WEB_TEXT, ['sky', 'fog']);
   }
-  measure(`web ${id} dark`, { ...baseDark, ...darkBlock.tokens }, WEB_TEXT, WEB_BACKGROUNDS);
-  measure(`web ${id} light`, { ...baseLight, ...lightBlock.tokens }, WEB_LIGHT_TEXT, WEB_BACKGROUNDS);
+}
+
+// ---------------------------------------------------------------------------
+// 6. The calendar covers the year.
+// ---------------------------------------------------------------------------
+
+// A leap year and a common one, so 29 February is covered too.
+for (const year of [2027, 2028]) {
+  for (let day = new Date(year, 0, 1); day.getFullYear() === year; day.setDate(day.getDate() + 1)) {
+    if (!decide({ now: day.getTime(), calendar: SEASONS }).season) {
+      fail(`calendar: no season on ${day.toDateString()}`);
+      break;
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
 // 3. Strings, in every catalogue.
 // ---------------------------------------------------------------------------
 
-const keysFor = (id) => [
-  `season.${id}.name`,
-  `season.${id}.greeting`,
-  `season.${id}.welcome`,
-  ...Array.from({ length: TOY_LINES }, (_, i) => `season.${id}.toy.${i + 1}`),
-];
+const keysFor = (id) => {
+  const strings = SEASON_PACKS[id].strings;
+  return [strings.name, strings.greeting, strings.welcome, ...strings.toy];
+};
 const catalogues = readdirSync(`${ROOT}packages/core/src/i18n/ui`).filter((file) => file.endsWith('.ts'));
 for (const file of catalogues) {
   const module = await import(pathToFileURL(`${ROOT}packages/core/src/i18n/ui/${file}`).href);
@@ -171,20 +209,10 @@ for (const file of catalogues) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// The packs themselves.
-// ---------------------------------------------------------------------------
-
-for (const id of SEASON_IDS) {
-  const pack = SEASON_PACKS[id];
-  if (!pack) fail(`core: no pack for "${id}" in SEASON_PACKS`);
-  else if (pack.particles.length < 2) fail(`core ${id}: a burst needs at least two particles`);
-}
-
 if (errors.length) {
   console.error(`\n  Seasons: ${errors.length} problem${errors.length === 1 ? '' : 's'}\n`);
   for (const error of errors) console.error(`  ✗ ${error}`);
   console.error('');
   process.exit(1);
 }
-console.log(`\n  Seasons: ${SEASON_IDS.join(', ')} have palettes on both clients, every string in ${catalogues.length} catalogues, and AA text throughout.\n`);
+console.log(`\n  Seasons: ${SEASON_IDS.join(', ')} have palettes on both clients, every string in ${catalogues.length} catalogues, AA text throughout (under the sky, sun and mist too), gentle looks, and a calendar with no gaps.\n`);

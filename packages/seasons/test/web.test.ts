@@ -4,7 +4,7 @@ import vm from 'node:vm';
 
 import { decide } from '../src/engine.ts';
 import type { SeasonWindow } from '../src/types.ts';
-import { applyDecision, createBootScript } from '../src/web.ts';
+import { applyDecision, createBootScript } from '../src/web/boot.ts';
 
 const CALENDAR: SeasonWindow<'halloween' | 'christmas'>[] = [
   { id: 'halloween', from: { month: 10, day: 1 }, to: { month: 11, day: 1 } },
@@ -106,5 +106,32 @@ describe('applyDecision', () => {
     assert.equal(attributes.get('data-season-look'), 'calm');
     applyDecision(element, { season: null, look: 'full', available: 'halloween', reason: 'preference-off' });
     assert.equal(attributes.size, 0);
+  });
+});
+
+describe('paletteCss', () => {
+  it('writes every role in both appearances, and the app’s own variables', async () => {
+    const { paletteCss } = await import('../src/web/palette.ts');
+    const { PRESET_PACKS } = await import('../src/presets/index.ts');
+    const css = paletteCss({ winter: PRESET_PACKS.winter }, { map: (c) => ({ '--brand-bg': c.canvas }) });
+    const [base, media] = css.split('@media (prefers-color-scheme: dark)') as [string, string];
+    assert.match(base, /:root\[data-season="winter"\] \{/);
+    assert.match(base, new RegExp(`--sv-ink: ${PRESET_PACKS.winter.palette.light.ink}`));
+    assert.match(media, new RegExp(`--sv-ink: ${PRESET_PACKS.winter.palette.dark.ink}`));
+    assert.match(media, new RegExp(`--brand-bg: ${PRESET_PACKS.winter.palette.dark.canvas}`));
+    // A role one appearance leaves out never leaks into the other; abyss stands in as well.
+    assert.doesNotMatch(css, /--sv-shadow/);
+    assert.match(base, new RegExp(`--sv-abyss: ${PRESET_PACKS.winter.palette.light.well}`));
+    const vars = (block: string) => [...block.matchAll(/(--[\w-]+):/g)].map((m) => m[1]).sort();
+    assert.deepEqual(vars(base), vars(media));
+  });
+
+  it('follows a class toggle instead of the media query', async () => {
+    const { paletteCss } = await import('../src/web/palette.ts');
+    const { PRESET_PACKS } = await import('../src/presets/index.ts');
+    const css = paletteCss({ spring: PRESET_PACKS.spring }, { toggle: '.dark', extra: (_id, selector) => `${selector} .x {}` });
+    assert.match(css, /:root\[data-season="spring"\]\.dark \{/);
+    assert.doesNotMatch(css, /@media/);
+    assert.match(css, /:root\[data-season="spring"\] \.x \{\}/);
   });
 });

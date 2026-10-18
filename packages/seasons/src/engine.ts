@@ -16,7 +16,8 @@ interface Loose {
  * 1. A QA `override` (`?season=christmas`, `christmas:calm`, `none`).
  * 2. The remote kill switch: `enabled: false`, or the season listed in
  *    `disabled`. Beats the viewer's own "on", because it exists for the day
- *    a season breaks something.
+ *    a season breaks something. A disabled season that sits inside a longer
+ *    one (by `priority`) gives way to it rather than to nothing.
  * 3. The viewer's preference: `off` hides the season, `calm` tones it down.
  * 4. The calendar, as moved by any remote `windows`, or a remote `force`.
  *
@@ -149,7 +150,11 @@ export function decide<Id extends string>(input: DecideInput<Id>): SeasonDecisio
     reason = 'remote-force';
   } else {
     var moved = remote && remote.windows && typeof remote.windows === 'object' ? (remote.windows as Loose) : null;
+    var skip = remote && Array.isArray(remote.disabled) ? (remote.disabled as unknown[]) : [];
     var best = -Infinity;
+    // Whether a window that applies today was passed over because it is
+    // switched off remotely, so the answer is "off", not "nothing on".
+    var blocked = false;
     for (var w = 0; w < calendar.length; w++) {
       var entry = calendar[w]!;
       var custom = moved ? (moved[entry.id] as Loose | undefined) : undefined;
@@ -157,10 +162,17 @@ export function decide<Id extends string>(input: DecideInput<Id>): SeasonDecisio
       var to = custom && typeof custom === 'object' ? custom.to : entry.to;
       var priority = typeof entry.priority === 'number' ? entry.priority : 0;
       if (priority > best && contains(from, to, today, date.getFullYear())) {
+        // A season switched off remotely steps aside for the one beneath it:
+        // with Halloween disabled, October is still autumn.
+        if (skip.indexOf(entry.id) >= 0) {
+          blocked = true;
+          continue;
+        }
         scheduled = entry.id;
         best = priority;
       }
     }
+    if (!scheduled && blocked) return result(null, 'full', null, 'remote-off');
   }
   if (!scheduled) return result(null, 'full', null, 'none');
 

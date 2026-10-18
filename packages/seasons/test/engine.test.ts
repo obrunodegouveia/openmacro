@@ -130,6 +130,19 @@ describe('the remote config', () => {
     assert.equal(season(october, { remote: { version: 1, disabled: ['christmas'] } }), 'halloween');
   });
 
+  it('lets a disabled holiday give way to the longer season it sits inside', () => {
+    const year: SeasonWindow<Id>[] = [
+      { id: 'leap', from: { month: 9, day: 23 }, to: { month: 12, day: 20 } },
+      { id: 'halloween', from: { month: 10, day: 1 }, to: { month: 11, day: 1 }, priority: 1 },
+    ];
+    assert.equal(season(october, {}, year), 'halloween');
+    assert.equal(season(october, { remote: { version: 1, disabled: ['halloween'] } }, year), 'leap');
+    // Both off: off, not "nothing scheduled".
+    assert.equal(decide({ now: october, calendar: year, remote: { version: 1, disabled: ['halloween', 'leap'] } }).reason, 'remote-off');
+    // A forced season that is disabled stays off.
+    assert.equal(season(october, { remote: { version: 1, force: 'halloween', disabled: ['halloween'] } }, year), null);
+  });
+
   it('beats the viewer saying "on", but not the viewer saying "off"', () => {
     assert.equal(season(october, { preference: 'auto', remote: { version: 1, enabled: false } }), null);
     assert.equal(season(at(2026, 7, 1), { preference: 'off', remote: { version: 1, force: 'christmas' } }), null);

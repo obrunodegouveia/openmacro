@@ -14,7 +14,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,21 +42,34 @@ const source = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 /** One export entry: types first, as TypeScript requires, then the module. */
 const entry = (name) => ({ types: `./${name}.d.ts`, default: `./${name}.js` });
 
+/**
+ * Where each export points once built: its source path with `src/` dropped
+ * and `.ts`/`.tsx` compiled to `.js` beside a `.d.ts`. Anything else (the
+ * stylesheet) is copied as it is.
+ */
+const exportsMap = Object.fromEntries(
+  Object.entries(source.exports).map(([key, target]) => {
+    const path = target.replace(/^\.\/src\//, '');
+    if (!/\.tsx?$/.test(path)) {
+      mkdirSync(dirname(join(dist, path)), { recursive: true });
+      copyFileSync(join(root, 'src', path), join(dist, path));
+      return [key, `./${path}`];
+    }
+    return [key, entry(path.replace(/\.tsx?$/, ''))];
+  }),
+);
+
 const published = {
   name: source.name,
   version: source.version,
   description: source.description,
   license: source.license,
   type: 'module',
-  exports: {
-    '.': entry('index'),
-    './react': entry('react'),
-    './types': entry('types'),
-    './web': entry('web'),
-  },
+  exports: exportsMap,
   peerDependencies: source.peerDependencies,
   peerDependenciesMeta: source.peerDependenciesMeta,
-  sideEffects: false,
+  sideEffects: source.sideEffects,
+  keywords: source.keywords,
 };
 writeFileSync(join(dist, 'package.json'), `${JSON.stringify(published, null, 2)}\n`);
 

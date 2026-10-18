@@ -1,15 +1,20 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/components/site/auth-provider";
-import { useLocale } from "@/components/site/locale-provider";
-import { SeasonalBurst, SeasonalRain, useSeason } from "@/components/site/seasonal-decor";
+import { useSeason } from "@/components/site/seasonal-decor";
+
+/** The staging, fetched only on the day a welcome is actually shown. */
+const SeasonWelcome = dynamic(() => import("./seasons/renderer").then((m) => m.SeasonWelcome), { ssr: false });
 
 /**
  * A seasonal welcome by name: the first time a signed-in learner opens the
  * site each day while a season is on, "Happy Halloween, Maria!" (or "Ho ho
- * ho, Maria!") fills the window with a burst of the season's particles, then
- * gets out of the way. Never in the calm look, which has no popups. The app
+ * ho, Maria!") is staged across the window (a glow blooming, motes rising,
+ * the card springing in over a burst of the season's particles), then gets
+ * out of the way. The staging is the package's `SeasonWelcome`, in the
+ * season's own air; this file decides when it shows and for whom. Never in the calm look, which has no popups. The app
  * shows the same thing (src/components/ui/SeasonalWelcome.tsx).
  *
  * The name is the signed-in account's own, from the session. Nobody's name is
@@ -52,7 +57,6 @@ function firstName(name: string): string | null {
 export function SeasonalWelcome() {
   const season = useSeason();
   const { learner } = useAuth();
-  const { t } = useLocale();
   const [name, setName] = React.useState<string | null>(null);
   const id = season && !season.calm ? season.id : null;
 
@@ -86,25 +90,11 @@ export function SeasonalWelcome() {
   }, [name]);
 
   if (!name || !season) return null;
-
   return (
-    <div
-      role="status"
-      onClick={() => setName(null)}
-      className="season-welcome fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-abyss/75 p-6"
-    >
-      <SeasonalRain />
-      <div className="season-welcome-card relative max-w-sm rounded-[28px] border-[3px] border-gold bg-surface px-8 py-6 text-center">
-        <p className="text-[88px] leading-none" aria-hidden>
-          {season.pack.welcome}
-        </p>
-        <p className="mt-3 text-4xl font-black leading-tight text-gold">
-          {t(`season.${season.id}.welcome`, { name })}
-        </p>
-        <div className="absolute inset-x-0 top-[40%]">
-          <SeasonalBurst />
-        </div>
-      </div>
-    </div>
+    <SeasonWelcome
+      name={name}
+      onDismiss={() => setName(null)}
+      classNames={{ scrim: "bg-abyss/75", card: "border-gold bg-surface", title: "text-4xl font-black leading-tight text-gold" }}
+    />
   );
 }

@@ -6,7 +6,7 @@
  * every season has a palette and that its text clears WCAG AA.
  */
 
-import type { SeasonId } from '@openmacro/core/season';
+import { SEASON_IDS, SEASON_PACKS, type SeasonColors, type SeasonId } from '@openmacro/core/season';
 
 /** The light appearance: every colour. */
 export const light = {
@@ -111,90 +111,64 @@ export const dark: Partial<Record<PaletteKey, string>> = {
 
 
 /**
- * What each season repaints, on top of `light` and `dark`.
+ * A season's colours as the app's tokens: the pack's palette roles
+ * (`SeasonColors` in `@openmacro/core/season`) mapped onto this palette's
+ * names. The site maps the same roles onto its CSS variables
+ * (`web/src/lib/season-palette.ts`), so both clients paint one palette.
  *
- * Only accents and surfaces move. Mint stays green and coral stays red in
- * every season, because they mean "correct" and "wrong" and a learner should
- * never have to relearn that for a month. Every text colour here was checked
- * for 4.5:1 on its surfaces, like the base palette.
+ * Mint and coral are not mapped: they mean "correct" and "wrong" all year.
+ *
+ * @param colors The season's colours for one appearance.
+ * @param scheme Which appearance they are for; the overlay and shadow tint
+ *     only the light one.
+ * @return The tokens the season repaints.
  */
-export const seasonal: Record<SeasonId, { light: Partial<Record<PaletteKey, string>>; dark: Partial<Record<PaletteKey, string>> }> = {
-  // Pumpkin for the streak and XP, violet where the app is usually blue, and
-  // a warm parchment canvas. Mint stays, and reads as slime green beside them.
-  halloween: {
-    light: {
-      gold: '#FF8A1F',
-      goldDark: '#A84A00',
-      goldSoft: '#FFEBD6',
-      blue: '#7B4DE8',
-      blueDark: '#5B32C4',
-      blueSoft: '#EFE8FF',
-      blueBevel: '#5B32C4',
-      // Teal, because blue has become violet.
-      linkAccent: '#14A3A8',
-      shadow: '#1A0F24',
-      ink: '#241A2E',
-      inkMuted: '#594C66',
-      inkFaint: '#66587A',
-      border: '#EDE2D2',
-      borderStrong: '#D9C9B2',
-      canvas: '#FBF5EC',
-      overlay: 'rgba(36, 26, 46, 0.4)',
-    },
-    dark: {
-      gold: '#FF8A1F',
-      goldDark: '#FFA348',
-      goldSoft: '#3A220C',
-      blue: '#7B4DE8',
-      blueDark: '#B49CFF',
-      blueSoft: '#22163A',
-      blueBevel: '#5B32C4',
-      ink: '#EEE6F5',
-      inkMuted: '#B9ABCC',
-      inkFaint: '#9D8EB3',
-      border: '#2E2140',
-      borderStrong: '#3F2E55',
-      surface: '#1A1026',
-      canvas: '#0E0816',
-    },
-  },
-  // A snowy night: frost blue where the app is usually blue, candle gold for
-  // the streak and XP, and a cold canvas. Red and green come from the
-  // decorations only, never from the palette, where they would read as
-  // "wrong" and "correct".
-  christmas: {
-    light: {
-      gold: '#FFC23D',
-      goldDark: '#8A5A00',
-      goldSoft: '#FFF3D6',
-      blue: '#2E7BD1',
-      blueDark: '#1C5A9E',
-      blueSoft: '#E4F0FB',
-      blueBevel: '#1C5A9E',
-      shadow: '#0A1626',
-      ink: '#14233A',
-      inkMuted: '#45566D',
-      inkFaint: '#536580',
-      border: '#DCE6F0',
-      borderStrong: '#C3D2E2',
-      canvas: '#F3F7FB',
-      overlay: 'rgba(20, 35, 58, 0.38)',
-    },
-    dark: {
-      gold: '#FFC23D',
-      goldDark: '#FFD36B',
-      goldSoft: '#33270B',
-      blue: '#2E7BD1',
-      blueDark: '#8CC4FF',
-      blueSoft: '#10233A',
-      blueBevel: '#1C5A9E',
-      ink: '#E8F1FA',
-      inkMuted: '#A9BBD0',
-      inkFaint: '#8EA3BC',
-      border: '#1E3048',
-      borderStrong: '#2C4260',
-      surface: '#0F1C2E',
-      canvas: '#08111F',
-    },
-  },
-};
+function seasonTokens(colors: SeasonColors, scheme: 'light' | 'dark'): Partial<Record<PaletteKey, string>> {
+  const tokens: Partial<Record<PaletteKey, string>> = {
+    gold: colors.accent,
+    goldDark: colors.accentText,
+    goldSoft: colors.accentSoft,
+    blue: colors.cool,
+    blueDark: colors.coolText,
+    blueSoft: colors.coolSoft,
+    blueBevel: colors.coolDeep,
+    ink: colors.ink,
+    inkMuted: colors.inkMuted,
+    inkFaint: colors.inkFaint,
+    border: colors.hairline,
+    borderStrong: colors.hairlineStrong,
+    surface: colors.surface,
+    canvas: colors.canvas,
+  };
+  if (colors.link) tokens.linkAccent = colors.link;
+  if (scheme === 'light') {
+    if (colors.shadow) tokens.shadow = colors.shadow;
+    tokens.overlay = overlayOf(colors.ink);
+  }
+  return tokens;
+}
+
+/**
+ * The scrim behind a sheet, tinted with the season's ink rather than black.
+ *
+ * @param ink `#rrggbb`.
+ * @return An `rgba()` at the light scrim's opacity.
+ */
+function overlayOf(ink: string): string {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(ink.slice(i, i + 2), 16));
+  return `rgba(${r}, ${g}, ${b}, 0.4)`;
+}
+
+/**
+ * What each season repaints, on top of `light` and `dark`, from its pack.
+ *
+ * Only accents and surfaces move. Every text colour in a pack is checked for
+ * 4.5:1 on its surfaces, under the season's sky and mist too
+ * (`npm run check:seasons`).
+ */
+export const seasonal = Object.fromEntries(
+  SEASON_IDS.map((id) => {
+    const { palette } = SEASON_PACKS[id];
+    return [id, { light: seasonTokens(palette.light, 'light'), dark: seasonTokens(palette.dark, 'dark') }];
+  }),
+) as Record<SeasonId, { light: Partial<Record<PaletteKey, string>>; dark: Partial<Record<PaletteKey, string>> }>;

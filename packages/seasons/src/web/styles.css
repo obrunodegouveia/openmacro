@@ -1,0 +1,1034 @@
+/*
+ * @openmacro/seasons/web — every style the web renderer draws with.
+ *
+ * Import it once, wherever your app imports global CSS:
+ *
+ *   import "@openmacro/seasons/web/styles.css";
+ *
+ * Plain CSS, shipped as a file rather than injected at runtime: it works
+ * with any bundler and any React version, under a strict Content Security
+ * Policy (no inline styles needed), cached with the rest of your CSS, and
+ * overridable with ordinary selectors. Every class is prefixed `sv-`.
+ *
+ * Colours come from the season (as CSS variables on each element) or from
+ * the palette-role variables `paletteCss` writes (`--sv-ink`, `--sv-raised`,
+ * …), so nothing here needs your design tokens. A few knobs for placement:
+ *
+ *   --sv-layer-top   where the decoration layer starts (under a fixed header)
+ *   --sv-toy-right   how far from the right the toy hangs
+ *   --sv-text-xs     the size of what the toy says
+ *
+ * Each visual follows `prefers-color-scheme` for its light or dark colours.
+ * An app with its own theme switch sets `data-sv-scheme="light"` or `"dark"`
+ * on <html> instead (see the end of this file).
+ *
+ * Everything moving stops under `prefers-reduced-motion`, and every
+ * animation inside `.sv` holds its frame while the tab is hidden.
+ */
+
+/* ======================================================================== */
+
+/* What every seasonal visual shares (runtime.ts). */
+
+/* A hidden tab holds every animation where it is. */
+:root[data-sv-paused] .sv,
+:root[data-sv-paused] .sv *,
+:root[data-sv-paused] .sv *::before,
+:root[data-sv-paused] .sv *::after {
+  animation-play-state: paused !important;
+}
+
+/* The pointer's offset from the centre, -1 to 1; 0 on touch and when still. */
+@property --sv-px {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --sv-py {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* A layer that follows the pointer by its --sv-depth (a fraction of the
+   window), eased so it drifts rather than jitters. */
+.sv-parallax {
+  translate: calc(var(--sv-px) * var(--sv-depth, 0) * 100vw) calc(var(--sv-py) * var(--sv-depth, 0) * 100vh);
+  transition: translate 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-parallax { translate: none; transition: none; }
+}
+
+/* ======================================================================== */
+
+/* The sky glow (sky-glow.tsx). */
+@property --sv-sky-drift {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+.sv-sky {
+  --sv-sky: var(--sv-sky-dark);
+  position: fixed;
+  /* A little past the edges, so parallax never shows one. */
+  inset: -4vh -4vw auto -4vw;
+  height: var(--sv-sky-height);
+  z-index: -1;
+  pointer-events: none;
+  background: var(--sv-sky);
+  /* Fades out before the band ends, so no glow is ever cut by its edge. */
+  mask-image: linear-gradient(to bottom, #000 70%, transparent);
+}
+@media (prefers-color-scheme: light) {
+  .sv-sky { --sv-sky: var(--sv-sky-light); }
+}
+.sv-sky[data-animate] {
+  animation: sv-sky-breathe var(--sv-sky-breathe) ease-in-out infinite alternate;
+}
+@keyframes sv-sky-breathe {
+  from { opacity: 0.72; --sv-sky-drift: -3%; }
+  to { opacity: 1; --sv-sky-drift: 3%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-sky[data-animate] { animation: none; }
+}
+
+/* ======================================================================== */
+
+/* The sun (sun.tsx). Its box is a point at the sun's centre. */
+.sv-sun {
+  --sv-sun-rays: var(--sv-sun-rays-dark);
+  --sv-sun-core: var(--sv-sun-core-dark);
+  position: fixed;
+  width: 0;
+  height: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+@media (prefers-color-scheme: light) {
+  .sv-sun {
+    --sv-sun-rays: var(--sv-sun-rays-light);
+    --sv-sun-core: var(--sv-sun-core-light);
+  }
+}
+.sv-sun > span {
+  position: absolute;
+  border-radius: 50%;
+}
+.sv-sun > [data-part="rays"] {
+  --sv-crown: calc(var(--sv-sun-r) * var(--sv-sun-reach));
+  inset: calc(var(--sv-crown) * -1);
+  background: var(--sv-sun-rays);
+  /* Bright at the root, gone at the tips. */
+  mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.35) 55%, transparent 72%);
+}
+.sv-sun > [data-part="core"] {
+  inset: calc(var(--sv-sun-r) * -1);
+  background: var(--sv-sun-core);
+}
+.sv-sun[data-animate] > [data-part="rays"] {
+  animation: sv-sun-turn var(--sv-sun-turn) linear infinite;
+}
+.sv-sun[data-animate] > [data-part="core"] {
+  animation: sv-sun-breathe 3s ease-in-out infinite alternate;
+}
+@keyframes sv-sun-turn {
+  to { transform: rotate(360deg); }
+}
+@keyframes sv-sun-breathe {
+  from { opacity: 0.8; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-sun[data-animate] > span { animation: none; }
+}
+
+/* ======================================================================== */
+
+/* Mist along the bottom of the window (mist.tsx). */
+.sv-mist {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: var(--sv-mist-height);
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.sv-mist > span {
+  --sv-mist: var(--sv-mist-dark);
+  position: absolute;
+  inset: 0 -30%;
+  background: var(--sv-mist);
+}
+@media (prefers-color-scheme: light) {
+  .sv-mist > span { --sv-mist: var(--sv-mist-light); }
+}
+.sv-mist:not([data-mode="shimmer"]) > [data-layer="1"] { top: 20%; }
+
+/* Shimmer: thin bands stacked low over the ground. */
+.sv-mist[data-mode="shimmer"] > span {
+  inset: auto -10%;
+  top: calc(50% + var(--sv-i) * 11%);
+  height: 14%;
+}
+
+.sv-mist[data-animate] > span {
+  animation-duration: var(--sv-mist-ms);
+  animation-delay: var(--sv-mist-delay);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.sv-mist[data-mode="drift"][data-animate] > span { animation-name: sv-mist-drift; }
+.sv-mist[data-mode="drift"][data-animate] > [data-layer="1"] { animation-direction: alternate-reverse; }
+@keyframes sv-mist-drift {
+  from { transform: translateX(-18%); }
+  to { transform: translateX(18%); }
+}
+/* Out of step: one bank breathes out while the other settles. */
+.sv-mist[data-mode="breathe"][data-animate] > span {
+  animation-name: sv-mist-breathe;
+}
+@keyframes sv-mist-breathe {
+  from { opacity: 0.45; transform: translateY(14px) scaleY(0.9); }
+  to { opacity: 1; transform: translateY(-10px) scaleY(1.1); }
+}
+/* Each band wavers on its own beat: stretching, sliding a little, brightening. */
+.sv-mist[data-mode="shimmer"][data-animate] > span {
+  animation-name: sv-mist-shimmer;
+}
+@keyframes sv-mist-shimmer {
+  from { opacity: 0.4; transform: translateX(-2.4%) scaleY(0.7); }
+  to { opacity: 1; transform: translateX(2.4%) scaleY(1.5); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-mist[data-animate] > span { animation: none; }
+}
+
+/* ======================================================================== */
+
+/* Ambient particles in depth (particle-field.tsx). */
+.sv-field {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+/* Behind the page, like the aurora; in front, under the header and dialogs. */
+.sv-field[data-placement="behind"] { z-index: -1; }
+.sv-field[data-placement="front"] { z-index: 39; }
+
+.sv-depth {
+  position: absolute;
+  inset: -5vh -5vw;
+}
+
+/* The particle: its path across the window. */
+.sv-mote {
+  --sv-mote: var(--sv-mote-dark);
+  position: absolute;
+  top: 0;
+  opacity: 0;
+  animation-name: sv-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+@media (prefers-color-scheme: light) {
+  .sv-mote { --sv-mote: var(--sv-mote-light); }
+}
+.sv-field[data-direction="rise"] .sv-mote { animation-name: sv-rise; }
+.sv-field[data-motion="pulse"] .sv-mote { animation-name: sv-wander; }
+
+/* Its artwork, which makes the gesture. */
+.sv-mote-art {
+  display: block;
+  width: var(--sv-size);
+  height: var(--sv-size);
+  border-radius: 999px;
+  background: var(--sv-mote);
+}
+.sv-field[data-glow] .sv-mote-art:not([data-emoji]) {
+  box-shadow: 0 0 calc(var(--sv-size) * 2) calc(var(--sv-size) / 2) color-mix(in srgb, var(--sv-mote) 55%, transparent);
+}
+.sv-mote-art[data-emoji] {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  font-size: calc(var(--sv-size) * 2.2);
+  line-height: 1;
+}
+/* Rounded, with one pointed end where it left the flower. */
+.sv-mote-art[data-shape="petal"] {
+  height: calc(var(--sv-size) * 1.3);
+  border-radius: 100% 12% 100% 100%;
+}
+/* Pointed at both ends, with a paler vein. */
+.sv-mote-art[data-shape="leaf"] {
+  position: relative;
+  border-radius: 100% 10% 100% 10%;
+  rotate: 45deg;
+}
+.sv-mote-art[data-shape="leaf"]::after {
+  content: "";
+  position: absolute;
+  inset: 50% -10% auto -10%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.35);
+  rotate: -45deg;
+}
+/* A four-pointed glint. */
+.sv-mote-art[data-shape="spark"] {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  color: var(--sv-mote);
+  font-size: calc(var(--sv-size) * 1.6);
+  line-height: 1;
+  text-shadow: 0 0 var(--sv-size) color-mix(in srgb, var(--sv-mote) 80%, transparent);
+}
+.sv-mote-art[data-shape="spark"]::before { content: "✦"; }
+
+/* Gestures, each on the particle's own beat. */
+.sv-field:not([data-motion="drift"]) .sv-mote-art {
+  animation-duration: var(--sv-beat);
+  animation-delay: var(--sv-beat-delay);
+  animation-iteration-count: infinite;
+}
+/* End over end, the face flipping through edge-on. */
+.sv-field[data-motion="tumble"] .sv-mote { perspective: 300px; }
+.sv-field[data-motion="tumble"] .sv-mote-art {
+  animation-name: sv-tumble;
+  animation-timing-function: linear;
+}
+@keyframes sv-tumble {
+  to {
+    transform: rotate(calc(360deg * var(--sv-turn))) rotateY(calc(360deg * var(--sv-turn))) rotateX(calc(180deg * var(--sv-turn)));
+  }
+}
+/* A pendulum: tipped into each swing, dipping through the middle. */
+.sv-field[data-motion="flutter"] .sv-mote-art {
+  animation-name: sv-flutter;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+@keyframes sv-flutter {
+  0% { translate: calc(var(--sv-sway) * -1) 0; transform: rotate(calc(-38deg * var(--sv-turn))); }
+  50% { translate: 0 calc(var(--sv-sway) * 0.35); transform: rotate(0deg); }
+  100% { translate: var(--sv-sway) 0; transform: rotate(calc(38deg * var(--sv-turn))); }
+}
+/* Glowing up and fading, smoothly. */
+.sv-field[data-motion="pulse"] .sv-mote-art {
+  animation-name: sv-pulse;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+@keyframes sv-pulse {
+  from { opacity: 0.15; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1.1); }
+}
+/* Turning slowly, and once a turn catching the light. */
+.sv-field[data-motion="glint"] .sv-mote-art {
+  animation-name: sv-glint;
+  animation-timing-function: linear;
+}
+@keyframes sv-glint {
+  0% { opacity: 0.55; transform: rotate(0deg) scale(1); }
+  44% { opacity: 0.55; transform: rotate(calc(80deg * var(--sv-turn))) scale(1); }
+  50% { opacity: 1; transform: rotate(calc(90deg * var(--sv-turn))) scale(1.35); }
+  56% { opacity: 0.55; transform: rotate(calc(100deg * var(--sv-turn))) scale(1); }
+  100% { opacity: 0.55; transform: rotate(calc(180deg * var(--sv-turn))) scale(1); }
+}
+
+/* Down the window with the wind, swaying on a sine sampled at quarters, and
+   fading in and out at the ends so nothing pops at an edge. */
+@keyframes sv-fall {
+  0% { transform: translate(0, -2vh); opacity: 0; }
+  12% { opacity: var(--sv-op); }
+  25% { transform: translate(calc(var(--sv-wind) * 0.25 + var(--sv-path-sway)), 27vh); }
+  50% { transform: translate(calc(var(--sv-wind) * 0.5), 55vh); }
+  75% { transform: translate(calc(var(--sv-wind) * 0.75 - var(--sv-path-sway)), 82vh); }
+  88% { opacity: var(--sv-op); }
+  100% { transform: translate(var(--sv-wind), 110vh); opacity: 0; }
+}
+@keyframes sv-rise {
+  0% { transform: translate(0, 110vh); opacity: 0; }
+  12% { opacity: var(--sv-op); }
+  25% { transform: translate(calc(var(--sv-wind) * 0.25 + var(--sv-path-sway)), 82vh); }
+  50% { transform: translate(calc(var(--sv-wind) * 0.5), 55vh); }
+  75% { transform: translate(calc(var(--sv-wind) * 0.75 - var(--sv-path-sway)), 27vh); }
+  88% { opacity: var(--sv-op); }
+  100% { transform: translate(var(--sv-wind), -2vh); opacity: 0; }
+}
+/* Up the window, wandering on two crossed swells, like a firefly. */
+@keyframes sv-wander {
+  0% { transform: translate(0, 110vh); opacity: 0; }
+  12% { opacity: var(--sv-op); }
+  12.5% { transform: translate(calc(var(--sv-path-sway) * 0.9), 97vh); }
+  25% { transform: translate(calc(var(--sv-wind) * 0.25 + var(--sv-path-sway) * 0.3), 83vh); }
+  37.5% { transform: translate(calc(var(--sv-wind) * 0.375 - var(--sv-path-sway)), 69vh); }
+  50% { transform: translate(calc(var(--sv-wind) * 0.5 - var(--sv-path-sway) * 0.2), 55vh); }
+  62.5% { transform: translate(calc(var(--sv-wind) * 0.625 + var(--sv-path-sway) * 1.1), 41vh); }
+  75% { transform: translate(calc(var(--sv-wind) * 0.75 + var(--sv-path-sway) * 0.2), 27vh); }
+  87.5% { transform: translate(calc(var(--sv-wind) * 0.875 - var(--sv-path-sway) * 0.8), 13vh); }
+  88% { opacity: var(--sv-op); }
+  100% { transform: translate(var(--sv-wind), -2vh); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-field { display: none; }
+}
+
+/* ======================================================================== */
+
+/* Fairy lights (fairy-lights.tsx). */
+.sv-lights {
+  position: relative;
+  height: calc(var(--sv-sag) + 1.25rem);
+  pointer-events: none;
+  --sv-wire: var(--sv-wire-dark, currentColor);
+  color: var(--sv-wire);
+}
+@media (prefers-color-scheme: light) {
+  .sv-lights { --sv-wire: var(--sv-wire-light, currentColor); }
+}
+.sv-lights[data-beads] { height: calc(var(--sv-sag) + 1.6rem); }
+.sv-lights-wire {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: var(--sv-sag);
+  overflow: visible;
+}
+/* A bulb on its socket, hanging off the wire. */
+.sv-bulb {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.7rem;
+  margin-left: -0.25rem;
+  margin-top: 1px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.75) 0 12%, transparent 30%),
+    var(--sv-bulb);
+  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--sv-bulb) 75%, transparent);
+  transform-origin: 50% -3px;
+  rotate: var(--sv-tilt);
+}
+.sv-bulb::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 3px;
+  border-radius: 1px;
+  background: currentColor;
+}
+.sv-lights[data-animate] .sv-bulb {
+  animation-name: sv-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes sv-twinkle {
+  from { opacity: 1; box-shadow: 0 0 12px 3px color-mix(in srgb, var(--sv-bulb) 80%, transparent); }
+  to { opacity: 0.55; box-shadow: 0 0 4px 0 color-mix(in srgb, var(--sv-bulb) 40%, transparent); }
+}
+/* A bead (a blossom, a leaf) on its stalk, swaying from where it hangs. */
+.sv-bead {
+  position: absolute;
+  margin-left: -0.55rem;
+  margin-top: -2px;
+  width: 1.1rem;
+  font-size: 1.05rem;
+  line-height: 1;
+  text-align: center;
+  transform-origin: 50% 0;
+  rotate: var(--sv-tilt);
+}
+.sv-lights[data-animate] .sv-bead {
+  animation-name: sv-bead-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes sv-bead-sway {
+  from { transform: rotate(-9deg); }
+  to { transform: rotate(9deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-lights[data-animate] .sv-bulb,
+  .sv-lights[data-animate] .sv-bead { animation: none; }
+}
+
+/* ======================================================================== */
+
+/* Something crossing the window (flyer.tsx). Each flight writes its own
+   keyframes; this is what every flight shares. */
+.sv-flyer-lane {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sv-flyer {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  color: var(--sv-flyer-color, currentColor);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
+}
+.sv-flyer[data-mirror] .sv-flyer-art { scale: -1 1; }
+.sv-flyer[data-flap] .sv-flyer-art > * {
+  display: block;
+  animation: sv-flap-y var(--sv-flap) ease-in-out infinite alternate;
+}
+.sv-flyer[data-flap="x"] .sv-flyer-art > * { animation-name: sv-flap-x; }
+@keyframes sv-flap-y {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0.45); }
+}
+@keyframes sv-flap-x {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0.35); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-flyer { display: none; }
+}
+
+/* ======================================================================== */
+
+/* A toy on a thread (draggable-toy.tsx). The swing wrapper turns about the
+   anchor (the container's top) and stretches along the thread; the body
+   bobs, drops and rings inside it with CSS. */
+.sv-toy {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sv-toy-swing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+.sv-toy-body {
+  position: relative;
+  margin-top: var(--sv-toy-rest);
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transform-origin: 50% -100vh;
+}
+.sv-toy[data-held] .sv-toy-body { cursor: grabbing; }
+.sv-toy[data-animate]:not([data-held]) .sv-toy-body {
+  animation: sv-toy-bob 3.2s ease-in-out infinite;
+}
+/* The thread, drawn up from the body so it stretches as the toy moves. */
+.sv-toy-body::before {
+  content: "";
+  position: absolute;
+  bottom: 70%;
+  left: calc(50% - 0.5px);
+  width: 1px;
+  height: 100vh;
+  background: var(--sv-thread, currentColor);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.sv-toy[data-move="drop"][data-moving] .sv-toy-body {
+  animation: sv-toy-drop 2.6s cubic-bezier(0.3, 1.4, 0.5, 1) 1;
+}
+.sv-toy[data-move="swing"] .sv-toy-body { transform-origin: 50% -2rem; }
+.sv-toy[data-move="swing"][data-moving] .sv-toy-body {
+  animation: sv-toy-ring 1.1s ease-out 1;
+}
+/* Falls, stretches the thread, and bounces to a stop, squashing at the bottom. */
+.sv-toy[data-move="bounce"][data-moving] .sv-toy-body {
+  animation: sv-toy-bounce 1.5s linear 1;
+}
+/* A quick loop and back, like a bee that has seen a flower. */
+.sv-toy[data-move="buzz"][data-moving] .sv-toy-body {
+  animation: sv-toy-buzz 1.2s ease-in-out 1;
+}
+@keyframes sv-toy-bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(10px) rotate(3deg); }
+}
+@keyframes sv-toy-drop {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(45vh); }
+  55% { transform: translateY(45vh); }
+  100% { transform: translateY(0); }
+}
+@keyframes sv-toy-ring {
+  0% { transform: rotate(0); }
+  15% { transform: rotate(24deg); }
+  35% { transform: rotate(-18deg); }
+  55% { transform: rotate(11deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0); }
+}
+@keyframes sv-toy-bounce {
+  0% { transform: translateY(0) rotate(0deg) scale(1, 1); animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6); }
+  22% { transform: translateY(16vh) rotate(110deg) scale(1.16, 0.8); animation-timing-function: cubic-bezier(0, 0.4, 0.5, 1); }
+  27% { transform: translateY(15vh) rotate(125deg) scale(1, 1); }
+  45% { transform: translateY(-2.5rem) rotate(230deg) scale(1, 1); animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6); }
+  62% { transform: translateY(7vh) rotate(290deg) scale(1.08, 0.9); animation-timing-function: cubic-bezier(0, 0.4, 0.5, 1); }
+  78% { transform: translateY(-0.75rem) rotate(335deg) scale(1, 1); }
+  90% { transform: translateY(1.5vh) rotate(355deg) scale(1, 1); }
+  100% { transform: translateY(0) rotate(360deg) scale(1, 1); }
+}
+@keyframes sv-toy-buzz {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  14% { transform: translate(-2.1rem, 1.1rem) rotate(-14deg); }
+  28% { transform: translate(-2.9rem, 3.2rem) rotate(10deg); }
+  42% { transform: translate(-0.6rem, 4.4rem) rotate(16deg); }
+  56% { transform: translate(1.6rem, 2.5rem) rotate(-10deg); }
+  70% { transform: translate(0.9rem, 0.5rem) rotate(6deg); }
+  85% { transform: translate(-0.3rem, -0.2rem) rotate(-3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-toy-body { animation: none !important; }
+}
+
+/* ======================================================================== */
+
+/* A burst (burst.tsx). Each particle flies out along its own --dx/--dy
+   while gravity (--g) pulls it down harder as time goes on: the x and y
+   travel on different easings, which is what makes the arc ballistic. */
+.sv-burst {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.sv-burst > span:not(.sv-burst-ring) {
+  position: absolute;
+  font-size: 1.6rem;
+  line-height: 1;
+  opacity: 0;
+  translate: -50% -50%;
+  animation:
+    sv-burst-out 1s cubic-bezier(0.15, 0.7, 0.3, 1) forwards,
+    sv-burst-fall 1s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+.sv-burst > span[data-near] { z-index: 1; }
+@keyframes sv-burst-out {
+  0% { transform: translate(0, 0) scale(calc(var(--s) * 0.45)) rotate(0); opacity: 1; }
+  30% { transform: translate(calc(var(--dx) * 0.6), calc(var(--dy) * 0.6)) scale(var(--s)); }
+  60% { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(var(--s)) rotate(var(--rot)); opacity: 0; }
+}
+/* Gravity, as a margin, so it adds to the throw on `transform` without
+   fighting it for the same property. */
+@keyframes sv-burst-fall {
+  from { margin-top: 0; }
+  to { margin-top: var(--g); }
+}
+.sv-burst-ring {
+  position: absolute;
+  width: var(--sv-ring-size);
+  height: var(--sv-ring-size);
+  translate: -50% -50%;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--sv-ring) 80%, transparent);
+  background: radial-gradient(circle, color-mix(in srgb, var(--sv-ring) 18%, transparent) 0%, transparent 70%);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--sv-ring) 60%, transparent);
+  animation: sv-burst-ring 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes sv-burst-ring {
+  from { transform: scale(0.15); opacity: 0.7; }
+  to { transform: scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-burst { display: none; }
+}
+
+/* ======================================================================== */
+
+/* A candle's glow (candle-glow.tsx). */
+.sv-candle {
+  display: inline-block;
+  line-height: 0;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--sv-candle) 55%, transparent));
+}
+.sv-candle[data-animate] {
+  animation-name: sv-candle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+/* Uneven on purpose, and smoothed: a flame, not a lamp on a bad switch. */
+@keyframes sv-candle {
+  0%, 100% { filter: drop-shadow(0 0 14px color-mix(in srgb, var(--sv-candle) 60%, transparent)) brightness(1); }
+  18% { filter: drop-shadow(0 0 9px color-mix(in srgb, var(--sv-candle) 42%, transparent)) brightness(0.94); }
+  30% { filter: drop-shadow(0 0 13px color-mix(in srgb, var(--sv-candle) 56%, transparent)) brightness(1); }
+  46% { filter: drop-shadow(0 0 7px color-mix(in srgb, var(--sv-candle) 36%, transparent)) brightness(0.9); }
+  58% { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--sv-candle) 52%, transparent)) brightness(0.98); }
+  74% { filter: drop-shadow(0 0 9px color-mix(in srgb, var(--sv-candle) 44%, transparent)) brightness(0.93); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-candle[data-animate] { animation: none; }
+}
+
+/* ======================================================================== */
+
+/* Snow on a card's top edge (snow-cap.tsx). */
+.sv-snowcap {
+  --sv-snow: var(--sv-snow-dark);
+  position: absolute;
+  top: -10px;
+  left: 14px;
+  right: 14px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 1;
+}
+@media (prefers-color-scheme: light) {
+  .sv-snowcap { --sv-snow: var(--sv-snow-light); }
+}
+.sv-snowcap > span {
+  position: absolute;
+  background: var(--sv-snow);
+}
+.sv-snowcap > [data-part="lump"] {
+  bottom: 4px;
+  border-radius: 999px 999px 4px 4px;
+}
+.sv-snowcap > [data-part="base"] {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 3px color-mix(in srgb, var(--sv-snow-shade) 25%, transparent);
+}
+.sv-snowcap > [data-part="drip"] {
+  top: 10px;
+  width: 5px;
+  border-radius: 0 0 3px 3px;
+}
+
+/* ======================================================================== */
+
+/* Frost on a card's top edge (frost-rim.tsx). */
+.sv-frost {
+  --sv-frost: var(--sv-frost-dark);
+  position: absolute;
+  top: -2px;
+  /* Where the card's top edge runs straight, clear of its rounded corners. */
+  left: 1.1rem;
+  right: 1.1rem;
+  height: 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+@media (prefers-color-scheme: light) {
+  .sv-frost { --sv-frost: var(--sv-frost-light); }
+}
+.sv-frost > [data-part="line"] {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--sv-frost) 85%, transparent), color-mix(in srgb, var(--sv-frost) 25%, transparent));
+}
+.sv-frost > [data-part="icicle"] {
+  position: absolute;
+  top: 2px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--sv-frost) 85%, transparent), color-mix(in srgb, var(--sv-frost) 20%, transparent));
+  /* Tapering to a point. */
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.sv-frost > [data-part="crystal"] {
+  position: absolute;
+  top: calc(1px - var(--sv-c) / 2);
+  margin-left: calc(var(--sv-c) / -2);
+  color: var(--sv-frost);
+  font-size: var(--sv-c);
+  line-height: 1;
+  opacity: 0.8;
+  text-shadow: 0 0 calc(var(--sv-c) / 2) var(--sv-frost);
+}
+.sv-frost > [data-part="crystal"]::before { content: "✦"; }
+.sv-frost[data-animate] > [data-part="crystal"] {
+  animation-name: sv-frost-glint;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes sv-frost-glint {
+  0%, 45% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  52% { opacity: 1; transform: scale(1.35) rotate(45deg); }
+  60%, 100% { opacity: 0.6; transform: scale(1) rotate(90deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-frost[data-animate] > [data-part="crystal"] { animation: none; }
+}
+
+/* ======================================================================== */
+
+/* Things resting on a card's top edge (scatter.tsx). */
+.sv-scatter {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.sv-scatter > span {
+  position: absolute;
+  line-height: 1;
+}
+
+/* ======================================================================== */
+
+/* The staged welcome (welcome-stage.tsx). Each layer has its own cue. */
+.sv-welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  cursor: pointer;
+  animation: sv-welcome-in 0.3s ease-out both;
+}
+.sv-welcome-bloom {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: min(120vmin, 60rem);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--sv-glow) 55%, transparent) 0%, color-mix(in srgb, var(--sv-glow) 18%, transparent) 40%, transparent 70%);
+  pointer-events: none;
+}
+.sv-welcome-motes .sv-field { position: absolute; }
+.sv-welcome-motes { position: absolute; inset: 0; pointer-events: none; }
+.sv-welcome-burst { position: absolute; top: 47%; left: 0; right: 0; height: 0; }
+.sv-welcome-card {
+  position: relative;
+  max-width: 24rem;
+  border-radius: 28px;
+  border-width: 3px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  box-shadow: 0 24px 64px color-mix(in srgb, var(--sv-glow) 35%, transparent);
+}
+.sv-welcome-emoji { font-size: 88px; line-height: 1; }
+.sv-welcome-title { margin-top: 0.75rem; }
+
+.sv-welcome[data-animate] .sv-welcome-bloom {
+  animation:
+    sv-welcome-bloom 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) both,
+    sv-welcome-breathe 1.8s ease-in-out 0.7s infinite alternate;
+}
+.sv-welcome[data-animate] .sv-welcome-card { animation: sv-welcome-card 0.7s cubic-bezier(0.3, 1.5, 0.5, 1) 0.12s both; }
+.sv-welcome[data-animate] .sv-welcome-emoji { animation: sv-welcome-pop 0.55s cubic-bezier(0.3, 1.8, 0.5, 1) 0.32s both; }
+.sv-welcome[data-animate] .sv-welcome-title { animation: sv-welcome-rise 0.35s ease-out 0.46s both; }
+
+@keyframes sv-welcome-in { from { opacity: 0; } }
+@keyframes sv-welcome-bloom { from { opacity: 0; transform: scale(0.5); } }
+@keyframes sv-welcome-breathe { to { opacity: 0.85; } }
+@keyframes sv-welcome-card { from { opacity: 0; transform: scale(0.6) rotate(-6deg); } }
+@keyframes sv-welcome-pop { from { opacity: 0; transform: scale(0.3); } }
+@keyframes sv-welcome-rise { from { opacity: 0; transform: translateY(10px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-welcome *, .sv-welcome { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
+
+/* ======================================================================== */
+/* The composition (layer.tsx, toy.tsx, decor.tsx): where the visuals sit.  */
+/* ======================================================================== */
+
+/* The layer every season's decorations sit in: under a fixed header, over
+   the page, never in the way of a click except the toy's. The sky, the mist
+   and the particles sit outside it, behind the page. */
+.sv-layer {
+  position: fixed;
+  inset: var(--sv-layer-top, 0px) 0 0 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+  --sv-flyer-color: var(--sv-ink, currentColor);
+}
+
+/* The garland, strung edge to edge at the top of the layer. */
+.sv-garland {
+  position: absolute;
+  inset: -2px 0 auto 0;
+}
+
+/* An emoji flyer: a bird, a butterfly, a sleigh, a leaf. */
+.sv-flyer-emoji {
+  display: block;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* The toy on its thread, near the right of the layer. */
+.sv-hanging-toy {
+  right: var(--sv-toy-right, clamp(3.25rem, 9vw, 6rem));
+  color: var(--sv-ink, currentColor);
+  --sv-thread: var(--sv-ink-faint, currentColor);
+}
+.sv-toy-emoji {
+  display: block;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* What it says, to its left, so it never runs off the window. */
+.sv-toy-line {
+  position: absolute;
+  top: 0.25rem;
+  right: calc(100% + 0.5rem);
+  width: max-content;
+  max-width: 12rem;
+  margin: 0;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--sv-hairline, currentColor);
+  border-radius: 0.75rem;
+  background: var(--sv-raised, Canvas);
+  color: var(--sv-ink, CanvasText);
+  font-size: var(--sv-text-xs, 0.75rem);
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: right;
+  animation: sv-toy-line 0.18s ease-out;
+}
+@keyframes sv-toy-line {
+  from { opacity: 0; transform: translateX(6px); }
+}
+.sv-toy-burst {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+}
+
+/* Particles drifting down the window on a finished task. Behind the page:
+   through the gaps, never over text. */
+.sv-rain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.sv-rain > span {
+  position: absolute;
+  top: -3rem;
+  font-size: 1.75rem;
+  opacity: 0.9;
+  animation: sv-rain linear infinite;
+}
+@keyframes sv-rain {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(18px, 36vh) rotate(80deg); }
+  66% { transform: translate(-18px, 72vh) rotate(160deg); }
+  100% { transform: translate(0, calc(100vh + 6rem)) rotate(240deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-rain { display: none; }
+}
+
+/* The row of ornaments that ends a page. Place it with your own class. */
+.sv-footer {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  pointer-events: none;
+}
+.sv-ornament { line-height: 1; }
+.sv-ornament[data-size="s"] { font-size: 1.75rem; }
+.sv-ornament[data-size="m"] { font-size: 2.1rem; }
+.sv-ornament[data-size="l"] { font-size: 2.6rem; }
+.sv-ornament[data-lift] { margin-bottom: 0.9rem; }
+
+/* The greeting pill's own look, when the app passes no class of its own. */
+.sv-greeting {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  margin: 0.5rem 0 0;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--sv-accent, currentColor) 30%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sv-accent, currentColor) 10%, transparent);
+  color: var(--sv-accent-text, currentColor);
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+/* The welcome's own look, when the app passes no classes of its own. */
+.sv-welcome[data-default] { background: color-mix(in srgb, var(--sv-abyss, #05080f) 75%, transparent); }
+.sv-welcome[data-default] .sv-welcome-card {
+  border-style: solid;
+  border-color: var(--sv-accent, currentColor);
+  background: var(--sv-surface, Canvas);
+}
+.sv-welcome[data-default] .sv-welcome-title {
+  margin-bottom: 0;
+  color: var(--sv-accent-text, CanvasText);
+  font-size: 2.25rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+/* ======================================================================== */
+/* Halloween's artwork (art/halloween.tsx), used only if the app opts in.   */
+/* ======================================================================== */
+
+.sv-cobweb {
+  position: absolute;
+  top: 0;
+  width: clamp(5.5rem, 14vw, 10rem);
+  height: auto;
+  /* Silk: the faint ink, fainter still. */
+  color: color-mix(in srgb, var(--sv-ink-faint, currentColor) 42%, transparent);
+}
+.sv-cobweb[data-side="left"] { left: 0; }
+.sv-cobweb[data-side="right"] { right: 0; transform: scaleX(-1); }
+
+.sv-bat {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The face glows a little brighter than the skin; the candle does the flicker. */
+.sv-pumpkin-face { filter: brightness(1.05); }
+
+/* ======================================================================== */
+/* A theme switch of the app's own: data-sv-scheme on <html> wins over the  */
+/* system's prefers-color-scheme, for every visual above.                   */
+/* ======================================================================== */
+
+:root[data-sv-scheme="light"] .sv-sky { --sv-sky: var(--sv-sky-light); }
+:root[data-sv-scheme="dark"] .sv-sky { --sv-sky: var(--sv-sky-dark); }
+:root[data-sv-scheme="light"] .sv-sun { --sv-sun-rays: var(--sv-sun-rays-light); --sv-sun-core: var(--sv-sun-core-light); }
+:root[data-sv-scheme="dark"] .sv-sun { --sv-sun-rays: var(--sv-sun-rays-dark); --sv-sun-core: var(--sv-sun-core-dark); }
+:root[data-sv-scheme="light"] .sv-mist > span { --sv-mist: var(--sv-mist-light); }
+:root[data-sv-scheme="dark"] .sv-mist > span { --sv-mist: var(--sv-mist-dark); }
+:root[data-sv-scheme="light"] .sv-mote { --sv-mote: var(--sv-mote-light); }
+:root[data-sv-scheme="dark"] .sv-mote { --sv-mote: var(--sv-mote-dark); }
+:root[data-sv-scheme="light"] .sv-lights { --sv-wire: var(--sv-wire-light, currentColor); }
+:root[data-sv-scheme="dark"] .sv-lights { --sv-wire: var(--sv-wire-dark, currentColor); }
+:root[data-sv-scheme="light"] .sv-snowcap { --sv-snow: var(--sv-snow-light); }
+:root[data-sv-scheme="dark"] .sv-snowcap { --sv-snow: var(--sv-snow-dark); }
+:root[data-sv-scheme="light"] .sv-frost { --sv-frost: var(--sv-frost-light); }
+:root[data-sv-scheme="dark"] .sv-frost { --sv-frost: var(--sv-frost-dark); }
