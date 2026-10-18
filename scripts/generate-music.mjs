@@ -8,13 +8,24 @@
  *
  *   korobeiniki.m4a     a short chiptune arrangement of "Korobeiniki"
  *   funeral-march.m4a   Gounod, "Funeral March of a Marionette" (Halloween)
- *   mountain-king.m4a   Grieg, "In the Hall of the Mountain King" (Halloween)
+ *   mountain-king.m4a   Grieg, "In the Hall of the Mountain King" (Halloween),
+ *                       transposed from Grieg's B minor to A minor
  *
  * `npm run gen:music` writes all of them; name tracks to write only those,
  * e.g. `npm run gen:music -- funeral-march mountain-king`. `--stems <dir>`
  * additionally writes each Halloween track's lead line as a dry WAV, with its
  * note list as JSON, so the notes can be checked against the score with a
- * pitch tracker.
+ * pitch tracker. The JSON lists the notes as they sound, after any
+ * transposition, so it is the list to check the stem against.
+ *
+ * KEYS. The feedback chimes (`generate-sounds.mjs`) are in C major, and any of
+ * them can sound over the music, so every loop is in C major's relative minor,
+ * A minor, or in a closely related key (Gounod's D minor, A minor's
+ * subdominant, one flat away). A piece written in another key keeps the
+ * score's notes in its note lists and is moved at render time by the
+ * `transpose` option of `play()` (semitones; see `semitones()`), so the lists
+ * still read exactly like the printed page. Grieg's B minor is played a whole
+ * tone down (`KING_TRANSPOSE = -2`), in A minor.
  *
  * Every file is pure arithmetic: no randomness, no samples, no clock. The one
  * thing `afconvert` puts in an .m4a that changes between runs is the creation
@@ -308,6 +319,28 @@ function octave(name, by) {
   return name.replace(/\d$/, (n) => String(Number(n) + by));
 }
 
+/** Spelling of each pitch class after a transposition: A minor's, sharps but B flat. */
+const SPELLING = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
+
+/**
+ * Moves a note name by a number of semitones, across octave boundaries
+ * (`semitones('C2', -2)` is `'Bb1'`). The result is spelled from `SPELLING`,
+ * so the printed name may differ from the textbook spelling of the new key
+ * (E sharp down a tone is written D sharp), but the pitch is exact.
+ *
+ * @param {string} name A note name, e.g. `'F#2'`.
+ * @param {number} by Semitones, negative for down.
+ * @returns {string} The transposed note name.
+ */
+function semitones(name, by) {
+  if (by === 0) return name;
+  const match = /^([A-G])([#b]?)(\d)$/.exec(name);
+  if (!match) throw new Error(`not a note name: ${name}`);
+  const accidental = match[2] === '#' ? 1 : match[2] === 'b' ? -1 : 0;
+  const midi = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[match[1]] + accidental + (Number(match[3]) + 1) * 12 + by;
+  return `${SPELLING[((midi % 12) + 12) % 12]}${Math.floor(midi / 12) - 1}`;
+}
+
 /**
  * Plays a line of [note | chord | null, length in units] events.
  *
@@ -319,15 +352,16 @@ function octave(name, by) {
  * @param {keyof typeof INSTRUMENTS} opts.instrument The voice.
  * @param {number} opts.gain Level of a single note.
  * @param {number} [opts.shift] Octaves to transpose by.
+ * @param {number} [opts.transpose] Semitones to transpose by, applied after `shift`.
  * @param {number} [opts.legato] Fraction of the written length that sounds.
  * @param {Array<{at: number, dur: number, notes: string[]}>} [opts.log] Collects what was played.
  * @returns {number} Where the line ended, seconds.
  */
-function play(buf, line, { at, unit, instrument, gain, shift = 0, legato = 0.9, log }) {
+function play(buf, line, { at, unit, instrument, gain, shift = 0, transpose = 0, legato = 0.9, log }) {
   let time = at;
   for (const [what, length] of line) {
     if (what !== null) {
-      const notes = (Array.isArray(what) ? what : [what]).map((n) => octave(n, shift));
+      const notes = (Array.isArray(what) ? what : [what]).map((n) => semitones(octave(n, shift), transpose));
       // A chord shares one note's level, so it is no louder than a melody note.
       const each = gain / Math.sqrt(notes.length);
       for (const n of notes) tone(buf, time, hz(n), length * unit * legato, each, instrument);
@@ -561,11 +595,17 @@ function renderFuneralMarch(log) {
  * GRIEG — IN THE HALL OF THE MOUNTAIN KING
  * ==========================================================================
  *
- * B minor, 4/4, "Alla marcia e molto marcato", sempre staccato e pianissimo.
- * The theme's sixteen bars as Grieg lays them out, and they already form a
- * loop: the phrase in B minor, the same an octave higher, the answer on the
- * dominant (F sharp major), the same an octave higher, ending on a held C
- * sharp that leads back to B.
+ * Grieg wrote it in B minor; it plays here a whole tone lower, in A minor
+ * (`KING_TRANSPOSE`), so it shares a key with Korobeiniki and cannot clash
+ * with the C major feedback chimes. The note lists below stay in Grieg's B
+ * minor, exactly as printed, and are moved at render time.
+ *
+ * 4/4, "Alla marcia e molto marcato", sempre staccato e pianissimo. The
+ * theme's sixteen bars as Grieg lays them out, and they already form a loop:
+ * the phrase in the tonic, the same an octave higher, the answer on the
+ * dominant, the same an octave higher, ending on a held supertonic that
+ * leads back to the tonic. Sounding (A minor): A - B - C - D -
+ * E - C - E, the answer on E major, ending on a held B that leads back to A.
  *
  * The piece famously accelerates for its whole length. A loop cannot, so the
  * tempo stays at quarter = 126 (Grieg starts at 138; a touch slower sits
@@ -589,8 +629,12 @@ function renderFuneralMarch(log) {
  * under it, is the creepy part; the answer's A# under D natural is the same
  * trick on the dominant. Every note was checked against the staff lines at
  * high magnification. The accompanying pulse is not Grieg's but follows his
- * harmony: a B pedal under the B minor phrases, F# under the answer.
+ * harmony: a B pedal under the B minor phrases, F# under the answer (A and E
+ * as they sound, after the transposition).
  */
+
+/** Semitones from Grieg's B minor to the A minor the loop plays in. */
+const KING_TRANSPOSE = -2;
 
 /** The phrase in B minor, at Grieg's written octave, in eighth notes. */
 const KING_A = [
@@ -611,7 +655,7 @@ const KING_B = [
 /** The sixteen bars: [phrase, octaves above the written pitch it sounds at]. */
 const KING_FORM = [[KING_A, 1], [KING_A, 2], [KING_B, 1], [KING_B, 2]];
 
-/** The plucked pulse, one pedal per phrase: root, fifth, root, fifth in quarters. */
+/** The plucked pulse, one pedal per phrase: root, fifth, root, fifth in quarters (B minor, as written). */
 const KING_PULSE = { A: ['B1', 'F#2'], B: ['F#1', 'C#2'] };
 
 /**
@@ -637,16 +681,17 @@ function renderMountainKing(log) {
     KING_FORM.forEach(([phrase, shift], index) => {
       const at = (pass * bars + index * 4) * barLength;
       // Grieg: sempre staccato. The pluck carries the line, the bassoon gives it body.
-      play(buf, phrase, { at, unit: eighth, instrument: 'pizz', gain: 0.4, shift, legato: 0.5 });
-      play(buf, phrase, { at, unit: eighth, instrument: 'reed', gain: 0.2, shift, legato: 0.45 });
-      play(lead, phrase, { at, unit: eighth, instrument: 'pizz', gain: 0.4, shift, legato: 0.5, log });
+      const transpose = KING_TRANSPOSE;
+      play(buf, phrase, { at, unit: eighth, instrument: 'pizz', gain: 0.4, shift, transpose, legato: 0.5 });
+      play(buf, phrase, { at, unit: eighth, instrument: 'reed', gain: 0.2, shift, transpose, legato: 0.45 });
+      play(lead, phrase, { at, unit: eighth, instrument: 'pizz', gain: 0.4, shift, transpose, legato: 0.5, log });
       if (pass === 1) {
-        play(buf, phrase, { at, unit: eighth, instrument: 'celesta', gain: 0.11, shift: shift + 2, legato: 0.5 });
+        play(buf, phrase, { at, unit: eighth, instrument: 'celesta', gain: 0.11, shift: shift + 2, transpose, legato: 0.5 });
       }
 
       const [root, fifth] = KING_PULSE[phrase === KING_A ? 'A' : 'B'];
       for (let quarter = 0; quarter < 16; quarter++) {
-        const pitch = quarter % 2 === 0 ? root : fifth;
+        const pitch = semitones(quarter % 2 === 0 ? root : fifth, KING_TRANSPOSE);
         tone(buf, at + quarter * 2 * eighth, hz(pitch), eighth, quarter % 4 === 0 ? 0.3 : 0.22, 'pizz');
       }
     });
