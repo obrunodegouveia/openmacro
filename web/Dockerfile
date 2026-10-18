@@ -19,6 +19,7 @@ WORKDIR /repo
 # when installing one of them.
 COPY package.json package-lock.json ./
 COPY packages/core/package.json ./packages/core/
+COPY packages/seasons/package.json ./packages/seasons/
 COPY web/package.json ./web/
 
 # Scoped to the website. Without --workspace this would also install React
@@ -32,6 +33,7 @@ WORKDIR /repo
 COPY --from=deps /repo/node_modules ./node_modules
 COPY package.json package-lock.json ./
 COPY packages/core ./packages/core
+COPY packages/seasons ./packages/seasons
 COPY web ./web
 
 # Public (NEXT_PUBLIC_*) values are inlined into the client bundle at build
