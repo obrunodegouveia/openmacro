@@ -43,26 +43,43 @@ function separators(locale: string): { group: string; decimal: string } {
  *
  * English "billion" is 10^9 and Portuguese *bilião* is 10^12, so `€100B`
  * rendered for a Portuguese reader says a thousand times what it means. The
- * long scale needs *mil milhões* for 10^9 and keeps B for 10^12, which is
- * why this cannot be a shared table with a locale-specific separator bolted
- * on — the letters themselves move.
+ * long scale needs *mil milhões* for 10^9, which is why this cannot be a
+ * shared table with a locale-specific separator bolted on — the letters
+ * themselves move.
+ *
+ * Each entry is `[scale, singular, plural]`; the singular is used only when
+ * the scaled figure is exactly 1 (`1 bilião`, `2,5 biliões`).
+ *
+ * WHY pt-PT SPELLS OUT «biliões»
+ *
+ * It used to be `B`, which is the correct initial for *bilião* and still the
+ * wrong choice. A Portuguese reader of financial news meets `B` as the English
+ * billion every day (`$5B` in any wire story), so `$5,2 B` next to `$10 mM`
+ * on one balance sheet read as 5.2 thousand million — off by a factor of a
+ * thousand, on the one figure the sheet exists to show. The alternatives were
+ * worse: `bi` is Brazilian shorthand for *bilhão*, which is 10^9 there, and
+ * `Bi` is no better known. Spelled out, the word cannot be misread, and at
+ * 7 letters it still fits every place this formatter is used: the T-account
+ * columns put the amount on its own (web: a non-shrinking span beside a
+ * wrapping account name; app: its own line), and the sim readouts wrap.
+ * `mM` and `M` stay abbreviated — those have no English look-alike problem.
  */
-const MAGNITUDES: Readonly<Record<string, readonly (readonly [number, string])[]>> = {
+const MAGNITUDES: Readonly<Record<string, readonly (readonly [number, string, string])[]>> = {
   en: [
-    [1e12, 'T'],
-    [1e9, 'B'],
-    [1e6, 'M'],
-    [1e3, 'K'],
+    [1e12, 'T', 'T'],
+    [1e9, 'B', 'B'],
+    [1e6, 'M', 'M'],
+    [1e3, 'K', 'K'],
   ],
   'pt-PT': [
-    [1e12, '\u00A0B'],
-    [1e9, '\u00A0mM'],
-    [1e6, '\u00A0M'],
-    [1e3, '\u00A0mil'],
+    [1e12, '\u00A0bilião', '\u00A0biliões'],
+    [1e9, '\u00A0mM', '\u00A0mM'],
+    [1e6, '\u00A0M', '\u00A0M'],
+    [1e3, '\u00A0mil', '\u00A0mil'],
   ],
 };
 
-function magnitudes(locale: string): readonly (readonly [number, string])[] {
+function magnitudes(locale: string): readonly (readonly [number, string, string])[] {
   return MAGNITUDES[locale] ?? MAGNITUDES.en!;
 }
 
@@ -208,13 +225,14 @@ export function formatCompactCurrency(value: number, currency = 'USD', locale = 
   const sign = value < 0 ? '-' : '';
   const magnitude = Math.abs(value);
 
-  for (const [scale, suffix] of magnitudes(locale)) {
+  for (const [scale, singular, plural] of magnitudes(locale)) {
     if (magnitude >= scale) {
       const scaled = magnitude / scale;
       // One decimal below 100 keeps "5.2T" readable; above it the decimal is
       // noise ("420B", not "420.0B").
       const text = scaled >= 100 ? String(Math.round(scaled)) : String(Math.round(scaled * 10) / 10);
       const [whole = '0', cents] = text.split('.');
+      const suffix = text === '1' ? singular : plural;
       return `${sign}${symbol}${group(whole, cents, locale)}${suffix}`;
     }
   }

@@ -618,7 +618,8 @@ export const en = {
   'level.advanced': 'Advanced',
   'level.advanced.blurb': 'Assumes the interface and the levers',
   'tflow.entries': 'Entries to post',
-  'tflow.placed': '{done, number} of {total, number} placed',
+  'tflow.placed': '{done, number} of {total, number} entries placed',
+  'tflow.decoys': 'Traps — not part of this trade',
   'tflow.chooseSide': 'Now choose whose sheet it lands on, and which side.',
   'tflow.pickEntry':
     'Pick an entry, then choose whose sheet it lands on and which side. Every sheet must balance.',
@@ -675,6 +676,10 @@ export const en = {
   'tflow.effect.expand': '{aggregate} expanded',
   'tflow.effect.contract': '{aggregate} contracted',
   'tflow.effect.unchanged': '{aggregate} unchanged',
+  'tflow.aggregate.M0': 'M0',
+  'tflow.aggregate.M1': 'M1',
+  'tflow.aggregate.M2': 'M2',
+  'tflow.aggregate.collateral': 'Collateral',
   'player.xpEarned': '+{count, number} XP',
   // ---- get the app --------------------------------------------------------
   'app.overline': 'The app',

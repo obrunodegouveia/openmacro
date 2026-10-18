@@ -94,6 +94,7 @@ export const eurodollarSystemLesson = defineLesson({
             { account: 'Dollar loans', side: 'asset', amount: 8e9 },
             { account: 'Nostro at US correspondent', side: 'asset', amount: 400e6 },
             { account: 'Dollar deposits', side: 'liability', amount: 8.2e9 },
+            { account: 'Equity', side: 'liability', amount: 200_000_000 },
           ],
         },
         {
@@ -104,6 +105,7 @@ export const eurodollarSystemLesson = defineLesson({
           openingLines: [
             { account: 'Vessels', side: 'asset', amount: 300e6 },
             { account: 'Equity', side: 'liability', amount: 120e6 },
+            { account: 'Other debts', side: 'liability', amount: 180_000_000 },
           ],
         },
       ],

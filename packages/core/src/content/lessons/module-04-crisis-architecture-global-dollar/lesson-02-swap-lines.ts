@@ -58,6 +58,7 @@ export const swapLinesLesson = defineLesson({
           openingLines: [
             { account: 'Securities held outright', side: 'asset', amount: 7e12 },
             { account: 'Bank reserves', side: 'liability', amount: 3e12 },
+            { account: 'Other liabilities and capital', side: 'liability', amount: 4_000_000_000_000 },
           ],
         },
         {
@@ -68,6 +69,7 @@ export const swapLinesLesson = defineLesson({
           openingLines: [
             { account: 'Japanese government bonds', side: 'asset', amount: 500e12 },
             { account: 'Yen reserves owed to banks', side: 'liability', amount: 400e12 },
+            { account: 'Other liabilities and capital', side: 'liability', amount: 100_000_000_000_000 },
           ],
         },
       ],

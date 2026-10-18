@@ -148,7 +148,10 @@ export const bailInBailOutLesson = defineLesson({
           label: 'Junior Bondholders',
           tier: 'shadow_bank',
           role: 'About to become shareholders',
-          openingLines: [{ account: 'Bank junior bonds', side: 'asset', amount: 5e9 }],
+          openingLines: [
+            { account: 'Bank junior bonds', side: 'asset', amount: 5e9 },
+            { account: 'Investors’ capital', side: 'liability', amount: 5_000_000_000 },
+          ],
         },
       ],
       options: [

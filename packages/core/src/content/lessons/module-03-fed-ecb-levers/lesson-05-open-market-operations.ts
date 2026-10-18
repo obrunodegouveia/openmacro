@@ -93,6 +93,7 @@ export const openMarketOperationsLesson = defineLesson({
             { account: 'Securities held outright', side: 'asset', amount: 4e12 },
             { account: 'Repo lending', side: 'asset', amount: 100e9 },
             { account: 'Commercial bank reserves', side: 'liability', amount: 3.5e12 },
+            { account: 'Other liabilities and capital', side: 'liability', amount: 600_000_000_000 },
           ],
         },
         {
@@ -104,6 +105,7 @@ export const openMarketOperationsLesson = defineLesson({
             { account: 'Government bonds', side: 'asset', amount: 80e9 },
             { account: 'Reserves at the central bank', side: 'asset', amount: 20e9 },
             { account: 'Customer deposits', side: 'liability', amount: 95e9 },
+            { account: 'Equity', side: 'liability', amount: 5_000_000_000 },
           ],
         },
       ],

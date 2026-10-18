@@ -71,6 +71,7 @@ export const twoPlacesToParkAEuroLesson = defineLesson({
           openingLines: [
             { account: 'Current accounts', side: 'liability', amount: 317864000000 },
             { account: 'Deposit facility', side: 'liability', amount: 2005870000000 },
+            { account: 'Bonds, loans and other assets', side: 'asset', amount: 2_323_734_000_000 },
           ],
         },
         {
@@ -82,6 +83,7 @@ export const twoPlacesToParkAEuroLesson = defineLesson({
             { account: 'Current account at the Eurosystem', side: 'asset', amount: 8000000000 },
             { account: 'Deposit facility balance', side: 'asset', amount: 20000000000 },
             { account: 'Customer deposits', side: 'liability', amount: 300000000000 },
+            { account: 'Loans and other assets', side: 'asset', amount: 272_000_000_000 },
           ],
         },
       ],

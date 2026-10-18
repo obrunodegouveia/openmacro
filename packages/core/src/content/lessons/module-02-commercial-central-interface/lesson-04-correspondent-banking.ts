@@ -132,6 +132,7 @@ export const correspondentBankingLesson = defineLesson({
           openingLines: [
             { account: 'Nostro balance at US correspondent', side: 'asset', amount: 40e6 },
             { account: 'Customer deposits', side: 'liability', amount: 900e6 },
+            { account: 'Loans and other assets', side: 'asset', amount: 860_000_000 },
           ],
         },
         {
@@ -142,6 +143,7 @@ export const correspondentBankingLesson = defineLesson({
           openingLines: [
             { account: 'Reserves at the Fed', side: 'asset', amount: 3e9 },
             { account: 'Vostro owed to Kenyan Bank', side: 'liability', amount: 40e6 },
+            { account: 'Other deposits and equity', side: 'liability', amount: 2_960_000_000 },
           ],
         },
       ],

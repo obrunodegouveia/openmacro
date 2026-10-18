@@ -111,6 +111,7 @@ export const kabLendingWithoutGoldLesson = defineLesson({
             { account: 'Building', side: 'asset', amount: 100 },
             { account: 'Demand deposits', side: 'liability', amount: 200 },
             { account: 'Notes outstanding', side: 'liability', amount: 100 },
+            { account: 'Equity', side: 'liability', amount: 100 },
           ],
         },
         {
