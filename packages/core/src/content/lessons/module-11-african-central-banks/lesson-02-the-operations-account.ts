@@ -55,6 +55,7 @@ export const theOperationsAccountLesson = defineLesson({
           openingLines: [
             { account: 'Cash at the Banque de France', side: 'asset', amount: 40000000000 },
             { account: 'Operations accounts owed to CFA central banks', side: 'liability', amount: 2000000000 },
+            { account: 'Other liabilities', side: 'liability', amount: 38_000_000_000 },
           ],
         },
       ],

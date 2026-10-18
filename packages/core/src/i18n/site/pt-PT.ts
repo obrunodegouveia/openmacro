@@ -616,7 +616,8 @@ export const ptPT = {
   'level.advanced': 'Avançado',
   'level.advanced.blurb': 'Pressupõe a interface e as alavancas',
   'tflow.entries': 'Lançamentos a fazer',
-  'tflow.placed': '{done, number} de {total, number} colocados',
+  'tflow.placed': '{done, number} de {total, number} lançamentos colocados',
+  'tflow.decoys': 'Armadilhas — não fazem parte desta operação',
   'tflow.chooseSide': 'Agora escolhe em que balanço cai, e de que lado.',
   'tflow.pickEntry':
     'Escolhe um lançamento, e depois em que balanço cai e de que lado. Todos os balanços têm de fechar.',
@@ -670,9 +671,16 @@ export const ptPT = {
   'roadmap.track': 'Percurso {n, number}',
   'roadmap.lessons': '{count, plural, one {# lição} other {# lições}}',
   'roadmap.operatesOn': 'Opera sobre',
-  'tflow.effect.expand': '{aggregate} expandiu',
-  'tflow.effect.contract': '{aggregate} contraiu',
-  'tflow.effect.unchanged': '{aggregate} inalterado',
+  'tflow.effect.expand': '{aggregate} aumentou',
+  'tflow.effect.contract': '{aggregate} diminuiu',
+  'tflow.effect.unchanged': '{aggregate} sem alteração',
+  // Singular on purpose: the titles read «{aggregate} aumentou», and a plural
+  // name («Garantias») would need «aumentaram». «Oferta de garantias» is the
+  // supply of good collateral, which is what this aggregate measures.
+  'tflow.aggregate.M0': 'M0',
+  'tflow.aggregate.M1': 'M1',
+  'tflow.aggregate.M2': 'M2',
+  'tflow.aggregate.collateral': 'Oferta de garantias',
   'player.xpEarned': '+{count, number} XP',
   // ---- get the app --------------------------------------------------------
   'app.overline': 'A app',

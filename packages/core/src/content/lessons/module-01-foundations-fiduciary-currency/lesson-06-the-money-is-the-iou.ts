@@ -168,6 +168,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
             { account: 'US Treasuries', side: 'asset', amount: 20e9 },
             { account: 'Reserves at the Fed', side: 'asset', amount: 8e9 },
             { account: 'Customer deposits', side: 'liability', amount: 25e9 },
+            { account: 'Equity', side: 'liability', amount: 3_000_000_000 },
           ],
         },
       ],

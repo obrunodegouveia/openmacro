@@ -73,6 +73,7 @@ export const africanCentralBanksPtPT: ContentDictionary = {
   'the-operations-account.operations-account-posting.entity.treasury.role': 'Detém a conta, paga juro sobre ela, garante a convertibilidade',
   'the-operations-account.operations-account-posting.account.cash-at-the-banque-de-france': 'Disponibilidades no Banque de France',
   'the-operations-account.operations-account-posting.account.operations-accounts-owed-to-cfa-central-banks': 'Contas de operações devidas aos bancos centrais do CFA',
+  'the-operations-account.operations-account-posting.account.other-liabilities': 'Outros passivos',
   'the-operations-account.operations-account-posting.option.cb-currency-down.feedback': 'Não foram retirados francos CFA de circulação. O banco central moveu um ativo seu de um depositário para outro; o que deve ao público está inalterado.',
   'the-operations-account.operations-account-posting.option.tr-gift.feedback': 'Sinal errado, e é a resposta errada mais reveladora que existe. Receber o depósito faz o Tesouro dever *mais*, não menos. Se o dinheiro fosse confiscado apareceria como receita do Tesouro — e nunca apareceu.',
   'the-operations-account.operations-account-posting.effect.0.note': 'Não se criaram nem destruíram francos CFA. Isto é um gestor de reservas a escolher um depositário — exceto que não estava a escolher.',

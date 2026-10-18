@@ -112,6 +112,7 @@ export const treasuryAccountDrainLesson = defineLesson({
             { account: 'U.S. Treasury securities', side: 'asset', amount: 4552347000000 },
             { account: 'Reserve balances', side: 'liability', amount: 2929285000000 },
             { account: 'U.S. Treasury, General Account', side: 'liability', amount: 944364000000 },
+            { account: 'Other liabilities and capital', side: 'liability', amount: 678_698_000_000 },
           ],
         },
         {
@@ -122,6 +123,7 @@ export const treasuryAccountDrainLesson = defineLesson({
           openingLines: [
             { account: 'Reserve deposits at the Fed', side: 'asset', amount: 300000000000 },
             { account: 'Customer deposits', side: 'liability', amount: 900000000000 },
+            { account: 'Loans and other assets', side: 'asset', amount: 600_000_000_000 },
           ],
         },
         {
@@ -132,6 +134,7 @@ export const treasuryAccountDrainLesson = defineLesson({
           openingLines: [
             { account: 'Cash at the Fed', side: 'asset', amount: 944364000000 },
             { account: 'Debt outstanding', side: 'liability', amount: 37000000000000 },
+            { account: 'Accumulated deficits', side: 'asset', amount: 36_055_636_000_000 },
           ],
         },
       ],
