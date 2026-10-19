@@ -13,6 +13,9 @@ import type { LessonProgress } from "@openmacro/core/progress/types";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import { Permalink } from "@/components/ui/permalink";
 import { ModuleVideo } from "@/components/app/module-video";
+import { KidsModeSwitch } from "@/components/app/kids-mode-switch";
+import { useLessonMode } from "@/components/app/kids-mode";
+import { lessonsForMode, moduleHasKidsPath } from "@openmacro/core/engine/lessonMode";
 import { cn } from "@/lib/utils";
 
 /**
@@ -31,6 +34,9 @@ import { cn } from "@/lib/utils";
 export function CourseMap() {
   const { snapshot, state } = useProgressSnapshot();
   const { t, modules } = useLocale();
+  // Kids mode: a module with a kids path lists only those lessons, each at
+  // its kids length. Every other module ignores it.
+  const mode = useLessonMode();
   const all = modules.flatMap((module) => module.lessons);
   const done = snapshot
     ? all.filter((lesson) => snapshot.progress[lesson.id]).length
@@ -338,12 +344,13 @@ export function CourseMap() {
 
               <div id={panelId} hidden={!open} className="mt-7 flex flex-col gap-8">
                 {group.modules.map((module) => {
-                  const moduleDone = module.lessons.filter(
+                  const lessons = lessonsForMode(module, mode);
+                  const moduleDone = lessons.filter(
                     (lesson) => snapshot?.progress[lesson.id],
                   ).length;
                   const moduleOpen = isModuleOpen(module.id);
                   const panel = `module-panel-${module.id}`;
-                  const finished = ready && moduleDone === module.lessons.length;
+                  const finished = ready && moduleDone === lessons.length;
 
                   return (
                     /* The `id` makes each module a real destination — without
@@ -384,7 +391,7 @@ export function CourseMap() {
                                 ? t("path.module.done")
                                 : t("path.module.progress", {
                                     done: moduleDone,
-                                    total: module.lessons.length,
+                                    total: lessons.length,
                                   })}
                             </p>
                           ) : null}
@@ -407,6 +414,9 @@ export function CourseMap() {
                       </p>
 
                       <div id={panel} hidden={!moduleOpen}>
+                        {moduleHasKidsPath(module) ? (
+                          <KidsModeSwitch lessons={lessonsForMode(module, "kids").length} />
+                        ) : null}
                         {module.video ? (
                           <div className="max-w-2xl">
                             <ModuleVideo video={module.video} moduleTitle={module.title} />
@@ -414,7 +424,7 @@ export function CourseMap() {
                         ) : null}
 
                         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                          {module.lessons.map((lesson) => (
+                          {lessons.map((lesson) => (
                             <li key={lesson.id}>
                               <LessonCard
                                 lesson={lesson}
@@ -450,6 +460,9 @@ function LessonCard({
     0,
   );
   const perfect = record ? record.bestXp >= xp : false;
+  // A full run counts towards a kids card too (they share the lesson's
+  // record), so never show more than this card's run can award.
+  const best = record ? Math.min(record.bestXp, xp) : 0;
 
   return (
     <LocaleLink
@@ -493,7 +506,7 @@ function LessonCard({
                 ) : (
                   <RotateCcw className="size-3" aria-hidden />
                 )}
-                {t("map.best", { best: record.bestXp, total: xp })}
+                {t("map.best", { best, total: xp })}
               </span>
               {record.completions > 1 ? (
                 <span>{t("map.runs", { count: record.completions })}</span>

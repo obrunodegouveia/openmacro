@@ -30,6 +30,15 @@ import { ChallengeView } from "@/components/challenges/challenge-view";
 import { CharacterAvatar, usePreloadSpeakers } from "@/components/challenges/character-avatar";
 import { speakerReaction, verdictMoment, type SpeakerReaction } from "@openmacro/core/engine/speaker";
 import { ModuleVideo } from "@/components/app/module-video";
+import { useLessonMode } from "@/components/app/kids-mode";
+import {
+  effectiveMode,
+  lessonForMode,
+  nextKidsLesson,
+  resumeId,
+  type LessonMode,
+} from "@openmacro/core/engine/lessonMode";
+import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content/schema";
 import { SeasonalBurst, SeasonalIcon, SeasonalRain } from "@/components/site/seasonal-decor";
 import { useAuth } from "@/components/site/auth-provider";
 import { SignedOutWarning } from "@/components/site/signed-out-warning";
@@ -56,15 +65,32 @@ import { cn } from "@/lib/utils";
  * (progress, hearts, XP) and the button that advances it, so both are pinned —
  * top and bottom — and everything else moves between them.
  */
-export function LessonPlayer({
-  lesson: englishLesson,
-  moduleId,
-  xpAvailable,
-}: {
+export function LessonPlayer(props: {
   lesson: Lesson;
   /** Resolved to a title here, so it follows the reader's language. */
   moduleId?: string;
   xpAvailable: number;
+}) {
+  /**
+   * Kids mode, keyed so that switching it starts a fresh run: the reducer
+   * copies the lesson in once, and a kids run holds different questions.
+   * The page is prerendered in the standard mode and a stored kids choice
+   * lands right after hydration — before anything can have been answered.
+   */
+  const mode = effectiveMode(props.lesson, useLessonMode());
+  return <LessonRun key={mode} mode={mode} {...props} />;
+}
+
+function LessonRun({
+  lesson: englishLesson,
+  moduleId,
+  xpAvailable: xpAvailableStandard,
+  mode,
+}: {
+  lesson: Lesson;
+  moduleId?: string;
+  xpAvailable: number;
+  mode: LessonMode;
 }) {
   const { t, lessonById, modules } = useLocale();
   const s = useSiteText();
@@ -77,7 +103,13 @@ export function LessonPlayer({
    * resolves the same id through the overlay; for an English reader, or an
    * untranslated module, it is the very same object.
    */
-  const lesson = lessonById(englishLesson.id) ?? englishLesson;
+  const lesson = lessonForMode(lessonById(englishLesson.id) ?? englishLesson, mode);
+  const xpAvailable =
+    mode === "kids"
+      ? lesson.challenges.reduce((sum, challenge) => sum + (challenge.xp ?? DEFAULT_CHALLENGE_XP), 0)
+      : xpAvailableStandard;
+  /** One stored run per lesson and mode (`resumeId`). */
+  const resumeAs = resumeId(englishLesson, mode);
 
   /** The module name over the title, resolved the same way for the same reason. */
   const moduleTitle = moduleId
@@ -104,23 +136,23 @@ export function LessonPlayer({
    */
   const resumeRead = React.useRef(false);
   React.useEffect(() => {
-    const snapshot = readResume(englishLesson.id);
+    const snapshot = readResume(resumeAs);
     if (snapshot) dispatch({ kind: "resume", snapshot });
     resumeRead.current = true;
-  }, [englishLesson.id]);
+  }, [resumeAs]);
   React.useEffect(() => {
     if (!resumeRead.current) return;
     const snapshot = snapshotSession(state);
     try {
       if (snapshot) {
-        localStorage.setItem(resumeKey(englishLesson.id), JSON.stringify(snapshot));
+        localStorage.setItem(resumeKey(resumeAs), JSON.stringify(snapshot));
       } else if (state.submissionCount > 0 || state.status !== "in_progress") {
-        localStorage.removeItem(resumeKey(englishLesson.id));
+        localStorage.removeItem(resumeKey(resumeAs));
       }
     } catch {
       // Storage unavailable: the run simply cannot be resumed.
     }
-  }, [state, englishLesson.id]);
+  }, [state, resumeAs]);
 
   /**
    * Arriving on a link to one particular question.
@@ -288,6 +320,7 @@ export function LessonPlayer({
             {finished ? (
               <LessonComplete
                 lesson={lesson}
+                mode={mode}
                 state={state}
                 onRestart={() => dispatch({ kind: "restart" })}
               />
@@ -647,16 +680,18 @@ function OutOfHearts({ lesson, onRestart }: { lesson: Lesson; onRestart: () => v
  */
 function LessonComplete({
   lesson,
+  mode,
   state,
   onRestart,
 }: {
   lesson: Lesson;
+  mode: LessonMode;
   state: ReturnType<typeof createSession>;
   onRestart: () => void;
 }) {
   const s = useSiteText();
   const { enabled, learner } = useAuth();
-  const { t, nextLesson: findNext } = useLocale();
+  const { t, nextLesson: findNext, modules } = useLocale();
   /** `local` means kept on this device — the signed-out case, not a failure. */
   const [saveState, setSaveState] = React.useState<
     "idle" | "local" | "saving" | "saved" | "failed"
@@ -701,7 +736,16 @@ function LessonComplete({
   }, []);
 
   const perfect = state.missed.length === 0 && state.xpEarned > 0;
-  const next = findNext(lesson.id);
+  // Kids mode stays on its own path and ends with it, rather than walking on
+  // into the grown-up lessons — the same as the app.
+  const kids = mode === "kids";
+  const parent = modules.find((candidate) =>
+    candidate.lessons.some((entry) => entry.id === lesson.id),
+  );
+  const next = kids
+    ? (parent ? nextKidsLesson(parent, lesson.id) ?? undefined : undefined)
+    : findNext(lesson.id);
+  const kidsPathDone = kids && next === undefined;
 
   return (
     <div className="glass rounded-card p-7 text-center shadow-2xl shadow-black/50 sm:p-10">
@@ -741,12 +785,21 @@ function LessonComplete({
         </ul>
       ) : null}
 
+      {kidsPathDone ? (
+        <div className="mx-auto mt-7 max-w-xl rounded-2xl border border-gold/30 bg-gold/10 p-5">
+          <p className="font-display text-lg font-extrabold text-gold">{t("kids.pathDone")}</p>
+          <p className="mt-1 text-sm leading-relaxed text-ink-muted">{t("kids.pathDoneBody")}</p>
+        </div>
+      ) : null}
+
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button asChild>
           {/* The actual next lesson, not the index. Finishing one thing should
               offer the next thing — sending someone back to a list of thirty is
               where a session ends. */}
-          <LocaleLink href={next ? `/learn/${next.id}` : "/learn"}>
+          <LocaleLink
+            href={next ? `/learn/${next.id}` : kidsPathDone && parent ? `/learn#${parent.id}` : "/learn"}
+          >
             {next ? t("complete.next") : t("complete.backToLessons")}
           </LocaleLink>
         </Button>

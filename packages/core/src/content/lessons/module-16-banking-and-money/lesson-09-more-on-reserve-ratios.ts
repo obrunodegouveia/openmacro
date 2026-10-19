@@ -15,6 +15,143 @@ export const kabMoreOnReserveRatiosLesson = defineLesson({
     source: 'Khan Academy — Banking 9 (the audio is poor; the arithmetic is not)',
   },
   challenges: [
+    // ---- Olivia warm-ups --------------------------------------------------
+    // Sal works the reserve rule backwards: with 300 of gold and a 10% rule,
+    // deposits can reach 3,000, and a bank at the limit can still be caught
+    // short. These four do the same with Breno’s €30 of coins.
+    {
+      id: 'olivia-one-in-ten',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'reserve-ratio'],
+      prompt:
+        'The town has a rule: a bank must keep at least €1 of coins in its safe for every €10 in its accounts. Breno has €30 of coins. What is the most that all the accounts at his bank can add up to?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'threehundred', label: '€300' },
+        {
+          id: 'thirty',
+          label: '€30',
+          feedback:
+            'That would be €1 of coins for every €1 in accounts. The rule only asks for €1 for every €10.',
+        },
+        {
+          id: 'three',
+          label: '€3',
+          feedback: 'That goes the wrong way. Each €1 of coins allows €10 of accounts, so multiply.',
+        },
+        {
+          id: 'forty',
+          label: '€40',
+          feedback: 'Each of the 30 euros of coins allows €10 of accounts: 30 × €10.',
+        },
+      ],
+      correctOptionId: 'threehundred',
+      explanation:
+        '€30 × 10 = €300. Every euro in the safe allows €10 of accounts. Sal does the same sum: 300 of gold and a 10% rule allow 3,000 of deposits.',
+    },
+    {
+      id: 'olivia-rule-words',
+      type: 'concept_match',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'reserve-ratio'],
+      prompt: 'Olivia is learning the bank’s rule. Match each word to what it means at Breno’s Bank.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'coins',
+          term: 'Coins in the safe',
+          definition: 'Money Breno can hand over today',
+        },
+        {
+          id: 'accounts',
+          term: 'Accounts',
+          definition: 'What people could ask Breno for today',
+        },
+        {
+          id: 'rule',
+          term: 'The 1-in-10 rule',
+          definition: 'At least €1 in the safe for every €10 in accounts',
+        },
+      ],
+      explanation:
+        'The rule compares the first two: coins in the safe against accounts. Sal calls them reserves and demand deposits, and the rule is a 10% reserve requirement.',
+    },
+    {
+      id: 'olivia-full-up',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'reserve-ratio', 'lending'],
+      prompt:
+        'Breno has €30 of coins and €300 in accounts: right at the limit. Dona Rosa asks for another €50 loan, written into her account. Can Breno say yes?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'no', label: 'No — accounts would reach €350, and that needs €35 of coins' },
+        {
+          id: 'yes-any',
+          label: 'Yes — he can write any number he likes',
+          feedback:
+            'He can write it, but the rule says no. €350 of accounts needs at least €35 of coins, and he has €30.',
+        },
+        {
+          id: 'yes-asset',
+          label: 'Yes — the loan is something he owns, so it helps',
+          feedback:
+            'The loan is something he owns, but it is not coins. The rule only counts coins in the safe.',
+        },
+        {
+          id: 'olivia',
+          label: 'Only if Olivia agrees',
+          feedback:
+            'Olivia does not decide who Breno lends to. The rule does: €1 of coins for every €10 of accounts.',
+        },
+      ],
+      correctOptionId: 'no',
+      explanation:
+        'A new loan adds a new account, and every €10 of accounts needs €1 of coins. At the limit, Breno must find more coins before he can lend more. Sal’s bank at 3,000 of deposits and 300 of gold is in exactly this spot.',
+    },
+    {
+      id: 'olivia-big-not-safe',
+      type: 'multiple_choice',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'liquidity'],
+      prompt:
+        'Tomás says: “Breno’s Bank has €300 in accounts, so it must be super safe!” On Monday, people with €40 in their accounts all come in and ask for coins. What happens?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'short', label: 'He runs out of coins and must send someone away' },
+        {
+          id: 'easy',
+          label: 'Nothing — €40 is tiny next to €300',
+          feedback:
+            'Only coins can be handed over, and there are €30 of them. The €300 is mostly loans that are not paid back yet.',
+        },
+        {
+          id: 'loans',
+          label: 'He pays them with bits of Dona Rosa’s loan',
+          feedback:
+            'People asked for coins. A promise from Dona Rosa to pay back later is not something they can spend today.',
+        },
+        {
+          id: 'rule',
+          label: 'Nothing goes wrong, because he kept to the rule',
+          feedback:
+            'The rule sets how big the bank may grow. It does not promise there will be enough coins on a busy day.',
+        },
+      ],
+      correctOptionId: 'short',
+      explanation:
+        'Big is not the same as safe. A bank that keeps to the rule can still run short of coins on a day when many people ask at once. Sal shows the same: 3,000 of deposits, 300 of gold, and 400 asked for.',
+    },
+    // ---- Sal’s bank ---------------------------------------------------------
     {
       id: 'mc-max-deposits',
       type: 'multiple_choice',
