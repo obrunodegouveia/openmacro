@@ -328,9 +328,12 @@ function LessonRun({
               <OutOfHearts lesson={lesson} onRestart={() => dispatch({ kind: "restart" })} />
             ) : challenge ? (
               <section className="glass rounded-card p-5 sm:p-7">
-                <header className="mb-5 flex items-start gap-3 sm:gap-4">
+                {/* flow-root: the speaker floats, so the prompt wraps round
+                    and then under the face instead of being squeezed into a
+                    narrow column beside it. */}
+                <header className="mb-5 flow-root">
                   <SpeakerFace challenge={challenge} />
-                  <div className="min-w-0 flex-1">
+                  <div>
                     <p className="text-xs font-extrabold uppercase tracking-wider text-ink-faint">
                       {t(`challenge.kind.${challenge.type}`)}
                     </p>
@@ -605,10 +608,12 @@ function FeedbackSheet({
             <CharacterAvatar
               character={speaker.character}
               expression={speaker.expression}
-              size={56}
+              size={96}
               pop
-              // Lifted into the sheet's top padding so the row is no taller.
-              className="-my-3 ml-auto"
+              // Big enough to be the reward for answering, and lifted out
+              // through the sheet's top edge so the row is no taller — the
+              // app's FeedbackSheet does the same.
+              className="-mt-14 -mb-4 ml-auto"
             />
           ) : null}
         </div>
@@ -641,7 +646,16 @@ function FeedbackSheet({
 function SpeakerFace({ challenge }: { challenge: Pick<Lesson["challenges"][number], "speaker" | "prompt"> }) {
   const speaker = speakerReaction(challenge, "question");
   if (!speaker) return null;
-  return <CharacterAvatar character={speaker.character} expression={speaker.expression} size={64} />;
+  // 96px on a phone, 128px from `sm` up: the friendly face of the question,
+  // with the prompt wrapping round it. The app draws it at 112pt, above.
+  return (
+    <CharacterAvatar
+      character={speaker.character}
+      expression={speaker.expression}
+      size={128}
+      className="float-left mr-3 mb-1 !size-24 sm:mr-4 sm:!size-32"
+    />
+  );
 }
 
 /** Ran out of hearts. Not a punishment screen — a retry screen. */

@@ -21,7 +21,7 @@ export function KidsModeSwitch({ lessons }: { lessons: number }) {
         on ? "border-mint/50 bg-mint/[0.06]" : "border-hairline bg-veil/[0.03]",
       )}
     >
-      <CharacterAvatar character="olivia" expression={on ? "excited" : "happy"} size={48} />
+      <CharacterAvatar character="olivia" expression={on ? "excited" : "happy"} size={72} />
       <span className="min-w-0 flex-1">
         <span id="kids-mode-label" className="block font-display text-sm font-extrabold text-ink">
           {t("kids.label")}
