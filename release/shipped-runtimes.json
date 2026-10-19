@@ -1,9 +1,9 @@
 {
   "production": {
     "ios": {
-      "runtimeVersion": "21bdda71d7824379f3fbe136d85928f7b1c3b38e",
-      "build": "29",
-      "recordedAt": "2026-10-06"
+      "runtimeVersion": "024ba691b6f571d5281e9f88fbfad36f464ba788",
+      "build": "36",
+      "recordedAt": "2026-10-19"
     }
   }
 }
