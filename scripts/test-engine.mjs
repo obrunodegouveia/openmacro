@@ -29,7 +29,7 @@ const {
   isEquity,
 } = await import('@openmacro/core/engine/tAccounts');
 const { looksLikeEquity, validateLesson } = await import('@openmacro/core/content/validate');
-const { getLessonById } = await import('@openmacro/core/content/registry');
+const { getLessonById, MODULES, ALL_LESSONS } = await import('@openmacro/core/content/registry');
 
 /** A minimal two-entity sheet: a person who buys on credit from a shop. */
 function fixture(overrides = {}) {
@@ -255,4 +255,63 @@ test('Olivia and Breno voice the module-16 warm-ups', () => {
     'olivia-breno-shop-profit': 'breno',
     'olivia-profit-grows-equity': 'olivia',
   });
+});
+
+// ---- kids mode ---------------------------------------------------------------
+
+const { lessonForMode, lessonsForMode, moduleHasKidsPath, nextKidsLesson, onKidsPath, resumeId, effectiveMode } =
+  await import('@openmacro/core/engine/lessonMode');
+
+test('kids mode: only the kids challenges, in order, same lesson otherwise', () => {
+  const lesson = getLessonById('kab-what-a-bank-is-for');
+  const kids = lessonForMode(lesson, 'kids');
+  assert.deepEqual(
+    kids.challenges.map((challenge) => challenge.id),
+    lesson.challenges.filter((challenge) => challenge.kids).map((challenge) => challenge.id),
+  );
+  assert.ok(kids.challenges.length > 0 && kids.challenges.length < lesson.challenges.length);
+  assert.equal(kids.id, lesson.id);
+  assert.equal(kids.video, lesson.video);
+  assert.equal(lessonForMode(lesson, 'kids'), kids, 'stable identity');
+  assert.equal(lessonForMode(lesson, 'standard'), lesson);
+  assert.equal(resumeId(lesson, 'kids'), 'kab-what-a-bank-is-for.kids');
+  assert.equal(resumeId(lesson, 'standard'), 'kab-what-a-bank-is-for');
+});
+
+test('kids mode leaves lessons off the path whole', () => {
+  const module = MODULES.find((candidate) => candidate.id === 'banking-and-money');
+  const off = module.lessons.find((lesson) => !onKidsPath(lesson));
+  assert.ok(off, 'the grown-up end of the module has no kids challenges');
+  assert.equal(effectiveMode(off, 'kids'), 'standard');
+  assert.equal(lessonForMode(off, 'kids'), off);
+  assert.equal(resumeId(off, 'kids'), off.id);
+});
+
+test('the kids path: the first ten Khan lessons, then it ends', () => {
+  const module = MODULES.find((candidate) => candidate.id === 'banking-and-money');
+  assert.ok(moduleHasKidsPath(module));
+  const path = lessonsForMode(module, 'kids');
+  assert.deepEqual(
+    path.map((lesson) => lesson.id),
+    module.lessons.slice(0, 10).map((lesson) => lesson.id),
+  );
+  for (const lesson of path) {
+    assert.ok(lesson.challenges.every((challenge) => challenge.kids && challenge.speaker), lesson.id);
+    assert.ok(lesson.challenges.length >= 4, `${lesson.id} has ${lesson.challenges.length}`);
+    assert.ok(lesson.challenges.length >= (lesson.hearts ?? 3), `${lesson.id}: fewer steps than hearts`);
+  }
+  assert.equal(nextKidsLesson(module, path[0].id)?.id, path[1].id);
+  assert.equal(nextKidsLesson(module, path.at(-1).id), null);
+  assert.equal(lessonsForMode(module, 'standard'), module.lessons);
+  for (const other of MODULES.filter((candidate) => candidate !== module)) {
+    assert.equal(moduleHasKidsPath(other), false, `${other.id} has no kids path`);
+    assert.equal(lessonsForMode(other, 'kids'), other.lessons);
+  }
+});
+
+test('a kids run earns no more XP than the whole lesson can', () => {
+  for (const lesson of ALL_LESSONS.filter(onKidsPath)) {
+    const xp = (challenges) => challenges.reduce((sum, challenge) => sum + (challenge.xp ?? 10), 0);
+    assert.ok(xp(lessonForMode(lesson, 'kids').challenges) < xp(lesson.challenges), lesson.id);
+  }
 });

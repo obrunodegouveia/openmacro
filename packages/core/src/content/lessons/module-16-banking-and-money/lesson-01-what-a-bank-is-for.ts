@@ -28,6 +28,7 @@ export const kabWhatABankIsForLesson = defineLesson({
       id: 'olivia-what-is-an-asset',
       type: 'multiple_choice',
       speaker: 'olivia',
+      kids: true,
       xp: 10,
       tags: ['basics', 'assets'],
       prompt:
@@ -62,6 +63,7 @@ export const kabWhatABankIsForLesson = defineLesson({
       id: 'olivia-iou',
       type: 'multiple_choice',
       speaker: 'olivia',
+      kids: true,
       xp: 10,
       tags: ['basics', 'assets', 'liabilities'],
       prompt:
@@ -96,6 +98,7 @@ export const kabWhatABankIsForLesson = defineLesson({
       id: 'olivia-amp-pay-later',
       type: 't_account_flow',
       speaker: 'olivia',
+      kids: true,
       xp: 15,
       tags: ['basics', 'balance-sheet', 'liabilities'],
       prompt:
@@ -171,6 +174,7 @@ export const kabWhatABankIsForLesson = defineLesson({
       id: 'olivia-whats-truly-hers',
       type: 'multiple_choice',
       speaker: 'olivia',
+      kids: true,
       xp: 10,
       tags: ['basics', 'equity'],
       prompt:

@@ -41,6 +41,15 @@ import { useContentUpdate } from '@/providers/ContentUpdateProvider';
 import { useLocale } from '@/providers/LocaleProvider';
 import { recordLessonOutcome } from '@/services/reviewStore';
 import { getModuleForLesson } from '@openmacro/core/content/registry';
+import {
+  effectiveMode,
+  lessonForMode,
+  lessonsForMode,
+  nextKidsLesson,
+  resumeId,
+  type LessonMode,
+} from '@openmacro/core/engine/lessonMode';
+import { useLessonMode } from '@/services/kidsMode';
 import { useProgress } from '@/providers/ProgressProvider';
 import { useCourse } from '@/hooks/useCourse';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
@@ -48,11 +57,16 @@ import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens'
 export default function LessonRunnerRoute() {
   const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
   const { locale, lessonById } = useLocale();
+  const mode = useLessonMode();
   const lesson = lessonId ? lessonById(lessonId) : undefined;
 
   if (!lesson) {
     return <LessonNotFound lessonId={lessonId} />;
   }
+  // Kids mode reaches only lessons on the kids path; anywhere else this is
+  // the lesson unchanged.
+  const shaped = lessonForMode(lesson, mode);
+  const lessonMode = effectiveMode(lesson, mode);
   /**
    * Keyed on the lesson *and the language*.
    *
@@ -60,14 +74,30 @@ export default function LessonRunnerRoute() {
    * `createSession`, so switching language mid-run would otherwise leave the
    * old language's questions on screen until the learner left and came back.
    * Remounting restarts the run, which is the honest outcome: the answers
-   * given were to different words.
+   * given were to different words. The mode is in the key for the same
+   * reason: a kids run and a full run hold different questions.
    */
-  return <LessonRunner key={`${lesson.id}#${locale}`} lesson={lesson} />;
+  return (
+    <LessonRunner
+      key={`${lesson.id}#${locale}#${lessonMode}`}
+      lesson={shaped}
+      mode={lessonMode}
+      resumeAs={resumeId(lesson, mode)}
+    />
+  );
 }
 
 // ---------------------------------------------------------------------------
 
-function LessonRunner({ lesson }: { lesson: Lesson }) {
+interface LessonRunnerProps {
+  /** Already shaped for the mode by `lessonForMode`. */
+  lesson: Lesson;
+  mode: LessonMode;
+  /** Where this run's snapshot is kept: one per lesson and mode. */
+  resumeAs: string;
+}
+
+function LessonRunner({ lesson, mode, resumeAs }: LessonRunnerProps) {
   const insets = useSafeAreaInsets();
   const { profile, recordResult } = useProgress();
   const { setSafeToReload } = useContentUpdate();
@@ -102,7 +132,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
   const resumeRead = useRef(false);
   useEffect(() => {
     let cancelled = false;
-    void readVersioned(resumeKey(lesson.id), RESUME_VERSION, isSnapshot).then((snapshot) => {
+    void readVersioned(resumeKey(resumeAs), RESUME_VERSION, isSnapshot).then((snapshot) => {
       if (cancelled) return;
       if (snapshot) dispatch({ kind: 'resume', snapshot });
       resumeRead.current = true;
@@ -110,16 +140,16 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
     return () => {
       cancelled = true;
     };
-  }, [lesson.id]);
+  }, [resumeAs]);
   useEffect(() => {
     if (!resumeRead.current) return;
     const snapshot = snapshotSession(state);
     if (snapshot) {
-      void writeVersioned(resumeKey(lesson.id), RESUME_VERSION, snapshot).catch(() => {});
+      void writeVersioned(resumeKey(resumeAs), RESUME_VERSION, snapshot).catch(() => {});
     } else if (state.submissionCount > 0 || state.status !== 'in_progress') {
-      void removeVersioned(resumeKey(lesson.id));
+      void removeVersioned(resumeKey(resumeAs));
     }
-  }, [state, lesson.id]);
+  }, [state, resumeAs]);
   const [draft, setDraft] = useState<ChallengeAnswer | null>(null);
   /** Measured height of the feedback sheet, so content can clear it. */
   const [sheetHeight, setSheetHeight] = useState(0);
@@ -255,6 +285,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
     return (
       <LessonComplete
         lesson={lesson}
+        mode={mode}
         xpEarned={state.xpEarned}
         perfect={state.hearts === state.maxHearts}
         bestCombo={state.bestCombo}
@@ -387,6 +418,7 @@ function LessonRunner({ lesson }: { lesson: Lesson }) {
 
 interface LessonCompleteProps {
   lesson: Lesson;
+  mode: LessonMode;
   xpEarned: number;
   perfect: boolean;
   bestCombo: number;
@@ -396,6 +428,7 @@ interface LessonCompleteProps {
 
 function LessonComplete({
   lesson,
+  mode,
   xpEarned,
   perfect,
   bestCombo,
@@ -408,8 +441,13 @@ function LessonComplete({
   const completeEmoji = useSeasonalEmoji('complete', '🎉');
   const { isLessonComplete } = useProgress();
   const { moduleOfLesson } = useCourse();
-  const nextLesson = findNext(lesson.id);
   const status = moduleOfLesson(lesson.id);
+  // Kids mode stays on its own path and ends with it, rather than walking on
+  // into the grown-up lessons.
+  const kids = mode === 'kids';
+  const nextLesson = kids
+    ? (status ? nextKidsLesson(status.module, lesson.id) ?? undefined : undefined)
+    : findNext(lesson.id);
 
   /**
    * Where to go now. This screen always knew the next lesson and then offered
@@ -423,7 +461,9 @@ function LessonComplete({
    */
   const moduleFinished =
     status !== undefined &&
-    status.module.lessons.every((entry) => entry.id === lesson.id || isLessonComplete(entry.id));
+    (kids ? lessonsForMode(status.module, 'kids') : status.module.lessons).every(
+      (entry) => entry.id === lesson.id || isLessonComplete(entry.id),
+    );
   const nextInSameModule =
     nextLesson !== undefined &&
     status !== undefined &&
@@ -479,9 +519,13 @@ function LessonComplete({
 
       {moduleFinished && status ? (
         <Animated.View entering={FadeIn.delay(200).duration(300)} style={styles.moduleDone}>
-          <Text style={styles.moduleDoneTitle}>{t('complete.moduleDone')}</Text>
+          <Text style={styles.moduleDoneTitle}>
+            {kids ? t('kids.pathDone') : t('complete.moduleDone')}
+          </Text>
           <Text style={styles.moduleDoneBody}>
-            {t('complete.moduleDoneBody', { module: status.module.title })}
+            {kids
+              ? t('kids.pathDoneBody')
+              : t('complete.moduleDoneBody', { module: status.module.title })}
           </Text>
         </Animated.View>
       ) : null}

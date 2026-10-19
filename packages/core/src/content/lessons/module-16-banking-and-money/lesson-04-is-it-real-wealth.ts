@@ -18,6 +18,146 @@ export const kabIsItRealWealthLesson = defineLesson({
     source: 'Khan Academy — Banking 4',
   },
   challenges: [
+    // ---- Olivia warm-ups --------------------------------------------------
+    // Sal asks whether the extra deposits are a trick, and answers that it
+    // depends on what the loans built. These four ask the same of Breno’s €40
+    // loan: Dona Rosa’s fixed oven bakes real bread, a loan spent on nothing
+    // does not.
+    {
+      id: 'olivia-real-or-not',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'wealth', 'lending'],
+      prompt:
+        'Breno could lend €40 to only one person. Which loan makes the town truly richer?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'oven', label: 'To Dona Rosa, to fix her oven so it bakes 100 more loaves a week' },
+        {
+          id: 'sweets',
+          label: 'To Tomás, for sweets he eats on the walk home',
+          feedback:
+            'The sweets are gone by tea time. Nothing is left that makes anything, and Tomás still owes €40.',
+        },
+        {
+          id: 'numbers',
+          label: 'To nobody — Breno just writes bigger numbers in his book',
+          feedback:
+            'Bigger numbers in a book do not bake bread or tune a guitar. Only real things make a town richer.',
+        },
+        {
+          id: 'any',
+          label: 'Any of them — €40 is €40, whoever borrows it',
+          feedback:
+            'The money is the same, but what it builds is not. A working oven keeps making bread; a bag of sweets makes nothing.',
+        },
+      ],
+      correctOptionId: 'oven',
+      explanation:
+        'The loan is only worth something real if it builds something real. Dona Rosa’s oven turns flour into 100 more loaves every week. That is Sal’s answer too: the extra money is not a trick when the projects it pays for are real.',
+    },
+    {
+      id: 'olivia-money-vs-bread',
+      type: 'concept_match',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'wealth', 'money'],
+      prompt: 'Money and wealth are not the same thing. Match each word to what it means in Olivia’s town.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'money',
+          term: 'Money',
+          definition: 'Coins and numbers in accounts that people swap for things',
+        },
+        {
+          id: 'wealth',
+          term: 'Wealth',
+          definition: 'Real, useful things: bread, guitars, a working oven',
+        },
+        {
+          id: 'loan',
+          term: 'Loan',
+          definition: 'Money now, paid back later out of what it helps to make',
+        },
+      ],
+      explanation:
+        'You cannot eat a coin or play a song on a number. Money is how people swap wealth, and a good loan helps make more of it. Sal says the same about gold: it cannot be eaten either.',
+    },
+    {
+      id: 'olivia-oven-pays-back',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'lending', 'wealth'],
+      prompt:
+        'Dona Rosa’s fixed oven bakes 100 more loaves a week, and she sells them for €1 each. Where does the €40 she pays back to Breno come from?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'bread', label: 'From selling the extra bread the oven bakes' },
+        {
+          id: 'another-loan',
+          label: 'From borrowing €40 more from Breno',
+          feedback:
+            'That would only swap one debt for another. Her extra bread is what really pays the loan off.',
+        },
+        {
+          id: 'never',
+          label: 'Nowhere — a loan never has to be paid back',
+          feedback:
+            'Every loan has to be paid back. That is why Breno cares so much about what it is for.',
+        },
+        {
+          id: 'olivia',
+          label: 'From Olivia’s account, because it was her money',
+          feedback:
+            'Olivia’s €50 is still hers, and Breno still owes it to her. Dona Rosa pays back from her own bakery.',
+        },
+      ],
+      correctOptionId: 'bread',
+      explanation:
+        'One week of extra bread brings in €100, more than enough to pay the €40 back. A loan that builds something useful pays for itself, and the town ends up with more bread than before.',
+    },
+    {
+      id: 'olivia-loan-for-nothing',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'lending', 'wealth'],
+      prompt:
+        'Imagine Breno had lent the €40 for fireworks instead: one loud night, then nothing. The accounts still add up to €90. Is the town richer?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'no', label: 'No — the numbers grew, but nothing real was built to pay the loan back' },
+        {
+          id: 'yes',
+          label: 'Yes — there is €90 in the accounts either way',
+          feedback:
+            'The numbers are the same, but there is no oven and no extra bread behind them. More money with nothing new to buy does not make anyone richer.',
+        },
+        {
+          id: 'poorer-olivia',
+          label: 'No — and Olivia has lost her €50',
+          feedback:
+            'Breno still owes Olivia her €50. The trouble is the loan: whoever bought the fireworks may never be able to pay it back.',
+        },
+        {
+          id: 'richer-breno',
+          label: 'Only Breno is richer, because he made a loan',
+          feedback:
+            'A loan is only worth something if it gets paid back. A loan spent on fireworks might not be.',
+        },
+      ],
+      correctOptionId: 'no',
+      explanation:
+        'Money for a bad project is like a promise with nothing behind it. Sal makes the same point: the new deposits are real wealth only if the projects they paid for are real.',
+    },
+    // ---- Sal’s bank ---------------------------------------------------------
     {
       id: 'mc-what-makes-it-real',
       type: 'multiple_choice',

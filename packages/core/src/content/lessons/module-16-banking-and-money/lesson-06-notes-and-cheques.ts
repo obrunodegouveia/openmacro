@@ -18,6 +18,143 @@ export const kabNotesAndChequesLesson = defineLesson({
     source: 'Khan Academy — Banking 6',
   },
   challenges: [
+    // ---- Olivia warm-ups --------------------------------------------------
+    // Sal moves value without moving gold: a note changes hands, or a cheque
+    // changes a name in the bank’s ledger. These four have Olivia pay Tomás
+    // €5 through Breno’s Bank, where only two numbers in the book change.
+    {
+      id: 'olivia-pay-by-app',
+      type: 'multiple_choice',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'payments'],
+      prompt:
+        'Olivia and her classmate Tomás both have accounts at Breno’s Bank. She pays him €5 for a set of guitar picks with a tap in the bank’s app. What changes?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'two-numbers', label: 'Olivia’s account goes down €5 and Tomás’s goes up €5' },
+        {
+          id: 'coins-move',
+          label: 'Breno takes €5 of coins out of the safe and gives them to Tomás',
+          feedback:
+            'Nobody touches the safe. Both accounts are in the same book, so Breno only changes two numbers.',
+        },
+        {
+          id: 'only-olivia',
+          label: 'Only Olivia’s account goes down €5',
+          feedback:
+            'The €5 does not vanish. It lands in Tomás’s account, so his number goes up by the same amount.',
+        },
+        {
+          id: 'bank-richer',
+          label: 'Breno’s Bank keeps the €5',
+          feedback:
+            'The bank is only passing it along. The €5 now belongs to Tomás, and the bank owes it to him instead of to Olivia.',
+        },
+      ],
+      correctOptionId: 'two-numbers',
+      explanation:
+        'Paying someone at the same bank is just changing two lines in the book: €5 less owed to Olivia, €5 more owed to Tomás. Sal’s cheque does exactly this.',
+    },
+    {
+      id: 'olivia-safe-untouched',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'payments'],
+      prompt:
+        'After Olivia pays Tomás €5, how many coins have left Breno’s safe?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'none', label: 'None' },
+        {
+          id: 'five',
+          label: '€5',
+          feedback:
+            'Tomás did not ask for coins. His €5 sits in his account, so the safe stays exactly as it was.',
+        },
+        {
+          id: 'ten',
+          label: '€10 — €5 out for Olivia and €5 out for Tomás',
+          feedback:
+            'Only numbers in the book changed. No coin went anywhere.',
+        },
+        {
+          id: 'all',
+          label: 'All of Olivia’s coins',
+          feedback:
+            'Olivia still has the rest of her money at the bank. Only €5 of what the bank owes moved from her name to Tomás’s.',
+        },
+      ],
+      correctOptionId: 'none',
+      explanation:
+        'Not a single coin moved. Most paying in the real world is like this: banks change numbers in their books instead of moving cash around.',
+    },
+    {
+      id: 'olivia-cheque-steps',
+      type: 'order_flow',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'payments', 'cheques'],
+      prompt:
+        'The old way is a cheque: a signed note telling the bank to pay someone. Put Olivia’s €5 cheque to Tomás in order.',
+      instructions: 'Drag the steps into order',
+      events: [
+        {
+          id: 'write',
+          label: 'Olivia writes “Pay Tomás €5” and signs it',
+        },
+        {
+          id: 'bring',
+          label: 'Tomás brings the cheque to Breno’s Bank',
+        },
+        {
+          id: 'check',
+          label: 'Breno checks the signature and that Olivia has €5',
+        },
+        {
+          id: 'change',
+          label: 'Breno takes €5 off Olivia’s account and adds €5 to Tomás’s',
+          detail: 'The safe stays shut.',
+        },
+      ],
+      correctOrder: ['write', 'bring', 'check', 'change'],
+      explanation:
+        'A cheque is an instruction, not money. The bank checks it is real and that the money is there, then changes two names in its book — the same steps as in Sal’s video.',
+    },
+    {
+      id: 'olivia-note-or-cheque',
+      type: 'concept_match',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'payments', 'bank-notes'],
+      prompt: 'Olivia can pay in three ways. Match each one to how it works.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'note',
+          term: 'Breno Buck',
+          definition: 'Paper you hand over — whoever holds it owns it',
+        },
+        {
+          id: 'cheque',
+          term: 'Cheque',
+          definition: 'A signed note telling the bank to pay one named person',
+        },
+        {
+          id: 'app',
+          term: 'App transfer',
+          definition: 'A tap on the phone that tells the bank to change two numbers',
+        },
+      ],
+      explanation:
+        'A note moves from hand to hand; a cheque and an app transfer move a number from one name to another in the bank’s book. None of them needs the coins to leave the safe.',
+    },
+    // ---- Sal’s bank ---------------------------------------------------------
     {
       id: 'mc-cheque-mechanics',
       type: 'multiple_choice',
