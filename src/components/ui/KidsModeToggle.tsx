@@ -21,7 +21,7 @@ export function KidsModeToggle({ lessons }: KidsModeToggleProps) {
 
   return (
     <View style={[styles.card, on && styles.cardOn]}>
-      <CharacterAvatar character="olivia" expression={on ? 'excited' : 'happy'} size={48} />
+      <CharacterAvatar character="olivia" expression={on ? 'excited' : 'happy'} size={72} />
       <View style={styles.text}>
         <Text style={styles.label}>{t('kids.label')}</Text>
         <Text style={styles.hint}>{t('kids.hint', { count: lessons })}</Text>

@@ -131,22 +131,25 @@ function ChallengeViewComponent(props: ChallengeViewProps) {
   );
 }
 
-/** The speaker beside the prompt, in points: present without crowding it. */
-const SPEAKER_SIZE = 64;
+/**
+ * The speaker above the prompt, in points: big enough to be the friendly face
+ * of the question — the warm-ups are for young learners — with the prompt the
+ * full width under it. The art is drawn for up to 128.
+ */
+const SPEAKER_SIZE = 112;
 
 const styles = StyleSheet.create({
   container: {
     gap: spacing.xl,
   },
-  // Speaker on the left, prompt beside it, as in a chat. Without a speaker
-  // the row holds the prompt alone and looks exactly as it did.
+  // Speaker above the prompt, big, with the prompt full width under it: a
+  // face this size beside the prompt would squeeze the question into a thin
+  // column, and React Native cannot wrap text round it. Without a speaker
+  // the header holds the prompt alone and looks exactly as it did.
   headerRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   header: {
-    flex: 1,
     gap: spacing.xs,
   },
   prompt: {

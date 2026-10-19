@@ -99,7 +99,11 @@ function FeedbackSheetComponent({
         slideStyle,
       ]}
       accessibilityLiveRegion="polite"
-      onLayout={(event) => onHeightChange?.(event.nativeEvent.layout.height)}
+      // The face peeks above the sheet, so it covers that much more of the
+      // screen than the sheet's own box.
+      onLayout={(event) =>
+        onHeightChange?.(event.nativeEvent.layout.height + (speaker ? SPEAKER_PEEK : 0))
+      }
     >
       {/* Thrown once, when the sheet arrives with a right answer. */}
       {correct ? <SeasonalBurst /> : null}
@@ -141,8 +145,13 @@ function FeedbackSheetComponent({
   );
 }
 
-/** The reacting speaker, in points. Larger than the badge, smaller than the prompt's. */
-const SPEAKER_SIZE = 56;
+/**
+ * The reacting speaker, in points: big enough to be the moment's reward —
+ * a young learner answers for that face as much as for the tick.
+ */
+const SPEAKER_SIZE = 96;
+/** How far the face rises above the sheet's top edge, Duolingo-style. */
+const SPEAKER_PEEK = 40;
 
 const styles = StyleSheet.create({
   sheet: {
@@ -186,12 +195,12 @@ const styles = StyleSheet.create({
     ...typography.title,
     flexShrink: 1,
   },
-  // Pushed to the far end of the row and lifted into the sheet's top
-  // padding, so the face does not make the header row any taller.
+  // Pushed to the far end of the row and lifted out through the sheet's top
+  // edge, so the bigger face does not make the header row any taller.
   speaker: {
     marginLeft: 'auto',
-    marginTop: -spacing.xl,
-    marginBottom: -spacing.sm,
+    marginTop: -(spacing.xl + SPEAKER_PEEK),
+    marginBottom: -spacing.lg,
   },
   // Shrinks to fit under the sheet's maxHeight; grows no further than its text.
   scroll: {
