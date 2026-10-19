@@ -15,6 +15,134 @@ export const kabReserveRatiosLesson = defineLesson({
     source: 'Khan Academy — Banking 8',
   },
   challenges: [
+    // ---- Olivia warm-ups --------------------------------------------------
+    // Sal divides the gold in the vault by what people could ask for today,
+    // and shows a run bringing down a bank whose loans are sound. These four
+    // do the same at Breno’s Bank, with a rumour going round Olivia’s school.
+    {
+      id: 'olivia-why-keep-coins',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'reserves'],
+      prompt:
+        'Breno lends most of the money at his bank, but he always keeps some coins in the safe. Why?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'ask', label: 'People with accounts can walk in any day and ask for their money' },
+        {
+          id: 'rich',
+          label: 'So the bank looks rich when people visit',
+          feedback:
+            'Nobody sees inside the safe. The coins are there for a practical reason: paying people who ask.',
+        },
+        {
+          id: 'interest',
+          label: 'Coins in the safe earn extra money for Breno',
+          feedback:
+            'Coins sitting in a safe earn nothing. Breno would earn more by lending them, so he keeps only as many as he needs.',
+        },
+        {
+          id: 'never',
+          label: 'Because coins must never leave the safe',
+          feedback:
+            'Coins leave whenever someone asks for their money. That is exactly why he keeps some there.',
+        },
+      ],
+      correctOptionId: 'ask',
+      explanation:
+        'An account is money you can ask for at any moment, so Breno keeps enough coins to pay the people who usually come in. Sal’s bank keeps gold in the vault for the same reason.',
+    },
+    {
+      id: 'olivia-reserve-ratio',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'reserve-ratio'],
+      prompt:
+        'Say Breno has €20 of coins in the safe, and people with accounts could ask for €100 today. Bankers divide the coins by what people could ask for. What is that ratio?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'twenty', label: '20%' },
+        {
+          id: 'five',
+          label: '5',
+          feedback: 'That is upside down: €100 ÷ €20. Put the coins on top: €20 ÷ €100.',
+        },
+        {
+          id: 'eighty',
+          label: '80%',
+          feedback:
+            '€80 is the part that is not in the safe. The ratio is about the coins that are: €20 of €100.',
+        },
+        {
+          id: 'onetwenty',
+          label: '€120',
+          feedback: 'A ratio divides, it does not add. Try €20 ÷ €100.',
+        },
+      ],
+      correctOptionId: 'twenty',
+      explanation:
+        '€20 ÷ €100 = 20%. Bankers call it the reserve ratio: coins in the safe over what people could ask for today. Sal calls the bottom number the bank’s demand liabilities.',
+    },
+    {
+      id: 'olivia-rumour',
+      type: 'order_flow',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'bank-run'],
+      prompt: 'A rumour goes round Olivia’s school. Put what happens at Breno’s Bank in order.',
+      instructions: 'Drag the steps into order',
+      events: [
+        { id: 'lend', label: 'Breno lends most of the money and keeps some coins in the safe' },
+        { id: 'rumour', label: 'Tomás hears that Breno’s Bank is in trouble', detail: 'It is not true' },
+        { id: 'rush', label: 'Lots of families go to ask for their money on the same day' },
+        { id: 'empty', label: 'The safe runs out of coins', detail: 'The loans are fine, just not paid back yet' },
+        { id: 'wait', label: 'Breno has to ask everyone else to wait', detail: 'Until Dona Rosa pays her loan back' },
+      ],
+      correctOrder: ['lend', 'rumour', 'rush', 'empty', 'wait'],
+      explanation:
+        'The rumour was false, but it still emptied the safe, and everyone who came late has to wait for their money. Grown-ups call this a bank run. Sal shows one in the video: what breaks the bank is everybody asking at once, not bad loans.',
+    },
+    {
+      id: 'olivia-run-not-broke',
+      type: 'multiple_choice',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'liquidity', 'solvency'],
+      prompt:
+        'The safe is empty, but Dona Rosa will pay back her whole loan by the end of the year. Is Breno’s Bank broke?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'not-yet', label: 'No — it owns enough, it just cannot pay everyone today' },
+        {
+          id: 'broke',
+          label: 'Yes — an empty safe means the money is gone',
+          feedback:
+            'The money is not gone: it is in Dona Rosa’s loan, and she is paying it back. It is just not coins yet.',
+        },
+        {
+          id: 'lost',
+          label: 'Yes — Olivia’s €50 is lost for ever',
+          feedback:
+            'Breno still owes Olivia €50 and owns enough to pay it. She may just have to wait.',
+        },
+        {
+          id: 'fine',
+          label: 'No — everyone can have their coins today',
+          feedback:
+            'Not today: the safe is empty. Breno can pay everyone back only once the loans come in.',
+        },
+      ],
+      correctOptionId: 'not-yet',
+      explanation:
+        'Not having coins today is different from not having enough at all. Breno’s Bank owns more than it owes; the trouble is only timing. Sal makes the same point: a run can bring down a bank whose loans are perfectly good.',
+    },
+    // ---- Sal’s bank ---------------------------------------------------------
     {
       id: 'mc-denominator',
       type: 'multiple_choice',

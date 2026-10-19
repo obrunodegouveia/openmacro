@@ -18,6 +18,145 @@ export const kabBankNotesLesson = defineLesson({
     source: 'Khan Academy — Banking 5',
   },
   challenges: [
+    // ---- Olivia warm-ups --------------------------------------------------
+    // Sal’s bank hands out paper notes for the gold in its vault, and people
+    // spend the notes instead of the gold. These four do the same with “Breno
+    // Bucks”, before Sal shows that the note in your wallet is that receipt.
+    {
+      id: 'olivia-breno-bucks',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'bank-notes'],
+      prompt:
+        'Coins are heavy. So Breno hands out paper slips that say “Breno Bucks — €10 in coins at Breno’s Bank”. What is one Breno Buck?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'promise', label: 'A promise to give €10 of coins to whoever brings it back' },
+        {
+          id: 'paper',
+          label: 'Just a nice piece of paper with a guitar drawn on it',
+          feedback:
+            'It is paper, but it is not just paper. Breno has promised to swap it for €10 of real coins.',
+        },
+        {
+          id: 'coin',
+          label: 'A brand-new kind of coin that Breno made himself',
+          feedback:
+            'Breno cannot make coins. The slip stands for €10 of coins that are already in his safe.',
+        },
+        {
+          id: 'olivia-only',
+          label: 'A ticket that only Olivia is allowed to use',
+          feedback:
+            'It has no name on it. Whoever holds it can bring it back to Breno’s Bank.',
+        },
+      ],
+      correctOptionId: 'promise',
+      explanation:
+        'A Breno Buck is a receipt: a promise that €10 of coins is waiting in the safe. Sal’s bank does exactly this with its gold, and he calls the receipts bank notes.',
+    },
+    {
+      id: 'olivia-spend-the-slip',
+      type: 'multiple_choice',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'bank-notes', 'payments'],
+      prompt:
+        'Olivia buys new strings at a market stall and pays with one €10 Breno Buck. Why does the stall owner happily take a piece of paper?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'swap', label: 'She can swap it for €10 of coins at Breno’s Bank, or spend it herself' },
+        {
+          id: 'pretty',
+          label: 'Because it has a nice drawing of a guitar on it',
+          feedback:
+            'A drawing does not pay for strings. She takes it because of the promise behind it.',
+        },
+        {
+          id: 'kind',
+          label: 'Because she is being kind to Olivia',
+          feedback:
+            'She is being sensible, not just kind. The slip is worth €10 of coins to anyone who holds it.',
+        },
+        {
+          id: 'must',
+          label: 'Because a law says she has to',
+          feedback:
+            'No law says so here. She takes it because she trusts Breno to keep his promise.',
+        },
+      ],
+      correctOptionId: 'swap',
+      explanation:
+        'People take the paper because they trust the promise behind it. Soon nobody bothers to fetch the coins: they just pass the Breno Bucks along, which is what happens to the notes in Sal’s video.',
+    },
+    {
+      id: 'olivia-receipt-words',
+      type: 'concept_match',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'bank-notes'],
+      prompt: 'Match each part of the Breno Bucks idea to what it means.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'coins',
+          term: 'Coins in the safe',
+          definition: 'The real euros that the paper slips stand for',
+        },
+        {
+          id: 'note',
+          term: 'Breno Buck',
+          definition: 'A paper promise to hand over €10 of coins',
+        },
+        {
+          id: 'holder',
+          term: 'Whoever holds it',
+          definition: 'The person who can bring the slip back and ask for the coins',
+        },
+      ],
+      explanation:
+        'The coins stay put; the promises move. The slip has no name on it, so whoever is holding it owns it — just like a bank note.',
+    },
+    {
+      id: 'olivia-whose-debt-note',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'bank-notes', 'liabilities'],
+      prompt:
+        'A €10 Breno Buck in Olivia’s pocket is an asset for her. What is that same slip for Breno’s Bank?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'liability', label: 'A liability — the bank owes €10 of coins to whoever brings it' },
+        {
+          id: 'asset',
+          label: 'An asset — the bank printed it, so it owns it',
+          feedback:
+            'Printing a promise does not give you anything. It means you owe something: €10 of coins.',
+        },
+        {
+          id: 'nothing',
+          label: 'Nothing — once it leaves the bank, it is not the bank’s problem',
+          feedback:
+            'It is very much the bank’s problem: anyone can walk in with it and ask for the coins.',
+        },
+        {
+          id: 'equity',
+          label: 'Breno’s own money',
+          feedback:
+            'The coins behind the slip belong to whoever holds it, not to Breno.',
+        },
+      ],
+      correctOptionId: 'liability',
+      explanation:
+        'Same as a deposit: one person’s asset is the bank’s liability. The euro and dollar notes in real wallets work like this too — they are promises from a central bank, which is why Sal calls the bill in your wallet a bank note.',
+    },
+    // ---- Sal’s bank ---------------------------------------------------------
     {
       id: 'mc-what-is-a-note',
       type: 'multiple_choice',

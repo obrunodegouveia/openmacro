@@ -15,6 +15,142 @@ export const kabLeverageLesson = defineLesson({
     source: 'Khan Academy — Banking 10 (poor audio)',
   },
   challenges: [
+    // ---- Olivia warm-ups --------------------------------------------------
+    // Sal shows that equity is the cushion that takes a bank’s losses, and how
+    // little of it a heavily borrowed bank has. These four do the same with
+    // Breno’s Bank and its €10 of equity. They are the last stop on Olivia’s
+    // path, so the final one looks back over the whole journey.
+    {
+      id: 'olivia-bank-cushion',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'equity'],
+      prompt:
+        'Breno’s Bank owns €100: coins in the safe and loans. It owes €90 to the people with accounts. How much of the bank is truly Breno’s?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'ten', label: '€10' },
+        {
+          id: 'hundred',
+          label: '€100',
+          feedback:
+            'The bank owns €100, but €90 of it is owed to the people with accounts. That part is not Breno’s.',
+        },
+        {
+          id: 'ninety',
+          label: '€90',
+          feedback: '€90 is what the bank owes. Take it away from what it owns: €100 − €90.',
+        },
+        {
+          id: 'oneninety',
+          label: '€190',
+          feedback: 'What you owe never adds to what is yours. Take it away: €100 − €90.',
+        },
+      ],
+      correctOptionId: 'ten',
+      explanation:
+        'Own minus owe: €100 − €90 = €10. That €10 is Breno’s equity, the same idea as Olivia’s own equity in lesson 1. Sal calls it the bank’s cushion.',
+    },
+    {
+      id: 'olivia-oven-breaks',
+      type: 'multiple_choice',
+      speaker: 'breno',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'equity', 'leverage'],
+      prompt:
+        'Oh no — Dona Rosa’s oven breaks, and €20 of her loan will never be paid back. Now the bank owns €80 and still owes €90. What is truly Breno’s now?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'minusten', label: '−€10' },
+        {
+          id: 'ten',
+          label: 'Still €10',
+          feedback:
+            'The bank lost €20 of what it owns, and it still owes the same €90. The loss comes out of Breno’s €10 first.',
+        },
+        {
+          id: 'zero',
+          label: 'Exactly €0',
+          feedback: '€80 − €90 goes below zero. The loss was bigger than the whole cushion.',
+        },
+        {
+          id: 'eighty',
+          label: '€80',
+          feedback: '€80 is what the bank owns. Take away the €90 it owes.',
+        },
+      ],
+      correctOptionId: 'minusten',
+      explanation:
+        '€80 − €90 = −€10. Breno’s €10 cushion is gone, and he cannot pay everybody back. With only €10 of cushion on €100, losing just 10% is enough to wipe it out. That is Sal’s warning about leverage.',
+    },
+    {
+      id: 'olivia-own-owe-words',
+      type: 'concept_match',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'equity', 'balance-sheet'],
+      prompt: 'Olivia learns the grown-up names for the three things she has used all along. Match each one.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'own',
+          term: 'Assets',
+          definition: 'What you own that is worth money: Olivia’s guitar and amp, Breno’s coins and loans',
+        },
+        {
+          id: 'owe',
+          term: 'Liabilities',
+          definition: 'What you owe and must pay back: Olivia’s €40 for the amp, the bank’s accounts',
+        },
+        {
+          id: 'equity',
+          term: 'Equity',
+          definition: 'What is truly yours: own minus owe, the cushion that takes the first bump',
+        },
+      ],
+      explanation:
+        'Assets are what you own, liabilities are what you owe, and equity is what is left. A loss always eats the equity first. Sal’s bank has the same three parts, just with bigger numbers.',
+    },
+    {
+      id: 'olivia-the-big-rule',
+      type: 'multiple_choice',
+      speaker: 'olivia',
+      kids: true,
+      xp: 10,
+      tags: ['basics', 'equity', 'balance-sheet'],
+      prompt:
+        'Look how far you’ve come! Olivia bought an amp on credit, made a profit at the talent show and put money in a bank. Breno ran a shop and then a bank. Which rule worked for both of them, every single time?',
+      instructions: 'Pick the best answer',
+      options: [
+        { id: 'own-owe', label: 'What is truly yours = what you own − what you owe' },
+        {
+          id: 'borrow',
+          label: 'The more you borrow, the richer you are',
+          feedback:
+            'Borrowing gave Olivia an amp, but it did not make her richer: she owed €40 for it.',
+        },
+        {
+          id: 'coins',
+          label: 'Whoever has the most coins is the richest',
+          feedback:
+            'Coins are only one thing you can own. Olivia’s guitar and Breno’s loans count too, and so does what you owe.',
+        },
+        {
+          id: 'keep',
+          label: 'A bank keeps all the money people put in it',
+          feedback:
+            'The money in Olivia’s account belongs to her. The bank owes it to her, and lends most of it out.',
+        },
+      ],
+      correctOptionId: 'own-owe',
+      explanation:
+        'Own minus owe, every time: for a 12-year-old with a guitar, a music shop, a bakery and a bank. That is a balance sheet, the same tool Sal uses for the Bank of Sal. You have finished Olivia’s path!',
+    },
+    // ---- Sal’s bank ---------------------------------------------------------
     {
       id: 'mc-leverage-definition',
       type: 'multiple_choice',

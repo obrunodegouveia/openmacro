@@ -27,6 +27,7 @@ export const kabIncomeStatementLesson = defineLesson({
       id: 'olivia-merch-words',
       type: 'concept_match',
       speaker: 'olivia',
+      kids: true,
       xp: 10,
       tags: ['basics', 'income-statement'],
       prompt:
@@ -56,6 +57,7 @@ export const kabIncomeStatementLesson = defineLesson({
       id: 'olivia-profit',
       type: 'multiple_choice',
       speaker: 'olivia',
+      kids: true,
       xp: 10,
       tags: ['basics', 'income-statement'],
       prompt:
@@ -88,6 +90,7 @@ export const kabIncomeStatementLesson = defineLesson({
       id: 'olivia-breno-shop-profit',
       type: 'multiple_choice',
       speaker: 'breno',
+      kids: true,
       xp: 10,
       tags: ['basics', 'income-statement'],
       prompt:
@@ -120,6 +123,7 @@ export const kabIncomeStatementLesson = defineLesson({
       id: 'olivia-profit-grows-equity',
       type: 'multiple_choice',
       speaker: 'olivia',
+      kids: true,
       xp: 10,
       tags: ['basics', 'equity', 'income-statement'],
       prompt:

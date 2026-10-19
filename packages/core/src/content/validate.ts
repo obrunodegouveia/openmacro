@@ -82,6 +82,10 @@ function validateChallenge(challenge: Challenge, path: string): ContentIssue[] {
     );
   }
 
+  if (challenge.kids !== undefined && typeof challenge.kids !== 'boolean') {
+    at('`kids` must be true or false.');
+  }
+
   switch (challenge.type) {
     case 'multiple_choice': {
       const ids = challenge.options.map((option) => option.id);

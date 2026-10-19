@@ -120,6 +120,13 @@ export interface BaseChallenge {
    * for a challenge with nobody in it — most of the course.
    */
   speaker?: CharacterId;
+  /**
+   * Part of the kids path: the beginner exercises that kids mode shows on
+   * their own (`engine/lessonMode.ts`). In the standard mode they still run,
+   * as warm-ups ahead of the rest. A lesson with none of these is not on the
+   * kids path at all.
+   */
+  kids?: boolean;
 }
 
 // ---------------------------------------------------------------------------

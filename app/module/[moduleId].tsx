@@ -18,6 +18,10 @@
  *   - one pinned button that always does the obvious thing: continue, start,
  *     or replay from the top once everything is finished.
  *
+ * A module with a kids path (`@openmacro/core/engine/lessonMode`) also gets
+ * the kids mode switch. With it on, the timeline, the ring and the button all
+ * count only the kids lessons, each at its kids length.
+ *
  * Share moved to the navigation bar, where iOS puts it.
  *
  * It is also a deep link: openmacro://module/<id> opens straight here.
@@ -31,6 +35,7 @@ import { SymbolView } from 'expo-symbols';
 
 import { ActionButton } from '@/components/ui/ActionButton';
 import { LessonRow, type LessonState } from '@/components/ui/CourseRows';
+import { KidsModeToggle } from '@/components/ui/KidsModeToggle';
 import { LessonVideo } from '@/components/ui/LessonVideo';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { useCourse } from '@/hooks/useCourse';
@@ -38,8 +43,10 @@ import { SeasonalCardCorner, SeasonalFooter } from '@/components/ui/SeasonalDeco
 import { openLesson } from '@/navigation/routes';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
+import { useLessonMode } from '@/services/kidsMode';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import { moduleUrl } from '@openmacro/core/content/links';
+import { lessonsForMode, moduleHasKidsPath } from '@openmacro/core/engine/lessonMode';
 
 /** Room for the pinned button, so the last lesson is not hidden behind it. */
 const FOOTER_SPACE = 112;
@@ -51,6 +58,7 @@ export default function ModuleScreen() {
   const { progress, isLessonComplete } = useProgress();
   const { statusOf } = useCourse();
   const status = moduleId ? statusOf(moduleId) : undefined;
+  const mode = useLessonMode();
 
   const share = useCallback(async () => {
     if (!status) return;
@@ -75,8 +83,23 @@ export default function ModuleScreen() {
     );
   }
 
-  const { module, number, level, done, total, minutes, finished, nextLesson } = status;
-  const target = nextLesson ?? module.lessons[0];
+  const { module, number, level } = status;
+  const kidsPath = moduleHasKidsPath(module);
+  const lessons = lessonsForMode(module, mode);
+  // Kids mode counts its own, shorter path; standard mode keeps the course's
+  // own figures so the two cannot drift.
+  const counted =
+    lessons === module.lessons
+      ? status
+      : {
+          done: lessons.filter((lesson) => isLessonComplete(lesson.id)).length,
+          total: lessons.length,
+          minutes: lessons.reduce((sum, lesson) => sum + lesson.estimatedMinutes, 0),
+          nextLesson: lessons.find((lesson) => !isLessonComplete(lesson.id)),
+        };
+  const { done, total, minutes, nextLesson } = counted;
+  const finished = total > 0 && done === total;
+  const target = nextLesson ?? lessons[0];
   const cta = finished
     ? t('module.replay')
     : done === 0
@@ -139,6 +162,8 @@ export default function ModuleScreen() {
           </Text>
         </View>
 
+        {kidsPath ? <KidsModeToggle lessons={lessonsForMode(module, 'kids').length} /> : null}
+
         {module.video ? (
           <LessonVideo
             url={module.video.url}
@@ -150,7 +175,7 @@ export default function ModuleScreen() {
 
         <Text style={styles.sectionTitle}>{t('module.lessons')}</Text>
         <View>
-          {module.lessons.map((lesson, index) => {
+          {lessons.map((lesson, index) => {
             const state: LessonState = isLessonComplete(lesson.id)
               ? 'done'
               : lesson.id === nextLesson?.id
@@ -163,7 +188,7 @@ export default function ModuleScreen() {
                 state={state}
                 bestXp={progress[lesson.id]?.bestXp ?? 0}
                 first={index === 0}
-                last={index === module.lessons.length - 1}
+                last={index === lessons.length - 1}
                 onPress={() => openLesson(lesson.id)}
               />
             );
