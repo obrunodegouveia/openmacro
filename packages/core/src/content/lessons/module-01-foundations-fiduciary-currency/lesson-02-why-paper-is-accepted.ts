@@ -28,17 +28,17 @@ import { defineLesson } from '../../schema';
 export const whyPaperIsAcceptedLesson = defineLesson({
   id: 'why-paper-is-accepted',
   title: 'Why You Accept a Piece of Paper',
-  subtitle: 'Not trust, not gold — an obligation you cannot settle any other way.',
+  subtitle: 'Not trust, and not gold: a bill you cannot pay any other way.',
   icon: '🧾',
   difficulty: 'intro',
   estimatedMinutes: 6,
   hearts: 3,
 
   keyTakeaways: [
-    'A tax liability payable only in one unit creates standing demand for that unit, whatever it is made of.',
-    'Legal tender law says a creditor cannot refuse it to settle a debt. It does not force a shop to sell you anything.',
-    'Acceptance is self-reinforcing: you take it because others will, and they take it for the same reason.',
-    'Currencies do circulate outside the state that issues them, so taxes are not the whole story.',
+    'If taxes can only be paid in one currency, people will always need that currency, whatever it is made of.',
+    'Legal tender means you cannot refuse it as payment of a debt. It does not force a shop to sell you anything.',
+    'Acceptance feeds itself: you take it because others will, and they take it for the same reason.',
+    'Currencies are also used outside the country that issues them, so taxes are not the whole story.',
   ],
 
   challenges: [
@@ -47,38 +47,38 @@ export const whyPaperIsAcceptedLesson = defineLesson({
       type: 'order_flow',
       tags: ['chartalism', 'foundations'],
       xp: 15,
-      prompt: 'How does a government make its currency wanted? Put the chain in order.',
-      instructions: 'Earliest cause at the top',
+      prompt: 'How does a government make people want its currency? Put the steps in order.',
+      instructions: 'First step at the top',
       events: [
         {
           id: 'declare',
-          label: 'The state names a unit and declares taxes payable in it',
-          detail: 'The obligation is defined before any money exists',
+          label: 'The state names a currency and says taxes must be paid in it',
+          detail: 'The tax bill exists before any of the money does',
         },
         {
           id: 'spend',
-          label: 'The state spends the unit into existence',
-          detail: 'Paying soldiers, suppliers and officials puts it in circulation',
+          label: 'The state pays with the new currency, and that puts it into use',
+          detail: 'It pays soldiers, suppliers and officials',
         },
         {
           id: 'need',
-          label: 'Everyone with a tax bill now needs to obtain some',
-          detail: 'Including people the state never paid directly',
+          label: 'Everyone with a tax bill now needs to get some',
+          detail: 'Even people the state never paid',
         },
         {
           id: 'accept',
-          label: 'Sellers accept it because their customers must hold it',
-          detail: 'Demand for the unit is now general, not just from taxpayers',
+          label: 'Sellers accept it, because their customers need it too',
+          detail: 'Now everyone wants it, not only taxpayers',
         },
         {
           id: 'price',
-          label: 'Prices start being quoted in the unit',
-          detail: 'It has become the unit of account, not just a means of payment',
+          label: 'Prices start being written in the currency',
+          detail: 'It is now the unit of account, not only a way to pay',
         },
       ],
       correctOrder: ['declare', 'spend', 'need', 'accept', 'price'],
       explanation:
-        'The order matters more than it looks. The state must create the obligation *before* it can spend the currency into existence — otherwise nobody would take the first payment. This is why the sequence is often summarised as "taxes drive money": the liability comes first and manufactures the demand that the spending then satisfies.',
+        'The order matters. The state must create the tax bill first, before it spends the currency. Otherwise nobody would accept the first payment. That is why people say “taxes drive money”: the tax bill comes first and creates the demand, and the state’s spending then meets it.',
     },
 
     {
@@ -86,35 +86,35 @@ export const whyPaperIsAcceptedLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['legal-tender', 'foundations'],
       xp: 10,
-      prompt: 'A café refuses your €50 note for a coffee. Are they breaking the law?',
+      prompt: 'A café will not take your €50 note for a coffee. Is that against the law?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'yes-legal-tender',
-          label: 'Yes — legal tender must be accepted for any payment',
+          label: 'Yes, because legal tender must be accepted for any payment',
           feedback:
-            'This is the most common misreading of legal tender law. It governs the settlement of *debts*, not whether a shop must agree to sell.',
+            'This is the most common mistake about legal tender. The law is about paying debts, not about whether a shop must agree to sell.',
         },
         {
           id: 'no-no-debt',
-          label: 'No — you owe them nothing until they agree to serve you',
+          label: 'No, because you owe them nothing until they agree to serve you',
         },
         {
           id: 'yes-currency',
           label: 'Yes, because it is the national currency',
           feedback:
-            'Being the national currency does not oblige a private seller to enter a transaction on your terms.',
+            'Being the national currency does not force a private seller to sell to you on your terms.',
         },
         {
           id: 'depends-amount',
           label: 'Only if the note is small enough to be reasonable change',
           feedback:
-            'Some jurisdictions do cap how much coin must be accepted for a debt, but that is a rule about debts again — not about a sale that has not happened yet.',
+            'Some countries limit how many coins you must accept for a debt. But that is again a rule about debts, not about a sale that has not happened yet.',
         },
       ],
       correctOptionId: 'no-no-debt',
       explanation:
-        'Legal tender means a creditor cannot refuse it to discharge a debt already owed. Before the café serves you there is no debt, so they can decline the note, decline cash entirely, or refuse your business. The law makes the currency a valid *settlement*, not a universal key.',
+        'Legal tender means a person you owe money to cannot refuse it as payment. Before the café serves you, you owe them nothing. So they can refuse the note, refuse cash completely, or refuse to serve you. The law makes the currency valid for paying debts. It does not make every seller take it.',
     },
 
     {
@@ -122,37 +122,37 @@ export const whyPaperIsAcceptedLesson = defineLesson({
       type: 'concept_match',
       tags: ['chartalism', 'foundations'],
       xp: 15,
-      prompt: 'Match each idea to what it claims.',
+      prompt: 'Match each idea to what it says.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'chartalism',
           term: 'Chartalism',
-          definition: 'A currency is wanted because the state demands it back in tax',
+          definition: 'People want a currency because the state asks for it back in taxes',
         },
         {
           id: 'legal-tender',
           term: 'Legal tender',
-          definition: 'A creditor cannot refuse it to settle a debt already owed',
+          definition: 'A person you owe money to cannot refuse it as payment',
         },
         {
           id: 'network',
           term: 'Network effect',
-          definition: 'It is worth holding mainly because everyone around you holds it too',
+          definition: 'It is worth holding mostly because everyone around you holds it too',
         },
         {
           id: 'seigniorage',
           term: 'Seigniorage',
-          definition: 'The issuer’s profit from creating money more cheaply than its face value',
+          definition: 'The profit an issuer makes because money costs less to make than the amount written on it',
         },
         {
           id: 'dollarisation',
           term: 'Dollarisation',
-          definition: 'A population abandoning its own unit for a foreign one it finds steadier',
+          definition: 'People drop their own currency for a foreign one that holds its value better',
         },
       ],
       explanation:
-        'These are competing and complementary explanations, not a single theory. Chartalism explains why a specific unit gets traction inside a state; network effects explain why it keeps it, and why a better-run foreign currency can take over anyway once confidence goes.',
+        'These ideas do not compete; they work together. Chartalism explains why one currency first takes hold in a country. Network effects explain why it stays. They also explain how a better-run foreign currency can take over once people stop trusting their own.',
     },
 
     {
@@ -167,7 +167,7 @@ export const whyPaperIsAcceptedLesson = defineLesson({
           id: 'chartalism-wrong',
           label: 'Tax-driven demand is a myth',
           feedback:
-            'Too strong. Tax liabilities plainly do create demand — it is why a new currency can be launched at all. The case shows it is not the *only* source.',
+            'Too strong. Taxes clearly do create demand; that is how a new currency can start at all. This case only shows that taxes are not the only reason.',
         },
         {
           id: 'not-only-source',
@@ -177,18 +177,18 @@ export const whyPaperIsAcceptedLesson = defineLesson({
           id: 'us-forces',
           label: 'The US must be forcing them to use it',
           feedback:
-            'Ecuador adopted the dollar unilaterally in 2000, after its own currency collapsed. The US was not consulted and gains nothing but seigniorage.',
+            'Ecuador chose the dollar by itself in 2000, after its own currency collapsed. The US was not asked, and it gains almost nothing.',
         },
         {
           id: 'gold',
           label: 'The dollar must still be backed by something physical',
           feedback:
-            'It is not. Ecuadorians hold dollars for the same reason Americans do — everyone else will take them, and the issuer has kept them reasonably stable.',
+            'It is not. People in Ecuador hold dollars for the same reason Americans do: everyone else accepts them, and their value has stayed fairly stable.',
         },
       ],
       correctOptionId: 'not-only-source',
       explanation:
-        'A currency can be adopted purely because it is a better store of value and everyone else accepts it. Ecuador dollarised after its own currency lost most of its value in a year. Tax liabilities can start a currency; stability and network effects are what keep one alive — and can carry a foreign one across a border where no tax obligation exists at all.',
+        'People can choose a currency just because it keeps its value and everyone accepts it. Ecuador switched to the dollar after its own currency lost most of its value in a year. Taxes can start a currency. Stability and the fact that everyone uses it are what keep it alive, even across a border where nobody pays taxes in it.',
     },
   ],
 });

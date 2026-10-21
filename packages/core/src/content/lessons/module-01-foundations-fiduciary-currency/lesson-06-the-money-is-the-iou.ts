@@ -50,18 +50,18 @@ export const theMoneyIsTheIouLesson = defineLesson({
   id: 'the-money-is-the-iou',
   title: 'The Money Is the IOU',
   subtitle:
-    'A central bank cannot create money and keep it. The thing it creates is the thing it owes.',
+    'A central bank cannot create money and keep it. The money it creates is the money it owes.',
   icon: '⚖️',
   difficulty: 'core',
   estimatedMinutes: 8,
   hearts: 3,
 
   keyTakeaways: [
-    'Printing a banknote creates nothing. It becomes money, and a liability, only when it is issued in exchange for something.',
-    'The money a central bank creates *is* its liability. There is no moment at which it holds the money it made.',
-    'An asset appears at the same instant because the bank received something: an asset it bought, or a promise to repay.',
-    'Creating money does not make a central bank richer. Both sides rise together and net worth does not move.',
-    'What makes a purchase monetary financing is not where it was bought or from whom, but whether the central bank’s holdings grew in order to fund new borrowing.',
+    'Printing a banknote creates nothing. It only becomes money, and a debt, when it is handed over in exchange for something.',
+    'The money a central bank creates is its liability. At no moment does it hold the money it made.',
+    'An asset appears at the same moment because the bank received something: something it bought, or a promise to repay.',
+    'Creating money does not make a central bank richer. Both sides grow together, so its net worth stays the same.',
+    'A purchase is monetary financing when the central bank holds more bonds in order to pay for new government borrowing. Where or from whom it bought them does not decide it.',
   ],
 
   challenges: [
@@ -72,28 +72,28 @@ export const theMoneyIsTheIouLesson = defineLesson({
       tags: ['money-creation', 'central-banking'],
       xp: 15,
       prompt:
-        'The Fed prints $1M of new $100 bills. They are stacked in its own vault. What is on its balance sheet?',
+        'The Fed prints $1M in new $100 bills and stacks them in its own vault. What is on its balance sheet now?',
       explanation:
-        'Nothing. Unissued notes are inventory — paper and ink the Fed happens to own, like its chairs. They become money, and a liability, at issuance: when a bank draws them down and pays for them out of its reserves. The Fed publishes this distinction rather than hiding it — the H.4.1 liability line reads "Federal Reserve notes, net of F.R. Bank holdings", explicitly subtracting the notes it is holding itself.',
+        'Nothing. Notes that have not been issued are just stock: paper and ink the Fed owns, like its chairs. They become money, and a debt, when they are issued: when a bank takes them and pays with its reserves. The Fed says this openly. Its published line for notes reads “Federal Reserve notes, net of F.R. Bank holdings”, which removes the notes it holds itself.',
       options: [
         { id: 'nothing', label: 'Nothing at all' },
         {
           id: 'liability',
           label: 'A $1M liability',
           feedback:
-            'Not yet. A liability is owed to somebody, and these notes are owed to nobody — they have not left the building. Your own IOU, in your own drawer, is not a debt.',
+            'Not yet. A liability is owed to someone, and these notes are owed to nobody: they have not left the building. An IOU you wrote and kept in your own drawer is not a debt.',
         },
         {
           id: 'asset',
           label: 'A $1M asset',
           feedback:
-            'The paper is worth its printing cost, not its face value. If printing created assets at face value, the printing cost would be the only limit on a central bank’s wealth.',
+            'The paper is worth what it cost to print, not the amount written on it. If printing created assets at face value, a central bank could become as rich as it liked.',
         },
         {
           id: 'both',
           label: 'Both: a $1M asset and a $1M liability',
           feedback:
-            'This is the right shape for *issued* money, but it has not been issued. The two entries appear together at the moment it is handed over in exchange for something.',
+            'That is the right shape for money that has been issued, but this has not. The two entries appear together at the moment the money is handed over for something.',
         },
       ],
       correctOptionId: 'nothing',
@@ -107,7 +107,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
       xp: 15,
       prompt: 'When a central bank creates money, why does an asset appear at the same moment?',
       explanation:
-        'Because it bought something. A central bank does not emit money into the void — it swaps its new liability for an asset, or lends it against a promise to repay. The asset is whatever it received. That is also why the accounting cannot be "gamed": the identity is not a rule imposed from outside, it is a description of a transaction that had two sides.',
+        'Because it bought something. A central bank does not just release money into the air. It swaps its new liability for an asset, or lends it in exchange for a promise to repay. The asset is whatever it received. So you cannot trick the accounting: it simply describes a deal that had two sides.',
       options: [
         {
           id: 'received',
@@ -117,19 +117,19 @@ export const theMoneyIsTheIouLesson = defineLesson({
           id: 'rules',
           label: 'Because accounting rules require every liability to have a matching asset',
           feedback:
-            'They do not. A liability can be matched by a fall in equity instead — which is exactly what happens when a central bank hands money over for nothing. The asset appears because of what happened, not because a rule demanded it.',
+            'They do not. A liability can be matched by a fall in equity instead, which is what happens when a central bank gives money away for nothing. The asset appears because of what happened, not because a rule says so.',
         },
         {
           id: 'gold',
           label: 'Because the money has to be backed by gold or foreign reserves',
           feedback:
-            'No modern currency is redeemable for gold, yet the entries still pair. The asset is whatever was bought — usually government bonds — and it does not have to be a commodity.',
+            'No modern currency can be swapped for gold, but the two entries still come in pairs. The asset is whatever was bought, usually government bonds. It does not need to be gold or any other good.',
         },
         {
           id: 'profit',
           label: 'Because the central bank books the new money as profit',
           feedback:
-            'If creation were profit, net worth would rise with every dollar and a central bank could buy the world. Both sides rise together instead, and equity does not move.',
+            'If creating money were profit, the bank’s net worth would rise with every dollar and it could buy the world. Instead both sides rise together, and its equity stays the same.',
         },
       ],
       correctOptionId: 'received',
@@ -141,10 +141,10 @@ export const theMoneyIsTheIouLesson = defineLesson({
       type: 't_account_flow',
       tags: ['money-creation', 'open-market-operations', 'balance-sheets'],
       xp: 30,
-      prompt: 'The Fed buys a $1B Treasury bond from a commercial bank. Post it.',
-      instructions: 'Pick an entry, then choose whose sheet it lands on and which side',
+      prompt: 'The Fed buys a $1B US government bond from a commercial bank. Post it.',
+      instructions: 'Pick an entry, then choose whose list it goes on and which side',
       scenario:
-        'This is how base money is normally created. The Fed buys the bond and pays by crediting the seller’s reserve account — with reserves that did not exist a moment earlier. Four entries are needed; three of the seven do not belong.',
+        'This is the normal way base money is created. The Fed buys the bond and pays by adding reserves to the seller’s account. Those reserves did not exist a moment before. Four entries are needed. Three of the seven are wrong.',
       currency: 'USD',
       entities: [
         {
@@ -193,19 +193,19 @@ export const theMoneyIsTheIouLesson = defineLesson({
           id: 'fed-capital-up',
           shift: { entityId: 'fed', side: 'liability', account: 'Capital and reserves', delta: 1e9, equity: true },
           feedback:
-            'The Fed is no richer for having done this. It paid full price for the bond, so its net worth is exactly what it was — that is the whole point of the pairing.',
+            'The Fed is not richer after this. It paid the full price for the bond, so its net worth is the same. That is the whole point of the pair of entries.',
         },
         {
           id: 'bank-deposits-up',
           shift: { entityId: 'bank', side: 'liability', account: 'Customer deposits', delta: 1e9 },
           feedback:
-            'No customer was involved. The bank sold its own bond from its own portfolio; nobody’s deposit changed.',
+            'No customer was involved. The bank sold its own bond, and nobody’s deposit changed.',
         },
         {
           id: 'fed-notes-up',
           shift: { entityId: 'fed', side: 'liability', account: 'Notes in circulation', delta: 1e9 },
           feedback:
-            'Payment was made in reserves, not banknotes. Notes only enter circulation when somebody withdraws cash.',
+            'The Fed paid in reserves, not banknotes. Notes only go out when someone takes out cash.',
         },
       ],
       expectedShifts: [
@@ -218,7 +218,7 @@ export const theMoneyIsTheIouLesson = defineLesson({
         {
           aggregate: 'M0',
           direction: 'expand',
-          note: 'Base money rose by $1B. The reserves the Fed credited did not come from anywhere — they are new.',
+          note: 'Base money rose by $1B. The reserves the Fed added did not come from anywhere: they are new.',
         },
         {
           aggregate: 'M2',
@@ -228,11 +228,11 @@ export const theMoneyIsTheIouLesson = defineLesson({
         {
           aggregate: 'collateral',
           direction: 'contract',
-          note: 'A bond left the private market and sat on the Fed’s book. That is the part of QE that is about collateral rather than money.',
+          note: 'A bond left the market and now sits with the Fed. This is the part of QE that is about collateral (assets used as security for loans), not about money.',
         },
       ],
       explanation:
-        'The Fed’s total grew by $1B on both sides at once. Its asset is the bond; its liability is the money it paid with. Notice what did *not* happen: the Fed never held the $1B. The reserves existed only from the instant they were owed to the selling bank. Notice also the commercial bank’s total is unchanged — it swapped a bond for reserves, which is why an open market purchase makes the banking system more liquid without making it richer.',
+        'The Fed’s total grew by $1B on both sides at once. Its asset is the bond. Its liability is the money it paid with. Notice what did not happen: the Fed never held the $1B. The reserves only existed from the moment they were owed to the selling bank. The bank’s total did not change either. It swapped a bond for reserves. So the purchase gives the banking system more cash to use, but does not make it richer.',
     },
 
     // -----------------------------------------------------------------------
@@ -241,9 +241,9 @@ export const theMoneyIsTheIouLesson = defineLesson({
       type: 'concept_match',
       tags: ['money-creation', 'balance-sheets'],
       xp: 20,
-      prompt: 'Each of these is somebody’s promise. Match it to who owes it.',
+      prompt: 'Each of these is someone’s promise. Match it to who owes it.',
       explanation:
-        'A liability is always owed to whoever holds it — that is what makes it a claim rather than an object. What a central bank actually owes you is the subtle part: hand a £10 note to the Bank of England and you get a £10 note back, so the promise is not to give you something else. The promise is to *take it back* — to accept it at par in settlement of taxes, of loans it made, of assets it sells. That obligation to accept is the content of the claim. Whether that makes fiat money "really" a liability is genuinely argued over; what is not argued over is that the issuer must honour it at par.',
+        'A liability is always owed to whoever holds it. That is what makes it a claim and not an object. What a central bank owes you is the tricky part. Give a £10 note to the Bank of England and you just get a £10 note back. So the promise is not to give you something else. The promise is to take it back: to accept it at full value for taxes, for loans it made, and for things it sells. Economists still argue whether that makes paper money “really” a debt. Nobody argues that the issuer must accept it at full value.',
       pairs: [
         {
           id: 'reserves',
@@ -258,12 +258,12 @@ export const theMoneyIsTheIouLesson = defineLesson({
         {
           id: 'deposit',
           term: 'The balance in your current account',
-          definition: 'Owed by your commercial bank to you — not by the central bank',
+          definition: 'Owed to you by your commercial bank, not by the central bank',
         },
         {
           id: 'unissued',
           term: 'A note still in the issuer’s vault',
-          definition: 'Owed to nobody. It is inventory, not money',
+          definition: 'Owed to nobody. It is stock, not money',
         },
       ],
     },
@@ -275,10 +275,10 @@ export const theMoneyIsTheIouLesson = defineLesson({
       tags: ['money-creation', 'monetary-financing', 'balance-sheets'],
       xp: 30,
       prompt:
-        'Now the case that is usually forbidden: the central bank credits the Treasury $1B and receives nothing. Post it.',
-      instructions: 'Four entries. Think about what balances a new liability when no asset arrives',
+        'Now the case that is usually not allowed: the central bank gives the government (the Treasury) $1B and gets nothing back. Post it.',
+      instructions: 'Four entries. Think about what balances a new liability when no asset comes in',
       scenario:
-        'No bond is bought and no loan is made — the money is simply given. Both sheets still have to balance, so on each one something has to absorb it. Only the accounts that move are shown. Four entries are needed; three of the seven do not belong.',
+        'No bond is bought and no loan is made: the money is simply given. Both lists must still balance, so on each one something has to absorb the change. Only the accounts that move are shown. Four entries are needed. Three of the seven are wrong.',
       currency: 'USD',
       entities: [
         {
@@ -325,13 +325,13 @@ export const theMoneyIsTheIouLesson = defineLesson({
           id: 'bonds-up',
           shift: { entityId: 'centralbank', side: 'asset', account: 'Government bonds', delta: 1e9 },
           feedback:
-            'No bond was bought. That is precisely what separates this from an open market purchase — and precisely why it is treated differently in law.',
+            'No bond was bought. That is exactly what makes this different from a normal purchase, and why the law treats it differently.',
         },
         {
           id: 'reserves-up',
           shift: { entityId: 'centralbank', side: 'liability', account: 'Bank reserves', delta: 1e9 },
           feedback:
-            'The money went to the Treasury’s account, not to a commercial bank’s. Reserves move later, when the government actually spends it.',
+            'The money went to the government’s account, not to a commercial bank’s. Reserves move later, when the government spends it.',
         },
         {
           id: 'capital-up',
@@ -350,16 +350,16 @@ export const theMoneyIsTheIouLesson = defineLesson({
         {
           aggregate: 'M0',
           direction: 'expand',
-          note: 'A new central bank liability exists. It is base money the moment the Treasury spends it into the banking system.',
+          note: 'The central bank now owes something new. It becomes base money as soon as the government spends it into the banking system.',
         },
         {
           aggregate: 'M2',
           direction: 'unchanged',
-          note: 'Not yet. Broad money rises when the government pays somebody and the payment lands in a deposit account.',
+          note: 'Not yet. Broad money rises when the government pays someone and the payment lands in a bank account.',
         },
       ],
       explanation:
-        'The central bank’s assets did not move, so its equity absorbed the whole $1B — and the Treasury’s net position rose by exactly the same amount. Put the two sheets side by side and the operation is not really money creation at all: it is a transfer of $1B of net worth from the central bank to the government, settled in newly created money. This is the case that proves the rule from the last exercise: the asset side normally appears *because the bank received something*, not because some rule forbids a lone liability. Remove the thing received and the liability still appears — it is simply paid for out of net worth. That is monetary financing, and Article 123 of the Treaty on the Functioning of the European Union prohibits the ECB from doing it. Not because the arithmetic fails, but because it works perfectly: it is a way to fund a government that never shows up as a tax and never shows up as a debt.',
+        'The central bank’s assets did not change, so its equity took the whole $1B loss. The government’s net position rose by exactly the same amount. Side by side, this is really a gift of $1B of net worth from the central bank to the government, paid in new money. It proves the earlier rule: an asset normally appears because the bank received something. Take that away and the liability still appears; it is just paid for out of net worth. This is monetary financing. EU law (Article 123 of the Treaty on the Functioning of the EU) bans the ECB from doing it. The maths works fine. The problem is that it funds a government in a way that never shows up as a tax or as a debt.',
     },
 
     // -----------------------------------------------------------------------
@@ -370,29 +370,29 @@ export const theMoneyIsTheIouLesson = defineLesson({
       xp: 20,
       prompt: 'A central bank makes four purchases. Which one is monetary financing?',
       explanation:
-        'The first. The test is not where the bond was bought, nor from whom — it is whether the central bank’s holdings grew *in order to fund borrowing that would otherwise have needed a private buyer*. Only the first does that. The rollover looks like the forbidden thing and is not: the bank held the same amount before and after, and the government raised nothing it would not otherwise have raised. The secondary purchase is ordinary QE — the bond was somebody else’s already. The repo is a loan, and it is returned in the morning. Worth knowing that the rules differ: the Fed rolls maturing holdings over at Treasury auctions, while Article 123 bars the ECB from the primary market at all, so it reinvests by buying in the secondary market instead. Same principle, drawn tighter.',
+        'The first one. The test is not where the bond was bought or from whom. It is whether the central bank now holds more bonds in order to pay for borrowing that would otherwise need a private buyer. Only the first does that. The rollover looks forbidden but is not: the bank holds the same amount before and after, and the government raised no extra money. The old-bond purchase is normal QE: the bond already belonged to someone else. The repo is a loan, returned the next morning. The rules differ a little: the Fed swaps maturing bonds for new ones at government auctions, while the ECB may not buy at auctions at all, so it buys from other investors instead.',
       options: [
         {
           id: 'new-issue',
-          label: 'It buys a newly issued bond at auction, and its holdings rise by that amount',
+          label: 'It buys a new bond at the government’s auction, and its holdings rise by that amount',
         },
         {
           id: 'rollover',
           label: 'A bond it holds matures, and it buys a new one so its holdings stay the same',
           feedback:
-            'This is the one that looks forbidden and is not. Nothing was funded that would not have been funded anyway — the holding was $100B before and $100B after, and the money supply is where it started.',
+            'This one looks forbidden but is not. Nothing new was funded: it held $100B before and $100B after, and the amount of money is where it started.',
         },
         {
           id: 'secondary',
           label: 'It buys a five-year-old bond from a pension fund',
           feedback:
-            'That is an ordinary open market purchase — QE. The government was financed years ago, by the pension fund. The central bank replaced the holder; it did not fund anything.',
+            'That is a normal open market purchase: QE. The government got its money years ago, from the pension fund. The central bank only replaced the owner. It did not fund anything.',
         },
         {
           id: 'repo',
           label: 'It lends to a bank overnight, holding a government bond as security',
           feedback:
-            'That is a loan against collateral, unwound in the morning. The bond never became the central bank’s, and the government was not on either side of it.',
+            'That is a loan with a bond as security, undone the next morning. The bond never became the central bank’s, and the government was not part of it.',
         },
       ],
       correctOptionId: 'new-issue',

@@ -84,7 +84,7 @@ export const moduleBankingAndMoney = defineModule({
   id: 'banking-and-money',
   title: 'Banking and Money (Khan Academy)',
   description:
-    'Sal Khan builds the banking system from one island, one vault and a thousand gold coins — through fractional reserve, leverage, the central bank and open market operations, to the Fed’s real balance sheet. Twenty-five videos, each with questions written against what it actually says, ending with his own argument against the system he just explained.',
+    'Sal Khan explains banking step by step. He starts with one island, one bank vault and 1,000 gold coins. Then he adds fractional reserve banking, leverage, the central bank and open market operations, and ends with the real balance sheet of the US Federal Reserve. There are 25 videos, each with questions about what it says. In the last videos, Sal argues against parts of the system he has just explained.',
   accent: 'gold',
   level: 'beginner',
   lessons: [

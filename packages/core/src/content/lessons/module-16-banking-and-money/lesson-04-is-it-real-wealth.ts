@@ -6,9 +6,9 @@ import { defineLesson } from '../../schema';
  */
 export const kabIsItRealWealthLesson = defineLesson({
   id: 'kab-is-it-real-wealth',
-  title: 'Is the Extra Money a Shell Game?',
+  title: 'Is the Extra Money Real?',
   subtitle:
-    'Deposits nearly tripled. Whether that is wealth or a trick depends on one thing — and it is not the gold.',
+    'Deposits nearly tripled. Is that real wealth or a trick? It depends on one thing, and it is not the gold.',
   icon: '🍎',
   difficulty: 'core',
   estimatedMinutes: 17,
@@ -164,36 +164,36 @@ export const kabIsItRealWealthLesson = defineLesson({
       tags: ['money-vs-wealth', 'investment'],
       xp: 20,
       prompt:
-        'The villagers’ accounts now add up to 2,710 gold pieces, but only 1,000 coins exist. What decides whether the extra money stands for real wealth?',
+        'The villagers’ accounts now add up to 2,710 gold pieces, but only 1,000 coins exist. What decides if the extra money stands for real wealth?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'projects',
           label:
-            'Whether the projects it funded really produce at least as much value as was borrowed',
+            'Whether the projects it paid for really produce at least as much value as was borrowed',
         },
         {
           id: 'gold-ratio',
-          label: 'Whether enough gold is held against the deposits',
+          label: 'Whether the bank keeps enough gold for the deposits',
           feedback:
-            'The gold is inert. It sits in the vault whether the canal works or not — it cannot tell you whether wealth was created.',
+            'The gold does nothing. It sits in the vault whether the canal works or not, so it cannot tell you if wealth was created.',
         },
         {
           id: 'confidence',
           label: 'Whether depositors believe their money is there',
           feedback:
-            'Confidence keeps the bank open; it does not make an irrigation ditch produce apples. A confident village funding useless projects is still poorer afterwards.',
+            'Trust keeps the bank open, but trust does not build anything. A village that trusts its bank but pays for useless projects still ends up poorer.',
         },
         {
           id: 'never',
-          label: 'It never does — money created by lending is always illusory',
+          label: 'It never does — money created by lending is always fake',
           feedback:
-            'That is the conclusion the video argues against, and its test is concrete: did apple production rise? In the example it goes from 1,000 to 3,000 a year.',
+            'The video argues against this idea. Its test is simple: did the village grow more apples? In the example, apples go from 1,000 to 3,000 a year.',
         },
       ],
       correctOptionId: 'projects',
       explanation:
-        'The money expanded to finance production. If the canal and the factory really produce more than was borrowed, the deposits are backed by future goods rather than by metal. If the projects fail, the deposits are hollow — and no reserve ratio would have changed that.',
+        'The extra money paid for things that produce goods. If the canal and the factory really produce more than was borrowed, the deposits are backed by future goods, not by gold. If the projects fail, the deposits are empty promises, and no reserve rule could have changed that.',
     },
     {
       id: 'mc-deflation',
@@ -201,35 +201,35 @@ export const kabIsItRealWealthLesson = defineLesson({
       tags: ['inflation', 'productivity'],
       xp: 25,
       prompt:
-        'Apple production rises from 1,000 a year to 3,000, while the money people believe they hold rises from 1,000 to 2,710. Assume people spend their money as often as before. What happens to the price of an apple?',
+        'The island now grows 3,000 apples a year instead of 1,000. The money people think they have goes from 1,000 to 2,710. People spend their money as often as before. What happens to the price of an apple?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'falls',
-          label: 'It falls — output grew faster than the money supply',
+          label: 'It falls — apples grew faster than money',
         },
         {
           id: 'rises',
-          label: 'It rises, because far more money is chasing apples',
+          label: 'It rises, because there is much more money to spend on apples',
           feedback:
-            'Money grew 2.71 times; apples grew 3 times. Apples grew faster than money, so each apple costs less money, not more.',
+            'Money grew 2.71 times. Apples grew 3 times. Apples grew faster than money, so each apple costs less, not more.',
         },
         {
           id: 'same',
           label: 'It stays the same, since both roughly tripled',
           feedback:
-            'Close, but the ratio moved: 2,710 against 3,000 is less money per apple than 1,000 against 1,000.',
+            'Close, but not quite. 2,710 of money for 3,000 apples is less money per apple than 1,000 for 1,000.',
         },
         {
           id: 'unknowable',
-          label: 'It cannot be known without the interest rate',
+          label: 'You cannot tell without knowing the interest rate',
           feedback:
-            'The interest rate shapes which projects get funded. Here you already know the result, and comparing money with goods is enough to settle the price.',
+            'The interest rate affects which projects get money. Here you already know what happened, and comparing money with apples is enough to find the price.',
         },
       ],
       correctOptionId: 'falls',
       explanation:
-        'This is the counter-example to "creating money always means inflation". Money grew and prices still fell, because the money funded projects that grew output faster than the money grew. Inflation depends on the race between money and goods, not on money creation alone.',
+        'Many people say “creating money always causes inflation”. This example shows it does not. Money grew and prices still fell, because the money paid for projects that made goods grow even faster. Inflation depends on whether money grows faster than goods, not on new money alone.',
     },
     {
       id: 'mc-bad-projects',
@@ -237,35 +237,35 @@ export const kabIsItRealWealthLesson = defineLesson({
       tags: ['money-creation', 'inflation', 'credit-risk'],
       xp: 30,
       prompt:
-        'Now run the same story with bad projects. The canal silts up, the tool factory never opens, and apple production stays at 1,000 a year. Deposits are still 2,710. What goes wrong?',
+        'Now tell the same story with bad projects. The canal fills with mud, the tool factory never opens, and the island still grows only 1,000 apples a year. Deposits are still 2,710. What goes wrong?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'both',
-          label: 'Two things: prices rise, and the bank is in trouble because its loans will not be repaid',
+          label: 'Two things: prices rise, and the bank is in trouble because its loans will not be paid back',
         },
         {
           id: 'inflation',
-          label: 'Only inflation — more money chasing the same number of apples',
+          label: 'Only inflation — more money to spend on the same number of apples',
           feedback:
-            'That is half of it. Look at what the bank holds against those 2,710 of deposits: two loans that will not be repaid.',
+            'That is only half of it. Look at what the bank owns to cover those 2,710 of deposits: two loans that will never be paid back.',
         },
         {
           id: 'bankonly',
-          label: 'Only the bank is in trouble. Prices are set by supply and demand, not by deposits',
+          label: 'Only the bank is in trouble. Prices depend on supply and demand, not on deposits',
           feedback:
-            'Deposits are the demand side: they are what people spend. 2,710 of spendable money against 1,000 apples gives a higher price than 1,000 against 1,000.',
+            'Deposits are the demand: they are the money people spend. 2,710 of money for 1,000 apples gives a higher price than 1,000 for 1,000.',
         },
         {
           id: 'nothing',
           label: 'Nothing. The money was created and still exists',
           feedback:
-            'It exists as a number in an account. What it buys, and whether the bank can pay it out, are exactly what the failed projects have changed.',
+            'It exists as a number in an account. But the failed projects change what it can buy, and whether the bank can pay it out.',
         },
       ],
       correctOptionId: 'both',
       explanation:
-        'This is the mirror image of the video. More lending is not inflationary or harmless by nature — it depends on whether the things it pays for actually get built. When they do, money and goods grow together. When they do not, the same failed projects bring both rising prices and a banking crisis, which is a fair description of many financial crises.',
+        'This is the video’s story turned the other way. More lending is not always good or always bad. It depends on whether the things it pays for really get built. If they do, money and goods grow together. If they do not, the failed projects bring both rising prices and a banking crisis. Many real financial crises happened like this.',
     },
     {
       id: 'mc-partial-growth',
@@ -273,7 +273,7 @@ export const kabIsItRealWealthLesson = defineLesson({
       tags: ['inflation', 'money-supply'],
       xp: 30,
       prompt:
-        'Now suppose the projects only half worked: apple production rises from 1,000 to 1,500 a year instead of 3,000, while deposits still reach 2,710. Assume people spend their money as often as before. What happens to the price of an apple?',
+        'Now say the projects only half worked. The island grows 1,500 apples a year instead of 3,000. Deposits still reach 2,710. People spend their money as often as before. What happens to the price of an apple?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -284,37 +284,37 @@ export const kabIsItRealWealthLesson = defineLesson({
           id: 'falls',
           label: 'It falls, as it did in the video, because output went up',
           feedback:
-            'Output going up is not enough on its own. What matters is whether it grew faster than money, and 1.5 times is well short of 2.7.',
+            'More apples is not enough on its own. What matters is whether apples grew faster than money, and 1.5 times is much less than 2.7 times.',
         },
         {
           id: 'same',
           label: 'It stays at one gold piece, because there are still only 1,000 coins of gold (M0)',
           feedback:
-            'People spend what they believe they hold, which is the 2,710 in their accounts. M0 sitting in a vault is not what meets the apples at market.',
+            'People spend the money they think they have: the 2,710 in their accounts. The gold in the vault (M0) is not what people take to the market.',
         },
         {
           id: 'unknowable',
           label: 'There is not enough information without knowing the interest rate',
           feedback:
-            'The interest rate decides who gets to borrow. The price here follows from the two growth figures you already have.',
+            'The interest rate decides who can borrow. Here, the price comes from the two growth numbers you already have.',
         },
       ],
       correctOptionId: 'rises',
       explanation:
-        '2,710 of money against 1,500 apples is about 1.8 gold pieces an apple, up from one. The video picks numbers where goods grow faster than money, and prices fall. Pick numbers where they do not, and the same mechanism raises prices. Lending itself does not decide which — how productive the funded projects are does.',
+        '2,710 of money for 1,500 apples is about 1.8 gold pieces per apple, up from 1. The video chose numbers where goods grow faster than money, so prices fall. With other numbers, the same process makes prices rise. Lending alone does not decide which. What decides is how much the projects really produce.',
     },
     {
       id: 'match-money-wealth',
       type: 'concept_match',
       tags: ['money-supply', 'wealth'],
       xp: 25,
-      prompt: 'The video insists that money and wealth are different things. Match each idea to what it refers to on the island.',
+      prompt: 'The video says that money and wealth are different things. Match each idea to what it means on the island.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'money',
           term: 'Money',
-          definition: 'The 2,710 in people’s accounts — you cannot eat it, live in it or travel on it',
+          definition: 'The 2,710 in people’s accounts — you cannot eat it, live in it or ride it',
         },
         {
           id: 'wealth',
@@ -329,16 +329,16 @@ export const kabIsItRealWealthLesson = defineLesson({
         {
           id: 'deflation',
           term: 'Deflation on the island',
-          definition: 'Goods grew faster than money, so each gold piece came to buy more',
+          definition: 'Goods grew faster than money, so each gold piece could buy more',
         },
       ],
       explanation:
-        'Sal says confusing the two will make you unhappy, and he means it as an economic point, not a moral one. Money represents wealth; it is not wealth. An island that doubles its gold and grows no more apples is not richer, and an island that triples its apples is richer whether or not anyone mines more gold.',
+        'Sal says that mixing up money and wealth will make you unhappy. He means this as economics, not as a life lesson. Money stands for wealth, but it is not wealth. An island that doubles its gold but grows no more apples is not richer. An island that grows three times more apples is richer, even if nobody digs up more gold.',
     },
   ],
   keyTakeaways: [
-    'Created money is real wealth exactly insofar as the projects it funded are real.',
-    'Money represents wealth; it is not wealth. Gold cannot be eaten either.',
-    'Money creation can coexist with falling prices when output grows faster.',
+    'New money from lending stands for real wealth only if the projects it paid for really produce something.',
+    'Money stands for wealth, but it is not wealth. You cannot eat gold either.',
+    'The money supply can grow while prices fall, if the amount of goods grows even faster.',
   ],
 });

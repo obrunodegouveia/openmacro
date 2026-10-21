@@ -5,7 +5,7 @@ export const kabFrbCommentaryLesson = defineLesson({
   id: 'kab-frb-commentary',
   title: 'The Half-Truth at the Centre',
   subtitle:
-    'You were told you could withdraw everything at any time. What is true is that you can, unless too many others try.',
+    'You were told you can take out all your money at any time. The truth is that you can — unless too many people try at once.',
   icon: '⚠️',
   difficulty: 'advanced',
   estimatedMinutes: 18,
@@ -21,35 +21,35 @@ export const kabFrbCommentaryLesson = defineLesson({
       tags: ['fractional-reserve', 'critique'],
       xp: 25,
       prompt:
-        'The video says a demand deposit comes with a hidden asterisk — fine print nobody reads out. For a bank holding 10% reserves, what is it?',
+        'A demand deposit is money you can take out whenever you want. The video says it comes with hidden small print (an “asterisk”). For a bank that keeps 10% of deposits as reserves, what does the small print say?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'asterisk',
-          label: '"On demand — as long as no more than about 10% of the money is asked for at once"',
+          label: '“Whenever you want — as long as people ask for no more than about 10% at once”',
         },
         {
           id: 'insured',
-          label: '"On demand — unless the bank fails, in which case insurance pays"',
+          label: '“Whenever you want — and if the bank fails, insurance will pay”',
           feedback:
-            'Insurance is the fix examined in the next video. The asterisk here comes from fractional reserve banking itself, and it is there whether or not there is insurance.',
+            'Insurance is the fix in the next video. This small print comes from keeping only part of deposits as reserves, and it is there with or without insurance.',
         },
         {
           id: 'notice',
-          label: '"On demand — with a notice period"',
+          label: '“Whenever you want — after giving the bank some notice first”',
           feedback:
-            'No notice period is mentioned to the depositor. Telling depositors when they can have their money is exactly the honest alternative the video proposes — and then explains why banks avoid it.',
+            'Depositors are not told about any notice. Telling them when they can have their money is the honest option the video suggests — and then it explains why banks avoid it.',
         },
         {
           id: 'fees',
-          label: '"On demand — subject to withdrawal fees"',
+          label: '“Whenever you want — but you must pay a fee to take it out”',
           feedback:
-            'Fees are not the issue. The issue is that the money is not all there.',
+            'Fees are not the problem. The problem is that the money is not all there.',
         },
       ],
       correctOptionId: 'asterisk',
       explanation:
-        'The video is even-handed about it: the gold-era version and the modern version produce identical balance sheets, so neither is shadier than the other. And it notes the honest alternative exists — tell depositors their money is locked up — but then they would demand more interest, which is exactly the cost the half-truth saves the bank.',
+        'The video is fair about it: the old gold version and the modern version give the same balance sheet, so neither is more dishonest. It also notes there is an honest option: tell depositors their money is tied up. But then they would ask for more interest. That extra interest is exactly what the half-truth saves the bank.',
     },
     {
       id: 'mc-risk-incentive',
@@ -57,36 +57,35 @@ export const kabFrbCommentaryLesson = defineLesson({
       tags: ['moral-hazard', 'bank-run'],
       xp: 30,
       prompt:
-        'There are three banks. Two lend carefully; the third lends to riskier borrowers at higher rates. Before anything goes wrong, which one looks best to a depositor?',
+        'There are three banks. Two lend carefully. The third lends to riskier borrowers at higher interest rates. Before anything goes wrong, which bank looks best to a depositor?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'risky',
-          label:
-            'The risky one, because it can pay depositors the highest interest rate',
+          label: 'The risky one, because it can pay depositors the most interest',
         },
         {
           id: 'prudent',
           label: 'A careful one, because depositors check what each bank lends to',
           feedback:
-            'The video’s point is that they cannot. Risk stays hidden while times are good, and the reckless bank simply looks like the most profitable one.',
+            'The video’s point is that they cannot check. Risk stays hidden in good times, and the reckless bank just looks like the most profitable one.',
         },
         {
           id: 'same',
-          label: 'They look identical, since all deposits are equally safe',
+          label: 'They all look the same, because all deposits are equally safe',
           feedback:
-            'Worse than identical: the riskiest bank visibly pays the most, which actively attracts deposits.',
+            'It is worse than that. The riskiest bank clearly pays the most, so it pulls in more deposits.',
         },
         {
           id: 'largest',
-          label: 'Whichever is largest, since size implies safety',
+          label: 'The biggest one, because big means safe',
           feedback:
-            'Size is not the signal discussed. The signal depositors actually see is the interest rate.',
+            'The video does not talk about size. What depositors actually see is the interest rate.',
         },
       ],
       correctOptionId: 'risky',
       explanation:
-        'So money flows towards the bank taking the most risk, precisely because it takes the most risk — and when it fails, the run does not stop at its door. Two problems follow: a fragile system where one bad apple can empty every bank, and the impossibility of telling good banks from bad, which the lender of last resort makes harder still.',
+        'So money flows to the bank that takes the most risk, because it takes the most risk. When it fails, the panic does not stay at its door. This causes two problems: one bad bank can empty every bank, and nobody can tell good banks from bad ones. The lender of last resort makes the second problem even worse.',
     },
     {
       id: 'mc-why-not-honest',
@@ -94,35 +93,35 @@ export const kabFrbCommentaryLesson = defineLesson({
       tags: ['fractional-reserve', 'deposits'],
       xp: 35,
       prompt:
-        'Sal offers an honest version: tell a depositor with 100 in the bank that 10 is available now, 40 more when a loan is repaid in a year, and the last 50 in two years. Nothing else changes. Why is this not what banks do?',
+        'Sal offers an honest version. A depositor has 100 in the bank. Tell them 10 is ready now, 40 more in one year when a loan is repaid, and the last 50 in two years. Nothing else changes. Why do banks not do this?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'interest',
-          label: 'Depositors want more interest for money they cannot touch, so the honest bank would pay more',
+          label: 'People want more interest for money they cannot touch, so the honest bank would pay more',
         },
         {
           id: 'illegal',
-          label: 'Regulation requires deposits to be available on demand',
+          label: 'The law says deposits must be ready whenever people ask for them',
           feedback:
-            'Term deposits are legal and ordinary — a fixed-term deposit is exactly this product. Nothing stops a bank offering only those.',
+            'Fixed-term deposits are legal and common, and they are exactly this product. Nothing stops a bank from offering only those.',
         },
         {
           id: 'nobody',
-          label: 'Nobody would deposit at all on those terms',
+          label: 'Nobody would put money in the bank on those terms',
           feedback:
-            'People lock money away all the time for a decent rate. The issue is not that they refuse, but how much interest they want for it.',
+            'People lock money away all the time for a good rate. They do not refuse — they just want more interest for it.',
         },
         {
           id: 'lending',
-          label: 'The bank would not be able to lend out nearly as much',
+          label: 'The bank would not be able to lend nearly as much',
           feedback:
-            'The loans are identical in Sal’s two versions. What differs is only what the depositor was told, and therefore how much interest they demand.',
+            'The loans are the same in both of Sal’s versions. Only what the depositor is told changes, and so how much interest they want.',
         },
       ],
       correctOptionId: 'interest',
       explanation:
-        'This is the sharpest part of the argument and the easiest to miss. The half-truth is not a harmless simplification — it is worth money: the difference between the interest a depositor accepts on money they can take out at any moment and the interest they would demand on money locked away for two years. Every bank collects that difference, every day, for telling people something not quite true.',
+        'This is the key point, and it is easy to miss. The half-truth is not a harmless shortcut. It is worth money. People accept less interest on money they can take out any time than on money locked away for two years. Every bank keeps that difference, every day, by telling people something that is not quite true.',
     },
     {
       id: 'mc-adverse-selection',
@@ -130,35 +129,35 @@ export const kabFrbCommentaryLesson = defineLesson({
       tags: ['risk', 'adverse-selection', 'banking'],
       xp: 35,
       prompt:
-        'Bank three lends to riskier borrowers, so it earns more, so it can pay depositors more. According to Sal, what happens next, while times are still good?',
+        'Bank three lends to riskier borrowers, so it earns more, so it can pay depositors more. What does Sal say happens next, while times are still good?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'attracts',
-          label: 'It looks like the best bank, and attracts the most deposits',
+          label: 'It looks like the best bank, and it gets the most deposits',
         },
         {
           id: 'punished',
-          label: 'Depositors notice the risk and move to the safer banks',
+          label: 'Depositors see the risk and move to the safer banks',
           feedback:
-            'They would if they could see it. A depositor sees the interest rate on offer, not the loans behind it, and in good years the risky loans are all being repaid.',
+            'They would if they could see it. A depositor sees the interest rate, not the loans behind it. In good years, the risky loans are all being paid back.',
         },
         {
           id: 'regulator',
           label: 'The regulator steps in before any harm is done',
           feedback:
-            'The video’s point is that the risk is hidden while times are good, including from regulators. It shows up as higher profits, which look like competence.',
+            'The video says the risk is hidden in good times, even from regulators. It shows up as higher profits, which look like good management.',
         },
         {
           id: 'nothing',
-          label: 'Nothing, until the loans go bad',
+          label: 'Nothing happens until the loans go bad',
           feedback:
-            'Something important happens first: money flows towards the risk. By the time the loans go bad, the risky bank is the biggest one.',
+            'Something important happens first: money moves towards the risk. By the time the loans go bad, the risky bank is the biggest one.',
         },
       ],
       correctOptionId: 'attracts',
       explanation:
-        'The market rewards the risk-taker right up until the risk destroys it, and it rewards it by handing it more of everyone else’s money. Extra risk looks like skill for exactly as long as times stay good — which is why the biggest failures are so often the fastest-growing banks of the decade before, and why "they were the most profitable bank in the country" appears in so many post-mortems.',
+        'The market rewards the risk-taker until the risk destroys it. It rewards it by giving it more of everyone else’s money. In good times, extra risk looks like skill. That is why the biggest bank failures are often the fastest-growing banks of the years before.',
     },
     {
       id: 'mc-lolr-moral-hazard',
@@ -166,59 +165,59 @@ export const kabFrbCommentaryLesson = defineLesson({
       tags: ['moral-hazard', 'lender-of-last-resort'],
       xp: 35,
       prompt:
-        'Sal names two problems — one bad bank can bring down the whole system, and depositors cannot tell good banks from bad — and then says the lender of last resort makes the second one worse. How?',
+        'Sal names two problems: one bad bank can bring down the whole system, and depositors cannot tell good banks from bad ones. He then says the lender of last resort makes the second problem worse. How?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'harder',
-          label: 'A safety net lets a weak bank keep paying out, so nothing reveals that it is weak',
+          label: 'A safety net lets a weak bank keep paying, so nothing shows that it is weak',
         },
         {
           id: 'runs',
-          label: 'Knowing a safety net exists makes depositors panic sooner',
+          label: 'Knowing there is a safety net makes depositors panic sooner',
           feedback:
-            'It works the other way — a credible safety net is what stops them panicking. And the question is about telling banks apart, not about runs.',
+            'It works the other way: a safety net people trust stops them from panicking. And the question is about telling banks apart, not about runs.',
         },
         {
           id: 'inflation',
-          label: 'It causes inflation, since the Fed must print money to lend',
+          label: 'It causes inflation, because the Fed must print money to lend',
           feedback:
-            'Emergency lending does create reserves, but it is repaid. And the question is about telling banks apart, not about prices.',
+            'Emergency loans do create reserves, but they are paid back. And the question is about telling banks apart, not about prices.',
         },
         {
           id: 'insolvency',
-          label: 'It makes banks insolvent, because the loans have to be repaid eventually',
+          label: 'It makes banks go broke, because the loans must be paid back one day',
           feedback:
-            'A solvent bank repays comfortably. The trouble is that the lending also keeps insolvent banks standing long enough to look solvent.',
+            'A healthy bank pays back easily. The problem is that these loans also keep broke banks standing long enough to look healthy.',
         },
       ],
       correctOptionId: 'harder',
       explanation:
-        'Failure is information. A system where weak banks fail teaches depositors which banks are weak; a system where they are propped up teaches nobody anything, and the reward for extra risk survives while the punishment does not. Sal is describing what economists call moral hazard, and reaching the dilemma every post-2008 reform wrestled with: you cannot have both the stability of a safety net and the discipline of having none.',
+        'When weak banks fail, depositors learn which banks are weak. When weak banks are saved, nobody learns anything. The reward for extra risk stays, but the punishment goes away. Economists call this moral hazard. Every reform after 2008 faced the same choice: you cannot have both the safety of a safety net and the discipline of having none.',
     },
     {
       id: 'order-one-bad-apple',
       type: 'order_flow',
       tags: ['bank-run', 'contagion', 'fractional-reserve'],
       xp: 30,
-      prompt: 'Put in order how one reckless bank leads to a panic across the whole system.',
+      prompt: 'Put the steps in order: how one reckless bank leads to panic across the whole system.',
       instructions: 'Drag the steps into order',
       events: [
-        { id: 'risk', label: 'Bank three lends to borrowers the others refused' },
-        { id: 'attract', label: 'It pays the best rates and wins the most deposits', detail: 'Extra risk reads as skill' },
-        { id: 'turn', label: 'Times turn bad and its loans are not repaid' },
-        { id: 'insolvent', label: 'It is insolvent, not merely short of cash' },
-        { id: 'fear', label: 'Depositors elsewhere cannot tell which bank is which' },
-        { id: 'solvent', label: 'Sound banks face runs they did nothing to deserve' },
+        { id: 'risk', label: 'Bank three lends to borrowers the other banks said no to' },
+        { id: 'attract', label: 'It pays the best rates and gets the most deposits', detail: 'Extra risk looks like skill' },
+        { id: 'turn', label: 'Times turn bad and its loans are not paid back' },
+        { id: 'insolvent', label: 'It is broke, not just short of cash' },
+        { id: 'fear', label: 'Depositors at other banks cannot tell which bank is which' },
+        { id: 'solvent', label: 'Healthy banks face runs they did nothing to deserve' },
       ],
       correctOrder: ['risk', 'attract', 'turn', 'insolvent', 'fear', 'solvent'],
       explanation:
-        'What turns one bank’s failure into a problem for the whole system is that depositors cannot tell the banks apart. If they could, the reckless bank would fail alone and the system would be healthier for it. They cannot, so the failure of the worst bank becomes a cost for the best — and a bank that lent carefully for a decade finds that its reward is a queue at the door.',
+        'One bank’s failure spreads because depositors cannot tell the banks apart. If they could, the reckless bank would fail alone. They cannot, so the worst bank’s failure becomes a cost for the best banks. A bank that lent carefully for ten years gets a queue of worried depositors at its door.',
     },
   ],
   keyTakeaways: [
-    'The gold-era and modern balance sheets are equivalent; neither is more honest.',
-    'Telling the truth about lock-ups would cost banks more in interest.',
-    'Hidden risk lets the most reckless bank look like the most generous.',
+    'The old gold balance sheet and the modern one are the same; neither is more honest.',
+    'Telling the truth about when money can be taken out would make banks pay more interest.',
+    'Because risk is hidden, the most reckless bank can look like the most generous one.',
   ],
 });

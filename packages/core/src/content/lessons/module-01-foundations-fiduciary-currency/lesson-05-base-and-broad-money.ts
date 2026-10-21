@@ -25,17 +25,17 @@ import { defineLesson } from '../../schema';
 export const baseAndBroadMoneyLesson = defineLesson({
   id: 'base-and-broad-money',
   title: 'Base Money and Broad Money',
-  subtitle: 'Your deposit and a bank’s reserves are both called money. They are not the same thing.',
+  subtitle: 'Your deposit and a bank’s reserves are both called money. But they are not the same thing.',
   icon: '🧱',
   difficulty: 'core',
   estimatedMinutes: 6,
   hearts: 3,
 
   keyTakeaways: [
-    'Base money (M0) is the central bank’s liability: notes, and reserves held by banks.',
-    'Broad money (M2) is mostly commercial banks’ liability: the deposits in everyone’s accounts.',
-    'Only banks can hold reserves. You cannot, which is why your deposit is a claim on a bank, not on the central bank.',
-    'Withdrawing cash swaps one kind of money for another. It does not create or destroy any.',
+    'Base money (M0) is what the central bank owes: notes, plus the reserves banks hold with it.',
+    'Broad money (M2) is mostly what commercial banks owe: the deposits in everyone’s accounts.',
+    'Only banks can hold reserves. You cannot. That is why your deposit is a claim on a bank, not on the central bank.',
+    'Taking out cash swaps one kind of money for another. It does not create or destroy any money.',
   ],
 
   challenges: [
@@ -44,37 +44,37 @@ export const baseAndBroadMoneyLesson = defineLesson({
       type: 'concept_match',
       tags: ['aggregates', 'foundations'],
       xp: 15,
-      prompt: 'Match each form of money to whose promise it is.',
+      prompt: 'Match each kind of money to whose promise it is.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'notes',
           term: 'Banknotes',
-          definition: 'A central bank liability you can hold in your hand',
+          definition: 'Owed by the central bank, and you can hold it in your hand',
         },
         {
           id: 'reserves',
           term: 'Reserves',
-          definition: 'A central bank liability only banks are allowed to hold',
+          definition: 'Owed by the central bank, and only banks are allowed to hold it',
         },
         {
           id: 'deposits',
           term: 'Deposits',
-          definition: 'A commercial bank’s promise to pay you on demand',
+          definition: 'A commercial bank’s promise to pay you whenever you ask',
         },
         {
           id: 'base',
           term: 'Base money (M0)',
-          definition: 'Notes plus reserves — everything the central bank owes',
+          definition: 'Notes plus reserves: everything the central bank owes',
         },
         {
           id: 'broad',
           term: 'Broad money (M2)',
-          definition: 'Cash in circulation plus the deposits households and firms hold',
+          definition: 'Cash in use plus the deposits of families and companies',
         },
       ],
       explanation:
-        'The dividing line is not size or liquidity, it is *whose promise you are holding*. Notes and reserves are the central bank’s. Deposits are your bank’s. That distinction is invisible in normal times, which is precisely why bank runs surprise people: a deposit was never central bank money, it was a claim on a private firm that promised to convert it on demand.',
+        'What separates them is not size or how easy they are to spend. It is whose promise you hold. Notes and reserves are the central bank’s promises. Deposits are your bank’s. In normal times you cannot see this difference. That is why bank runs surprise people: a deposit was never central bank money. It was a promise from a private company to pay you on demand.',
     },
 
     {
@@ -87,30 +87,30 @@ export const baseAndBroadMoneyLesson = defineLesson({
       options: [
         {
           id: 'yes-anyone',
-          label: 'Yes — anyone can, it is a public institution',
+          label: 'Yes, anyone can, because it is a public institution',
           feedback:
-            'Central banks are public but they are not retail banks. Their customers are commercial banks, the government, and a handful of financial institutions.',
+            'Central banks are public, but they are not banks for the public. Their customers are commercial banks, the government and a few financial institutions.',
         },
         {
           id: 'no-banks-only',
-          label: 'No — reserve accounts are for banks and a few approved institutions',
+          label: 'No, reserve accounts are only for banks and a few approved institutions',
         },
         {
           id: 'yes-rich',
           label: 'Only above a certain balance',
           feedback:
-            'It is not a wealth threshold. It is a question of what kind of institution you are and what supervision you are subject to.',
+            'It is not about how much money you have. It is about what kind of institution you are and who supervises you.',
         },
         {
           id: 'yes-cash',
-          label: 'Yes, indirectly — banknotes are a central bank account',
+          label: 'Yes, in a way, because banknotes are like a central bank account',
           feedback:
-            'Tempting, and half right: a banknote *is* a central bank liability. But it pays no interest and settles nothing electronically, which is exactly what a reserve account is for.',
+            'Half right: a banknote is something the central bank owes. But it pays no interest and cannot be used for electronic payments. A reserve account does both.',
         },
       ],
       correctOptionId: 'no-banks-only',
       explanation:
-        'This restriction shapes the whole system. Because the public cannot hold central bank money electronically, everyone needs a commercial bank to participate in the payment system — and that is why bank deposits, not reserves, are what most people mean by "money". Central bank digital currency proposals are, at bottom, arguments about whether to lift this restriction.',
+        'This rule shapes the whole system. The public cannot hold central bank money electronically, so everyone needs a commercial bank to make payments. That is why bank deposits, not reserves, are what most people mean by “money”. Plans for a central bank digital currency are really about whether to change this rule.',
     },
 
     {
@@ -118,10 +118,10 @@ export const baseAndBroadMoneyLesson = defineLesson({
       type: 't_account_flow',
       tags: ['aggregates', 'balance-sheets'],
       xp: 25,
-      prompt: 'You withdraw $500 in cash from the ATM. Post what moves.',
-      instructions: 'Pick an entry, then choose whose sheet it lands on and which side',
+      prompt: 'You take $500 in cash out of the ATM. Post what changes.',
+      instructions: 'Pick an entry, then choose whose list it goes on and which side',
       scenario:
-        'Your deposit falls and you walk away with notes. Two entries are needed on the bank’s sheet — three of the five do not belong.',
+        'Your deposit goes down and you leave with notes. Two entries are needed on the bank’s list. Three of the five are wrong.',
       currency: 'USD',
       entities: [
         {
@@ -161,18 +161,18 @@ export const baseAndBroadMoneyLesson = defineLesson({
           id: 'cb-notes-up',
           shift: { entityId: 'central-bank', side: 'liability', account: 'Banknotes in circulation', delta: 500 },
           feedback:
-            'The notes were already in circulation as far as the central bank is concerned — they were sitting in the bank’s vault, which it counts as issued. Nothing changes on the central bank’s sheet today.',
+            'For the central bank, these notes were already out: they were in your bank’s vault, which it counts as issued. Nothing changes on the central bank’s list today.',
         },
         {
           id: 'bank-reserves-down',
           shift: { entityId: 'bank', side: 'asset', account: 'Reserves at the central bank', delta: -500 },
           feedback:
-            'Reserves are untouched. The bank handed over notes it already held; it did not settle anything with the central bank.',
+            'Reserves do not change. The bank handed you notes it already had. It did not pay anything to the central bank.',
         },
         {
           id: 'bank-deposits-up',
           shift: { entityId: 'bank', side: 'liability', account: 'Customer deposits', delta: 500 },
-          feedback: 'Your deposit fell — you took the money out. This is the entry for paying cash in.',
+          feedback: 'Your deposit went down, because you took money out. This entry is for paying cash in.',
         },
       ],
       expectedShifts: [
@@ -183,16 +183,16 @@ export const baseAndBroadMoneyLesson = defineLesson({
         {
           aggregate: 'M0',
           direction: 'unchanged',
-          note: 'The notes existed before you took them; they simply moved from a vault to your pocket.',
+          note: 'The notes already existed. They just moved from a vault to your pocket.',
         },
         {
           aggregate: 'M2',
           direction: 'unchanged',
-          note: 'Your $500 deposit became $500 of cash. Broad money counts both, so the total is identical.',
+          note: 'Your $500 deposit became $500 in cash. Broad money counts both, so the total is the same.',
         },
       ],
       explanation:
-        'Both sides of the bank’s sheet shrink by $500 and nothing else moves. This is the clean case where money changes *form* without changing *quantity* — you swapped a claim on your bank for a claim on the central bank. Compare it with a loan, where a new asset and a new liability appear together and broad money genuinely grows. Withdrawing is a swap; lending is creation.',
+        'Both sides of the bank’s list shrink by $500, and nothing else moves. Money changed its form, not its amount. You swapped a promise from your bank for a promise from the central bank. Compare this with a loan: a new asset and a new liability appear together, and broad money really grows. Taking out cash is a swap. Lending creates money.',
     },
 
     {
@@ -200,35 +200,35 @@ export const baseAndBroadMoneyLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['aggregates', 'qe'],
       xp: 15,
-      prompt: 'A central bank creates $1 trillion of reserves through QE. Does the money in your bank account go up?',
+      prompt: 'A central bank creates $1 trillion of reserves through QE (buying bonds with new money). Does the money in your bank account go up?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'yes-directly',
-          label: 'Yes — the new money is distributed to accounts',
+          label: 'Yes, because the new money is shared out to accounts',
           feedback:
-            'Reserves cannot reach your account. You are not allowed to hold them, and the central bank has no way to credit you directly.',
+            'Reserves cannot reach your account. You are not allowed to hold them, and the central bank has no way to pay you directly.',
         },
         {
           id: 'not-directly',
-          label: 'Not directly — reserves and deposits are separate, though whoever sold the bonds gets a deposit',
+          label: 'Not directly: reserves and deposits are separate, but whoever sold the bonds gets a deposit',
         },
         {
           id: 'no-never',
           label: 'No, QE has no effect on broad money at all',
           feedback:
-            'Too strong. When the central bank buys from a non-bank, that seller receives a *deposit* — so broad money does rise, just not by the amount of reserves created.',
+            'Too strong. When the central bank buys from someone who is not a bank, that seller gets a deposit. So broad money does rise, just not by the full amount of reserves created.',
         },
         {
           id: 'yes-lending',
           label: 'Yes, because banks must lend out their new reserves',
           feedback:
-            'Banks cannot lend reserves to you — reserves only move between reserve-account holders. Lending creates a new deposit, and is constrained by capital and demand, not by reserves on hand.',
+            'Banks cannot lend reserves to you, because reserves only move between banks. A loan creates a new deposit. What limits lending is capital and demand, not the reserves a bank holds.',
         },
       ],
       correctOptionId: 'not-directly',
       explanation:
-        'This is the single most misunderstood point in modern monetary policy. QE creates base money, which lives in a system only banks can access. Broad money rises only to the extent the central bank buys from non-banks — a pension fund selling bonds receives a bank deposit, and that deposit is broad money. The trillions in reserves that got the headlines never entered anyone’s account and could not have.',
+        'This is one of the most misunderstood points in monetary policy. QE creates base money, which only banks can hold. Broad money rises only when the central bank buys from someone who is not a bank. For example, a pension fund that sells bonds gets a bank deposit, and that deposit is broad money. The trillions of reserves in the news never reached anyone’s account, and they could not have.',
     },
   ],
 });

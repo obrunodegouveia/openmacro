@@ -44,7 +44,7 @@ export const moduleWhatGdpCounts = defineModule({
   id: 'what-gdp-counts',
   title: 'What GDP Counts',
   description:
-    'Why building a hospital and shelling a city both show up as growth, and what the number would have to be to tell them apart. Flow against stock, consumption against capital, and who ends up paying for the difference.',
+    'Building a hospital and bombing a city can both make GDP grow. This module shows why. GDP measures what is produced in a year, not what a country owns. It also cannot tell spending that is used up from things that last, or show who pays in the end.',
   accent: 'gold',
   level: 'beginner',
   lessons: [

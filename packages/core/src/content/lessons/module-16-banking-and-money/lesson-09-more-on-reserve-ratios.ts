@@ -5,7 +5,7 @@ export const kabMoreOnReserveRatiosLesson = defineLesson({
   id: 'kab-more-on-reserve-ratios',
   title: 'Working the Ratio Backwards',
   subtitle:
-    '300 of reserves and a 10% requirement. How large can the bank legally become — and is large the same as safe?',
+    '300 of reserves and a 10% rule. How big can the bank grow under the rule? And does big mean safe?',
   icon: '🧮',
   difficulty: 'core',
   estimatedMinutes: 15,
@@ -158,64 +158,64 @@ export const kabMoreOnReserveRatiosLesson = defineLesson({
       tags: ['reserve-ratio', 'arithmetic'],
       xp: 25,
       prompt:
-        'The bank holds 300 gold pieces of reserves, and reserves must be at least 10% of demand deposits. What is the most its demand deposits can add up to, in total?',
+        'The bank has 300 gold pieces of reserves. The rule says reserves must be at least 10% of demand deposits. What is the most that all its demand deposits can add up to?',
       instructions: 'Pick the best answer',
       options: [
-        { id: 'three-thousand', label: '3,000 — because 10% of 3,000 is exactly 300' },
+        { id: 'three-thousand', label: '3,000, because 10% of 3,000 is exactly 300' },
         {
           id: 'thirty',
           label: '30',
           feedback:
-            'That takes 10% *of* the reserves. The requirement runs the other way: reserves must be at least 10% of deposits, so divide rather than multiply.',
+            'That is 10% of the reserves. The rule works the other way: the reserves must be at least 10% of the deposits. So divide, do not multiply.',
         },
         {
           id: 'three-hundred',
-          label: '300 — deposits cannot exceed reserves',
+          label: '300, because deposits cannot be more than reserves',
           feedback:
-            'That would be full reserve banking — a real alternative, discussed in videos 18 and 24 — but not what a 10% requirement means.',
+            'That would be full reserve banking, where every deposit is fully covered. Videos 18 and 24 talk about it. But it is not what a 10% rule means.',
         },
         {
           id: 'two-seven',
-          label: '2,700 — 3,000 minus the 300 of reserves',
+          label: '2,700, which is 3,000 minus the 300 of reserves',
           feedback:
-            'Nothing is subtracted. The reserves are the 10%; the 3,000 is the total of all demand deposits, including any already on the books.',
+            'You do not take anything away. The reserves are the 10%. The 3,000 is the total of all demand deposits, including the ones the bank already has.',
         },
       ],
       correctOptionId: 'three-thousand',
       explanation:
-        'Reserves ÷ ratio gives the ceiling: 300 ÷ 0.1 = 3,000. In the video, the original 100 of deposits plus new loans of 900 and then 2,000 reach it exactly, and the bank is then at its limit — "maxed out", in the video’s phrase.',
+        'Divide the reserves by the ratio: 300 ÷ 0.1 = 3,000. In the video, the first 100 of deposits plus new loans of 900 and then 2,000 add up to exactly 3,000. Then the bank is at its limit, or “maxed out”, as Sal says.',
     },
     {
       id: 'match-liquid-solvent',
       type: 'concept_match',
       tags: ['liquidity', 'solvency'],
       xp: 25,
-      prompt: 'Match each term to what it actually asks about a bank.',
+      prompt: 'Match each word to what it tells you about a bank.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'liquid',
           term: 'Liquid',
-          definition: 'Can hand over cash to whoever asks for it today',
+          definition: 'Can give cash today to anyone who asks for it',
         },
         {
           id: 'solvent',
           term: 'Solvent',
-          definition: 'Assets are worth more than liabilities, given enough time to realise them',
+          definition: 'Owns more than it owes, if it has enough time to sell what it owns',
         },
         {
           id: 'reserve-req',
           term: 'Reserve requirement',
-          definition: 'The rule aimed at keeping a bank liquid',
+          definition: 'The rule that helps a bank stay liquid',
         },
         {
           id: 'leverage-req',
           term: 'Leverage limit',
-          definition: 'The rule aimed at keeping a bank solvent — how much loss it can absorb',
+          definition: 'The rule that helps a bank stay solvent: how much loss it can take',
         },
       ],
       explanation:
-        'Two different failures need two different rules. Reserves answer "can you pay this afternoon?"; leverage answers "how badly can your loans go before you are finished?". The next video takes up the second question.',
+        'A bank can fail in two different ways, so there are two different rules. Reserves answer “Can you pay this afternoon?” Leverage answers “How much can your loans lose before you are finished?” The next video looks at the second question.',
     },
     {
       id: 'mc-where-reserves-came-from',
@@ -223,24 +223,24 @@ export const kabMoreOnReserveRatiosLesson = defineLesson({
       tags: ['reserves', 'equity'],
       xp: 30,
       prompt:
-        'The bank holds 300 gold pieces of reserves, but customers only ever deposited 100 gold pieces. Where did the other 200 come from?',
+        'The bank has 300 gold pieces of reserves. But customers only ever deposited 100 gold pieces. Where did the other 200 come from?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'equity',
-          label: 'From Sal’s own pocket — the equity he started the bank with',
+          label: 'From Sal’s own pocket: the equity he started the bank with',
         },
         {
           id: 'loans',
           label: 'From the loans he made, which paid interest',
           feedback:
-            'The loans have not been repaid and no interest has arrived yet. Look at the opening balance sheet, before any lending happened.',
+            'The loans have not been paid back, and no interest has come in yet. Look at the first balance sheet, before any lending.',
         },
         {
           id: 'created',
           label: 'He created it, the same way he creates deposits',
           feedback:
-            'He can create claims on gold with a pen. He cannot create gold — and reserves, in this world, are the metal itself.',
+            'He can create promises to pay gold just by writing them. He cannot create gold. Here, reserves are the gold itself.',
         },
         {
           id: 'central',
@@ -251,7 +251,7 @@ export const kabMoreOnReserveRatiosLesson = defineLesson({
       ],
       correctOptionId: 'equity',
       explanation:
-        'Reserves do not have to come from depositors. Equity is money the owner put in and nobody can demand back, so gold bought with it makes a very reliable reserve. Sal’s 200 of his own gold counts towards the reserve requirement just like the 100 that depositors brought, and nobody can ask for it back.',
+        'Reserves do not have to come from depositors. Equity is the owner’s own money, and nobody can ask for it back. So Sal’s own 200 of gold counts as reserves, just like the 100 the depositors brought.',
     },
     {
       id: 'mc-maxed-out',
@@ -259,35 +259,35 @@ export const kabMoreOnReserveRatiosLesson = defineLesson({
       tags: ['liquidity', 'solvency'],
       xp: 30,
       prompt:
-        'The bank has lent to the limit: 3,000 of demand deposits against 300 of gold. Its total assets are 3,300 and its loans are sound. Depositors with 400 gold pieces in their accounts turn up asking for gold. What is the bank’s position?',
+        'The bank has lent up to the limit: 3,000 of demand deposits and 300 of gold. It owns 3,300 in total, and its loans are good. Depositors with 400 gold pieces in their accounts come in and ask for gold. What is the bank’s situation?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'illiquid',
-          label: 'Illiquid but solvent — it cannot pay them all today, but it can pay everyone in time',
+          label: 'Illiquid but solvent: it cannot pay them all today, but it can pay everyone in time',
         },
         {
           id: 'insolvent',
-          label: 'Insolvent, because it owes 3,000 and holds 300',
+          label: 'Insolvent, because it owes 3,000 and has only 300 of gold',
           feedback:
-            'Owing more on demand than you hold in cash is how the business is designed. Insolvency means assets worth less than liabilities, and here they are 3,300 against 3,000.',
+            'Owing more on demand than you have in cash is how banking works. Insolvent means owning less than you owe. Here the bank owns 3,300 and owes 3,000.',
         },
         {
           id: 'fine',
-          label: 'Fine — it holds exactly the 10% the regulator asked for',
+          label: 'Fine, because it keeps exactly the 10% the rule asks for',
           feedback:
-            'It has obeyed the rule and still cannot pay. The rule was a bet that no more than 10% of deposits would be asked for at once, and 400 out of 3,000 is over 13%.',
+            'It followed the rule and still cannot pay. The rule assumed people would not ask for more than 10% of deposits at once. 400 out of 3,000 is more than 13%.',
         },
         {
           id: 'breach',
-          label: 'In breach of the reserve requirement the regulator set',
+          label: 'Breaking the reserve rule that the regulator set',
           feedback:
-            'It held exactly 10% when the day started. Being unable to meet an unusually large demand is not the same as having broken the rule.',
+            'It had exactly 10% at the start of the day. Not being able to pay an unusually big demand is not the same as breaking the rule.',
         },
       ],
       correctOptionId: 'illiquid',
       explanation:
-        'Keep the two words apart, because almost every argument about a banking crisis turns on which one applies. Solvency asks whether the assets are worth more than the liabilities; liquidity asks whether you can pay what is demanded today. A solvent bank that cannot pay today can be saved by a loan. An insolvent one cannot be saved by any amount of lending, and the next video is about how much loss a bank can take before it becomes insolvent.',
+        'Keep these two words apart. Solvent asks: does the bank own more than it owes? Liquid asks: can it pay what people ask for today? A solvent bank that cannot pay today can be saved with a loan. An insolvent bank cannot be saved by any loan. The next video asks how much a bank can lose before it becomes insolvent.',
     },
     {
       id: 'mc-double-the-ratio',
@@ -295,37 +295,37 @@ export const kabMoreOnReserveRatiosLesson = defineLesson({
       tags: ['reserves', 'regulation'],
       xp: 25,
       prompt:
-        'Same 300 of gold, but the requirement is raised from 10% to 20%. What is the most the bank can now owe in demand deposits?',
+        'The bank still has 300 of gold, but the rule goes up from 10% to 20%. What is the most the bank can now owe in demand deposits?',
       instructions: 'Pick the best answer',
       options: [
-        { id: 'fifteen', label: '1,500 of deposits — half what it could support before' },
+        { id: 'fifteen', label: '1,500 of deposits, half of what it could have before' },
         {
           id: 'three',
-          label: '3,000 still, since the gold has not changed',
+          label: 'Still 3,000, because the gold has not changed',
           feedback:
-            'The gold is the numerator and it has not changed. The rule changed what multiple of it may be promised: 300 / 0.20 rather than 300 / 0.10.',
+            'The gold has not changed, but the rule has. Now it is 300 ÷ 0.20, not 300 ÷ 0.10.',
         },
         {
           id: 'six',
-          label: '6,000 — doubling the ratio doubles the capacity',
+          label: '6,000, because doubling the ratio doubles what the bank can owe',
           feedback:
-            'Check which way round the ratio works. A higher reserve requirement means more gold per promise, so fewer promises.',
+            'Check which way the ratio works. A higher rule means more gold for each promise, so fewer promises.',
         },
         {
           id: 'sixhundred',
-          label: '600 — twenty per cent of 3,000',
+          label: '600, which is 20% of 3,000',
           feedback:
-            'That is what the bank would need to hold against 3,000 of deposits, and it only has 300. Divide instead: 300 / 0.20.',
+            'That is the gold the bank would need for 3,000 of deposits, and it only has 300. Divide instead: 300 ÷ 0.20.',
         },
       ],
       correctOptionId: 'fifteen',
       explanation:
-        'Doubling the requirement halves the maximum, from 3,000 to 1,500. A bank already at the old limit would have to shrink its deposits by 1,500, which means cutting 1,500 of loans. That is a huge and blunt lever, and it is one reason central banks rarely use it and steer interest rates instead. Video 16 explains why they target a rate.',
+        'Doubling the rule halves the maximum, from 3,000 to 1,500. A bank already at the old limit would have to cut 1,500 of deposits, which means cutting 1,500 of loans. That is a very rough tool. So central banks rarely use it and change interest rates instead. Video 16 explains why.',
     },
   ],
   keyTakeaways: [
-    'Maximum deposits equal reserves divided by the required ratio.',
-    'Reserve requirements target liquidity; leverage limits target solvency.',
-    'A bank at its reserve limit has no room to lend without new reserves.',
+    'The most deposits a bank can have = its reserves ÷ the required ratio.',
+    'Reserve rules help a bank pay today (liquidity). Leverage limits help it survive losses (solvency).',
+    'A bank at its reserve limit cannot lend more until it gets more reserves.',
   ],
 });
