@@ -15,7 +15,7 @@ export const whatACountryMustSellLesson = defineLesson({
   id: 'what-a-country-must-sell',
   title: 'A Hotel Night Sold to a Foreigner',
   subtitle:
-    'For one country the question is not what is productive, but what earns the claim on everybody else.',
+    'For one country, the question is not only what is productive. It is also what earns money from the rest of the world.',
   icon: '🧳',
   difficulty: 'core',
   estimatedMinutes: 10,
@@ -26,65 +26,65 @@ export const whatACountryMustSellLesson = defineLesson({
       tags: ['trade', 'tradables'],
       xp: 30,
       prompt:
-        'A country builds a €50m hospital, and separately sells €50m of hotel nights to foreign visitors. What does each do that the other does not?',
+        'A country builds a €50m hospital. Separately, it sells €50m of hotel nights to foreign tourists. What does each one do that the other does not?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'both-something',
-          label: 'The hospital adds capacity; the hotel nights earn foreign currency',
+          label: 'The hospital lets the country treat more people; the hotel nights earn money from abroad',
         },
         {
           id: 'hospital-only',
-          label: 'Only the hospital matters — the hotel nights are consumption',
+          label: 'Only the hospital matters — hotel nights are just consumption',
           feedback:
-            'They are consumption for the visitor. For the country they are an export, and exports are how it pays for the machines, medicines and fuel it does not make.',
+            'They are consumption for the tourist. For the country they are an export, and exports pay for the machines, medicines and fuel it does not make.',
         },
         {
           id: 'hotel-only',
-          label: 'Only the hotel nights matter, since they bring in money from outside',
+          label: 'Only the hotel nights matter, since they bring in money from abroad',
           feedback:
-            'Money from outside is worth having and it does not treat anybody. A country of hotels and no hospitals has to import the health care too, and eventually runs out of things to sell.',
+            'Money from abroad is good, but it does not treat anyone. A country with hotels and no hospitals must import its health care too.',
         },
         {
           id: 'identical',
-          label: 'Nothing distinguishes them; both are €50m of GDP',
+          label: 'Nothing separates them; both are €50m of GDP',
           feedback:
-            'Both are €50m of GDP, which is the module before this one. The difference here is that one leaves an asset and the other leaves a claim on the rest of the world.',
+            'Both are €50m of GDP; that was the last module. The difference here: one leaves a building, the other brings in money from the rest of the world.',
         },
       ],
       correctOptionId: 'both-something',
       explanation:
-        'This is the honest correction to a purely capital-centric view. Tourism, fashion and luxury are consumption in the accounts, and when they are sold abroad they earn the foreign currency that pays for imports. A small open economy does not need to produce everything. It needs to produce something the rest of the world wants enough to pay for.',
+        'This corrects a view that only buildings and machines matter. Tourism, fashion and luxury goods are consumption in the accounts. But when foreigners buy them, they bring in the money that pays for imports. A small country does not need to make everything. It needs to make something the rest of the world wants to buy.',
     },
     {
       id: 'match-tradable',
       type: 'concept_match',
       tags: ['trade', 'tradables'],
       xp: 30,
-      prompt: 'Match each kind of output to what it can and cannot do for a country.',
+      prompt: 'Match each kind of production to what it can and cannot do for a country.',
       instructions: 'Tap a term, then its definition',
       pairs: [
         {
           id: 'tradable',
-          term: 'Tradable output',
+          term: 'Tradable goods and services',
           definition:
-            'Can be sold to foreigners, so it earns the currency that pays for imports — and is exposed to competition from everywhere',
+            'Can be sold to foreigners, so they earn the money that pays for imports. They also face competition from everywhere',
         },
         {
           id: 'nontradable',
-          term: 'Non-tradable output',
+          term: 'Non-tradable goods and services',
           definition:
-            'Haircuts, most construction, most health care: real, necessary, and it cannot pay for a single imported machine',
+            'Haircuts, most building work, most health care: real and needed, but they cannot pay for a single imported machine',
         },
         {
           id: 'import',
-          term: 'Unavoidable imports',
+          term: 'Imports you cannot avoid',
           definition:
-            'Whatever the country cannot make at a sane cost — for most countries, fuel, medicines and advanced equipment',
+            'What the country cannot make at a sensible cost. For most countries: fuel, medicines and advanced equipment',
         },
       ],
       explanation:
-        'Note where tourism sits. It is a service consumed inside the country by someone from outside it, which makes a non-tradable-looking activity into an export. The same is true of a foreign student’s tuition. These are the loopholes through which service economies pay their import bills.',
+        'Notice where tourism fits. A foreigner uses the service inside the country, so a local-looking activity becomes an export. The same is true when a foreign student pays university fees. This is how countries that mainly sell services pay for their imports.',
     },
     {
       id: 'mc-cannot-produce',
@@ -92,35 +92,35 @@ export const whatACountryMustSellLesson = defineLesson({
       tags: ['trade', 'criticality'],
       xp: 35,
       prompt:
-        'A country produces almost no energy, no semiconductors and few medicines. Under what condition is that fine?',
+        'A country makes almost no energy, no computer chips and few medicines. When is that fine?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'sell-and-access',
-          label: 'It has something to sell, and nobody can cut it off from buying',
+          label: 'When it has something to sell, and nobody can stop it from buying',
         },
         {
           id: 'rich',
-          label: 'It is rich enough to afford them',
+          label: 'When it is rich enough to buy them',
           feedback:
-            'Rich is half of it. Wealth is no help against a supplier who will not sell, which is what the last few years have been teaching countries that assumed money was sufficient.',
+            'Being rich is half of it. Money does not help if a supplier refuses to sell. Recent years have taught this to countries that thought money was enough.',
         },
         {
           id: 'never',
-          label: 'Never — a country must produce its own essentials',
+          label: 'Never — a country must make its own essentials',
           feedback:
-            'Almost no country does, and autarky is dramatically more expensive than the risk it removes. The question is not whether to depend but on how many suppliers, and with what buffer.',
+            'Almost no country does. Making everything yourself costs far more than the risk it removes. The real question is how many suppliers you depend on, and how big your reserves are.',
         },
         {
           id: 'allies',
-          label: 'Its suppliers are allies',
+          label: 'When its suppliers are its allies',
           feedback:
-            'Better than the alternative and thinner than it sounds. Alliances change faster than an energy system does, and the previous lesson is about how slowly the second one moves.',
+            'That helps, but less than it sounds. Alliances can change faster than a country can change its energy system, and the last lesson showed how slow that is.',
         },
       ],
       correctOptionId: 'sell-and-access',
       explanation:
-        'Two conditions, and most of the security argument is about the second. Dependence on imports is normal and efficient; dependence on a *single* supplier for something with no substitute and a long replacement time is the thing that is not. That is the criticality test from earlier, applied to a country rather than a firm.',
+        'There are two conditions, and most worries about security are about the second. Depending on imports is normal and efficient. The danger is depending on one single supplier for something with no substitute that takes years to replace. That is the test from the earlier lessons, applied to a country.',
     },
     {
       id: 'mc-synthesis',
@@ -128,41 +128,41 @@ export const whatACountryMustSellLesson = defineLesson({
       tags: ['criticality', 'gdp', 'synthesis'],
       xp: 35,
       prompt:
-        'Someone says "tourism is 15% of our economy, so it is our most important sector." What is the most useful reply?',
+        'Someone says: “Tourism is 15% of our economy, so it is our most important sector.” What is the most useful reply?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'which-question',
-          label: 'Important for which of the three — size, criticality, or future capacity?',
+          label: 'Important in which way — size, criticality or future capacity?',
         },
         {
           id: 'agree',
-          label: 'Agree: 15% is a large share and shares measure importance',
+          label: 'Agree: 15% is a big share, and share shows importance',
           feedback:
-            'It measures size, and the module opened by taking that apart. Agriculture is 2% and nobody eats without it.',
+            'Share shows size, and this module began by showing why that is not the same. Farming is 2% of the economy, and nobody eats without it.',
         },
         {
           id: 'dismiss',
           label: 'Disagree: tourism is consumption, so it builds nothing',
           feedback:
-            'It builds nothing and it earns foreign currency, which is what pays for the things that do build something. Dismissing it is the mirror-image error of overrating it.',
+            'It builds nothing, but it earns money from abroad, and that money pays for things that do build. Dismissing tourism is the opposite mistake to overrating it.',
         },
         {
           id: 'diversify',
-          label: 'Point out that concentration is the real risk',
+          label: 'Point out that depending on one sector is the real risk',
           feedback:
-            'True and it is an answer to a different question — one about the variance of income rather than about what importance means.',
+            'True, but that answers a different question: how stable income is, not what “important” means.',
         },
       ],
       correctOptionId: 'which-question',
       explanation:
-        'Tourism scores high on size, high on earning foreign currency, low on criticality — a country whose tourism stops has a severe income problem and not a supply shock — and low on future capacity, since hotel nights do not raise what anyone can produce next year. All four of those statements are true at once, and any argument that uses only one of them is being used to win rather than to understand.',
+        'Tourism scores high on size and high on earning money from abroad. It scores low on criticality: if tourism stops, the country has a serious income problem, but nothing else stops working. It also scores low on future capacity: hotel nights do not help anyone produce more next year. All of this is true at once. An argument that uses only one of these is trying to win, not to understand.',
     },
   ],
   keyTakeaways: [
-    'A country consumes what it can buy and buys with what it can sell.',
-    'Tourism and foreign students turn non-tradable-looking services into exports.',
-    'Import dependence is normal; single-supplier dependence with no substitute is not.',
-    'Size, foreign earnings, criticality and future capacity are four separate scores, and a sector can be high on one and low on the rest.',
+    'A country uses what it can buy, and it buys with what it can sell.',
+    'Tourism and foreign students turn local services into exports.',
+    'Depending on imports is normal. Depending on one supplier with no substitute is not.',
+    'Size, money earned from abroad, criticality and future capacity are four separate scores. A sector can be high on one and low on the others.',
   ],
 });

@@ -5,7 +5,7 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
   id: 'kab-what-happened-to-the-gold',
   title: 'What Happened to the Gold?',
   subtitle:
-    'It sat in a vault doing nothing, while forcing an arbitrary limit on the money supply. In 1971 it stopped pretending.',
+    'The gold sat in a vault doing nothing, but it still put a random limit on the amount of money. In 1971 the last link was cut.',
   icon: '🥇',
   difficulty: 'advanced',
   estimatedMinutes: 17,
@@ -21,36 +21,36 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
       tags: ['gold-standard', 'money-supply'],
       xp: 25,
       prompt:
-        'What is the video’s central objection to tying the money supply to gold?',
+        'What is the video’s main problem with linking the amount of money to gold?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'geology',
           label:
-            'It ties the money supply to mining rather than to output',
+            'The amount of money depends on mining, not on what the economy produces',
         },
         {
           id: 'inflation',
-          label: 'Gold standards always cause inflation',
+          label: 'Linking money to gold always makes prices rise',
           feedback:
-            'The video gives a case where gold *did* cause inflation — sixteenth-century Spain — but as evidence that metal is no guarantee, not that it always inflates.',
+            'The video gives one case where gold did make prices rise: Spain in the 1500s. It uses it to show that metal is no guarantee, not that prices always rise.',
         },
         {
           id: 'heavy',
           label: 'Gold is heavy, and moving it between vaults is impractical',
           feedback:
-            'True, but notes and cheques solved that several videos ago. The objection here is about the limit on quantity.',
+            'True, but notes and cheques solved that problem several videos ago. The problem here is the limit on the amount of money.',
         },
         {
           id: 'worthless',
           label: 'Gold has no value, so it cannot back anything',
           feedback:
-            'The video is careful not to claim that. Its claim is that gold represents wealth rather than being wealth — it cannot be eaten or lived in.',
+            'The video does not say that. It says gold stands for wealth but is not wealth itself: you cannot eat it or live in it.',
         },
       ],
       correctOptionId: 'geology',
       explanation:
-        'The thought experiment is an asteroid made of gold landing in the United States. Should the currency be worth less because of a geological accident? Should growth be held back because no new gold was found? Under a gold standard, the answer to both is yes, and neither has anything to do with how productive the economy is.',
+        'Imagine an asteroid made of gold lands in the United States. Should the money be worth less because of a lucky find? Or should the economy grow more slowly because nobody found new gold? With money linked to gold, the answer to both is yes. Neither has anything to do with how hard people work or what they produce.',
     },
     {
       id: 'mc-backed-by-what',
@@ -58,7 +58,7 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
       tags: ['fiat', 'wealth'],
       xp: 30,
       prompt:
-        'The video argues that a currency backed by a government may rest on *more* wealth than one backed by gold. What does it rest on?',
+        'The video says money backed by a government may rest on more wealth than money backed by gold. What does it rest on?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -68,26 +68,26 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
         },
         {
           id: 'military',
-          label: 'Its military power and the stability that buys',
+          label: 'Its army, and the peace and order that gives',
           feedback:
-            'Not the argument. The claim is economic: a government can tax the output of the economy it governs.',
+            'That is not the argument. The point is about the economy: a government can tax what its economy produces.',
         },
         {
           id: 'reserves',
           label: 'The foreign currency reserves it holds',
           feedback:
-            'Reserves appear nowhere in this argument. The backing described is the productive capacity that can be taxed.',
+            'This argument does not mention those reserves. The backing is everything the economy can produce, which can be taxed.',
         },
         {
           id: 'nothing',
-          label: 'Nothing — that is what fiat means',
+          label: 'Nothing, because that is what fiat money means',
           feedback:
-            'The video takes the word apart rather than accepting it. "Not backed by metal" is not the same as "not backed by anything".',
+            'The video questions that idea. “Not backed by metal” is not the same as “not backed by anything”.',
         },
       ],
       correctOptionId: 'tax',
       explanation:
-        'The plane-crash question makes it concrete: would you rather crash-land on the island with a pile of gold, or on the one with water, cattle, oil and skilled people? Gold represents wealth by agreement; an economy is wealth. The whole argument comes with a condition, though — *if* you trust the issuer to manage the supply. The last question of this lesson and video 18 take that condition seriously.',
+        'Sal asks: if your plane crashed, would you prefer an island with a pile of gold, or one with water, cattle, oil and skilled people? Gold stands for wealth because people agree it does. An economy is real wealth. But there is a condition: you must trust whoever creates the money to manage it well. The last question of this lesson, and video 18, look at that condition.',
     },
     {
       id: 'mc-spanish-gold',
@@ -95,35 +95,35 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
       tags: ['gold-standard', 'inflation', 'history'],
       xp: 35,
       prompt:
-        'Sal brings up 16th-century Spain: its money was real precious metal, then ships brought huge amounts of it from the Americas, and prices soared. What does that episode show?',
+        'Sal talks about Spain in the 1500s. Its money was real gold and silver. Then ships brought huge amounts of metal from the Americas, and prices shot up. What does this show?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'backing',
-          label: 'Backing does not prevent inflation — money against goods sets prices',
+          label: 'Backing money with metal does not stop prices rising',
         },
         {
           id: 'spain',
-          label: 'That Spain mismanaged its gold specifically',
+          label: 'That Spain in particular managed its gold badly',
           feedback:
-            'Spain did little that any government would not have done with a windfall. The point stands without blaming anyone: the amount of money grew far faster than the goods.',
+            'Spain did what almost any government would do with a sudden fortune. You do not need to blame anyone: the amount of money simply grew much faster than the goods.',
         },
         {
           id: 'notreal',
-          label: 'That the metal arriving from the Americas was not real',
+          label: 'That the metal coming from the Americas was fake',
           feedback:
-            'It was entirely real, which is precisely what makes the episode devastating for the argument that real gold prevents inflation.',
+            'It was completely real. That is exactly why this story is so bad for the idea that real gold stops prices rising.',
         },
         {
           id: 'paperbetter',
           label: 'That paper money would have served Spain better',
           feedback:
-            'Nothing here argues paper is better. It argues that the distinction between hard and soft money is not the distinction that determines inflation.',
+            'This story does not say paper is better. It says that metal money versus paper money is not what decides whether prices rise.',
         },
       ],
       correctOptionId: 'backing',
       explanation:
-        'Spain got a flood of precious metal — historically mostly silver, from mines such as Potosí, as well as gold — and prices rose to match, with money that was as hard as money gets. Metal holds back the money supply only as long as it is hard to obtain, and history kept finding new supplies, from Potosí’s silver to the Klondike’s gold. The video is not arguing that paper is safer, but that the safety was never in the metal.',
+        'Spain got a flood of precious metal. Most of it was silver, from mines such as Potosí, but there was gold too. Prices rose to match, even though the money was real metal. What sets prices is how much money there is compared with goods. Metal only limits the amount of money while it is hard to find, and people kept finding more. The video does not say paper is safer. It says the safety was never in the metal.',
     },
     {
       id: 'mc-what-gold-constrained',
@@ -131,35 +131,35 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
       tags: ['gold-standard', 'central-banking'],
       xp: 35,
       prompt:
-        'Even under the gold standard there were always more notes outstanding than gold in the vault. So what was the gold actually constraining?',
+        'Even when money was linked to gold, there were always more notes than gold in the vault. So what did the gold actually limit?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'ownratio',
-          label: 'It forced a reserve ratio on the central bank itself, pegged to how much metal happened to be dug up',
+          label: 'It gave the central bank its own reserve ratio, based on how much metal miners happened to dig up',
         },
         {
           id: 'onetoone',
-          label: 'Nothing was constrained, since the notes exceeded the gold anyway',
+          label: 'Nothing, because there were more notes than gold anyway',
           feedback:
-            'Exceeding the gold is not the same as ignoring it. The ratio still had to be defended, and defending it is what forced central banks to shrink the money supply when gold flowed out.',
+            'Having more notes than gold is not the same as ignoring the gold. The ratio still had to be kept. So when gold left the country, central banks had to reduce the amount of money.',
         },
         {
           id: 'govspending',
-          label: 'Government spending, which could not exceed the gold stock',
+          label: 'Government spending, which could not be more than the gold it had',
           feedback:
-            'Governments borrowed far beyond their gold throughout the period. The bite was on the note issue, not the budget.',
+            'Governments borrowed far more than their gold during this whole time. The limit was on how many notes could be issued, not on the budget.',
         },
         {
           id: 'privatebanks',
-          label: 'Commercial bank lending, which was capped by the gold',
+          label: 'Lending by commercial banks, which was limited by the gold',
           feedback:
-            'Commercial banks were capped by their reserves, which had already become central bank notes. The gold constrained the layer above them.',
+            'Commercial banks were limited by their reserves, which were already central bank notes. The gold limited the level above them: the central bank.',
         },
       ],
       correctOptionId: 'ownratio',
       explanation:
-        'That is the elegant part of the argument. Every other bank had a reserve requirement set by a regulator who could think; the central bank had one set by geology. An economy that grows faster than miners dig has to see prices fall, and one that happens to sit next to a gold rush sees prices rise — neither having anything to do with how hard anybody worked.',
+        'This is the clever part of the argument. Every other bank had a reserve rule set by people who could think about it. The central bank had a rule set by how much gold was in the ground. If the economy grew faster than miners could dig, prices had to fall. If a gold rush happened nearby, prices rose. Neither had anything to do with how hard anyone worked.',
     },
     {
       id: 'mc-the-big-if',
@@ -167,7 +167,7 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
       tags: ['fiat-money', 'central-banking'],
       xp: 30,
       prompt:
-        'Sal’s case for leaving the gold standard comes with what he calls a big if. What is the condition?',
+        'Sal argues for leaving the gold standard (money linked to gold), but with what he calls a “big if”. What is the condition?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -178,48 +178,48 @@ export const kabWhatHappenedToTheGoldLesson = defineLesson({
           id: 'growth',
           label: 'That the economy keeps growing year after year',
           feedback:
-            'Growth helps, but the condition is about the issuer’s conduct. A shrinking economy with a disciplined central bank is not the failure case he has in mind.',
+            'Growth helps, but the condition is about how the money is managed. A shrinking economy with a careful central bank is not the danger he means.',
         },
         {
           id: 'keepgold',
           label: 'That the central bank holds on to some gold anyway',
           feedback:
-            'He notes the Fed still holds gold, but treats it as a leftover, not as a condition for anything.',
+            'He says the Fed still has gold, but he sees it as a leftover, not as a condition.',
         },
         {
           id: 'surplus',
-          label: 'That the government runs a balanced budget',
+          label: 'That the government never spends more than it collects in taxes',
           feedback:
-            'He never makes a balanced budget the test. The test is how the money supply is managed, which is a different lever in different hands.',
+            'He never makes that the test. The test is how the amount of money is managed, and that is a different job, often done by different people.',
         },
       ],
       correctOptionId: 'trust',
       explanation:
-        'Notice how much the argument concedes. Fiat money is not defended as self-regulating — it is defended as better *provided* the people running it behave, which moves the problem from geology to institutions. That is why central bank independence, inflation targets and published mandates matter so much: they are the machinery for making the big if true, and the case falls apart without them.',
+        'Notice how much Sal admits here. He does not say paper money controls itself. He says it is better only if the people running it behave well. So the problem moves from the gold mines to the people in charge. That is why independent central banks, inflation targets and clear public rules matter so much. Without them, the argument falls apart.',
     },
     {
       id: 'order-off-gold',
       type: 'order_flow',
       tags: ['gold-standard', 'history', 'fiat-money'],
       xp: 30,
-      prompt: 'Put the drift from a gold system to a fiat one in order, as the video tells it.',
+      prompt: 'Put the steps from gold money to paper money in order, as the video tells it.',
       instructions: 'Drag the steps into order',
       events: [
         { id: 'pool', label: 'Banks pool their gold at one reserve bank' },
         { id: 'notes', label: 'Only that bank may issue notes against it' },
-        { id: 'habit', label: 'Banks come to hold the notes as their reserves', detail: 'Rather than asking for the metal' },
-        { id: 'ratio', label: 'Over time, notes outstanding grow well past the gold behind them' },
-        { id: 'idle', label: 'The result: the gold just sits in the vault', detail: 'Its only remaining job is to limit how many notes may be issued' },
-        { id: 'nixon', label: 'In 1971 the last link is cut', detail: 'Foreign central banks can no longer swap dollars for gold, and little else changes' },
+        { id: 'habit', label: 'Banks start keeping the notes as their reserves', detail: 'Instead of asking for the metal' },
+        { id: 'ratio', label: 'Over time, there are far more notes than gold behind them' },
+        { id: 'idle', label: 'In the end, the gold just sits in the vault', detail: 'Its only job left is to limit how many notes can be issued' },
+        { id: 'nixon', label: 'In 1971 the last link is cut', detail: 'Other countries’ central banks can no longer swap dollars for gold. Little else changes' },
       ],
       correctOrder: ['pool', 'notes', 'habit', 'ratio', 'idle', 'nixon'],
       explanation:
-        'The striking thing about this sequence is that 1971 is its least eventful step. By then the gold had done little monetary work for decades: banks settled in central bank money, Americans had not been able to swap their notes for gold since 1933, and the legal gold cover behind Federal Reserve notes was dropped in 1968. What Nixon ended was foreign central banks’ right to convert dollars into gold — which is why the system carried on working the next morning.',
+        'The surprise is that 1971 is the quietest step. By then, the gold had done very little for decades. Banks paid each other in central bank money. Americans could not swap their notes for gold after 1933. The legal rule to keep gold behind the notes ended in 1968. In 1971, President Nixon only ended other central banks’ right to swap dollars for gold. That is why the system kept working the next morning.',
     },
   ],
   keyTakeaways: [
-    'Under a metal standard, money growth depends on mining rather than on output.',
-    'Gold in a central bank vault performs no economic function beyond confidence.',
-    'Fiat rests on an economy that can be taxed — conditional on competent management.',
+    'When money is linked to metal, the amount of money depends on mining, not on what the economy produces.',
+    'Gold in a central bank vault does nothing useful except make people feel safe.',
+    'Paper money rests on an economy that can be taxed, but only if it is managed well.',
   ],
 });

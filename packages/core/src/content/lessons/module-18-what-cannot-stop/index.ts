@@ -43,7 +43,7 @@ export const moduleWhatCannotStop = defineModule({
   id: 'what-cannot-stop',
   title: 'What the Economy Cannot Do Without',
   description:
-    'Agriculture is 2% of output and nobody eats without it. Semiconductors are under 1% and they idled the car industry. How to tell what a sector is worth from what would stop without it — and why that is a different ranking from its size.',
+    'Farming is 2% of the economy, and nobody can eat without it. Computer chips are under 1%, and a shortage stopped car factories. Learn to tell how big a sector is from how much would stop without it. They are two different rankings.',
   accent: 'coral',
   level: 'beginner',
   lessons: [

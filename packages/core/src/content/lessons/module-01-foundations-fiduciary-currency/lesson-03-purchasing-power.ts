@@ -24,17 +24,17 @@ import { defineLesson } from '../../schema';
 export const purchasingPowerLesson = defineLesson({
   id: 'purchasing-power',
   title: 'Inflation Is the Price of Money',
-  subtitle: 'What your savings quietly lose while the number in the account stays still.',
+  subtitle: 'What your savings slowly lose while the number in the account stays the same.',
   icon: '📉',
   difficulty: 'intro',
   estimatedMinutes: 6,
   hearts: 3,
 
   keyTakeaways: [
-    'Inflation is a fall in what one unit buys — the same event seen from the money’s side rather than the goods’ side.',
-    'It compounds. Ten years of 10% does not remove 100% of your purchasing power; it removes about 61%.',
-    'A rise in one price is not inflation. Inflation is a rise in the general level, which is why a single supply shock is not the same thing.',
-    'What matters to a saver is the real rate: interest earned minus what inflation took.',
+    'Inflation means one euro buys less. It is the same event as prices rising, seen from the money’s side.',
+    'It compounds: each year’s loss builds on the last. Ten years of 10% does not take 100% of your buying power; it takes about 61%.',
+    'One price going up is not inflation. Inflation is prices in general going up.',
+    'For a saver, what matters is the real rate: the interest earned minus inflation.',
   ],
 
   challenges: [
@@ -43,35 +43,35 @@ export const purchasingPowerLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['inflation', 'foundations'],
       xp: 10,
-      prompt: 'A drought doubles the price of coffee while everything else is unchanged. Is that inflation?',
+      prompt: 'A drought doubles the price of coffee. All other prices stay the same. Is that inflation?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'yes',
-          label: 'Yes — a price went up',
+          label: 'Yes, because a price went up',
           feedback:
-            'One price rising is a relative price change. It tells you coffee got scarcer, not that money is buying less across the board.',
+            'One price rising is a change in relative prices. It tells you coffee became scarcer, not that money buys less in general.',
         },
         {
           id: 'no-relative',
-          label: 'No — that is a relative price change, not a fall in the value of money',
+          label: 'No, because only one price changed, not the value of money',
         },
         {
           id: 'yes-index',
           label: 'Yes, because the price index will tick up',
           feedback:
-            'The index will move a little, since coffee is in the basket. But the signal is about coffee. Inflation is the general level moving, not one component dragging the average.',
+            'The price index will move a little, because coffee is part of it. But that is about coffee. Inflation is the general level of prices moving, not one item pulling the average up.',
         },
         {
           id: 'only-if-wages',
           label: 'Only if wages rise to match',
           feedback:
-            'Wage responses matter for whether a shock persists, but they are not what makes something inflation in the first place.',
+            'Wages affect whether the rise lasts. But they are not what makes something inflation.',
         },
       ],
       correctOptionId: 'no-relative',
       explanation:
-        'Relative prices move all the time and that is the price system doing its job — expensive coffee tells people to drink less of it and tells farmers to plant more. Inflation is different: it is every price drifting up together, which conveys no information about any particular good and instead says something about the money.',
+        'Relative prices change all the time, and that is useful. Expensive coffee tells people to drink less and tells farmers to grow more. Inflation is different: all prices rise together. That says nothing about any one product. It tells you something about the money.',
     },
 
     {
@@ -79,10 +79,10 @@ export const purchasingPowerLesson = defineLesson({
       type: 'interactive_sim',
       tags: ['inflation', 'compounding', 'foundations'],
       xp: 25,
-      prompt: 'What is €10,000 under the mattress actually worth later?',
-      instructions: 'Move the rate and see',
+      prompt: 'You keep €10,000 under the mattress. What is it really worth later?',
+      instructions: 'Move the rate and see what happens',
       narrative:
-        'The number in the account never changes. Compare a central bank hitting its 2% target with a country running 25%, and watch what a decade does to the same €10,000.',
+        'The number never changes. Compare a central bank that hits its 2% target with a country at 25%, and see what ten years do to the same €10,000.',
       constants: { nominal: 10000, years: 10 },
       sliders: [
         {
@@ -121,7 +121,7 @@ export const purchasingPowerLesson = defineLesson({
         },
       ],
       objective: {
-        description: 'Finish at 25% — the rate a currency in trouble runs at',
+        description: 'End at 25%, the kind of rate a currency in trouble has',
         requiredObservations: [
           { sliderKey: 'inflationRate', values: [0.02, 0.1, 0.25] },
         ],
@@ -131,7 +131,7 @@ export const purchasingPowerLesson = defineLesson({
         target: { readoutKey: 'purchasing_power_lost', comparator: 'gte', value: 0.85 },
       },
       explanation:
-        'At the 2% target a decade costs you about 18% — unpleasant but survivable. At 10% it costs 61%, and at 25% it costs 89%: the €10,000 buys what €1,074 buys today. Notice the halving time collapses far faster than the rate rises, because the erosion compounds. This is also why "inflation is coming down" does not mean prices are: a falling rate still eats what is left, only more slowly.',
+        'At the 2% target, ten years cost you about 18%. That hurts, but you can live with it. At 10% it costs 61%. At 25% it costs 89%: your €10,000 buys what €1,074 buys today. Notice that the time to lose half falls much faster than the rate rises, because the losses compound. Also, “inflation is coming down” does not mean prices are falling. They still rise, just more slowly.',
     },
 
     {
@@ -145,17 +145,17 @@ export const purchasingPowerLesson = defineLesson({
         {
           id: 'purchasing-power',
           term: 'Purchasing power',
-          definition: 'The quantity of real goods one unit of money can buy',
+          definition: 'How many real things one unit of money can buy',
         },
         {
           id: 'nominal',
           term: 'Nominal value',
-          definition: 'The number printed on the note or shown in the account',
+          definition: 'The number written on the note or shown in the account',
         },
         {
           id: 'real',
           term: 'Real value',
-          definition: 'The same amount after inflation has been taken back out',
+          definition: 'The same amount after taking out the effect of inflation',
         },
         {
           id: 'disinflation',
@@ -165,11 +165,11 @@ export const purchasingPowerLesson = defineLesson({
         {
           id: 'deflation',
           term: 'Deflation',
-          definition: 'The general price level actually falling',
+          definition: 'Prices in general actually going down',
         },
       ],
       explanation:
-        'Disinflation and deflation get confused constantly, including in headlines. Disinflation is the rate coming down while prices keep climbing — which is what "inflation is falling" almost always means. Deflation is the level itself going into reverse, and it brings its own problem: debts are fixed in nominal terms, so they get heavier in real terms every year.',
+        'People often mix up disinflation and deflation, even in the news. Disinflation means the rate goes down but prices keep rising. That is almost always what “inflation is falling” means. Deflation means prices really fall. It has its own problem: debts stay the same in euros, so they get harder to pay every year.',
     },
 
     {
@@ -184,28 +184,28 @@ export const purchasingPowerLesson = defineLesson({
           id: 'gained-4',
           label: 'It grew by 4%',
           feedback:
-            'That is the nominal return. The number in the account did grow by 4% — but the question is what it buys.',
+            'That is the nominal return. The number did grow by 4%, but the question is what it can buy.',
         },
         {
           id: 'lost-2',
-          label: 'It lost roughly 2% of its purchasing power',
+          label: 'It lost about 2% of what it can buy',
         },
         {
           id: 'flat',
           label: 'It broke even, since interest offsets inflation',
           feedback:
-            'Only if the two rates matched. Here interest is below inflation, so the gap is a real loss.',
+            'Only if the two rates were the same. Here interest is lower than inflation, so the gap is a real loss.',
         },
         {
           id: 'lost-6',
           label: 'It lost 6%',
           feedback:
-            'That is the erosion before interest. The 4% you earned offsets most of it — the loss is the difference, not the whole of inflation.',
+            'That is the loss before interest. The 4% you earned covers most of it. The loss is the difference, not all of inflation.',
         },
       ],
       correctOptionId: 'lost-2',
       explanation:
-        'The real rate is what is left after inflation: about −1.9% here, since (1.04 / 1.06) − 1 = −0.0189. The rough version — subtract inflation from interest — gives −2% and is close enough at these levels. It stops being close at high rates, which is why the exact form matters to anyone saving in a currency running at 25%. A negative real rate means a saver doing everything right still gets poorer.',
+        'The real rate is what is left after inflation. Here it is about −1.9%, because (1.04 ÷ 1.06) − 1 = −0.019. The quick way, interest minus inflation, gives −2%, which is close enough at these levels. At high inflation like 25% the quick way is no longer close. A negative real rate means a saver who does everything right still gets poorer.',
     },
   ],
 });

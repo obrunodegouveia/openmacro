@@ -5,7 +5,7 @@ export const kabOpenMarketOperationsLesson = defineLesson({
   id: 'kab-open-market-operations',
   title: 'The Two Printing Presses',
   subtitle:
-    'The central bank prints reserves and buys government debt. The base rises once; the banks multiply it again.',
+    'The central bank creates new money and buys government bonds with it. Then the banks lend on top of that new money.',
   icon: '🖨️',
   difficulty: 'core',
   estimatedMinutes: 18,
@@ -20,19 +20,20 @@ export const kabOpenMarketOperationsLesson = defineLesson({
       type: 'order_flow',
       tags: ['open-market-operations', 'money-supply'],
       xp: 30,
-      prompt: 'Put an open market purchase in order, from the press to the loan.',
+      prompt:
+        'An open market purchase is when the central bank buys bonds with new money. Put the steps in order, from printing the money to the bank’s new loan.',
       instructions: 'Drag the steps into order',
       events: [
-        { id: 'print', label: 'The central bank creates 100 of new notes', detail: 'Notes outstanding are its liability' },
-        { id: 'buy', label: 'It uses them to buy Treasuries on the open market', detail: 'From whoever will sell — a pension fund, China, your uncle. The Treasuries become its asset' },
-        { id: 'seller', label: 'The seller now holds cash instead of a bond' },
-        { id: 'deposit', label: 'The seller deposits that cash in a commercial bank' },
-        { id: 'reserves', label: 'The bank’s reserves rise', detail: 'M0 is now 300 instead of 200' },
-        { id: 'multiply', label: 'The bank lends against the new reserves', detail: 'And M1 rises by a multiple of the 100' },
+        { id: 'print', label: 'The central bank creates 100 of new notes', detail: 'The notes are something it owes' },
+        { id: 'buy', label: 'It uses them to buy Treasury bonds from anyone who wants to sell', detail: 'For example a pension fund, or your uncle. The bonds are now something it owns' },
+        { id: 'seller', label: 'The seller now has cash instead of a bond' },
+        { id: 'deposit', label: 'The seller puts that cash in a commercial bank' },
+        { id: 'reserves', label: 'The bank’s reserves go up', detail: 'M0 is now 300 instead of 200' },
+        { id: 'multiply', label: 'The bank makes new loans using the new reserves', detail: 'So M1 goes up by more than 100' },
       ],
       correctOrder: ['print', 'buy', 'seller', 'deposit', 'reserves', 'multiply'],
       explanation:
-        'Two presses, as the video puts it: the base money press at the central bank, and the leverage press in the commercial banks. An injection of 100 raises M0 by 100 and, at a 50% reserve ratio, M1 by up to 200 — at a 10% ratio it would be up to 1,000.',
+        'The video calls these two printing presses. The first is the central bank, which creates the base money (M0). The second is the commercial banks, which lend on top of it. Adding 100 raises M0 by 100. With a 50% reserve ratio, M1 can rise by up to 200. With a 10% ratio, it could rise by up to 1,000.',
     },
     {
       id: 'mc-why-not-reserve-req',
@@ -40,36 +41,36 @@ export const kabOpenMarketOperationsLesson = defineLesson({
       tags: ['monetary-policy', 'reserve-ratio'],
       xp: 25,
       prompt:
-        'The central bank could also expand the money supply by lowering the reserve requirement. According to the video, why does it prefer open market operations?',
+        'The central bank could also add money by lowering the reserve requirement (the share of deposits a bank must keep as cash). In the video, why does it prefer to buy and sell bonds instead?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'unwind',
           label:
-            'Because raising the requirement again later would force banks to sell assets in a hurry or call in loans',
+            'Raising the requirement again later would force banks to sell things in a hurry or ask for loans back',
         },
         {
           id: 'illegal',
           label: 'Because it is not allowed to set the requirement',
           feedback:
-            'It does set it. The video is clear that this is one of its tools — just a clumsy one.',
+            'It does set it. The video says this is one of its tools. It is just a clumsy one.',
         },
         {
           id: 'no-effect',
-          label: 'Because changing the requirement would not affect the money supply',
+          label: 'Because changing the requirement would not change the money supply',
           feedback:
-            'It would, dramatically: at 10% rather than 50%, the same base supports five times the deposits. The problem is the reverse move.',
+            'It would change it a lot. At 10% instead of 50%, the same reserves support five times more deposits. The problem is going back the other way.',
         },
         {
           id: 'slow',
-          label: 'Because a change in the requirement takes months to reach lending',
+          label: 'Because a change in the requirement takes months to change lending',
           feedback:
-            'Speed is not the complaint. The problem is that the tool is hard to reverse without breaking the banks that responded to it.',
+            'Speed is not the problem. The problem is that this tool is hard to reverse without hurting the banks that followed it.',
         },
       ],
       correctOptionId: 'unwind',
       explanation:
-        'Banks stay close to whatever limit they are given, because idle reserves earn nothing. Loosening the limit invites them to lend up to it; tightening it again then forces them to sell assets cheaply at the worst moment. Open market operations change the base instead, and they can be reversed simply by selling the bonds back.',
+        'Cash kept as reserves earns nothing, so banks lend as much as the rule allows. If the rule is loosened, they lend more. If it is tightened again, they must suddenly sell things cheaply, at the worst moment. Buying bonds is easy to undo: the central bank just sells them back.',
     },
     {
       id: 'mc-omo-arithmetic',
@@ -77,35 +78,35 @@ export const kabOpenMarketOperationsLesson = defineLesson({
       tags: ['open-market-operations', 'multiplier'],
       xp: 35,
       prompt:
-        'The Fed prints 100 and buys Treasuries. With a 50% reserve requirement, the video takes M0 from 200 to 300 and M1 from 400 to 600. What would the same 100 do with a 10% requirement, if banks lend as much as they can?',
+        'The Fed creates 100 and buys Treasury bonds. With a 50% reserve requirement, the video says M0 goes from 200 to 300 and M1 goes from 400 to 600. What would the same 100 do with a 10% requirement, if banks lend as much as they can?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'thousand',
-          label: 'M0 still rises by 100, but M1 could rise by up to 1,000',
+          label: 'M0 still goes up by 100, but M1 could go up by as much as 1,000',
         },
         {
           id: 'same',
-          label: 'The same, since the Fed printed the same 100 either way',
+          label: 'The same as before, because the Fed created the same 100',
           feedback:
-            'The base rises by 100 either way. How much the banks can build on top of that 100 depends on the ratio, and 1/0.10 = 10 is five times 1/0.50 = 2.',
+            'M0 goes up by 100 both times. But how much banks can lend on top of it depends on the ratio. At 10% each dollar supports 10 dollars of deposits; at 50% only 2.',
         },
         {
           id: 'twohundred',
-          label: 'M0 rises by 100 and M1 by 200, as before',
+          label: 'M0 goes up by 100 and M1 goes up by 200, as before',
           feedback:
-            'That is the answer at 50%. At 10%, each new dollar of reserves supports ten of deposits rather than two.',
+            'That is the answer at 50%. At 10%, each new dollar of reserves supports ten dollars of deposits, not two.',
         },
         {
           id: 'hundred',
-          label: 'Both rise by exactly 100 — the Fed cannot create deposits',
+          label: 'Both go up by exactly 100, because the Fed cannot create deposits',
           feedback:
-            'The Fed cannot, and does not. The commercial banks do, on the back of the reserves it supplied — which is the whole point of the two presses.',
+            'The Fed does not create those deposits. The commercial banks do, by lending, using the reserves the Fed gave them. That is the second press.',
         },
       ],
       correctOptionId: 'thousand',
       explanation:
-        'The central bank controls only the base. What that base turns into depends on the ratio, and on whether banks want to lend and anyone wants to borrow. This is why quantitative easing after 2008 produced an enormous rise in M0 and a much smaller one in M1: the reserves were created, but the second press mostly did not run.',
+        'The central bank only controls the base money. How much more money that becomes depends on the ratio. It also depends on whether banks want to lend and people want to borrow. After 2008, quantitative easing raised M0 enormously but M1 much less: the reserves were created, but banks did not lend much on top of them.',
     },
     {
       id: 'mc-no-requirement-for-the-fed',
@@ -113,35 +114,35 @@ export const kabOpenMarketOperationsLesson = defineLesson({
       tags: ['central-banking', 'reserves'],
       xp: 30,
       prompt:
-        'Every commercial bank faces a reserve requirement. The central bank faces none, and Sal says it does not need one, once its notes can no longer be swapped for gold. Why not?',
+        'Every commercial bank has a reserve requirement. The central bank has none. Sal says it does not need one, once its notes can no longer be swapped for gold. Why not?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'ownliability',
-          label: 'What people can demand from it is its own notes and reserves, and it can always create more of those',
+          label: 'People can only ask it for its own notes and reserves, and it can always create more',
         },
         {
           id: 'gold',
-          label: 'Because it holds enough gold to cover everything it has issued',
+          label: 'Because it keeps enough gold to cover all the notes it has issued',
           feedback:
-            'It holds only a fraction, which is the whole design. If gold were the answer, there would be nothing special about the central bank at all.',
+            'It keeps only a small part of that in gold, and that is how the system is designed. If gold were the answer, a central bank would be no different from any other bank.',
         },
         {
           id: 'trusted',
-          label: 'Because nobody would ever run on a central bank',
+          label: 'Because people never rush to take money out of a central bank',
           feedback:
-            'People have — that is what a currency crisis is. What protects it is not that a run cannot start, but that a run cannot leave it short of its own money.',
+            'They have done it. That is what a currency crisis is. What protects the central bank is that a rush can never leave it without its own money.',
         },
         {
           id: 'regulator',
-          label: 'Because it writes the rules and would not impose one on itself',
+          label: 'Because it makes the rules and would not set one for itself',
           feedback:
-            'Perhaps, but beside the point. Even a central bank that wanted a requirement would find it meaningless: it cannot run short of something it issues itself.',
+            'Maybe, but that is not the reason. Even if it wanted a requirement, it would mean nothing: it cannot run out of something it creates itself.',
         },
       ],
       correctOptionId: 'ownliability',
       explanation:
-        'A commercial bank promises cash, which it cannot make itself. A central bank promises its own notes and reserves, which it makes by typing. That difference is the heart of central banking, and it has one real limit: the central bank can always meet a demand for its currency, but it cannot control what that currency is worth once it does. Running out of cash is impossible for it; making the currency worth less is not.',
+        'A commercial bank promises to pay cash, and it cannot make cash. A central bank promises its own notes and reserves, and it can create them by typing a number. So it can never run out of its own money. But there is a real limit: it cannot control what that money is worth. If it creates too much, the money loses value.',
     },
     {
       id: 'match-two-presses',
@@ -154,26 +155,26 @@ export const kabOpenMarketOperationsLesson = defineLesson({
         {
           id: 'base',
           term: 'The base money press',
-          definition: 'Run by the central bank, which creates reserves and notes from nothing and buys assets with them',
+          definition: 'The central bank creates new reserves and notes, and buys things with them',
         },
         {
           id: 'leverage',
           term: 'The leverage press',
-          definition: 'Run by commercial banks, which turn each unit of reserves into several of deposits by lending',
+          definition: 'Commercial banks lend, turning each unit of reserves into several units of deposits',
         },
         {
           id: 'brake',
-          term: 'The brake on the second',
-          definition: 'The reserve ratio, plus whether anyone creditworthy actually wants to borrow',
+          term: 'The brake on the second press',
+          definition: 'The reserve ratio, and whether anyone safe to lend to actually wants to borrow',
         },
       ],
       explanation:
-        'Keeping these apart clears up most public confusion about money printing. The central bank runs the first press and cannot run the second; "the Fed printed trillions" describes reserves that only turn into much more spendable money if banks lend on top of them. It also explains why the same operation pushes up prices in one decade and not in another — the second press is run by people deciding whether a loan is worth making.',
+        'Keeping the two presses apart clears up a lot of confusion about “printing money”. The central bank runs the first press only. When people say “the Fed printed trillions”, they mean reserves. Those reserves only become much more spending money if banks lend on top of them. That is why the same action raises prices in one decade but not in another: the second press depends on people deciding whether a loan is worth making.',
     },
   ],
   keyTakeaways: [
-    'An open market purchase raises base money, which banks then multiply.',
-    'The seller of the bond is the channel: their deposit becomes a bank’s reserves.',
-    'Reserve requirements are a real tool but a nearly irreversible one.',
+    'When the central bank buys bonds, base money goes up, and banks then lend on top of it.',
+    'The person who sold the bond deposits the money, and it becomes a bank’s reserves.',
+    'Changing the reserve requirement works, but it is very hard to undo.',
   ],
 });

@@ -13,9 +13,9 @@ import { defineLesson } from '../../schema';
  */
 export const destructionDoesNotSubtractLesson = defineLesson({
   id: 'destruction-does-not-subtract',
-  title: 'Nothing in GDP Goes Down When Something Is Destroyed',
+  title: 'GDP Does Not Go Down When Something Is Destroyed',
   subtitle:
-    'A flow measure has no line for the stock. Follow what that means through a flood, a broken window and a war.',
+    'GDP only counts new production. It has no line for what is lost. See what that means for a flood, a broken window and a war.',
   icon: '💥',
   difficulty: 'core',
   estimatedMinutes: 11,
@@ -26,35 +26,35 @@ export const destructionDoesNotSubtractLesson = defineLesson({
       tags: ['gdp', 'flow-vs-stock', 'disasters'],
       xp: 25,
       prompt:
-        'A flood destroys €10 billion of houses in March. Over that year, what does the destruction itself do to GDP?',
+        'In March, a flood destroys €10 billion of houses. Over that year, what does the destruction itself do to GDP?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'nothing-direct',
-          label: 'Nothing directly — and the rebuilding that follows raises it',
+          label: 'Nothing directly — and the rebuilding afterwards makes it rise',
         },
         {
           id: 'minus-ten',
           label: 'GDP falls by €10 billion',
           feedback:
-            'There is no line to put it on. GDP adds up production during the year; the houses were produced in earlier years and counted then. Losing them destroys wealth without un-producing anything.',
+            'There is nowhere to subtract it. GDP adds up what is produced during the year. The houses were built in earlier years and counted then. Losing them destroys wealth, but it does not “un-produce” anything.',
         },
         {
           id: 'falls-later',
-          label: 'GDP falls the following year, when the houses are missing',
+          label: 'GDP falls the next year, when the houses are missing',
           feedback:
-            'It falls only to the extent that the lost houses were producing something countable — mainly the rent, imputed or actual, that housing services represent. The €10 billion of value never appears as a fall.',
+            'It falls only a little: by the housing the lost homes would have provided, measured as rent. The €10 billion itself never shows up as a fall.',
         },
         {
           id: 'depends-insurance',
           label: 'It depends on whether the houses were insured',
           feedback:
-            'Insurance moves who bears the loss. It produces nothing and so changes nothing in GDP; the payout is a transfer, like a pension.',
+            'Insurance only changes who pays for the loss. It produces nothing, so it changes nothing in GDP. The payout is a transfer, like a pension.',
         },
       ],
       correctOptionId: 'nothing-direct',
       explanation:
-        'The national accounts do record the loss — in the balance sheet, under other changes in the volume of assets. That is a different set of books from GDP, and almost nobody quotes it. So a country can be measurably poorer and have a higher GDP in the same year, with no error anywhere in the arithmetic.',
+        'The loss is recorded, but in a different set of accounts: the national balance sheet, which almost nobody quotes. So a country can become poorer and still have a higher GDP in the same year. Nobody made a mistake in the maths.',
     },
     {
       id: 'mc-broken-window',
@@ -62,35 +62,35 @@ export const destructionDoesNotSubtractLesson = defineLesson({
       tags: ['gdp', 'bastiat', 'opportunity-cost'],
       xp: 30,
       prompt:
-        'A child breaks a shopkeeper’s window. The glazier earns €200 fixing it. A bystander says this is good for the economy. What is wrong with that, in one step?',
+        'A child breaks a shop window. A glazier earns €200 to fix it. Someone says this is good for the economy. What is wrong with that?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'forgone',
-          label: 'Something the €200 would have bought now never exists',
+          label: 'The shopkeeper can no longer buy what the €200 would have bought',
         },
         {
           id: 'gdp-unchanged',
-          label: 'Nothing is wrong with it — GDP really does rise by the €200 the glazier earned',
+          label: 'Nothing is wrong — GDP really does rise by the €200 the glazier earned',
           feedback:
-            'GDP does rise, which is exactly why the bystander sounds right. The error is in the leap from that to *good for the economy*, and the module is about the size of that leap.',
+            'GDP does rise, and that is why the person sounds right. The mistake is jumping from “GDP rose” to “good for the economy”. This module is about that jump.',
         },
         {
           id: 'glazier-loses',
           label: 'The glazier gains nothing, because he had other work anyway',
           feedback:
-            'He may well gain. The loss is the shopkeeper’s, and the country’s: a window that existed no longer does, and the resources that replaced it cannot be used twice.',
+            'He may well gain. The loss is the shopkeeper’s, and the town’s: a window that existed is gone, and the work that replaced it cannot be used for anything else.',
         },
         {
           id: 'insurance',
           label: 'Insurance will pay, so no one is worse off',
           feedback:
-            'Somebody is worse off by one window however the cost is shared out. Insurance changes the distribution of the loss, never its existence.',
+            'Someone is still one window poorer, however the cost is shared. Insurance only changes who pays for the loss.',
         },
       ],
       correctOptionId: 'forgone',
       explanation:
-        'Bastiat wrote this in 1850 and it is still the cleanest test of the confusion. What is seen: the glazier at work, €200 of measured activity. What is not seen: the shoes the shopkeeper would have bought, and the fact that the town has the same number of windows as before and one fewer pair of shoes. GDP records what is seen. It has no column for what is not.',
+        'The French writer Bastiat described this in 1850. What you see: the glazier working, €200 of activity. What you do not see: the shoes the shopkeeper would have bought. The town ends up with the same windows as before and one less pair of shoes. GDP records what you see, not what you do not see.',
     },
     {
       id: 'mc-weapons-accounting',
@@ -98,35 +98,35 @@ export const destructionDoesNotSubtractLesson = defineLesson({
       tags: ['gdp', 'war', 'national-accounts'],
       xp: 30,
       prompt:
-        'Since the 2008 revision of the System of National Accounts, how is a newly built warship treated?',
+        'Since the 2008 update of the international rules for national accounts, how is a newly built warship counted?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'capital-formation',
-          label: 'As gross fixed capital formation — capital, alongside a factory or a road',
+          label: 'As investment — capital, like a factory or a road',
         },
         {
           id: 'consumption',
-          label: 'As government consumption, since it produces nothing civilian',
+          label: 'As government consumption, since it makes nothing for civilians',
           feedback:
-            'That was the older treatment, and the 2008 revision changed it precisely because a warship is a long-lived produced asset by any ordinary definition. Do not build the argument on an accounting rule that no longer holds.',
+            'That was the old rule. The 2008 update changed it because a warship is a long-lasting asset, like any other. Do not base the argument on a rule that no longer applies.',
         },
         {
           id: 'excluded',
-          label: 'Excluded from GDP, being a public good',
+          label: 'It is left out of GDP, because it is a public good',
           feedback:
-            'Nothing is excluded for being a public good. The nurse, the road and the warship are all output bought by the state.',
+            'Nothing is left out for being a public good. The nurse, the road and the warship are all things the state buys.',
         },
         {
           id: 'negative',
-          label: 'As a negative entry, because it may destroy value',
+          label: 'As a negative entry, because it may destroy things',
           feedback:
-            'There are no negative entries for intent. The accounts record production, not what anybody plans to do with it.',
+            'The accounts have no negative entries for what something might be used for. They record what was produced, not what anyone plans to do with it.',
         },
       ],
       correctOptionId: 'capital-formation',
       explanation:
-        'Worth knowing before arguing about war and GDP: the accountants are not on the side you might expect. A warship is capital in the accounts. The honest form of the argument is therefore not that war spending is miscounted — it is that this particular capital produces nothing anyone can eat, wear or live in, and that its normal fate is to be destroyed rather than to depreciate slowly. Munitions are treated differently again: they are inventories, counted as used.',
+        'In the accounts, a warship is capital, like a factory. So the honest argument is not that war spending is counted wrongly. It is that this capital makes nothing people can eat, wear or live in, and it usually ends up destroyed. Ammunition is counted differently: as stock, used up when it is fired.',
     },
     {
       id: 'order-war-cycle',
@@ -134,24 +134,24 @@ export const destructionDoesNotSubtractLesson = defineLesson({
       tags: ['gdp', 'war', 'capital-stock'],
       xp: 35,
       prompt:
-        'Put one cycle of a war economy in order, and watch which steps move GDP and which move the stock.',
+        'Put one cycle of a war economy in order. Notice which steps change GDP and which change what the country owns.',
       instructions: 'Drag the steps into causal order',
       events: [
-        { id: 'order', label: 'The state orders €20bn of shells and vehicles', detail: 'Enters GDP as it is produced' },
-        { id: 'divert', label: 'Factories and workers switch from civilian goods', detail: 'Output that would have existed does not' },
-        { id: 'use', label: 'The materiel is used at the front' },
-        { id: 'destroy', label: 'Both sides’ equipment and buildings are destroyed', detail: 'No entry in GDP at all' },
-        { id: 'poorer', label: 'The capital stock is smaller than before the cycle began' },
-        { id: 'rebuild', label: 'Reconstruction is contracted after the war', detail: 'Enters GDP again, as new production' },
+        { id: 'order', label: 'The state orders €20bn of shells and vehicles', detail: 'Counted in GDP as they are made' },
+        { id: 'divert', label: 'Factories and workers stop making civilian goods', detail: 'Things that would have existed are never made' },
+        { id: 'use', label: 'The weapons are used at the front' },
+        { id: 'destroy', label: 'Equipment and buildings on both sides are destroyed', detail: 'Nothing changes in GDP' },
+        { id: 'poorer', label: 'The country owns less than before the cycle began' },
+        { id: 'rebuild', label: 'Rebuilding starts after the war', detail: 'Counted in GDP again, as new production' },
       ],
       correctOrder: ['order', 'divert', 'use', 'destroy', 'poorer', 'rebuild'],
       explanation:
-        'GDP rises at the first step and again at the last, and never falls at the one in the middle where the country actually became poorer. Run the cycle twice and you have a fast-growing economy with less standing at the end of it than at the start. Nothing here is a flaw in GDP — it is a flow measure doing exactly what a flow measure does. The flaw is in reading it as a scoreboard for whether a country is getting richer.',
+        'GDP rises at the first step and again at the last. It never falls in the middle, where the country actually became poorer. Repeat the cycle and you get a fast-growing economy that owns less at the end than at the start. GDP is not broken here; it measures production, as designed. The mistake is reading it as a score of whether a country is getting richer.',
     },
   ],
   keyTakeaways: [
-    'Destruction never appears in GDP; it appears in a balance sheet almost nobody quotes.',
-    'Rebuilding raises GDP, which is why disasters and wars can show up as growth.',
-    'Durable weapons are capital formation in the accounts — the argument has to rest on what they produce, not on how they are booked.',
+    'Destruction never shows up in GDP. It shows up in a balance sheet that almost nobody quotes.',
+    'Rebuilding raises GDP, so disasters and wars can look like growth.',
+    'Warships count as capital in the accounts. The real argument is about what they produce, not how they are counted.',
   ],
 });

@@ -26,18 +26,18 @@ import { defineLesson } from '../../schema';
 
 export const whatMoneyDoesLesson = defineLesson({
   id: 'what-money-does',
-  title: 'What Money Actually Does',
-  subtitle: 'Three jobs, and why the thing doing them stopped needing to be valuable.',
+  title: 'What Money Really Does',
+  subtitle: 'Money has three jobs. And the thing doing those jobs no longer needs to be valuable itself.',
   icon: '🪙',
   difficulty: 'intro',
   estimatedMinutes: 5,
   hearts: 3,
 
   keyTakeaways: [
-    'Money is defined by three jobs it performs, not by what it is made of.',
-    'Barter fails because it needs a double coincidence of wants — you must find someone who has what you want and wants what you have.',
-    'The unit of account is the job people notice least and rely on most: it is what lets prices be compared at all.',
-    'Once money is only a claim, its usefulness depends on who owes it and whether they are good for it.',
+    'Money is defined by the three jobs it does, not by what it is made of.',
+    'Barter fails because both people must want what the other has, at the same time. This is called the “double coincidence of wants”.',
+    'The unit of account is the job people notice least but need most: it lets you compare prices at all.',
+    'When money is only a promise, its value depends on who made the promise and whether they can keep it.',
   ],
 
   challenges: [
@@ -46,14 +46,14 @@ export const whatMoneyDoesLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['money-functions', 'foundations'],
       xp: 10,
-      prompt: 'You are a baker who wants shoes. The cobbler does not want bread. What exactly is the problem?',
+      prompt: 'You are a baker and you want shoes. The shoemaker does not want bread. What is the problem?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'no-value',
           label: 'Bread is worth less than shoes',
           feedback:
-            'Relative value is not the obstacle — you could offer many loaves. The trade fails even at a price you both consider fair.',
+            'Value is not the problem: you could offer many loaves. The trade fails even at a price you both think is fair.',
         },
         {
           id: 'double-coincidence',
@@ -63,18 +63,18 @@ export const whatMoneyDoesLesson = defineLesson({
           id: 'perishable',
           label: 'Bread goes stale',
           feedback:
-            'That is a real problem, and it is why bread is a poor *store of value*. But the trade fails today, while the bread is still fresh.',
+            'That is a real problem, and it is why bread is a bad store of value. But the trade fails today, while the bread is still fresh.',
         },
         {
           id: 'no-price',
           label: 'Nobody has agreed a price for bread in shoes',
           feedback:
-            'Closer — comparing across goods is genuinely hard. But even with an agreed rate the cobbler still does not want bread.',
+            'Closer: comparing different goods is hard. But even with an agreed price, the shoemaker still does not want bread.',
         },
       ],
       correctOptionId: 'double-coincidence',
       explanation:
-        'This is the double coincidence of wants. Direct exchange requires your want and their want to line up exactly, which almost never happens. Money solves it by splitting one trade into two: you sell bread to whoever wants bread, and buy shoes from the cobbler, who accepts money because he can spend it on anything.',
+        'This is the double coincidence of wants: a direct swap only works if each person wants exactly what the other has. That rarely happens. Money splits one trade into two. You sell bread to someone who wants bread. Then you buy shoes from the shoemaker, who takes money because he can spend it on anything.',
     },
 
     {
@@ -82,28 +82,28 @@ export const whatMoneyDoesLesson = defineLesson({
       type: 'concept_match',
       tags: ['money-functions', 'foundations'],
       xp: 15,
-      prompt: 'Match each term to what it actually means.',
+      prompt: 'Match each term to what it means.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'medium',
           term: 'Medium of exchange',
-          definition: 'The thing you hand over so a trade does not need a double coincidence of wants',
+          definition: 'What you hand over in a trade, so both people do not need to want each other’s goods',
         },
         {
           id: 'unit',
           term: 'Unit of account',
-          definition: 'The common ruler prices are quoted in, so any two goods can be compared',
+          definition: 'The common measure prices are written in, so any two things can be compared',
         },
         {
           id: 'store',
           term: 'Store of value',
-          definition: 'Something that still buys roughly as much next year as it does today',
+          definition: 'Something that still buys about as much next year as it does today',
         },
         {
           id: 'fiduciary',
           term: 'Fiduciary currency',
-          definition: 'Money whose value rests on a promise rather than on the material it is made of',
+          definition: 'Money whose value comes from a promise, not from what it is made of',
         },
         {
           id: 'commodity',
@@ -112,7 +112,7 @@ export const whatMoneyDoesLesson = defineLesson({
         },
       ],
       explanation:
-        'The three jobs are usually listed together, but they can come apart. In a hyperinflation people keep using the local currency to pay for things while quoting prices in dollars and saving in anything else — the medium of exchange survives after the unit of account and store of value have gone.',
+        'The three jobs usually go together, but they can split apart. In very high inflation, people still pay in the local currency. But they write prices in dollars and save in anything else. So the medium of exchange survives after the other two jobs are gone.',
     },
 
     {
@@ -120,38 +120,38 @@ export const whatMoneyDoesLesson = defineLesson({
       type: 'order_flow',
       tags: ['money-history', 'foundations'],
       xp: 15,
-      prompt: 'Put the steps from metal to modern money in order.',
+      prompt: 'Put the steps from metal coins to modern money in order.',
       instructions: 'Earliest first',
       events: [
         {
           id: 'commodity',
-          label: 'People settle on a commodity everyone accepts',
-          detail: 'Metal wins on durability and divisibility, not by decree',
+          label: 'People agree on one good that everyone accepts',
+          detail: 'Metal wins because it lasts and can be divided, not because of a law',
         },
         {
           id: 'warehouse',
-          label: 'Goldsmiths issue receipts for metal on deposit',
-          detail: 'Paper is easier to carry than the thing it represents',
+          label: 'Goldsmiths give out paper receipts for metal left with them',
+          detail: 'Paper is easier to carry than the metal it stands for',
         },
         {
           id: 'circulate',
-          label: 'The receipts circulate instead of the metal',
-          detail: 'Nobody redeems, because the paper spends just as well',
+          label: 'People pay with the receipts instead of the metal',
+          detail: 'Nobody swaps them back for metal, because the paper works just as well',
         },
         {
           id: 'overissue',
-          label: 'Issuers notice most metal never leaves the vault',
-          detail: 'More receipts are written than there is metal behind them',
+          label: 'The issuers notice that most metal never leaves the vault',
+          detail: 'So they write more receipts than they have metal',
         },
         {
           id: 'fiduciary',
-          label: 'The link to metal is cut entirely',
-          detail: 'What is left is a claim on the issuer and nothing else',
+          label: 'The link to metal is cut completely',
+          detail: 'What is left is only a promise from the issuer',
         },
       ],
       correctOrder: ['commodity', 'warehouse', 'circulate', 'overissue', 'fiduciary'],
       explanation:
-        'The decisive step is the middle one. Once receipts circulate rather than the metal, the metal is doing no work in daily trade — it is just collateral sitting still. Everything after that is a discovery about how much collateral is actually needed, and the answer kept turning out to be "less than we hold".',
+        'The key step is the middle one. Once people pay with receipts instead of metal, the metal does no work in daily trade. It just sits in the vault. After that, the question is how much metal is really needed, and the answer kept being “less than we have”.',
     },
 
     {
@@ -159,35 +159,35 @@ export const whatMoneyDoesLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['fiduciary', 'foundations'],
       xp: 10,
-      prompt: 'A modern banknote is not redeemable for anything. So what makes it worth something?',
+      prompt: 'You cannot swap a modern banknote for gold or anything else. So why is it worth something?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'gold',
           label: 'Gold held by the government',
           feedback:
-            'No major currency has been redeemable for gold since 1971. Reserves exist, but you cannot present a note and claim any of it.',
+            'No major currency could be swapped for gold after 1971. Countries still hold gold, but you cannot bring a note and claim any of it.',
         },
         {
           id: 'confidence',
-          label: 'Public confidence, and nothing more concrete than that',
+          label: 'People’s confidence in it, and nothing more solid than that',
           feedback:
-            'Close, but this is the hand-wave this course exists to avoid. Confidence in *what*, exactly? There are concrete obligations underneath.',
+            'Close, but too vague. Confidence in what? There are real obligations underneath.',
         },
         {
           id: 'obligations',
-          label: 'Real obligations denominated in it — taxes, debts, wages and contracts',
+          label: 'Real obligations written in it: taxes, debts, wages and contracts',
         },
         {
           id: 'scarcity',
           label: 'The fact that the supply is strictly limited',
           feedback:
-            'Supply is not strictly limited — central banks expand it deliberately. Scarcity relative to demand matters for the price level, but it is not what makes a note acceptable in the first place.',
+            'The supply is not strictly limited: central banks increase it on purpose. Scarcity affects prices, but it is not why people accept a note in the first place.',
         },
       ],
       correctOptionId: 'obligations',
       explanation:
-        'You accept a note because you have obligations you can only discharge with it, and so does everyone you trade with. Rent, taxes, loan repayments and wages are all written in the unit. That web of obligations is what "confidence" actually refers to — and it is why a currency collapses when the obligations start being written in something else.',
+        'You accept a note because you have bills you can only pay with it, and so does everyone you deal with. Rent, taxes, loan payments and wages are all written in euros. This web of obligations is what “confidence” really means. When people start writing these obligations in another currency, the old one collapses.',
     },
   ],
 });

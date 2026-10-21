@@ -45,7 +45,7 @@ export const moduleStartHere = defineModule({
   // `start-here`: saved progress and shared links are keyed on it.
   title: 'Everyday Money',
   description:
-    'No background needed. What the number in your banking app actually is, what a bank does with it, what an interest rate is for, and why a decision in Frankfurt reaches your mortgage.',
+    'No background needed. What the number in your banking app really is, what a bank does with it, what an interest rate is for, and how a decision in Frankfurt reaches your mortgage.',
   accent: 'mint',
   level: 'beginner',
   lessons: [

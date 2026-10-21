@@ -8,7 +8,7 @@ export const yourMoneyIsAPromiseLesson = defineLesson({
   id: 'your-money-is-a-promise',
   title: 'The Number in Your Banking App',
   subtitle:
-    'You open the app and see €2,400. What exactly is that? It is not cash, and it is not in a box with your name on it.',
+    'You open the app and see €2,400. What is that, exactly? It is not cash, and it is not in a box with your name on it.',
   icon: '📱',
   difficulty: 'intro',
   estimatedMinutes: 5,
@@ -30,42 +30,42 @@ export const yourMoneyIsAPromiseLesson = defineLesson({
           id: 'cash-vault',
           label: '€2,400 of notes, kept for you in the bank’s vault',
           feedback:
-            'Have a look at the number of people with accounts at your bank, and imagine the vault. The notes do not exist in anything like that quantity — and they do not need to, because almost nobody asks for them at once.',
+            'Think of how many people have accounts at your bank. The vault does not hold notes for all of them. It does not need to, because almost nobody asks for their money at the same time.',
         },
         {
           id: 'gold',
           label: 'Gold the bank holds on your behalf',
           feedback:
-            'No bank has backed deposits with gold for a very long time. That link was cut everywhere by 1971.',
+            'Banks stopped backing deposits with gold a long time ago. By 1971 that link was gone everywhere.',
         },
         {
           id: 'government',
           label: 'Money the government is holding for you',
           feedback:
-            'The government is not involved in your current account at all. The promise is your bank’s, which is why it matters which bank it is.',
+            'The government has nothing to do with your current account. The promise comes from your bank, so it matters which bank you use.',
         },
       ],
       correctOptionId: 'promise',
       explanation:
-        'Your balance is an IOU. The bank owes you €2,400 and will hand it over on demand, and that promise is so reliable that we call it "money" and think no more about it. But it is a promise, made by a company — and everything else in this course follows from noticing that.',
+        'Your balance is an IOU (“I owe you”): the bank owes you €2,400 and will pay it whenever you ask. The promise is so reliable that we just call it “money”. But it is still a promise made by a company, and the rest of this course starts from that fact.',
     },
     {
       id: 'mc-so-what',
       type: 'multiple_choice',
       tags: ['basics', 'deposits'],
       xp: 15,
-      prompt: 'If your balance is a promise, when does that fact ever matter?',
+      prompt: 'Your balance is a promise from your bank. When does that matter?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'bank-trouble',
-          label: 'When the bank gets into trouble — a promise is only as good as whoever made it',
+          label: 'When the bank is in trouble, because a promise is only as good as the one who made it',
         },
         {
           id: 'never',
           label: 'Never, in practice',
           feedback:
-            'It is invisible almost all of the time, which is exactly why it is worth knowing. People discover it on the one day it stops being invisible.',
+            'You almost never notice it, and that is why it is worth knowing. People find out on the one day it suddenly matters.',
         },
         {
           id: 'abroad',
@@ -78,20 +78,20 @@ export const yourMoneyIsAPromiseLesson = defineLesson({
       ],
       correctOptionId: 'bank-trouble',
       explanation:
-        'This is why deposit guarantees exist — in the EU, €100,000 per person per bank. Somebody had to promise to make the promise good, because a promise from a company that has failed is worth nothing. When you hear that a government "rescued a bank", this is the thing being rescued: the ordinary belief that the number in the app is real.',
+        'This is why deposit guarantees exist. In the EU, up to €100,000 per person per bank is guaranteed. Someone has to back the bank’s promise, because the promise of a failed company is worth nothing. When a government “rescues a bank”, this is what it is protecting: people’s trust that the number in the app is real.',
     },
     {
       id: 'match-kinds-of-money',
       type: 'concept_match',
       tags: ['basics', 'money'],
       xp: 15,
-      prompt: 'Three things we all call "money". Match each to whose promise it is.',
+      prompt: 'We call all three of these “money”. Match each one to whose promise it is.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'notes',
           term: 'A €20 note in your pocket',
-          definition: 'A promise from the central bank — the only kind you can hold',
+          definition: 'A promise from the central bank, and the only kind you can hold in your hand',
         },
         {
           id: 'deposit',
@@ -101,16 +101,16 @@ export const yourMoneyIsAPromiseLesson = defineLesson({
         {
           id: 'card',
           term: 'Tapping your card',
-          definition: 'Not money at all — just an instruction to move somebody’s promise',
+          definition: 'Not money at all: just an instruction to move someone’s promise',
         },
       ],
       explanation:
-        'Almost all the money in the euro area is the second kind: promises from ordinary commercial banks. Notes are a small fraction of it. So when people ask "how much money is there", they are mostly asking about how much banks have promised — which turns out to be a question about lending, and that is the next lesson.',
+        'Almost all the money in the euro area is the second kind: promises from ordinary banks. Notes are only a small part of it. So “how much money is there?” is mostly a question about how much banks have promised. That depends on lending, which is the next lesson.',
     },
   ],
   keyTakeaways: [
     'Your bank balance is a promise from your bank, not cash set aside for you.',
-    'That promise is so dependable we call it money and stop thinking about it.',
+    'That promise is so reliable that we call it money and stop thinking about it.',
     'It matters when the bank is in trouble, which is why deposit guarantees exist.',
     'Most of the money in use is bank promises, not notes.',
   ],

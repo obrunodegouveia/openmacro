@@ -8,7 +8,7 @@ export const thePriceOfTimeLesson = defineLesson({
   id: 'the-price-of-time',
   title: 'What an Interest Rate Actually Is',
   subtitle:
-    'A rate is a price — the price of having money now instead of later. Everything else about it follows from that.',
+    'A rate is a price: the price of having money now instead of later.',
   icon: '⏱️',
   difficulty: 'intro',
   estimatedMinutes: 5,
@@ -30,13 +30,13 @@ export const thePriceOfTimeLesson = defineLesson({
           id: 'bank-costs',
           label: 'The bank’s administrative costs',
           feedback:
-            'Some of it covers costs, and that part barely changes when rates move. When a rate goes from 1% to 5%, the paperwork did not get five times harder.',
+            'A small part covers costs, but that part hardly changes when rates move. When a rate goes from 1% to 5%, the paperwork does not get five times harder.',
         },
         {
           id: 'inflation',
           label: 'Compensation for inflation only',
           feedback:
-            'Inflation is one of the things a lender wants covering, and there is more: the risk you do not repay, and the simple fact that they cannot use the money meanwhile.',
+            'Inflation is one part, but there is more: the risk that you do not pay back, and the fact that the lender cannot use the money while you have it.',
         },
         {
           id: 'profit',
@@ -45,20 +45,20 @@ export const thePriceOfTimeLesson = defineLesson({
       ],
       correctOptionId: 'use-of-money',
       explanation:
-        'An interest rate is the price of time. Someone with money now hands it to someone who wants it now, and takes it back later — and the fee is for the waiting, the risk of not being repaid, and the buying power lost to rising prices in the meantime. Three separate things, all quoted as one number.',
+        'An interest rate is the price of time. Someone with money gives it to someone who wants it now, and gets it back later. The fee pays for three things: the waiting, the risk of not being paid back, and the buying power lost as prices rise. All three are shown as one number.',
     },
     {
       id: 'match-rate-parts',
       type: 'concept_match',
       tags: ['basics', 'interest'],
       xp: 20,
-      prompt: 'A lender’s rate has parts. Match each to what it is paying for.',
+      prompt: 'A lender’s rate has three parts. Match each part to what it pays for.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'waiting',
           term: 'Waiting',
-          definition: 'They cannot use the money while you have it',
+          definition: 'The lender cannot use the money while you have it',
         },
         {
           id: 'risk',
@@ -68,11 +68,11 @@ export const thePriceOfTimeLesson = defineLesson({
         {
           id: 'inflation',
           term: 'Inflation',
-          definition: 'The euros coming back will buy less than the ones handed over',
+          definition: 'The euros paid back will buy less than the euros lent',
         },
       ],
       explanation:
-        'This is why two people borrowing the same amount on the same day are quoted different rates: the waiting is identical and the risk is not. It is also why rates rise across the whole economy when inflation is expected — every lender wants that third part covered, and none of them can be talked out of it.',
+        'This is why two people who borrow the same amount on the same day can get different rates. The waiting is the same, but the risk is not. It is also why all rates rise when people expect inflation: every lender wants to be paid for that third part.',
     },
     {
       id: 'mc-real-rate',
@@ -85,13 +85,13 @@ export const thePriceOfTimeLesson = defineLesson({
       options: [
         {
           id: 'lost',
-          label: 'They grew in euros and shrank in what they can buy — about 1% worse off',
+          label: 'They grew in euros but shrank in what they can buy: about 1% worse off',
         },
         {
           id: 'gained',
-          label: 'They grew — 2% is more than nothing',
+          label: 'They grew, because 2% is more than nothing',
           feedback:
-            'More euros, yes. But the point of saving is to buy something later, and everything you were going to buy went up 3%. Count in shopping, not in euros.',
+            'You have more euros, yes. But you save so you can buy things later, and those things now cost 3% more. Count in what you can buy, not in euros.',
         },
         {
           id: 'flat',
@@ -104,7 +104,7 @@ export const thePriceOfTimeLesson = defineLesson({
       ],
       correctOptionId: 'lost',
       explanation:
-        'Economists call the 2% the nominal rate and the roughly −1% the real rate, and the second is the one that decides whether saving was worth doing. A saver can be paid interest every year and still be quietly getting poorer — which happened right across Europe for most of the 2010s, and is the reason a later module is about what inflation actually does to people.',
+        'Economists call the 2% the nominal rate and the −1% the real rate (interest minus inflation). The real rate tells you if saving was worth it. You can earn interest every year and still slowly get poorer. That happened across Europe for most of the 2010s.',
     },
     {
       id: 'mc-who-sets-it',
@@ -116,19 +116,19 @@ export const thePriceOfTimeLesson = defineLesson({
       options: [
         {
           id: 'cb-one-rate',
-          label: 'A central bank sets one very short rate, and every other rate is priced off it by markets',
+          label: 'A central bank sets one very short-term rate, and markets set every other rate based on it',
         },
         {
           id: 'banks',
           label: 'Each bank decides its own, freely',
           feedback:
-            'They set their own margins, and they all move together when the central bank moves — because none of them can lend far below what they could earn risk-free overnight.',
+            'Banks add their own margins, but they all move together when the central bank moves. None of them can lend far below what they could earn safely overnight.',
         },
         {
           id: 'government',
           label: 'The government sets them by law',
           feedback:
-            'Governments have done this in the past and mostly stopped. In the euro area the ECB is deliberately independent of governments, which a later module is about.',
+            'Governments did this in the past and mostly stopped. In the euro area the ECB is independent from governments on purpose. A later module covers this.',
         },
         {
           id: 'market-only',
@@ -137,13 +137,13 @@ export const thePriceOfTimeLesson = defineLesson({
       ],
       correctOptionId: 'cb-one-rate',
       explanation:
-        'The central bank sets one overnight rate — the price of money for a single night — and everything else is built outward from it: your mortgage, a company loan, a government bond for thirty years. It is a remarkably small lever for the size of what it moves, and how it works is the subject of the next lesson.',
+        'The central bank sets one overnight rate: the price of money for a single night. Every other rate is built from it: your mortgage, a company loan, a 30-year government bond. It is a small lever that moves a very big system. The next lesson shows how.',
     },
   ],
   keyTakeaways: [
     'An interest rate is the price of having money now instead of later.',
     'It pays for three things at once: waiting, the risk of not being repaid, and inflation.',
-    'Interest minus inflation is the number that decides whether saving was worth it.',
-    'A central bank sets one overnight rate, and every other rate is priced off it.',
+    'Interest minus inflation (the real rate) tells you if saving was worth it.',
+    'A central bank sets one overnight rate, and every other rate is based on it.',
   ],
 });
