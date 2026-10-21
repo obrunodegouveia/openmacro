@@ -24,18 +24,18 @@ import { defineLesson } from '../../schema';
 
 export const pegsAndConvertibilityLesson = defineLesson({
   id: 'pegs-and-convertibility',
-  title: 'Pegs, and Why They Break',
-  subtitle: 'Promising a fixed price for your currency, and running out of the means to keep it.',
+  title: 'Fixed Exchange Rates, and Why They Break',
+  subtitle: 'A country promises a fixed price for its currency, then runs out of the money it needs to keep that promise.',
   icon: '⚖️',
   difficulty: 'core',
   estimatedMinutes: 7,
   hearts: 3,
 
   keyTakeaways: [
-    'Defending a peg means buying your own currency back — which destroys it, contracting the domestic money supply.',
-    'The defence is limited by foreign reserves. Selling the currency is unlimited; buying it is not.',
-    'The trilemma: fixed rate, free capital movement, independent monetary policy — pick two.',
-    'A peg is credible until the market can count the reserves and see the end of them.',
+    'To defend a peg (a fixed exchange rate), the central bank buys its own currency back. That removes money from the economy.',
+    'The defence is limited by foreign reserves. A central bank can sell its own currency without limit, but it can only buy it back with reserves it has.',
+    'The trilemma: a fixed rate, free movement of money across borders, and your own interest rate. You can only have two.',
+    'People believe a peg until they can count the reserves and see when they will run out.',
   ],
 
   challenges: [
@@ -44,35 +44,35 @@ export const pegsAndConvertibilityLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['pegs', 'fx'],
       xp: 10,
-      prompt: 'Your currency is under pressure and slipping below its peg. To defend it, the central bank must:',
+      prompt: 'Your currency is falling below its fixed rate (its “peg”). To defend it, what must the central bank do?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'sell-domestic',
           label: 'Sell domestic currency and buy foreign currency',
           feedback:
-            'That pushes it further down. Selling more of your own currency is what you do to stop it rising, not falling.',
+            'That pushes it down further. You sell more of your own currency to stop it rising, not falling.',
         },
         {
           id: 'buy-domestic',
-          label: 'Buy domestic currency, paying with its foreign reserves',
+          label: 'Buy its own currency, paying with its foreign reserves',
         },
         {
           id: 'print',
           label: 'Print more domestic currency to show strength',
           feedback:
-            'Issuing more of something under pressure lowers its price. This is the opposite of a defence.',
+            'Creating more of something under pressure makes its price fall. That is the opposite of a defence.',
         },
         {
           id: 'cut-rates',
           label: 'Cut interest rates to stimulate the economy',
           feedback:
-            'Lower rates make the currency *less* attractive to hold. Defending a peg usually forces rates up, which is exactly the painful part.',
+            'Lower rates make the currency less attractive to hold. Defending a peg usually means raising rates, which is the painful part.',
         },
       ],
       correctOptionId: 'buy-domestic',
       explanation:
-        'A currency falls because more people want to sell it than buy it. The central bank becomes the buyer of last resort, paying in dollars or euros from its reserves. Note the asymmetry that decides every peg crisis: a central bank can create its own currency without limit, so holding a peg *down* is easy — but it can only buy its currency back with reserves it already has.',
+        'A currency falls when more people want to sell it than buy it. So the central bank becomes the buyer, paying in dollars or euros from its reserves. Note the key difference: a central bank can create its own currency without limit, so stopping it from rising is easy. But it can only buy it back with the reserves it already has.',
     },
 
     {
@@ -80,10 +80,10 @@ export const pegsAndConvertibilityLesson = defineLesson({
       type: 't_account_flow',
       tags: ['pegs', 'fx', 'balance-sheets'],
       xp: 25,
-      prompt: 'The central bank spends $1B of reserves defending the peg. Post it.',
-      instructions: 'Pick an entry, then choose whose sheet it lands on and which side',
+      prompt: 'The central bank spends $1B of its reserves to defend the peg. Post it.',
+      instructions: 'Pick an entry, then choose whose list it goes on and which side',
       scenario:
-        'Traders are selling the domestic currency. The central bank buys $1B worth of it back from a commercial bank, paying in foreign exchange. Four entries are needed — three of the seven do not belong.',
+        'Traders are selling the country’s currency. The central bank buys $1B of it back from a commercial bank and pays in foreign currency. Four entries are needed. Three of the seven are wrong.',
       currency: 'USD',
       entities: [
         {
@@ -129,18 +129,18 @@ export const pegsAndConvertibilityLesson = defineLesson({
         {
           id: 'cb-fx-up',
           shift: { entityId: 'central-bank', side: 'asset', account: 'Foreign exchange reserves', delta: 1e9 },
-          feedback: 'Reserves are being spent, not acquired. This is the entry for holding a peg down, not up.',
+          feedback: 'The reserves are being spent, not received. This entry is for stopping a currency from rising, not from falling.',
         },
         {
           id: 'cb-bonds-down',
           shift: { entityId: 'central-bank', side: 'asset', account: 'Domestic government bonds', delta: -1e9 },
-          feedback: 'The bank was paid in foreign exchange, not with bonds. The bond portfolio is untouched.',
+          feedback: 'The bank was paid in foreign currency, not with bonds. The bonds do not change.',
         },
         {
           id: 'bank-deposits-up',
           shift: { entityId: 'commercial-bank', side: 'liability', account: 'Customer deposits', delta: 1e9 },
           feedback:
-            'Nobody deposited anything. The bank swapped one asset for another; its customers are not involved.',
+            'Nobody deposited anything. The bank swapped one asset for another. Its customers are not involved.',
         },
       ],
       expectedShifts: [
@@ -153,21 +153,21 @@ export const pegsAndConvertibilityLesson = defineLesson({
         {
           aggregate: 'M0',
           direction: 'contract',
-          note: 'The currency the central bank bought back is extinguished — its liability shrank by $1B.',
+          note: 'The currency the central bank bought back no longer exists: what it owes fell by $1B.',
         },
         {
           aggregate: 'M2',
           direction: 'contract',
-          note: 'Less base money in the system, and nothing replaced it. Defending the peg is monetary tightening whether the central bank wanted it or not.',
+          note: 'There is less money in the system and nothing replaced it. Defending the peg tightens money, whether the central bank wants that or not.',
         },
         {
           aggregate: 'collateral',
           direction: 'contract',
-          note: 'Foreign reserves — the most usable collateral a central bank has — are $1B lower and visibly counted by the market.',
+          note: 'Foreign reserves, the most useful thing a central bank holds, are $1B lower, and the market can see it.',
         },
       ],
       explanation:
-        'Both sheets shrink by $1B. The crucial line is the central bank’s liability: money bought back by its issuer ceases to exist, exactly as a repaid loan destroys a deposit. So defending a currency automatically tightens domestic monetary conditions — the defence and the recession are the same operation. This is why pegs are usually abandoned during downturns, when the tightening becomes politically unbearable.',
+        'Both lists shrink by $1B. The key line is the central bank’s liability. When the issuer buys its own money back, that money disappears, just as repaying a loan removes a deposit. So defending a currency automatically tightens money at home: the defence and the slowdown are the same action. That is why countries often give up a peg during a recession, when the pain becomes too much.',
     },
 
     {
@@ -175,38 +175,38 @@ export const pegsAndConvertibilityLesson = defineLesson({
       type: 'order_flow',
       tags: ['pegs', 'crisis'],
       xp: 15,
-      prompt: 'How does a peg actually fall? Put the sequence in order.',
-      instructions: 'Earliest cause at the top',
+      prompt: 'How does a peg really fall? Put the steps in order.',
+      instructions: 'First step at the top',
       events: [
         {
           id: 'divergence',
-          label: 'Domestic conditions diverge from the anchor country',
-          detail: 'The pegged rate stops matching what the economy needs',
+          label: 'The country’s economy starts to need something different from the anchor country',
+          detail: 'The fixed rate no longer fits what the economy needs',
         },
         {
           id: 'doubt',
           label: 'Traders start testing whether the peg will hold',
-          detail: 'Selling the currency costs little if the peg holds and pays well if it breaks',
+          detail: 'Selling the currency costs little if the peg holds, and pays a lot if it breaks',
         },
         {
           id: 'drain',
           label: 'The central bank spends reserves buying its currency back',
-          detail: 'Each defence is visible in the published reserve figures',
+          detail: 'Every defence shows up in the published reserve numbers',
         },
         {
           id: 'count',
-          label: 'The market counts the remaining reserves',
-          detail: 'The end of the defence becomes a date, not a possibility',
+          label: 'The market counts how many reserves are left',
+          detail: 'People can now see the date when the defence will end',
         },
         {
           id: 'break',
-          label: 'The peg is abandoned and the currency repricing happens at once',
-          detail: 'Months of suppressed adjustment arrive in an afternoon',
+          label: 'The peg is dropped and the currency jumps to a new price at once',
+          detail: 'Months of held-back change happen in one afternoon',
         },
       ],
       correctOrder: ['divergence', 'doubt', 'drain', 'count', 'break'],
       explanation:
-        'The step that makes speculation rational is the fourth. Reserves are published, so the defence has a visible floor — and a bet against a peg is close to one-way: if it holds you lose a little carry, and if it breaks you win the whole devaluation. Sterling in 1992 and the Swiss franc in 2015 both ended this way, the second when the central bank chose to stop rather than run out.',
+        'The fourth step is what makes betting against a peg sensible. Reserves are published, so everyone can see the limit. The bet is almost one-way: if the peg holds you lose a little, and if it breaks you win a lot. The British pound in 1992 and the Swiss franc in 2015 both ended like this. In 2015 the central bank chose to stop before it ran out.',
     },
 
     {
@@ -214,14 +214,14 @@ export const pegsAndConvertibilityLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['trilemma', 'pegs'],
       xp: 15,
-      prompt: 'A country wants a fixed exchange rate, free movement of capital, and its own interest rate policy. What happens?',
+      prompt: 'A country wants three things: a fixed exchange rate, money that can move freely in and out, and its own interest rate. What happens?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'fine',
-          label: 'Nothing — these are independent choices',
+          label: 'Nothing, because these choices do not affect each other',
           feedback:
-            'They are not. If capital can move freely and your rate differs from the anchor country’s, money floods in or out until the peg gives way.',
+            'They do. If money moves freely and your rate is different from the anchor country’s, money rushes in or out until the peg breaks.',
         },
         {
           id: 'pick-two',
@@ -231,18 +231,18 @@ export const pegsAndConvertibilityLesson = defineLesson({
           id: 'impossible',
           label: 'All three are impossible together and always have been',
           feedback:
-            'Any *two* are perfectly workable, which is the useful part. The Eurozone keeps the first two and surrenders the third; the US keeps the last two and floats.',
+            'Any two of them work fine, and that is the useful part. The euro area keeps the first two and gives up the third. The US keeps the last two and lets its currency float.',
         },
         {
           id: 'reserves',
           label: 'It can have all three with enough foreign reserves',
           feedback:
-            'Reserves buy time, not exemption. They set how long the contradiction can be absorbed before it forces a choice.',
+            'Reserves buy time, not freedom from the rule. They decide how long the conflict can last before the country has to choose.',
         },
       ],
       correctOptionId: 'pick-two',
       explanation:
-        'This is the impossible trinity. Set your rate above the anchor’s and capital pours in chasing yield, pushing your currency up until the peg breaks; set it below and capital leaves. The Eurozone chose fixed rates and open capital, surrendering national monetary policy. China long chose fixed rates and its own policy, using capital controls as the third lever. In practice most countries sit somewhere between the corners rather than on one — a managed float with partial controls is a compromise, not a fourth option.',
+        'This is called the impossible trinity. Set your rate above the anchor’s and money pours in looking for higher returns, pushing your currency up until the peg breaks. Set it below and money leaves. The euro area chose fixed rates and free movement of money, and gave up national interest rates. China for a long time chose a fixed rate and its own rates, and limited money moving across its borders. In practice most countries sit somewhere in between.',
     },
   ],
 });

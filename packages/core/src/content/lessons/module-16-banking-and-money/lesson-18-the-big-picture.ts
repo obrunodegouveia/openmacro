@@ -5,7 +5,7 @@ export const kabBigPictureLesson = defineLesson({
   id: 'kab-big-picture',
   title: 'Money Is Not Wealth',
   subtitle:
-    'Scarce or flexible, metal or paper — every monetary system is a bet on how humans will behave.',
+    'Scarce or flexible, metal or paper: every kind of money is a bet on how people will behave.',
   icon: '🧭',
   difficulty: 'advanced',
   estimatedMinutes: 18,
@@ -21,36 +21,36 @@ export const kabBigPictureLesson = defineLesson({
       tags: ['money-vs-wealth', 'gold'],
       xp: 25,
       prompt:
-        'The video says scarcity is what defines gold as money — and that it cuts both ways. How?',
+        'The video says gold works as money because it is scarce (hard to get more of). It says this is both good and bad. How?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'both',
           label:
-            'It cannot be manipulated, which is a virtue; and it cannot be adjusted to the economy’s needs, which is a defect',
+            'Nobody can create more of it, which is good, but it cannot grow when the economy needs more money, which is bad',
         },
         {
           id: 'virtue',
-          label: 'Only as a virtue — unmanipulable money is strictly better',
+          label: 'Only good, because money nobody can create more of is always better',
           feedback:
-            'That is one side. The other is the planting-season problem from video 16: a money supply that cannot expand turns away good projects.',
+            'That is one side. The other side is the planting-season problem from video 16: if the amount of money cannot grow, good projects get no money.',
         },
         {
           id: 'defect',
-          label: 'Only as a defect — inflexible money is strictly worse',
+          label: 'Only bad, because money that cannot change is always worse',
           feedback:
-            'The video rejects that too. Scarcity really does protect against a government shrinking its debts by creating money and inflation.',
+            'The video does not accept that either. Scarcity really does stop a government from creating money to make its debts smaller through rising prices.',
         },
         {
           id: 'neither',
-          label: 'Neither — scarcity is irrelevant once you have fractional reserve banking',
+          label: 'Neither, because scarcity does not matter once banks lend most deposits',
           feedback:
-            'Fractional reserve banking multiplies whatever base exists; it does not free you from the base. Under a gold standard that base is still dug out of the ground.',
+            'Banks lend on top of whatever base money exists, but they still need that base. When money is linked to gold, the base still has to be dug out of the ground.',
         },
       ],
       correctOptionId: 'both',
       explanation:
-        'The same property is a virtue or a defect depending on which failure you fear more: a government making the currency worth less, or an economy starved of credit. Notice that the video does not settle it — it makes the trade-off clear and leaves the judgement to you.',
+        'The same thing is good or bad depending on what you fear more: a government making money worth less, or an economy without enough loans. The video does not choose. It shows the trade-off clearly and lets you decide.',
     },
     {
       id: 'mc-gold-1980',
@@ -58,36 +58,36 @@ export const kabBigPictureLesson = defineLesson({
       tags: ['gold', 'inflation', 'investing'],
       xp: 30,
       prompt:
-        'In 1980 inflation was very high and buying gold looked obvious. Measured in the dollars of 2009, when the video was made, gold cost about $2,400 at its 1980 peak and about $840 in 2009. What lesson does the video draw?',
+        'In 1980 prices were rising very fast, and buying gold looked like the obvious choice. In 2009 dollars (when the video was made), gold cost about $2,400 at its 1980 peak and about $840 in 2009. What lesson does the video take from this?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'bet-on-humans',
           label:
-            'That holding something like gold as money is a bet on what people will do',
+            'That keeping your savings in something like gold is a bet on what people will do',
         },
         {
           id: 'gold-bad',
-          label: 'That gold is a poor investment over any long horizon',
+          label: 'That gold is always a bad investment over the long term',
           feedback:
-            'Too strong. The point is how hard it is to price something that pays no income, not a verdict on gold.',
+            'That goes too far. The point is that it is hard to put a price on something that pays no income. It is not a judgement on gold.',
         },
         {
           id: 'inflation-never',
-          label: 'That fears of inflation are always overdone',
+          label: 'That people always worry too much about rising prices',
           feedback:
-            'The 1980 fear was reasonable on the evidence at the time. What defeated it was a policy choice that few expected to go so far.',
+            'The worry in 1980 made sense at the time. What stopped the rising prices was a policy decision that few people expected to go so far.',
         },
         {
           id: 'cash-better',
           label: 'That a savings account always beats gold in the long run',
           feedback:
-            'The comparison is with a bank account earning 3–4% over that particular period, not a general law.',
+            'The comparison is with a bank account paying 3–4% during that one period. It is not a general rule.',
         },
       ],
       correctOptionId: 'bet-on-humans',
       explanation:
-        'A very reasonable person in 1980 could have put everything into gold and still been behind a savings account decades later — because the Fed under Paul Volcker raised interest rates hard, against enormous political pressure, and inflation fell. Gold pays no income, so its price reflects expectations rather than earnings, and that makes it a bet on human decisions rather than on arithmetic.',
+        'A sensible person in 1980 could have put everything into gold and still done worse than a savings account decades later. The reason: the Fed, led by Paul Volcker, raised interest rates very high despite huge political pressure, and prices stopped rising so fast. Gold pays no income, so its price depends on what people expect. That makes it a bet on human decisions, not on simple maths.',
     },
     {
       id: 'mc-four-systems',
@@ -95,35 +95,35 @@ export const kabBigPictureLesson = defineLesson({
       tags: ['monetary-systems', 'full-reserve'],
       xp: 35,
       prompt:
-        'Sal lays out the paths not taken: banks may keep full (100%) or fractional reserves, and the base money may be gold or paper. Which combination limits money creation the most, and what is the case for it?',
+        'Sal describes other possible systems. Banks could keep all deposits as reserves (100%) or only part of them. And the base money could be gold or paper. Which mix limits the creation of money the most, and what is the argument for it?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'fullgold',
-          label: 'Full reserves on gold — nobody can create money, so nobody can manipulate it',
+          label: '100% reserves and gold money, so nobody can create money or misuse it',
         },
         {
           id: 'fracgold',
-          label: 'Fractional reserves on gold, which is what the 19th century ran',
+          label: 'Partial reserves and gold money, as in the 1800s',
           feedback:
-            'It limits money more than today’s system but less than full reserves on gold. Banks could still multiply deposits, which is where most money creation happens.',
+            'This limits money more than today’s system, but less than 100% reserves with gold. Banks could still lend most deposits, and that is where most new money comes from.',
         },
         {
           id: 'fullpaper',
-          label: 'Full reserves on paper, since the central bank still controls the base',
+          label: '100% reserves and paper money, since the central bank still controls the base',
           feedback:
-            'Closer, but the central bank can still expand the base at will. Take away the ability to print and you remove the last lever anyone can pull.',
+            'Closer, but the central bank can still create more base money whenever it wants. Take away the power to print, and nobody can add money at all.',
         },
         {
           id: 'none',
-          label: 'They all limit money equally, since all four have a reserve rule',
+          label: 'They all limit money the same, since all four have a reserve rule',
           feedback:
-            'The rules differ enormously. A 100% requirement makes the multiplier exactly one; a 10% requirement makes it up to ten.',
+            'The rules are very different. With 100% reserves, each dollar of base money stays one dollar. With 10% reserves, it can become up to ten.',
         },
       ],
       correctOptionId: 'fullgold',
       explanation:
-        'Full reserves on gold switch off both presses at once: banks cannot multiply deposits, and no one can expand the base without mining. Full-reserve proposals have serious advocates — the Chicago Plan of the 1930s and today’s "narrow banking" arguments — and the honest cost is the one Sal names: no flexibility at all, so the money supply cannot respond to a planting season or a panic. You are trading crises of manipulation for crises of rigidity.',
+        '100% reserves with gold money stops both printing presses at once. Banks cannot lend out deposits, and nobody can add base money without mining. Some serious economists support 100% reserves, for example the “Chicago Plan” of the 1930s. But the cost is the one Sal names: no flexibility at all. The amount of money cannot respond to a planting season or a panic. You swap one kind of crisis (money being misused) for another (money that cannot change).',
     },
     {
       id: 'mc-what-you-are-betting-on',
@@ -131,72 +131,72 @@ export const kabBigPictureLesson = defineLesson({
       tags: ['gold', 'investing', 'inflation'],
       xp: 35,
       prompt:
-        'A reasonable person in 1980, facing very high inflation, bought gold — and lost out over the next three decades. Sal’s point is not that they were foolish. What is it?',
+        'In 1980 prices were rising very fast. A sensible person bought gold, and lost out over the next 30 years. Sal does not say they were foolish. What is his point?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'humans',
-          label: 'They were betting on what people would do next — and few expected the Fed to fight inflation as hard as it did',
+          label: 'It was a bet on people, and few expected the Fed to act so hard',
         },
         {
           id: 'wrong',
-          label: 'They were simply wrong about inflation',
+          label: 'They were simply wrong about prices rising fast',
           feedback:
-            'They were right about inflation — it was high and getting worse. What they could not see was how hard the policy response that ended it would be.',
+            'They were right: prices were rising fast and getting worse. What they could not see was how hard the Fed would act to stop it.',
         },
         {
           id: 'timing',
           label: 'They bought at the wrong moment and should have waited',
           feedback:
-            'Only hindsight tells you the right moment. The argument is about what kind of thing is being predicted, not about when to buy.',
+            'You only know the right moment afterwards. The point is about what kind of thing you are trying to predict, not about when to buy.',
         },
         {
           id: 'goldbad',
-          label: 'Gold is always a bad investment',
+          label: 'Gold is always a bad investment, at any moment',
           feedback:
-            'He explicitly refuses to say that, and notes gold may well do well from here. The claim is that it is unusually hard to price, not that it is doomed.',
+            'He clearly refuses to say that, and says gold may do well in the future. His point is that it is very hard to put a price on, not that it will always lose.',
         },
       ],
       correctOptionId: 'humans',
       explanation:
-        'Something that pays no income cannot be valued from its own earnings — you are pricing what everyone else will think, and in this case that turned on how far the Fed under Paul Volcker would go: it pushed interest rates to around 20%. Sal’s arithmetic is the sting: an ordinary deposit account paying 3 or 4% from 1980 beat gold all the way to 2009, even though the fear of inflation was correct at the time.',
+        'Gold pays no income, so you cannot value it from what it earns. You are guessing what everyone else will think. Here, that depended on how far the Fed, led by Paul Volcker, would go: it pushed interest rates to about 20%. Sal’s numbers show the surprise: a normal savings account paying 3% or 4% from 1980 did better than gold until 2009, even though the fear of rising prices was right at the time.',
     },
     {
       id: 'match-spins',
       type: 'concept_match',
       tags: ['gold', 'fiat-money', 'monetary-systems'],
       xp: 30,
-      prompt: 'Sal insists that each property can be described kindly or unkindly. Match each description to what it says.',
+      prompt: 'Sal says each feature of money can be described in a kind way or an unkind way. Match each description to what it says.',
       instructions: 'Pick a term, then its definition',
       pairs: [
         {
           id: 'goldgood',
-          term: 'Scarce, kindly put',
-          definition: 'Cannot be manipulated — no government can conjure more of it to fund itself',
+          term: 'Scarce, said kindly',
+          definition: 'Safe from misuse: no government can create more of it to pay its bills',
         },
         {
           id: 'goldbad',
-          term: 'Scarce, unkindly put',
-          definition: 'Inflexible — the supply cannot answer a harvest, a panic or a century of growth',
+          term: 'Scarce, said unkindly',
+          definition: 'Rigid: the amount cannot grow for a harvest, a panic or a century of growth',
         },
         {
           id: 'papergood',
-          term: 'Printable, kindly put',
-          definition: 'Flexible — it can expand exactly when the economy needs it to',
+          term: 'Printable, said kindly',
+          definition: 'Flexible: the amount can grow just when the economy needs it',
         },
         {
           id: 'paperbad',
-          term: 'Printable, unkindly put',
-          definition: 'Manipulable — and governments have repeatedly printed too much, sometimes until the money was worthless',
+          term: 'Printable, said unkindly',
+          definition: 'Easy to misuse: governments have often printed too much, sometimes until the money was worth nothing',
         },
       ],
       explanation:
-        'Each fact is described twice, and the description people reach for usually reflects their politics rather than their economics. Holding both readings at once is the point of the exercise: scarcity really does protect against one failure and really does cause another, and choosing a monetary system is choosing which crisis you would rather risk.',
+        'Each fact is described twice. Which description people choose often depends on their politics more than on economics. The point is to keep both in mind. Scarcity really does protect against one problem and really does cause another. Choosing a kind of money means choosing which crisis you would rather risk.',
     },
   ],
   keyTakeaways: [
-    'Money is a medium of exchange; wealth is what it is exchanged for.',
-    'Scarcity protects against manipulation and prevents adaptation — the same property.',
-    'Full reserve banking is a genuine alternative, with its own trade-offs.',
+    'Money is what we use to swap things. Wealth is the things we swap it for.',
+    'Scarce money is safe from misuse but cannot adapt. Both come from the same feature.',
+    'Banks keeping 100% reserves is a real alternative, with its own costs.',
   ],
 });

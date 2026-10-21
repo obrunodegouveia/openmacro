@@ -22,7 +22,7 @@ export const moduleFoundationsFiduciaryCurrency = defineModule({
   id: 'foundations-fiduciary-currency',
   title: 'Foundations of Fiduciary Currency',
   description:
-    'Why unbacked paper is accepted, what inflation actually is, and what breaks when a currency fails.',
+    'Why people accept paper money that is not backed by gold, what inflation really is, and what goes wrong when a currency fails.',
   accent: 'gold',
   level: 'beginner',
   lessons: [

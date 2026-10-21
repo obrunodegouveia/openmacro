@@ -14,7 +14,7 @@ export const consumptionIsNotCapitalLesson = defineLesson({
   id: 'consumption-is-not-capital',
   title: 'The Hospital and the Lipstick',
   subtitle:
-    'Two outlays of €50 million, identical in GDP, leaving two different economies behind.',
+    'Two purchases of €50 million each. The same in GDP, but they leave two very different countries behind.',
   icon: '⚖️',
   difficulty: 'core',
   estimatedMinutes: 10,
@@ -33,24 +33,24 @@ export const consumptionIsNotCapitalLesson = defineLesson({
           id: 'hospital-more',
           label: 'The hospital counts for more, because it lasts',
           feedback:
-            'Lasting is exactly what GDP does not ask about. Both are newly produced final output bought this year, so both enter at their market price.',
+            'GDP does not ask how long something lasts. Both were newly made and bought this year, so both count at their price.',
         },
         {
           id: 'cosmetics-less',
-          label: 'Cosmetics count for less, being a luxury',
+          label: 'Cosmetics count for less, because they are a luxury',
           feedback:
-            'The accounts hold no opinion about which purchases are worthy. A thing produced and sold is output at the price it fetched.',
+            'GDP does not judge which purchases are worthy. Anything made and sold counts at the price it was sold for.',
         },
         {
           id: 'hospital-zero',
-          label: 'The hospital does not count — the state produced it for itself',
+          label: 'The hospital does not count — the state built it for itself',
           feedback:
-            'Government investment is in G. A hospital built by the state is output just as a hospital built by a company is.',
+            'Government investment is in G. A hospital built by the state counts just like a hospital built by a company.',
         },
       ],
       correctOptionId: 'same',
       explanation:
-        'Identical in GDP, and that is not an oversight — GDP measures production in a period, and both were produced in the period. The difference between them is real, but it is not in this number. It is in what each country owns on the 31st of December.',
+        'They are the same in GDP, and that is not a mistake. GDP measures what was produced in the year, and both were produced this year. The real difference between them is not in this number. It is in what each country owns on 31 December.',
     },
     {
       id: 'mc-next-year',
@@ -58,89 +58,89 @@ export const consumptionIsNotCapitalLesson = defineLesson({
       tags: ['gdp', 'capital-stock', 'capacity'],
       xp: 25,
       prompt:
-        'Now look at the following year, with no new spending in either country. What differs?',
+        'Now look at the next year. Neither country spends anything new. What is different between them?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'capacity',
           label:
-            'One country has a hospital and can treat patients it could not treat before; the other has used up what it bought',
+            'One country has a hospital and can treat more patients; the other has used up what it bought',
         },
         {
           id: 'gdp-higher',
           label: 'The hospital country’s GDP is €50 million higher again',
           feedback:
-            'The building was counted once, when it was built. What the hospital does from here is the *treatment* it produces, which is new output each year — usually far less than the building cost, and never the cost repeated.',
+            'The building was counted once, when it was built. From now on, what counts is the treatment the hospital gives each year. That is usually much less than the building cost.',
         },
         {
           id: 'nothing',
-          label: 'Nothing — both outlays are in the past',
+          label: 'Nothing — both purchases are in the past',
           feedback:
-            'One of them is standing there. Capital is the part of last year’s output that is still working for you this year, and that is precisely what the cosmetics were not.',
+            'One of them is still standing. Capital is the part of last year’s production that keeps working for you this year. The cosmetics are not that.',
         },
         {
           id: 'cosmetics-better',
           label: 'The cosmetics country is better off, because people got what they wanted',
           feedback:
-            'They may well be happier — and that is a real thing which this number cannot see. But capacity to produce is a different question from satisfaction, and the hospital country has more of it.',
+            'People may well be happier, and that is real, but GDP cannot see it. Being able to produce more is a different question, and the hospital country can.',
         },
       ],
       correctOptionId: 'capacity',
       explanation:
-        'This is the whole distinction between consumption and capital formation. Consumption is output used up; capital is output that goes on producing. Both are legitimate uses of a year’s work — an economy that only built and never consumed would be pointless — but only one of them raises what next year can make.',
+        'This is the difference between consumption and capital. Consumption is used up; capital keeps producing. An economy needs both, because one that only built and never consumed would be pointless. But only capital raises what the country can make next year.',
     },
     {
       id: 'match-two-questions',
       type: 'concept_match',
       tags: ['gdp', 'welfare', 'capacity'],
       xp: 25,
-      prompt: 'Three different questions that get confused with one another. Match each to what answers it.',
+      prompt: 'People often mix up these three questions. Match each one to what answers it.',
       instructions: 'Tap a term, then its definition',
       pairs: [
         {
           id: 'produced',
           term: 'How much did we produce this year?',
-          definition: 'GDP — and it answers this one well, which is what it was built for',
+          definition: 'GDP. It answers this question well, because that is what it was made for',
         },
         {
           id: 'capacity',
           term: 'What can we produce next year?',
           definition:
-            'The capital stock, the workforce and how well they are combined — of which only the addition to capital appears in this year’s GDP, inside I',
+            'Our buildings, machines and workers, and how well we use them. Only the new buildings and machines appear in this year’s GDP, inside I',
         },
         {
           id: 'welfare',
           term: 'Are people’s lives better?',
           definition:
-            'Nothing in the national accounts. Health, clean air, safety, unpaid care and free time are absent by construction, not by oversight',
+            'Nothing in GDP. Health, clean air, safety, unpaid care and free time are left out on purpose',
         },
       ],
       explanation:
-        'The cosmetics really might make someone’s life better, and the hospital certainly will. Neither of those facts is what GDP recorded — it recorded €50 million of production in each case. Simon Kuznets, who built the US accounts in the 1930s, warned in his first report to Congress that the welfare of a nation can scarcely be inferred from this measure. It is still true, and it is still ignored.',
+        'The cosmetics might make someone’s life better, and the hospital surely will. GDP records neither of those things. It records €50 million of production in each case. Simon Kuznets, who created the US national accounts in the 1930s, warned that this number cannot tell you how well a nation is living.',
     },
     {
       id: 'order-capital-chain',
       type: 'order_flow',
       tags: ['gdp', 'capital-stock'],
       xp: 30,
-      prompt: 'Put the life of a €50 million road in order, from outlay to output.',
+      prompt: 'Put the life of a €50 million road in order, from the spending to the extra production.',
       instructions: 'Drag the steps into causal order',
       events: [
-        { id: 'spend', label: 'The state contracts €50m of roadbuilding', detail: 'Enters G this year' },
-        { id: 'wages', label: 'Contractors pay wages and buy materials', detail: 'The same €50m, seen as income' },
+        { id: 'spend', label: 'The state orders a €50m road', detail: 'Counted in G this year' },
+        { id: 'wages', label: 'Builders pay wages and buy materials', detail: 'The same €50m, now as people’s income' },
         { id: 'gdp', label: 'GDP rises by €50m in the year the road is built' },
-        { id: 'stock', label: 'The capital stock is €50m larger on the 31st' },
-        { id: 'freight', label: 'Freight moves faster along the new route' },
-        { id: 'output', label: 'Firms along it produce more each year afterwards', detail: 'New output, counted again — this time as their production' },
+        { id: 'stock', label: 'On 31 December the country owns €50m more' },
+        { id: 'freight', label: 'Lorries move goods faster on the new road' },
+        { id: 'output', label: 'Firms along the road produce more every year after', detail: 'New production, counted as theirs' },
       ],
       correctOrder: ['spend', 'wages', 'gdp', 'stock', 'freight', 'output'],
       explanation:
-        'Two distinct things are counted here and it is worth being exact about which is which. The €50m enters GDP once, in the year of building. The extra freight and production afterwards enter GDP again in each later year — not because the road is counted twice, but because the road makes new output possible. That second stream is the return on capital formation, and it is what an economy buys when it builds rather than consumes.',
+        'Two different things are counted here. The €50m enters GDP once, in the year the road is built. The extra production afterwards enters GDP each later year. The road is not counted twice; it makes new production possible. That extra production is what a country gets when it builds instead of consuming.',
     },
   ],
   keyTakeaways: [
-    'Consumption and capital formation enter GDP identically and leave different economies behind.',
-    'Only capital formation raises what the following year can produce.',
-    'Whether a purchase improves a life is a real question that GDP does not ask.',
+    'Consumption and capital count the same in GDP, but they leave different economies behind.',
+    'Only capital raises what the country can produce next year.',
+    'Whether a purchase makes a life better is a real question, but GDP does not ask it.',
   ],
 });

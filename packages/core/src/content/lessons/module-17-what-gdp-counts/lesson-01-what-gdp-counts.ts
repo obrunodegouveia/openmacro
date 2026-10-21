@@ -11,7 +11,7 @@ export const whatGdpCountsLesson = defineLesson({
   id: 'what-gdp-counts',
   title: 'A Number About Spending, Not About Wealth',
   subtitle:
-    'GDP adds up what was spent on newly produced final output in a period. Start with what that sentence excludes.',
+    'GDP adds up spending on new final products made in one period. First, see what it leaves out.',
   icon: '📐',
   difficulty: 'intro',
   estimatedMinutes: 9,
@@ -22,7 +22,7 @@ export const whatGdpCountsLesson = defineLesson({
       tags: ['gdp', 'national-accounts'],
       xp: 20,
       prompt:
-        'Four things happen this year, each for €300,000. Which one adds €300,000 to this year’s GDP?',
+        'Four things happen this year. Each one costs €300,000. Which one adds €300,000 to this year’s GDP?',
       instructions: 'Pick the best answer',
       options: [
         { id: 'new-house', label: 'A builder finishes a new house and sells it' },
@@ -30,24 +30,24 @@ export const whatGdpCountsLesson = defineLesson({
           id: 'old-house',
           label: 'Someone buys a house built in 1974',
           feedback:
-            'The house was produced in 1974 and counted then. Only the estate agent’s fee is new output this year — a service produced this year — which is why a housing boom shows up in GDP mostly as fees, not as the price of the houses.',
+            'The house was made in 1974 and counted then. Only the estate agent’s fee is new this year, because the agent did the work this year. So a housing boom shows up in GDP mostly as fees, not as house prices.',
         },
         {
           id: 'shares',
           label: 'Someone buys €300,000 of shares in the building company',
           feedback:
-            'That is a change of ownership of an existing claim. Nothing was produced. The broker’s commission is output; the €300,000 is not.',
+            'The shares already existed. They just changed owner, and nothing new was made. The broker’s fee counts as production; the €300,000 does not.',
         },
         {
           id: 'pension',
           label: 'The state pays €300,000 in pensions',
           feedback:
-            'A transfer moves purchasing power from one person to another without anything being produced in exchange. It is counted when the pensioner spends it, as consumption — not when it is paid.',
+            'A pension moves money from one person to another. Nothing is made in return, so it is a transfer. It only counts later, when the pensioner spends it on things.',
         },
       ],
       correctOptionId: 'new-house',
       explanation:
-        'GDP counts production, and it counts it once, in the period it happened. Second-hand sales, financial trades and transfers all move money without producing anything, so all three are excluded. This is the first place intuition goes wrong: an economy can be very busy — houses changing hands, markets trading, benefits being paid — with none of that activity in GDP.',
+        'GDP counts things that are newly made, once, in the year they were made. Selling an old house, trading shares and paying pensions all move money but make nothing new. So an economy can be very busy, with houses sold, shares traded and benefits paid, and none of that is in GDP.',
     },
     {
       id: 'mc-intermediate',
@@ -55,32 +55,32 @@ export const whatGdpCountsLesson = defineLesson({
       tags: ['gdp', 'double-counting'],
       xp: 25,
       prompt:
-        'A steelmaker sells €40,000 of steel to a bridge builder, who is paid €300,000 for the finished bridge. How much of this is in GDP?',
+        'A steelmaker sells €40,000 of steel to a bridge builder. The builder uses it and is paid €300,000 for the finished bridge. How much of this is in GDP?',
       instructions: 'Pick the best answer',
       options: [
-        { id: 'three-hundred', label: '€300,000 — the steel is inside the bridge’s price' },
+        { id: 'three-hundred', label: '€300,000 — the steel is already inside the bridge’s price' },
         {
           id: 'three-forty',
-          label: '€340,000 — both transactions happened',
+          label: '€340,000 — both sales happened',
           feedback:
-            'That counts the steel twice: once when sold, and again inside the bridge. Every intermediate good would be double-counted this way, and the total would depend on how many firms the supply chain passes through rather than on how much was produced.',
+            'That counts the steel twice: once when it is sold, and again inside the bridge. Counting like this would make GDP depend on how many firms a product passes through, not on how much was made.',
         },
         {
           id: 'two-sixty',
           label: '€260,000 — the bridge’s price minus the steel',
           feedback:
-            'That is the builder’s value added, and summing value added across every firm is the *other* correct way to reach GDP. But then you must also add the steelmaker’s €40,000, which brings you back to €300,000.',
+            'That is only the builder’s part (its “value added”). Adding up every firm’s part is another correct way to get GDP. But then you must also add the steelmaker’s €40,000, which gives €300,000 again.',
         },
         {
           id: 'forty',
           label: '€40,000 — only the raw material is real production',
           feedback:
-            'Turning steel into a bridge is production too. The whole point of the value-added method is that each stage adds something countable.',
+            'Turning steel into a bridge is production too. Each step in making something adds value, and that value counts.',
         },
       ],
       correctOptionId: 'three-hundred',
       explanation:
-        'Only final output counts, which is why there are two routes to the same number: add up spending on final goods, or add up value added at every stage. €300,000 either way. Hold on to this — it is what makes GDP a measure of production rather than of how many times money changed hands.',
+        'Only the final product counts. So there are two ways to get the same number: add up spending on final products, or add up the value each firm adds. Both give €300,000. This is why GDP measures production, not how many times money changed hands.',
     },
     {
       id: 'match-components',
@@ -88,36 +88,36 @@ export const whatGdpCountsLesson = defineLesson({
       tags: ['gdp', 'national-accounts'],
       xp: 25,
       prompt:
-        'Expenditure-side GDP is C + I + G + NX. Match each component to what actually goes in it.',
+        'GDP can be counted as spending: C + I + G + NX. Match each letter to what goes in it.',
       instructions: 'Tap a term, then its definition',
       pairs: [
         {
           id: 'c',
           term: 'C — consumption',
           definition:
-            'Households buying goods and services that are used up: food, haircuts, cosmetics, a cinema ticket',
+            'Households buying things that get used up: food, haircuts, cosmetics, a cinema ticket',
         },
         {
           id: 'i',
-          term: 'I — gross capital formation',
+          term: 'I — investment (capital formation)',
           definition:
-            'Output bought to produce with rather than to use up: machines, a new factory, a new house, additions to inventory',
+            'Things bought to make other things with: machines, a new factory, a new house, extra stock in a warehouse',
         },
         {
           id: 'g',
           term: 'G — government purchases',
           definition:
-            'The state buying output — a nurse’s work, a road — but never its transfers, which produce nothing',
+            'The state buying goods and work, like a nurse’s work or a road. Pensions and benefits are not included',
         },
         {
           id: 'nx',
           term: 'NX — net exports',
           definition:
-            'Exports minus imports, because what was produced abroad is not this country’s production',
+            'Exports minus imports, because things made abroad are not this country’s production',
         },
       ],
       explanation:
-        'Two of these trip people up. G excludes pensions and benefits, so a government can spend enormous sums that never enter G. And imports are subtracted not as a penalty but as a correction: they were already inside C, I and G, and they were not produced here.',
+        'Two of these often confuse people. G leaves out pensions and benefits, so a government can spend huge sums that never enter G. Imports are taken away as a correction, not a penalty: they were already counted inside C, I and G, but they were made abroad.',
     },
     {
       id: 'mc-flow-not-stock',
@@ -125,40 +125,40 @@ export const whatGdpCountsLesson = defineLesson({
       tags: ['gdp', 'flow-vs-stock'],
       xp: 30,
       prompt:
-        'A country has €8 trillion of houses, roads and machines standing, and a GDP of €400 billion. What is the relationship between those two numbers?',
+        'A country owns €8 trillion of houses, roads and machines. Its GDP is €400 billion a year. How are these two numbers related?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'flow-stock',
-          label: 'One is a stock and one is a flow — wealth standing, against production per year',
+          label: 'One is what the country owns; the other is what it produces each year',
         },
         {
           id: 'twenty-years',
-          label: 'The country would take twenty years to rebuild what it has',
+          label: 'The country would need twenty years to rebuild everything',
           feedback:
-            'The arithmetic is right and the meaning is not: most of GDP each year is consumption and replacement, not new capital. The ratio tells you nothing about a rebuilding schedule.',
+            'The sum is right but the meaning is wrong. Most of GDP each year is things used up or replaced, not new buildings and machines. The ratio is not a rebuilding plan.',
         },
         {
           id: 'wealth-ratio',
-          label: 'GDP is 5% of wealth, so the capital stock returns 5% a year',
+          label: 'GDP is 5% of wealth, so the wealth earns 5% a year',
           feedback:
-            'GDP is output, not a return on capital — labour produces most of it. Dividing one by the other yields a number with no interpretation.',
+            'GDP is production, not a return on wealth. Most of it comes from people’s work. Dividing one by the other gives a number that means nothing.',
         },
         {
           id: 'error',
-          label: 'The figures are inconsistent; GDP cannot be smaller than the capital stock',
+          label: 'The figures cannot be right; GDP cannot be smaller than wealth',
           feedback:
-            'It almost always is. A country’s accumulated wealth is the result of decades of output; one year of output is a slice of that, typically well under a fifth.',
+            'It almost always is smaller. A country’s wealth is built from many decades of production. One year of production is only a small slice of it.',
         },
       ],
       correctOptionId: 'flow-stock',
       explanation:
-        'This distinction is the spine of the whole module. GDP is a flow: how much was produced between January and December. The capital stock is what is standing on the 31st. A flow measure has no line for what happened to the stock, which is why the next two lessons can happen at all.',
+        'This difference is the key idea of the whole module. GDP is a flow: what was produced from January to December. Wealth is a stock: what is standing on 31 December. GDP has no line for what happens to the stock, and the next two lessons show why that matters.',
     },
   ],
   keyTakeaways: [
-    'GDP counts newly produced final output, once, in the period it was produced.',
-    'Second-hand sales, share purchases and transfers are excluded — nothing was produced.',
-    'GDP is a flow per year; the capital stock is what stands at a point in time.',
+    'GDP counts new final products, once, in the year they are made.',
+    'Second-hand sales, buying shares and transfers like pensions are left out, because nothing new is made.',
+    'GDP is a flow per year. Wealth is a stock: what exists at one moment.',
   ],
 });

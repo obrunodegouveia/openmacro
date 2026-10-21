@@ -7,9 +7,9 @@ import { defineLesson } from '../../schema';
  */
 export const whatRisingPricesDoLesson = defineLesson({
   id: 'what-rising-prices-do-to-you',
-  title: 'What Rising Prices Do to You Specifically',
+  title: 'What Rising Prices Do to You',
   subtitle:
-    'Not to "the economy". To your salary, your savings and your rent — which move at different speeds, and that is the whole story.',
+    'Not to “the economy”: to your salary, your savings and your rent. They change at different speeds, and that is what matters.',
   icon: '🛒',
   difficulty: 'intro',
   estimatedMinutes: 6,
@@ -21,10 +21,10 @@ export const whatRisingPricesDoLesson = defineLesson({
       tags: ['basics', 'inflation', 'savings'],
       xp: 25,
       currency: 'EUR',
-      prompt: 'You put €10,000 aside and left it alone for ten years.',
+      prompt: 'You put €10,000 aside and do not touch it for ten years.',
       instructions: 'Move the inflation rate and see what is left',
       narrative:
-        'The money is safe. Nobody takes any of it, the bank does not fail, and the number in the app never goes down. The only thing that happens is that everything you were going to buy with it gets more expensive.',
+        'The money is safe. Nobody takes any of it, the bank does not fail, and the number in the app never goes down. The only change is that everything you wanted to buy with it gets more expensive.',
       constants: {
         nominal: 10000,
         years: 10,
@@ -55,7 +55,7 @@ export const whatRisingPricesDoLesson = defineLesson({
           label: 'Gone',
           formulaId: 'purchasing_power_lost',
           format: 'percent',
-          caption: 'Nobody sent you a bill for this',
+          caption: 'Lost without anyone sending you a bill',
         },
       ],
       objective: {
@@ -68,7 +68,7 @@ export const whatRisingPricesDoLesson = defineLesson({
         },
       },
       explanation:
-        'Even at the 2% target — the number policy is deliberately aiming at, and considered a success — ten years costs you about a fifth of it. At 5% it costs nearly two fifths. This is not a scandal or a failure; it is the system working as designed. It is simply worth knowing that "keeping your money safe" and "keeping what your money can buy" are two different things, and only one of them is on offer.',
+        'Even at the 2% target, which counts as success, ten years costs you about a fifth of what your money can buy. At 5% it costs nearly two fifths. This is not a failure: the system is working as designed. But “keeping your money safe” and “keeping what your money can buy” are two different things, and you only get the first.',
     },
     {
       id: 'match-who-feels-it',
@@ -81,26 +81,26 @@ export const whatRisingPricesDoLesson = defineLesson({
         {
           id: 'saver',
           term: 'Someone with savings in the bank',
-          definition: 'Worse off — the same euros, buying less',
+          definition: 'Worse off: the same euros now buy less',
         },
         {
           id: 'borrower',
           term: 'Someone with a fixed-rate mortgage',
-          definition: 'Better off — repaying with euros that are worth less than the ones borrowed',
+          definition: 'Better off: pays back with euros worth less than the ones borrowed',
         },
         {
           id: 'worker',
           term: 'Someone on a salary reviewed once a year',
-          definition: 'Worse off for a while — pay catches up late, if it catches up',
+          definition: 'Worse off for a while: pay catches up late, if at all',
         },
         {
           id: 'owner',
           term: 'Someone who owns a flat',
-          definition: 'Roughly protected — the flat is repriced along with everything else',
+          definition: 'Mostly protected: the flat’s price rises along with everything else',
         },
       ],
       explanation:
-        'Inflation is not a tax on everyone equally; it is a transfer between them. What the saver and the salaried worker lose, the borrower and the asset owner keep. That is worth sitting with, because it explains a great deal about who is anxious about inflation and who is quietly relaxed about it — and the two groups are not the ones you would expect from the newspapers.',
+        'Inflation does not hit everyone equally. It moves value from some people to others. What savers and salary earners lose, borrowers and owners of things like flats keep. This explains who worries about inflation and who does not.',
     },
     {
       id: 'mc-why-not-zero',
@@ -108,18 +108,18 @@ export const whatRisingPricesDoLesson = defineLesson({
       tags: ['basics', 'inflation', 'policy'],
       xp: 20,
       prompt:
-        'If inflation costs savers a fifth of their money every decade, why does the ECB aim for 2% rather than zero?',
+        'Inflation costs savers about a fifth of their money every ten years. So why does the ECB aim for 2% and not zero?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'buffer',
-          label: 'Because it leaves room to cut rates in a downturn, and falling prices bring problems of their own',
+          label: 'It leaves room to cut rates in a crisis, and falling prices cause their own problems',
         },
         {
           id: 'revenue',
           label: 'Because inflation raises money for governments',
           feedback:
-            'It does transfer value to borrowers, governments among them — which is a real criticism of the arrangement rather than the stated reason for the target.',
+            'Inflation does help borrowers, including governments. That is a real criticism, but it is not the official reason for the target.',
         },
         {
           id: 'impossible',
@@ -129,18 +129,18 @@ export const whatRisingPricesDoLesson = defineLesson({
           id: 'growth',
           label: 'Because inflation causes economic growth',
           feedback:
-            'It does not, and the mainstream view has never claimed it does. The argument for a small positive target is about having room to manoeuvre, not about growth.',
+            'It does not, and mainstream economists have never said it does. The case for a small positive target is about having room to act, not about growth.',
         },
       ],
       correctOptionId: 'buffer',
       explanation:
-        'Two reasons, both about room. If inflation sits at zero, then in a downturn a central bank cutting rates to zero has nothing left; a small positive target gives it space. And when prices are falling, people postpone buying and firms postpone hiring, which is a hard hole to climb out of — Japan spent decades on it. You can disagree with the trade, and plenty of serious people do. But it is a trade, made deliberately, and not an accident.',
+        'Two reasons, both about room to act. If inflation is zero, a central bank in a crisis can cut rates only a little before it reaches zero. And when prices fall, people delay buying and companies delay hiring, which is very hard to escape. Japan was stuck like this for decades. Many people disagree with the 2% choice, but it is a deliberate choice.',
     },
   ],
   keyTakeaways: [
     'At the 2% target, ten years costs about a fifth of what your savings can buy.',
-    'Inflation is a transfer, not a general loss: savers and wage earners lose, borrowers and asset owners gain.',
-    'Money kept safe and buying power kept are different things, and only the first is on offer.',
-    'The 2% target is a deliberate trade — room to cut rates, and away from falling prices.',
+    'Inflation moves value between people: savers and workers lose, borrowers and owners gain.',
+    'Keeping money safe is not the same as keeping what it can buy. You only get the first.',
+    'The 2% target is a deliberate choice: room to cut rates, and a safe distance from falling prices.',
   ],
 });

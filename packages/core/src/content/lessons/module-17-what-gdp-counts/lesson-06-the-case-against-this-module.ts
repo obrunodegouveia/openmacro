@@ -20,9 +20,9 @@ import { defineLesson } from '../../schema';
  */
 export const theCaseAgainstThisModuleLesson = defineLesson({
   id: 'the-case-against-this-module',
-  title: 'Five Ways War Is Accretive',
+  title: 'Five Ways War Leaves Something Behind',
   subtitle:
-    'The strongest arguments against everything you have just learned. Four of them survive. One does not.',
+    'The strongest arguments against what you have just learned. Four of them hold up. One does not.',
   icon: '⚔️',
   difficulty: 'advanced',
   estimatedMinutes: 11,
@@ -33,42 +33,42 @@ export const theCaseAgainstThisModuleLesson = defineLesson({
       tags: ['war', 'growth', 'counterarguments'],
       xp: 30,
       prompt:
-        'Five channels through which war genuinely leaves something behind. Match each to the catch that comes with it.',
+        'Here are five ways a war really can leave something useful behind. Match each one to its catch.',
       instructions: 'Tap a term, then its definition',
       pairs: [
         {
           id: 'slack',
-          term: 'Idle capacity',
+          term: 'Idle workers and factories',
           definition:
-            'A grid or a railway would have employed the same workers and left an asset standing — war is a ruinously expensive way to buy a stimulus',
+            'A power grid or a railway would have employed the same workers and left something useful. War is a very expensive way to create jobs',
         },
         {
           id: 'dualuse',
-          term: 'Dual-use infrastructure',
+          term: 'Roads and ports built for the military',
           definition:
-            'The real thing, and the narrowest: only the part that outlives the war counts, and a road is a road whoever paid for it',
+            'Real, but limited: only the part still useful after the war counts, and a road is a road whoever paid for it',
         },
         {
           id: 'spillover',
-          term: 'Technology spillovers',
+          term: 'New technology',
           definition:
-            'Per euro, civilian research almost certainly yields more; what war supplies is urgency and a tolerance for failure, not money',
+            'Civilian research would probably get more per euro. What war adds is urgency and acceptance of failure, not extra money',
         },
         {
           id: 'state',
-          term: 'State capacity',
+          term: 'A stronger state',
           definition:
-            'Income tax, statistics and social insurance arrived with wars — and a state built to fight is not automatically a state that governs well',
+            'Income tax, statistics and social insurance came with wars. But a state built to fight does not always govern well',
         },
         {
           id: 'conquest',
           term: 'Conquest',
           definition:
-            'A transfer, not production: the winner holds what the loser held, and the world is no richer for the move',
+            'Taking, not producing: the winner owns what the loser owned, and the world is no richer',
         },
       ],
       explanation:
-        'None of these is a trick. Each is a genuine mechanism with a genuine limit, and an argument about war and growth that ignores all five is not worth having. What none of them establishes is the strong claim — that the destruction itself was productive.',
+        'None of these is a trick. Each one really happens, and each one has a limit. But none of them proves the strong claim: that the destruction itself made anyone richer.',
     },
     {
       id: 'mc-interstate',
@@ -76,36 +76,36 @@ export const theCaseAgainstThisModuleLesson = defineLesson({
       tags: ['war', 'infrastructure', 'dual-use'],
       xp: 25,
       prompt:
-        'Which is the most literal case of military spending that accretes the way a building does?',
+        'Which is the clearest case of military spending that leaves a lasting asset, like a building does?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'interstate',
           label:
-            'The US Interstate system, created in 1956 as the National System of Interstate and Defense Highways',
+            'The US motorway network, created in 1956 as the “National System of Interstate and Defense Highways”',
         },
         {
           id: 'tanks',
-          label: 'Tank production, because the factories could be converted afterwards',
+          label: 'Making tanks, because the factories could be used for other things afterwards',
           feedback:
-            'The factory is the asset, not the tank — and a plant tooled for armour is expensive to convert. Some were; the conversion is the accretive part, and it is smaller than the outlay.',
+            'The factory is the asset, not the tank. A factory built for tanks is expensive to convert. Some were converted, but that part is much smaller than the spending.',
         },
         {
           id: 'employment',
-          label: 'Wartime employment, because workers gained skills',
+          label: 'Wartime jobs, because workers learned new skills',
           feedback:
-            'Skills are real human capital and they do persist. But that is the idle-capacity channel wearing different clothes, and a civilian programme would have built the same skills.',
+            'The skills are real and they last. But that is just the “idle workers” point again, and a civilian programme would have taught the same skills.',
         },
         {
           id: 'bonds',
-          label: 'War bonds, because households ended the war holding assets',
+          label: 'War bonds, because families ended the war owning savings',
           feedback:
-            'A bond is a claim on future taxes, held by one citizen and owed by all of them. The country as a whole is not richer by a single bond.',
+            'A bond is a promise to be paid from future taxes. One citizen holds it and all citizens owe it. The country as a whole is not richer.',
         },
       ],
       correctOptionId: 'interstate',
       explanation:
-        'Defence justified it, and eighty years of freight has used it. The same is true of Roman roads, of ports, airfields and satellites, and of the network that became the internet. This is the channel with the least to argue about — and note what it is not: it is not the fighting that produced the asset, it is the spending that happened to be routed through a defence budget.',
+        'Defence was the reason for building it, and goods have travelled on it for decades. The same is true of Roman roads, ports, airfields, satellites and the network that became the internet. But note: the fighting did not create these assets. The spending did; it just went through a defence budget.',
     },
     {
       id: 'mc-postwar-miracle',
@@ -113,35 +113,35 @@ export const theCaseAgainstThisModuleLesson = defineLesson({
       tags: ['war', 'reconstruction', 'evidence'],
       xp: 35,
       prompt:
-        'Germany and Japan grew spectacularly after 1945. The usual inference is that destruction cleared out old capital and let newer capital in. What does the evidence actually show?',
+        'Germany and Japan grew very fast after 1945. Many people say the destruction cleared out old factories and made room for newer ones. What does the evidence show?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'catchup',
-          label: 'Catch-up to the path they were already on, not a gain from having been flattened',
+          label: 'They caught up to the path they were already on; the destruction did not help',
         },
         {
           id: 'leapfrog',
-          label: 'A genuine leapfrog — newer vintage capital beat what the winners kept',
+          label: 'A real jump ahead — their new factories beat the old ones the winners kept',
           feedback:
-            'Newer capital was installed, and that is true. But if destruction were the mechanism, the most heavily bombed cities should have overtaken the least bombed ones. Studied directly, they returned to their own pre-war trajectories instead.',
+            'New factories were built, that is true. But if destruction helped, the most bombed cities should have grown past the least bombed ones. Instead, studies show they just returned to their own pre-war path.',
         },
         {
           id: 'marshall',
-          label: 'It was the Marshall Plan, not the destruction',
+          label: 'It was the Marshall Plan aid, not the destruction',
           feedback:
-            'The aid mattered, and it was small next to the economies it entered — a few per cent of recipient GDP. It is not large enough to be the whole story either way.',
+            'The aid mattered, but it was small next to those economies: a few per cent of their GDP. It cannot explain the whole story.',
         },
         {
           id: 'unknowable',
-          label: 'Unknowable — there is no counterfactual for a destroyed country',
+          label: 'We cannot know, because we cannot compare with a country that was not destroyed',
           feedback:
-            'There is a usable one: cities within the same country, bombed to very different degrees, under the same government and currency. That comparison is exactly what the research uses.',
+            'There is a useful comparison: cities in the same country, bombed very differently, under the same government and currency. That is exactly what researchers compared.',
         },
       ],
       correctOptionId: 'catchup',
       explanation:
-        'Davis and Weinstein followed Japanese cities through the bombing and found them converging back to the population paths they had been on before it, within about fifteen years. Fast growth from a low base looks like a miracle in the growth rate and is a return to trend in the level. Both countries would have been richer still without the war — which is the answer the growth figures cannot give you and the levels can.',
+        'Researchers Davis and Weinstein followed bombed Japanese cities. Within about fifteen years, the cities returned to the population growth they had before the bombing. Fast growth from a low point looks like a miracle, but it is a return to normal. Both countries would have been even richer without the war.',
     },
     {
       id: 'mc-whose-territory',
@@ -149,35 +149,35 @@ export const theCaseAgainstThisModuleLesson = defineLesson({
       tags: ['war', 'gdp', 'capital-stock'],
       xp: 35,
       prompt:
-        'The United States finished the Second World War with a larger industrial base than it started with. Europe finished it in rubble. What does that difference turn on?',
+        'The United States ended the Second World War with more factories than it started with. Europe ended it in ruins. What explains the difference?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'territory',
-          label: 'Where the destruction happened, not who won it',
+          label: 'Where the destruction happened, not who won',
         },
         {
           id: 'winning',
-          label: 'Winning — the victors gain and the losers pay for it afterwards',
+          label: 'Winning — the winners gain and the losers pay afterwards',
           feedback:
-            'Britain and the Soviet Union won and were devastated; Britain was still rationing bread in 1948. Victory did not protect a capital stock that the fighting reached.',
+            'Britain and the Soviet Union won and were badly damaged. Britain was still rationing bread in 1948. Winning did not protect factories that the fighting reached.',
         },
         {
           id: 'planning',
-          label: 'Better economic management of the war effort',
+          label: 'Better economic planning during the war',
           feedback:
-            'Wartime planning was formidable everywhere, including in economies that ended in ruins. Competence did not decide this.',
+            'Wartime planning was strong everywhere, including in countries that ended in ruins. Skill did not decide this.',
         },
         {
           id: 'reserve',
-          label: 'The dollar becoming the reserve currency',
+          label: 'The dollar becoming the world’s main currency',
           feedback:
-            'That followed from the industrial and financial position rather than creating it. Bretton Woods ratified an outcome the war had already produced.',
+            'That came after the US had the factories and the money, not before. The 1944 Bretton Woods agreement only confirmed what the war had already decided.',
         },
       ],
       correctOptionId: 'territory',
       explanation:
-        '"Is war accretive" has no general answer because war is not one thing that happens to everybody. Production happens where the factories are; destruction happens where the fighting is. When those are different places, one participant books the output and another books the loss — and the world total is still down by everything destroyed.',
+        'There is no general answer to “does war make a country richer?”, because war does not hit everyone the same way. Production happens where the factories are. Destruction happens where the fighting is. When those are different places, one country records the production and another suffers the loss. The world as a whole still loses everything that was destroyed.',
     },
     {
       id: 'mc-insurance',
@@ -185,41 +185,41 @@ export const theCaseAgainstThisModuleLesson = defineLesson({
       tags: ['defence', 'growth', 'framing'],
       xp: 35,
       prompt:
-        'After all of that, what is the most defensible thing to say about defence spending and growth?',
+        'After all of this, what is the fairest thing to say about defence spending and growth?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'insurance',
-          label: 'It is insurance — a precondition for growth rather than a source of it',
+          label: 'It is like insurance — needed for growth, but not a source of growth',
         },
         {
           id: 'always-waste',
-          label: 'It is waste, since the output produces nothing',
+          label: 'It is a waste, since what it buys produces nothing',
           feedback:
-            'It produces security, which is a service and a real one. A country that loses its territory loses every other thing in this course along with it.',
+            'It produces security, and that is a real service. A country that loses its territory loses everything else in this course too.',
         },
         {
           id: 'engine',
-          label: 'It is an engine of growth, given how much technology came out of it',
+          label: 'It drives growth, given how much technology came from it',
           feedback:
-            'The spillovers are real and they are a by-product. Buying research through a defence budget works; it is not the cheapest way to buy research, and the lesson before this one is why.',
+            'The new technology is real, but it is a side effect. Paying for research through a defence budget works, but it is not the cheapest way, as the first question showed.',
         },
         {
           id: 'neutral',
-          label: 'It is neutral — it counts in GDP like anything else',
+          label: 'It makes no difference — it counts in GDP like anything else',
           feedback:
-            'It counts like anything else, which is the whole problem the module started from. Counting the same is not being the same.',
+            'It counts like anything else, and that is the problem this module started with. Counting the same is not being the same.',
         },
       ],
       correctOptionId: 'insurance',
       explanation:
-        'Nobody calls their fire insurance a source of wealth, and nobody sensible goes without it. Defence buys a service that is consumed continuously and whose value is invisible precisely when it is working. The mechanical difference from a hospital stands: a hospital is not diminished by treating patients, and a shell fired is gone and takes a bridge with it. That is the asymmetry — not the accounting, which treats a warship as capital exactly like a factory.',
+        'Nobody calls fire insurance a source of wealth, and nobody sensible lives without it. Defence is a service you use all the time, and you only notice it when it fails. The difference from a hospital is real: a hospital is not used up by treating patients, but a fired shell is gone and may destroy a bridge too.',
     },
   ],
   keyTakeaways: [
-    'Four channels are real: idle capacity, dual-use infrastructure, spillovers and state capacity. Each has a limit.',
-    'Conquest enriches a winner by transfer, not by production.',
-    'The post-war miracle was catch-up to trend, not a gain from destruction.',
-    'Defence is insurance: a precondition for growth rather than a source of it.',
+    'Four things are real: idle workers put to work, roads and ports, new technology and a stronger state. Each has a limit.',
+    'Conquest makes a winner richer by taking, not by producing.',
+    'The post-war “miracle” was catching up to the normal path, not a gain from destruction.',
+    'Defence is like insurance: needed for growth, but not a source of it.',
   ],
 });

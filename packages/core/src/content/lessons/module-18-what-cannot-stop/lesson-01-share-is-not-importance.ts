@@ -10,9 +10,9 @@ import { defineLesson } from '../../schema';
  */
 export const shareIsNotImportanceLesson = defineLesson({
   id: 'share-is-not-importance',
-  title: 'The Sector That Shrank Because It Won',
+  title: 'The Sector That Shrank Because It Succeeded',
   subtitle:
-    'Agriculture is about 2% of output in a rich economy. Try going a week without it.',
+    'Farming is about 2% of a rich economy. Try going a week without it.',
   icon: '🌾',
   difficulty: 'intro',
   estimatedMinutes: 9,
@@ -23,35 +23,35 @@ export const shareIsNotImportanceLesson = defineLesson({
       tags: ['sectors', 'productivity'],
       xp: 20,
       prompt:
-        'Agriculture was around 40% of the American workforce in 1900 and is a couple of per cent of output today. What does that fall record?',
+        'In 1900, about 40% of American workers were in farming. Today farming is only a few per cent of the economy. What does that fall show?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'productivity',
-          label: 'Productivity — the same food from a fraction of the people and land',
+          label: 'Productivity — the same food now needs far fewer people and less land',
         },
         {
           id: 'less-food',
-          label: 'A country that grows much less of its own food',
+          label: 'The country now grows much less of its own food',
           feedback:
-            'The United States is one of the largest food exporters in the world. Output rose enormously; it is the share of the economy needed to produce it that collapsed.',
+            'The United States is one of the world’s biggest food exporters. It produces far more food than before. What shrank is the share of the economy needed to grow it.',
         },
         {
           id: 'unimportant',
-          label: 'Food becoming less important to people',
+          label: 'Food has become less important to people',
           feedback:
-            'Nobody eats less because farming got efficient. What changed is the price of food relative to everything else, and a falling relative price shrinks a sector’s share even as its volume grows.',
+            'Nobody eats less because farming got efficient. Food got cheaper compared with other things. A falling price makes a sector a smaller share, even when it produces more.',
         },
         {
           id: 'imports',
-          label: 'Production moving abroad, as it did in manufacturing',
+          label: 'Farming moved abroad, as factory work did',
           feedback:
-            'Some did. But the domestic volume is up many times over on a fraction of the labour, which offshoring cannot explain.',
+            'Some did. But the country grows many times more food than in 1900, with far fewer workers. Moving abroad cannot explain that.',
         },
       ],
       correctOptionId: 'productivity',
       explanation:
-        'A sector that gets radically better at its job takes a smaller share of spending, because share is price times quantity and the price collapsed. So the smallest sectors in a rich economy include some of the most successful ones — and reading a 2% share as 2% of importance gets the story exactly backwards.',
+        'When a sector gets much better at its job, it takes a smaller share of spending. A share is price times quantity, and the price fell a lot. So some of the smallest sectors in a rich economy are among the most successful. Reading a 2% share as “2% important” gets the story backwards.',
     },
     {
       id: 'mc-baumol',
@@ -59,62 +59,62 @@ export const shareIsNotImportanceLesson = defineLesson({
       tags: ['baumol', 'services', 'productivity'],
       xp: 30,
       prompt:
-        'A Mozart string quartet needs the same four musicians it needed in 1790. Health and education have barely more room to automate. What does that imply for their share of GDP over time?',
+        'A Mozart string quartet still needs the same four musicians it needed in 1790. Health care and teaching also cannot be automated much. What happens to their share of GDP over time?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'rises',
-          label: 'It rises, because they get more expensive relative to everything that automates',
+          label: 'It rises, because they get more expensive compared with things that are automated',
         },
         {
           id: 'falls',
-          label: 'It falls, because they add no productivity growth',
+          label: 'It falls, because they do not become more productive',
           feedback:
-            'Backwards. Their wages must keep pace with the rest of the economy or the musicians and nurses leave for it — and with no offsetting productivity gain, that shows up entirely as cost.',
+            'The other way round. Their wages must keep up with the rest of the economy, or musicians and nurses would leave for other jobs. With no productivity gain to balance that, their costs go up.',
         },
         {
           id: 'stable',
-          label: 'It stays flat, since demand for them is stable',
+          label: 'It stays the same, because demand for them is steady',
           feedback:
-            'Demand does grow with income, which adds to the effect. But the effect works even with flat demand, purely through relative prices.',
+            'Demand does grow as people get richer, which adds to the effect. But the effect happens even with steady demand, just because of prices.',
         },
         {
           id: 'inefficiency',
-          label: 'It rises, which is evidence they are being run inefficiently',
+          label: 'It rises, which proves they are badly run',
           feedback:
-            'This is the most costly misreading of the three. Cost disease is a relative-price phenomenon, not waste — a quartet is not badly managed for needing four players.',
+            'This is the most costly mistake. The cost rises because everything else gets cheaper, not because of waste. A quartet is not badly managed because it needs four players.',
         },
       ],
       correctOptionId: 'rises',
       explanation:
-        'Baumol and Bowen named this in 1966. It means a rising share of spending on health, education or care is partly a mechanical consequence of everything else getting cheaper — not, by itself, evidence of either growing importance or bad management. Whenever someone quotes a sector’s rising share as an argument, the first question is whether the quantity rose or only the relative price.',
+        'Economists Baumol and Bowen described this “cost disease” in 1966. A rising share of spending on health, education or care partly happens automatically, because everything else gets cheaper. On its own, it does not prove the sector became more important or badly managed. So when someone quotes a rising share, ask: did the quantity rise, or only the price?',
     },
     {
       id: 'match-why-share-moves',
       type: 'concept_match',
       tags: ['sectors', 'measurement'],
       xp: 30,
-      prompt: 'A sector’s share of GDP can rise for three unrelated reasons. Match each to its signature.',
+      prompt: 'A sector’s share of GDP can rise for three different reasons. Match each reason to what you would see.',
       instructions: 'Tap a term, then its definition',
       pairs: [
         {
           id: 'volume',
-          term: 'People genuinely want more of it',
-          definition: 'Quantity rises and the relative price is roughly flat — growth you can see in the units',
+          term: 'People really want more of it',
+          definition: 'The quantity rises and its price stays about the same compared with other things',
         },
         {
           id: 'baumol',
           term: 'Cost disease',
-          definition: 'Quantity is flat and the relative price rises, because the rest of the economy got cheaper',
+          definition: 'The quantity stays the same and its price rises, because everything else got cheaper',
         },
         {
           id: 'scarcity',
           term: 'A supply shock',
-          definition: 'Quantity falls and the price rises more, so the bill goes up while people get less',
+          definition: 'The quantity falls and the price rises even more, so people pay more and get less',
         },
       ],
       explanation:
-        'The third is the one that matters for the rest of this module. When energy went from a few per cent of European spending to a great deal more in 2022, nobody had decided energy was more important — the quantity available fell and the price did the rest. A share can rise because a sector is winning, because it is standing still, or because it is failing.',
+        'The third one matters most for this module. In 2022, energy went from a few per cent of European spending to much more. Nobody decided energy had become more important. Less energy was available, and the price did the rest. A share can rise because a sector is winning, standing still or failing.',
     },
     {
       id: 'mc-which-ranking',
@@ -122,40 +122,40 @@ export const shareIsNotImportanceLesson = defineLesson({
       tags: ['sectors', 'criticality'],
       xp: 30,
       prompt:
-        'Retail is a larger share of output than energy in most rich economies. Which is the more important sector?',
+        'In most rich economies, shops are a bigger share of the economy than energy. Which sector is more important?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'depends',
-          label: 'The question is badly posed until you say what for',
+          label: 'You cannot answer until you say “important for what?”',
         },
         {
           id: 'retail',
-          label: 'Retail, since it is larger and employs more people',
+          label: 'Shops, since they are bigger and employ more people',
           feedback:
-            'That answers "which is bigger", which was not asked. Size is one ranking and the module is about the fact that there are three.',
+            'That answers “which is bigger?”, which was not the question. Size is one way to rank sectors, and this module shows there are three.',
         },
         {
           id: 'energy',
           label: 'Energy, because everything else needs it',
           feedback:
-            'This is the answer the module will end up defending — but not yet, and not for free. It needs the test that the next lesson builds, or it is just a slogan.',
+            'This module will end up agreeing — but you need the test from the next lesson to show it. Without the test, it is just a slogan.',
         },
         {
           id: 'equal',
-          label: 'Equally important; the market has priced both correctly',
+          label: 'Both are equally important; the market prices both correctly',
           feedback:
-            'Prices clear a market under normal conditions. They say little about what happens when supply is interrupted, which is the question criticality asks.',
+            'Prices work well when things are normal. They say little about what happens when supply suddenly stops, and that is what “important” means here.',
         },
       ],
       correctOptionId: 'depends',
       explanation:
-        'There are three defensible rankings and they disagree. By size: what we spend most on. By criticality: what we cannot do without. By capacity: what raises what we can produce next. Almost every public argument about the economy is two of those three being confused — and the next lesson makes the second one measurable.',
+        'There are three fair ways to rank sectors, and they disagree. By size: what we spend most on. By criticality: what we cannot do without. By capacity: what helps us produce more in the future. Most public arguments about the economy mix up two of these. The next lesson shows how to measure the second one.',
     },
   ],
   keyTakeaways: [
-    'A shrinking share can mean a sector got radically better, not less important.',
-    'Cost disease raises a share through relative prices, with no change in quantity.',
-    'Size, criticality and future capacity are three rankings, and they disagree.',
+    'A shrinking share can mean a sector got much better, not less important.',
+    'Cost disease raises a sector’s share through prices alone, with no change in quantity.',
+    'Size, criticality and future capacity are three different rankings, and they disagree.',
   ],
 });

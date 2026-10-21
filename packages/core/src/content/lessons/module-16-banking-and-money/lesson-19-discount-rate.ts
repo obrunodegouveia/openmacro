@@ -5,7 +5,7 @@ export const kabDiscountRateLesson = defineLesson({
   id: 'kab-discount-rate',
   title: 'When Nobody Will Lend to You',
   subtitle:
-    'The funds rate needs a willing counterparty. The discount window is what exists for when there is none.',
+    'Banks usually borrow from each other. The discount window is where a bank goes when no other bank will lend to it.',
   icon: '🪟',
   difficulty: 'core',
   estimatedMinutes: 17,
@@ -20,36 +20,36 @@ export const kabDiscountRateLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['discount-rate', 'lender-of-last-resort'],
       xp: 25,
-      prompt: 'Why is the discount rate deliberately set above the federal funds rate?',
+      prompt:
+        'The discount rate is what the Fed charges a bank for a loan. The federal funds rate is what banks charge each other. Why does the Fed set the discount rate higher on purpose?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'last-resort',
-          label:
-            'So banks try each other first and come to the window last',
+          label: 'So banks borrow from each other first and come to the Fed last',
         },
         {
           id: 'profit',
-          label: 'So the central bank makes more money on the loan',
+          label: 'So the central bank makes more money on each loan',
           feedback:
-            'Its surplus goes back to the Treasury, so profit is not the motive. The spread exists to shape behaviour.',
+            'The Fed’s profit goes back to the Treasury, so profit is not the reason. The higher rate is there to change how banks behave.',
         },
         {
           id: 'risk',
-          label: 'Because lending to a distressed bank is riskier',
+          label: 'Because lending to a bank in trouble is riskier',
           feedback:
-            'Reasonable in principle, but the loan is backed by collateral. The stated purpose is to keep the window a last resort rather than a first choice.',
+            'That sounds sensible, but the loan is backed by collateral. The real purpose is to keep the window a last choice, not a first one.',
         },
         {
           id: 'inflation',
-          label: 'To stop discount lending from being inflationary',
+          label: 'To stop loans from the Fed from causing inflation',
           feedback:
-            'Both kinds of lending move reserves around in the same way. The difference is about who lends to whom, not about inflation.',
+            'Both kinds of loan move reserves around in the same way. The difference is who lends to whom, not inflation.',
         },
       ],
       correctOptionId: 'last-resort',
       explanation:
-        'If the window were cheaper than borrowing from other banks, no bank would ever bother with another bank. When the video was made, the gap was about one percentage point. The gap also gives a signal: heavy use of the window says lending between banks has stopped working.',
+        'If the Fed were cheaper, no bank would ever borrow from another bank. When the video was made, the gap was about one percentage point. The gap is also a signal: if many banks use the window, lending between banks has stopped working.',
     },
     {
       id: 'mc-pariah',
@@ -57,36 +57,35 @@ export const kabDiscountRateLesson = defineLesson({
       tags: ['bank-run', 'liquidity'],
       xp: 25,
       prompt:
-        'A bank faces heavy withdrawals and no other bank will lend to it, because none can judge what its assets are worth. Why should the other banks care?',
+        'Many depositors are taking money out of one bank. No other bank will lend to it, because nobody can tell what its loans are really worth. Why should the other banks care?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'systemic',
-          label:
-            'If one depositor is turned away, the story spreads and every bank faces a run',
+          label: 'If one depositor is sent away, the news spreads and every bank faces a run',
         },
         {
           id: 'charity',
-          label: 'Because the central bank is obliged to rescue any bank that asks',
+          label: 'Because the central bank must rescue any bank that asks',
           feedback:
-            'It is not, and Sal’s commentary videos argue that it often cannot tell whether it should — a bank that is bust and one that is merely unlucky make the same claim.',
+            'It does not have to. Sal also argues that the Fed often cannot tell a bank that is broke from one that is just short of cash.',
         },
         {
           id: 'exposure',
-          label: 'Because the other banks have lent to it',
+          label: 'Because the other banks have lent money to it',
           feedback:
-            'That is a real way trouble spreads, but the one stressed here is confidence: depositors cannot tell which bank is sound.',
+            'That is one real way trouble spreads. But the video stresses trust: depositors cannot tell which bank is safe.',
         },
         {
           id: 'no-care',
-          label: 'They do not — a failing bank is a competitor gone',
+          label: 'They do not care — one less bank means one less rival',
           feedback:
-            'That is the reasoning the video rejects. In a fractional reserve system a single visible failure can empty every other bank.',
+            'The video says the opposite. When banks keep only part of their deposits as cash, one bank failing in public can empty every other bank.',
         },
       ],
       correctOptionId: 'systemic',
       explanation:
-        'The first depositor turned away calls the newspapers, and then nobody knows which banks are sound. The window exists because the alternative to lending against collateral is a panic across the whole system — which is also why it hands the central bank the hard problem of telling a bank that is short of cash from one that is bust.',
+        'The first depositor who is sent away tells the newspapers. Then nobody knows which banks are safe, and people run to all of them. The window exists to stop that panic. It also leaves the Fed with a hard job: telling a bank that is short of cash from a bank that is broke.',
     },
     {
       id: 'mc-target-versus-price',
@@ -94,35 +93,35 @@ export const kabDiscountRateLesson = defineLesson({
       tags: ['discount-rate', 'fed-funds', 'monetary-policy'],
       xp: 35,
       prompt:
-        'Sal says the federal funds rate and the discount rate move together but are "pretty different in their actual implementation". What is the difference?',
+        'Sal says the federal funds rate and the discount rate move together, but they work very differently. What is the difference?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'targetvsprice',
-          label: 'The funds rate is a target the Fed steers the market towards; the discount rate is a price the Fed itself charges',
+          label: 'The funds rate is a target the Fed pushes the market towards; the discount rate is a price the Fed charges',
         },
         {
           id: 'termlength',
-          label: 'One is overnight and the other is for a longer term',
+          label: 'One rate is for loans of one night, and the other is for loans of several months',
           feedback:
-            'Discount window loans are short too. The difference is who is lending, and whether the rate is simply posted or reached in the market.',
+            'Loans from the window are short too. The difference is who lends, and whether the rate is simply set or found in a market.',
         },
         {
           id: 'whopays',
-          label: 'One is paid by banks and the other by the public',
+          label: 'Banks pay one of the rates and the public pays the other',
           feedback:
-            'The public borrows from neither. Both rates live entirely inside the banking system.',
+            'The public borrows at neither rate. Both rates are only for banks.',
         },
         {
           id: 'sameahing',
-          label: 'Nothing real — the two names describe one rate',
+          label: 'There is no real difference — they are two names for one rate',
           feedback:
-            'They are reliably different numbers, and the gap between them is deliberate. A bank choosing between them is choosing between two different lenders.',
+            'They are always two different numbers, and the gap is on purpose. A bank choosing between them is choosing between two different lenders.',
         },
       ],
       correctOptionId: 'targetvsprice',
       explanation:
-        'The funds rate is a goal the Fed reaches indirectly, by adding or removing reserves until banks lending to each other overnight settle on it. The discount rate is simply posted: turn up at the window and this is what you pay. One is policy carried out through a market, the other is a service with a price list — which is why the Fed can change the discount rate just by announcing it, and cannot change the funds rate the same way.',
+        'The Fed cannot set the funds rate directly. It adds or removes reserves until banks lending to each other overnight agree on that rate. The discount rate is simply a price: come to the window and this is what you pay. So the Fed can change the discount rate just by announcing it, but not the funds rate.',
     },
     {
       id: 'mc-money-destroyed',
@@ -130,35 +129,35 @@ export const kabDiscountRateLesson = defineLesson({
       tags: ['open-market-operations', 'money-supply'],
       xp: 35,
       prompt:
-        'The Fed sells a Treasury bill to raise rates. The buyer pays with money held at a bank, so that bank’s reserves at the Fed fall by the same amount. What has happened to that money?',
+        'To raise rates, the Fed sells a Treasury bill (a short government bond). The buyer pays from a bank account, so that bank’s reserves at the Fed fall by the same amount. What happened to that money?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'destroyed',
-          label: 'It no longer exists: the Fed’s liability (the reserves) shrank as its asset (the bill) left',
+          label: 'It no longer exists: the Fed’s debt (the reserves) shrank as its asset (the bill) left',
         },
         {
           id: 'vault',
-          label: 'It is sitting in the Fed’s vault, waiting to be spent again',
+          label: 'It is in the Fed’s vault, ready to be spent again later',
           feedback:
-            'Money owed by the Fed to itself is not money — it is a promise to itself, which is no promise at all. Only notes and reserves held outside the Fed count.',
+            'Money the Fed owes to itself is not money. A promise to yourself is no promise at all. Only notes and reserves held outside the Fed count.',
         },
         {
           id: 'treasury',
-          label: 'It went to the Treasury as government revenue',
+          label: 'It went to the Treasury as money for the government',
           feedback:
-            'The Treasury is not party to this trade. The Fed sold a bond it already owned to a private buyer.',
+            'The Treasury is not part of this trade. The Fed sold a bond it already owned to a private buyer.',
         },
         {
           id: 'moved',
-          label: 'It moved to the buyer, who now holds it instead',
+          label: 'It moved to the buyer, who holds it now instead',
           feedback:
-            'The buyer handed money over and received a bond. Follow the money rather than the bond: it goes back to the Fed, which issued it, and vanishes.',
+            'The buyer gave money and got a bond. Follow the money, not the bond: it goes back to the Fed, which created it, and disappears.',
         },
       ],
       correctOptionId: 'destroyed',
       explanation:
-        'Money creation runs in reverse just as cleanly, and this is the fact most commentary misses: base money is not a stock released into the world once that then circulates forever. It is created when the central bank buys and destroyed when it sells. Quantitative tightening is nothing more exotic than this, repeated on a large scale — the Fed lets bonds mature or sells them, and the reserves that paid for them disappear.',
+        'The Fed creates base money when it buys, and destroys it when it sells. Base money is not a fixed amount that goes out once and stays forever. Quantitative tightening is just this on a large scale: the Fed sells bonds or lets them end, and the reserves that paid for them disappear.',
     },
     {
       id: 'mc-stigma',
@@ -166,35 +165,35 @@ export const kabDiscountRateLesson = defineLesson({
       tags: ['discount-rate', 'lender-of-last-resort'],
       xp: 35,
       prompt:
-        'The discount window exists for a bank nobody else will lend to. What problem does that create for a bank that really needs it?',
+        'The discount window is for a bank that no one else will lend to. What problem does that cause for a bank that really needs it?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'stigma',
-          label: 'Using it announces that nobody else would lend to you',
+          label: 'Using it tells everyone that no other bank would lend to you',
         },
         {
           id: 'collateral',
-          label: 'It has to post collateral, which it may not have',
+          label: 'It must give collateral, which it may not have',
           feedback:
-            'Collateral is a real limit, but a sound bank usually has some. The deeper problem is what everyone else concludes when they find out the bank used the window.',
+            'Collateral is a real limit, but a healthy bank usually has some. The bigger problem is what everyone thinks when they hear the bank used the window.',
         },
         {
           id: 'expensive',
           label: 'The rate is higher, so it costs more than borrowing from a bank',
           feedback:
-            'It costs about a percentage point more — trivial next to failing. Banks have avoided the window while paying far more elsewhere, which shows price is not what stops them.',
+            'It costs about one percentage point more, which is tiny next to failing. Banks have avoided the window even when other loans cost far more, so price is not what stops them.',
         },
         {
           id: 'slow',
-          label: 'The Fed takes too long to approve and fund the loan',
+          label: 'The Fed takes too long to agree to the loan and pay it',
           feedback:
-            'The window is designed to lend on the same day. Speed is one thing it reliably delivers.',
+            'The window is built to lend on the same day. Speed is not the problem.',
         },
       ],
       correctOptionId: 'stigma',
       explanation:
-        'Sal calls such a bank the pariah of the banking community, and that label is the problem. A service only desperate banks use marks you as desperate, so banks avoid it exactly when it would help most. In late 2007 the Fed created the Term Auction Facility, which lent on similar terms through auctions, largely to get round that stigma. Bagehot said to lend freely at a penalty rate; he did not foresee that the penalty banks feared most would be damage to their reputation.',
+        'Sal calls such a bank an outcast among banks, and that is the problem. If only desperate banks use the window, using it makes you look desperate. So banks avoid it just when it would help most. In late 2007 the Fed started the Term Auction Facility, which lent in a similar way through auctions, mainly to get round this shame.',
     },
     {
       id: 'match-two-rates',
@@ -207,26 +206,26 @@ export const kabDiscountRateLesson = defineLesson({
         {
           id: 'funds',
           term: 'The federal funds rate',
-          definition: 'What one bank charges another overnight, steered by the Fed rather than set by it',
+          definition: 'What one bank charges another for one night; the Fed steers it but does not set it',
         },
         {
           id: 'discount',
           term: 'The discount rate',
-          definition: 'What the Fed itself charges a bank that turns up at the window, posted in advance',
+          definition: 'What the Fed itself charges a bank that comes to the window; it is set in advance',
         },
         {
           id: 'spread',
           term: 'The gap between them',
-          definition: 'Kept positive on purpose, so banks go to each other first and to the Fed last',
+          definition: 'Kept above zero on purpose, so banks go to each other first and to the Fed last',
         },
       ],
       explanation:
-        'If the window were the cheaper option, nobody would ever call another bank, and the Fed would end up funding the entire banking system every night instead of only its emergencies. The higher rate is what keeps lending between banks alive — and it is also, awkwardly, what makes turning up at the window an admission of trouble.',
+        'If the window were cheaper, no bank would ever call another bank. The Fed would then lend to the whole banking system every night, not only in emergencies. The higher rate keeps banks lending to each other. But it also means that going to the window looks like a sign of trouble.',
     },
   ],
   keyTakeaways: [
-    'The funds rate is bank-to-bank; the discount rate is central-bank-to-bank.',
-    'The discount rate sits higher so the window stays a last resort.',
-    'Discount window loans are backed by collateral.',
+    'The funds rate is what banks charge each other; the discount rate is what the Fed charges banks.',
+    'The discount rate is higher so that the window stays a last choice.',
+    'Loans from the discount window are backed by collateral.',
   ],
 });

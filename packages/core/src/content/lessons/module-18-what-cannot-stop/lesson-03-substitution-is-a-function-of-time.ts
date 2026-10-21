@@ -16,7 +16,7 @@ export const substitutionIsAFunctionOfTimeLesson = defineLesson({
   id: 'substitution-is-a-function-of-time',
   title: 'The Same Shock, Twice, With Different Endings',
   subtitle:
-    'Nothing substitutes in a month and almost everything substitutes in a decade. Criticality is a statement about a horizon.',
+    'Almost nothing can be replaced in a month. Almost everything can be replaced in ten years. So “critical” always means critical over some length of time.',
   icon: '⏳',
   difficulty: 'core',
   estimatedMinutes: 10,
@@ -27,35 +27,35 @@ export const substitutionIsAFunctionOfTimeLesson = defineLesson({
       tags: ['energy', 'elasticity'],
       xp: 30,
       prompt:
-        'Oil quadrupled in 1973-74 and rich economies fell into recession. By the mid-1980s they used far less oil per unit of output. What does that contrast establish?',
+        'The oil price rose four times over in 1973–74, and rich countries fell into recession. By the mid-1980s, they used much less oil for the same production. What does that show?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'horizon',
-          label: 'Substitution is real and slow — it needs new equipment, buildings and habits',
+          label: 'Replacing oil is possible but slow — it needs new machines, buildings and habits',
         },
         {
           id: 'overstated',
-          label: 'The 1974 recession was not really about oil',
+          label: 'The 1974 recession was not really caused by oil',
           feedback:
-            'It was substantially about oil, and about the policy response to it. The point is not that the shock was small but that the same shock lands differently depending on how long there is to adapt.',
+            'It was caused largely by oil, and by how governments reacted. The point is not that the shock was small. It is that the same shock hits differently depending on how much time there is to adapt.',
         },
         {
           id: 'permanent',
-          label: 'Economies permanently adapt within a year or two of any shock',
+          label: 'Economies always adapt fully within a year or two of any shock',
           feedback:
-            'It took a decade and a large amount of capital spending — new boilers, insulation, smaller cars, different factories. Within a year or two, almost nothing had changed.',
+            'It took ten years and a lot of spending: new boilers, insulation, smaller cars, different factories. After a year or two, almost nothing had changed.',
         },
         {
           id: 'prices-fix',
-          label: 'Prices solve shortages, so the shock was self-correcting',
+          label: 'Prices solve shortages, so the shock fixed itself',
           feedback:
-            'Prices are what drove the adaptation, and they took ten years to work through the capital stock. A mechanism that needs a decade is not a correction for this winter.',
+            'High prices did drive the change, but it took ten years to replace the old equipment. Something that takes ten years does not help this winter.',
         },
       ],
       correctOptionId: 'horizon',
       explanation:
-        'The elasticity of demand for an essential input is close to zero in the short run and substantial in the long run, and the difference is the capital stock. You cannot insulate a house, replace a fleet or re-tool a factory by Friday. That is why "the market will adapt" and "this will be devastating" are both true statements about the same shock, at different horizons.',
+        'In the short run, people can hardly use less of an essential input. In the long run, they can use much less. The difference is the equipment and buildings: you cannot insulate a house, replace your vehicles or change a factory by Friday. So “the market will adapt” and “this will be terrible” can both be true about the same shock, over different lengths of time.',
     },
     {
       id: 'mc-gas-2022',
@@ -63,94 +63,94 @@ export const substitutionIsAFunctionOfTimeLesson = defineLesson({
       tags: ['energy', 'europe', 'substitution'],
       xp: 35,
       prompt:
-        'Russian pipeline gas went from over 40% of EU imports to under a tenth within a year, faster than almost anyone forecast, without the industrial collapse many predicted. What made that possible?',
+        'Russian pipeline gas fell from over 40% of EU gas imports to under 10% within a year. That was faster than almost anyone expected, and industry did not collapse as many had predicted. What made it possible?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'many-margins',
-          label: 'A dozen partial margins at once, none of them sufficient alone',
+          label: 'Many small changes at once, none of them enough on its own',
         },
         {
           id: 'renewables',
-          label: 'Renewables were built fast enough to replace the missing volumes',
+          label: 'Wind and solar were built fast enough to replace the missing gas',
           feedback:
-            'Build-out accelerated and it is not fast enough to have done this in a year. Most of the gap was closed by buying gas from somewhere else and by using less of it.',
+            'Building did speed up, but not fast enough to do this in one year. Most of the gap was closed by buying gas elsewhere and by using less.',
         },
         {
           id: 'recession',
-          label: 'A deep recession destroyed the demand',
+          label: 'A deep recession cut the demand for gas',
           feedback:
-            'Output held up better than forecast. Energy-intensive industry did contract hard — which is where the adjustment landed — but the aggregate recession that was widely predicted did not arrive.',
+            'The economy did better than expected. Industries that use a lot of energy did cut back hard, and that is where much of the change happened. But the big recession many expected did not come.',
         },
         {
           id: 'overstated-dependence',
-          label: 'The dependence had been exaggerated all along',
+          label: 'Europe had never really depended on Russian gas',
           feedback:
-            'It was real, and the adjustment was expensive: gas prices spiked, governments spent heavily on support, and some industry left permanently. Surviving a shock is not evidence there was none.',
+            'The dependence was real, and the change was expensive. Gas prices jumped, governments spent a lot on support, and some industry left for good. Surviving a shock does not mean there was no shock.',
         },
       ],
       correctOptionId: 'many-margins',
       explanation:
-        'Substitution rarely arrives as one replacement. It arrives as a dozen partial ones — a different supplier, a warmer building, a shifted process, an idled smelter — each small and none sufficient alone. This is why forecasts of catastrophe usually overshoot: they model the input as irreplaceable because no single replacement exists. It is also why forecasts of easy adaptation undershoot, because they price none of the disruption that each margin costs.',
+        'Replacement rarely comes as one big swap. It comes as many partial changes: a new supplier, a cooler building, a changed process, a closed factory. Each is small and none is enough alone. This is why forecasts of disaster often go too far: no single replacement exists. And it is why forecasts of easy change go too far the other way: each small change has a cost.',
     },
     {
       id: 'order-adaptation',
       type: 'order_flow',
       tags: ['energy', 'adaptation'],
       xp: 30,
-      prompt: 'Put the adaptation to an energy shock in order, from the first hour to the second decade.',
+      prompt: 'Put the reaction to an energy shock in order, from the first hours to twenty years later.',
       instructions: 'Drag the steps into causal order',
       events: [
         { id: 'price', label: 'The price jumps', detail: 'Hours. Nothing physical has changed yet' },
-        { id: 'ration', label: 'The most exposed users stop first', detail: 'Weeks. Smelters and fertiliser plants idle' },
-        { id: 'behaviour', label: 'Everyone turns the thermostat down' },
-        { id: 'supply', label: 'Cargoes are redirected from other buyers', detail: 'Months, and at their expense' },
-        { id: 'capital', label: 'New boilers, insulation and efficient equipment are installed' },
-        { id: 'structure', label: 'The energy-intensive industry does not come back' },
+        { id: 'ration', label: 'The biggest energy users stop first', detail: 'Weeks. Metal and fertiliser plants close for a while' },
+        { id: 'behaviour', label: 'Everyone turns the heating down' },
+        { id: 'supply', label: 'Gas ships are sent here instead of to other buyers', detail: 'Months, and the other buyers lose out' },
+        { id: 'capital', label: 'New boilers, insulation and efficient machines are installed' },
+        { id: 'structure', label: 'The industries that use the most energy never come back' },
       ],
       correctOrder: ['price', 'ration', 'behaviour', 'supply', 'capital', 'structure'],
       explanation:
-        'Read the order and you can see who pays at each stage. The first responders are the users with the least room to absorb a price — which is why an energy shock is felt as an industrial shock long before it is felt as a consumer one. And the last step is the one nobody votes for: some of the adaptation is permanent relocation, and the jobs move with it.',
+        'The order shows who pays at each step. The first to stop are the users who can least afford higher prices. That is why an energy shock hits industry long before it hits households. The last step is the one nobody chooses: some industry moves abroad for good, and the jobs go with it.',
     },
     {
       id: 'mc-what-criticality-means',
       type: 'multiple_choice',
       tags: ['criticality', 'framing'],
       xp: 30,
-      prompt: 'Given all that, what is the most precise way to state how critical an input is?',
+      prompt: 'After all this, what is the most precise way to say how critical an input is?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'horizon-bound',
-          label: 'Output lost if it stops, at a stated horizon — without one the claim is empty',
+          label: 'How much production is lost if it stops, over a stated length of time',
         },
         {
           id: 'share',
-          label: 'Its share of national output',
+          label: 'Its share of the economy',
           feedback:
-            'The previous lesson took this apart: a 0.6% sector idled several million cars. Share answers a different question.',
+            'The last lesson showed why not: chips are a tiny sector and they stopped millions of cars. Share answers a different question.',
         },
         {
           id: 'strategic',
-          label: 'Whether the government has designated it strategic',
+          label: 'Whether the government has called it “strategic”',
           feedback:
-            'Designations follow the last crisis and are lobbied for. The test has to be answerable from the structure of production, not from a list.',
+            'Those labels follow the last crisis, and companies lobby for them. The test should come from how production really works, not from a list.',
         },
         {
           id: 'import',
           label: 'How much of it is imported',
           feedback:
-            'Import dependence matters for who can interrupt you, and it is not the same thing. A domestically produced input with one factory and no substitute is more critical than an imported one with forty suppliers.',
+            'Imports matter for who can cut you off, but that is a different thing. A product made at home in one factory, with no substitute, is more critical than an import with forty suppliers.',
         },
       ],
       correctOptionId: 'horizon-bound',
       explanation:
-        'Criticality without a horizon is a slogan. Over one winter, natural gas in Europe was close to irreplaceable. Over five years it was replaceable at a cost. Over twenty it is a policy choice. Every serious argument about energy security, chips or food is really an argument about which of those three clocks is being used — and that is usually left unsaid.',
+        'Saying something is critical without saying “over how long” means little. Over one winter, gas in Europe was almost impossible to replace. Over five years it could be replaced, at a cost. Over twenty years it is a choice. Every serious argument about energy, chips or food depends on which time frame is meant, and people rarely say which.',
     },
   ],
   keyTakeaways: [
-    'Demand for an essential input is inelastic in the short run and elastic in the long run; the difference is the capital stock.',
-    'Substitution arrives as many partial margins, not one replacement.',
-    'A criticality claim without a stated horizon is empty.',
+    'In the short run people can hardly use less of an essential input. In the long run they can, once equipment and buildings change.',
+    'Replacement comes as many small changes, not one big swap.',
+    'Calling something critical means little unless you say over how long.',
   ],
 });

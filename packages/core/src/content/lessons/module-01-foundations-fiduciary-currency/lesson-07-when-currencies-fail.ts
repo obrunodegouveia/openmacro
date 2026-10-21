@@ -28,17 +28,17 @@ import { defineLesson } from '../../schema';
 export const whenCurrenciesFailLesson = defineLesson({
   id: 'when-currencies-fail',
   title: 'How a Currency Dies',
-  subtitle: 'Hyperinflation is not fast inflation. It is a different mechanism.',
+  subtitle: 'Hyperinflation is not just fast inflation. It works in a different way.',
   icon: '🔥',
   difficulty: 'core',
   estimatedMinutes: 7,
   hearts: 3,
 
   keyTakeaways: [
-    'Hyperinflation is usually a fiscal event: a deficit that cannot be taxed or borrowed gets financed by issuance.',
-    'The loop is the mechanism — spending faster to avoid holding the currency raises prices, which makes holding it worse.',
-    'Money loses its three jobs in order: store of value first, unit of account next, medium of exchange last.',
-    'It ends abruptly when the fiscal position becomes credible, not gradually as the money supply shrinks.',
+    'Hyperinflation usually starts with the budget: a government that cannot tax or borrow enough pays its bills by creating money.',
+    'The loop is the cause: people spend fast to avoid holding the money, which pushes prices up, which makes holding it even worse.',
+    'Money loses its three jobs in order: store of value first, then unit of account, then medium of exchange.',
+    'It ends suddenly, when people believe the government can pay its way again. It does not end slowly as money is removed.',
   ],
 
   challenges: [
@@ -47,43 +47,43 @@ export const whenCurrenciesFailLesson = defineLesson({
       type: 'order_flow',
       tags: ['hyperinflation', 'crisis'],
       xp: 20,
-      prompt: 'Put the hyperinflation spiral in causal order.',
-      instructions: 'Earliest cause at the top',
+      prompt: 'Put the steps of the hyperinflation spiral in order, from cause to effect.',
+      instructions: 'First step at the top',
       events: [
         {
           id: 'deficit',
-          label: 'The government cannot fund itself by tax or borrowing',
-          detail: 'Lenders refuse, and the tax base is too small or too damaged',
+          label: 'The government cannot pay its bills from taxes or by borrowing',
+          detail: 'Lenders say no, and taxes bring in too little',
         },
         {
           id: 'issue',
-          label: 'It finances the gap by issuing currency',
-          detail: 'The central bank buys the debt nobody else will',
+          label: 'It covers the gap by creating money',
+          detail: 'The central bank buys the debt nobody else wants',
         },
         {
           id: 'prices',
-          label: 'Prices rise as the new money chases the same goods',
+          label: 'Prices rise, because more money is chasing the same goods',
           detail: 'The first round looks like ordinary inflation',
         },
         {
           id: 'flee',
           label: 'People spend it the moment they receive it',
-          detail: 'Holding cash for a week is now a guaranteed loss',
+          detail: 'Keeping cash for even a week now means a sure loss',
         },
         {
           id: 'velocity',
-          label: 'Faster spending drives prices up further',
-          detail: 'The same stock of money now does far more work — velocity is the accelerant',
+          label: 'Faster spending pushes prices up even more',
+          detail: 'The same money changes hands much more often: this speed (“velocity”) makes it worse',
         },
         {
           id: 'real-collapse',
-          label: 'Real tax revenue collapses, widening the original gap',
-          detail: 'Taxes are assessed today and paid in money worth less tomorrow',
+          label: 'The real value of taxes collapses, so the gap gets bigger',
+          detail: 'Taxes are set today but paid later, in money worth less',
         },
       ],
       correctOrder: ['deficit', 'issue', 'prices', 'flee', 'velocity', 'real-collapse'],
       explanation:
-        'The last step is what makes it a spiral rather than a one-off. As prices rise, the real value of tax collected between assessment and payment falls — the Olivera–Tanzi effect — so the deficit the government was trying to close gets *wider*, forcing more issuance. That feedback, not the initial printing, is why hyperinflations accelerate rather than settling at a high plateau.',
+        'The last step turns this into a spiral, not a one-time jump. As prices rise, taxes lose value between the day they are set and the day they are paid. This is called the Olivera–Tanzi effect. So the gap the government wanted to close gets bigger, and it creates even more money. This loop, not the first printing, is why hyperinflation speeds up instead of settling at a high level.',
     },
 
     {
@@ -91,35 +91,35 @@ export const whenCurrenciesFailLesson = defineLesson({
       type: 'multiple_choice',
       tags: ['hyperinflation', 'fiscal'],
       xp: 15,
-      prompt: 'Central banks created trillions in QE after 2008 without hyperinflation. Why not?',
+      prompt: 'After 2008, central banks created trillions through QE, but there was no hyperinflation. Why not?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'not-enough',
           label: 'The amounts were not actually that large',
           feedback:
-            'They were enormous — several times the pre-crisis monetary base. Size was not the difference.',
+            'They were huge: several times the base money before the crisis. Size was not the difference.',
         },
         {
           id: 'reserves-not-spent',
-          label: 'It created reserves, not spending — and it was not financing a deficit that could not be funded',
+          label: 'It created reserves, not spending, and governments could still borrow normally',
         },
         {
           id: 'luck',
           label: 'It very nearly did happen',
           feedback:
-            'Inflation ran below target for most of the decade after QE began. This was not a near miss; the prediction was wrong about the mechanism.',
+            'Inflation stayed below target for most of the ten years after QE began. It was not a near miss. The warning was wrong about how it works.',
         },
         {
           id: 'gold',
           label: 'Those currencies are backed by reserves',
           feedback:
-            'They are not redeemable for anything. Whatever restrained inflation, it was not backing.',
+            'They cannot be swapped for anything. Whatever kept inflation low, it was not backing.',
         },
       ],
       correctOptionId: 'reserves-not-spent',
       explanation:
-        'Two differences. First, QE swapped one safe asset for another inside the banking system — it created reserves that only banks can hold, not purchasing power in anyone’s hands. Second, and more important, these governments could still borrow at low rates: the issuance was a policy choice, not a last resort. Hyperinflation is what happens when a state has no other way to pay its bills, and the market knows it.',
+        'There are two differences. First, QE swapped one safe asset for another inside the banking system. It created reserves that only banks can hold, not money in people’s hands. Second, and more important, these governments could still borrow at low rates. Creating money was a policy choice, not a last resort. Hyperinflation happens when a state has no other way to pay its bills, and the market knows it.',
     },
 
     {
@@ -130,7 +130,7 @@ export const whenCurrenciesFailLesson = defineLesson({
       prompt: 'Can a bank account protect you?',
       instructions: 'Move inflation and see what the saver keeps',
       narrative:
-        'A saver holds money in an account paying 8% a year — generous by rich-country standards. Move the inflation rate and watch what the real return does.',
+        'A saver keeps money in an account that pays 8% a year, which is a lot in rich countries. Move the inflation rate and watch what happens to the real return.',
       constants: { nominalRate: 0.08, nominal: 10000, years: 5 },
       sliders: [
         {
@@ -168,7 +168,7 @@ export const whenCurrenciesFailLesson = defineLesson({
         },
       ],
       objective: {
-        description: 'Finish at 40% — where saving in the currency is hopeless',
+        description: 'End at 40%, where saving in this currency is hopeless',
         requiredObservations: [
           { sliderKey: 'inflationRate', values: [0.04, 0.08, 0.4] },
         ],
@@ -176,7 +176,7 @@ export const whenCurrenciesFailLesson = defineLesson({
         target: { readoutKey: 'real_interest_rate', comparator: 'lte', value: -0.2 },
       },
       explanation:
-        'At 8% inflation the account exactly breaks even — that is the definition of a zero real rate. Past it every extra point is a loss the saver cannot avoid by choosing a better bank, because no deposit rate keeps pace once inflation is accelerating. At 40% the real return is about −23% a year. This is the moment the store-of-value function dies, and it is why people in high-inflation countries buy dollars, property or anything durable: they are not speculating, they are refusing to hold a melting asset.',
+        'At 8% inflation the account just breaks even: that is what a zero real rate means. Above that, every extra point is a loss. No bank can save you, because no deposit rate keeps up once inflation speeds up. At 40%, the real return is about −23% a year. This is when money stops being a store of value. It is why people in high-inflation countries buy dollars, property or anything that lasts. They are not gambling. They are refusing to hold something that is melting away.',
     },
 
     {
@@ -189,30 +189,30 @@ export const whenCurrenciesFailLesson = defineLesson({
       options: [
         {
           id: 'medium',
-          label: 'Medium of exchange — people stop accepting it',
+          label: 'Medium of exchange: people stop accepting it',
           feedback:
-            'This goes last, and often never entirely. People keep transacting in the local currency long after they stop saving or quoting prices in it.',
+            'This goes last, and often never fully. People keep paying in the local currency long after they stop saving in it or writing prices in it.',
         },
         {
           id: 'store',
-          label: 'Store of value — nobody holds it any longer than they must',
+          label: 'Store of value: nobody keeps it any longer than they must',
         },
         {
           id: 'unit',
-          label: 'Unit of account — prices get quoted in something else',
+          label: 'Unit of account: prices are written in another currency',
           feedback:
-            'This is second. Shops start pricing in dollars once repricing daily becomes impractical — but only after holding the currency has already become untenable.',
+            'This is second. Shops start writing prices in dollars when changing prices every day becomes too hard. But that only happens after keeping the currency has already become a bad idea.',
         },
         {
           id: 'all-together',
-          label: 'All three collapse simultaneously',
+          label: 'All three at the same time',
           feedback:
-            'They come apart in a consistent order, which is what makes the process recognisable while it is happening rather than only afterwards.',
+            'They fall apart in a fixed order. That is what lets people recognise the process while it is happening, not only afterwards.',
         },
       ],
       correctOptionId: 'store',
       explanation:
-        'The sequence is store of value, then unit of account, then medium of exchange. You stop *saving* in it first, because the loss is immediate and personal. You stop *pricing* in it next, when menus need rewriting faster than they can be printed. You stop *spending* it last — often only when the state stops accepting it in tax. Recognising which stage a currency is in tells you how far the process has run, and dollarisation of prices is the reliable signal that the second stage has passed.',
+        'The order is: store of value, then unit of account, then medium of exchange. You stop saving in it first, because the loss is quick and personal. You stop writing prices in it next, when menus need changing faster than they can be printed. You stop spending it last, often only when the state stops taking it for taxes. When shops start pricing in dollars, you know the second stage has arrived.',
     },
   ],
 });

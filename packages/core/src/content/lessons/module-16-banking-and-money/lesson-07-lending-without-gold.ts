@@ -6,9 +6,9 @@ import { defineLesson } from '../../schema';
  */
 export const kabLendingWithoutGoldLesson = defineLesson({
   id: 'kab-lending-without-gold',
-  title: 'A Loan Is Two Entries, Not a Withdrawal',
+  title: 'A Loan Is Two New Entries, Not Gold Leaving the Vault',
   subtitle:
-    'The bank lends 300 gold pieces without opening the vault. Both sides of the balance sheet grow at once.',
+    'The bank lends 300 gold pieces without opening the vault. Both sides of its balance sheet grow at the same time.',
   icon: '✍️',
   difficulty: 'core',
   estimatedMinutes: 16,
@@ -205,7 +205,7 @@ export const kabLendingWithoutGoldLesson = defineLesson({
       tags: ['money-creation', 'lending'],
       xp: 25,
       prompt:
-        'The bank lends Entrepreneur C 300 gold pieces by opening an account for him with a balance of 300. No gold leaves the vault. What happens to the bank’s balance sheet?',
+        'The bank lends 300 gold pieces to Entrepreneur C. It does this by opening an account for him with 300 in it. No gold leaves the vault. What happens to the bank’s balance sheet?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -217,24 +217,24 @@ export const kabLendingWithoutGoldLesson = defineLesson({
           id: 'gold-falls',
           label: 'Gold falls by 300 and loans rise by 300, leaving the total unchanged',
           feedback:
-            'That is the earlier version, where the bank handed over metal and waited for it to be deposited again. The point of this video is that the gold does not need to move at all.',
+            'That was the older way, when the bank handed out gold. In this video the gold does not move at all.',
         },
         {
           id: 'equity',
-          label: 'Equity rises by 300, since the bank is now owed more',
+          label: 'Equity rises by 300, because people now owe the bank more',
           feedback:
-            'Equity is assets minus liabilities. Both grew by the same 300, so equity is unchanged — making the loan does not make the bank richer, only more exposed to risk.',
+            'Equity is assets minus liabilities. Both went up by 300, so equity stays the same. The loan does not make the bank richer. It only adds risk.',
         },
         {
           id: 'nothing',
           label: 'Nothing changes until the borrower spends the money',
           feedback:
-            'The loan and the deposit both exist from the moment they are written. Spending only moves the deposit to somebody else’s name.',
+            'The loan and the deposit exist as soon as they are written. When C spends, the deposit just moves to someone else’s name.',
         },
       ],
       correctOptionId: 'both-grow',
       explanation:
-        'This is where "banks create money by lending" stops sounding mysterious. The loan is the asset, the borrower’s new deposit is the liability, and both are written at the same moment. The video admits it looks like magic — and notes it is no different in substance from the gold version, minus the wait for the gold to be deposited again.',
+        'The loan is a new asset for the bank. C’s new deposit is a new liability, because the bank owes it to him. Both are written at the same moment. That is how a bank creates money when it lends.',
     },
     {
       id: 'mc-what-stops-it',
@@ -242,46 +242,46 @@ export const kabLendingWithoutGoldLesson = defineLesson({
       tags: ['reserve-ratio', 'regulation'],
       xp: 20,
       prompt:
-        'If a bank can create a loan and a deposit with a pen, what does the video say stops it doing so forever?',
+        'A bank can create a loan and a deposit just by writing them down. According to the video, what stops it from doing this without end?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'reserves',
           label:
-            'The reserve requirement: it must hold a minimum share of reserves against its deposits and notes',
+            'The reserve requirement: it must keep a minimum share of reserves for its deposits and notes',
         },
         {
           id: 'gold-stock',
-          label: 'Running out of gold, since every loan draws the vault down',
+          label: 'Running out of gold, because every loan takes gold from the vault',
           feedback:
-            'The gold is not being spent, so it does not run down. What binds is the ratio between the gold and the claims written against it.',
+            'The gold is not spent, so it does not run out. The limit is the ratio between the gold and the deposits and notes.',
         },
         {
           id: 'borrowers',
           label: 'Running out of people who want to borrow',
           feedback:
-            'In real life that limits lending too, but it is not the limit the video introduces here. The next video makes the reserve ratio explicit.',
+            'In real life that also limits lending. But it is not the limit the video talks about here. The next video explains the reserve ratio.',
         },
         {
           id: 'nothing',
           label: 'Nothing — this is why banking is unstable',
           feedback:
-            'The video asks exactly this and answers it: reserve requirements exist, and a careful bank would keep some reserves even without them.',
+            'The video asks this question and answers it. There are reserve requirements, and a careful bank would keep some reserves anyway.',
         },
       ],
       correctOptionId: 'reserves',
       explanation:
-        'The limit is not the amount of metal but the minimum ratio of reserves to deposits and notes. That one number decides how far the balance sheet can be stretched, and it is the subject of the next two videos. (Later in this lesson you will see a second, practical limit: money leaking to other banks.)',
+        'The limit is not the amount of gold. It is the minimum share of reserves the bank must keep for its deposits and notes. The next two videos are about this number. Later in this lesson you will see a second limit: money moving to other banks.',
     },
     {
       id: 'taccount-loan-creates-deposit',
       type: 't_account_flow',
       tags: ['money-creation', 'balance-sheets', 'lending'],
       xp: 35,
-      prompt: 'Sal lends Entrepreneur C 300 gold pieces for an irrigation project.',
-      instructions: 'Place every posting this operation requires',
+      prompt: 'Sal lends Entrepreneur C 300 gold pieces to build a water channel for his farm.',
+      instructions: 'Place every entry this loan needs',
       scenario:
-        'C walks in with an idea and no money, and walks out able to pay his workers. Nothing is taken out of the vault and no existing depositor’s balance falls. Post what happens on both balance sheets.',
+        'C comes in with an idea and no money. He leaves with an account he can use to pay his workers. No gold leaves the vault, and nobody else’s account goes down. Show what happens on both balance sheets.',
       entities: [
         {
           id: 'bank',
@@ -299,7 +299,7 @@ export const kabLendingWithoutGoldLesson = defineLesson({
           id: 'entrepreneur',
           label: 'Entrepreneur C',
           tier: 'fiduciary_core',
-          role: 'Had an idea and no claims on anything',
+          role: 'Has an idea, but no money',
         },
       ],
       options: [
@@ -323,13 +323,13 @@ export const kabLendingWithoutGoldLesson = defineLesson({
           id: 'gold-down',
           shift: { entityId: 'bank', side: 'asset', account: 'Gold in the vault', delta: -300 },
           feedback:
-            'This is the assumption the video sets out to break. The gold stays in the vault; what C receives is a new account balance he can write cheques against, created simply by recording it.',
+            'The video shows the gold stays in the vault. C gets a new account balance instead, and he can write cheques from it.',
         },
         {
           id: 'other-dep-down',
           shift: { entityId: 'bank', side: 'liability', account: 'Demand deposits', delta: -300 },
           feedback:
-            'Nobody’s existing balance falls. Lending here does not move money from a saver to a borrower — it adds a new deposit alongside the old ones.',
+            'Nobody else’s account goes down. The loan does not move money from a saver to C. It adds a new deposit next to the old ones.',
         },
       ],
       expectedShifts: [
@@ -347,11 +347,11 @@ export const kabLendingWithoutGoldLesson = defineLesson({
         {
           aggregate: 'M1',
           direction: 'expand',
-          note: 'Deposits rose by 300 and everyone else’s balance is untouched, so the island’s spendable money supply is 300 larger than it was a minute ago.',
+          note: 'Deposits went up by 300 and nobody else’s account went down. So the island now has 300 more money that people can spend.',
         },
       ],
       explanation:
-        'Both sides of both balance sheets grow at once, and that symmetry is the whole point: the entrepreneur’s new asset (his deposit) is matched by his new debt, and the bank’s new asset (the loan) is matched by its new liability (the deposit). Nobody had to save first. This is what economists mean by "loans create deposits", and it is one of the most counter-intuitive facts in banking — which is why the video spends a whole episode building it by hand.',
+        'Both sides of both balance sheets grow at once. C owns a new deposit and owes a new loan. The bank owns a new loan and owes a new deposit. Nobody had to save first. Economists call this “loans create deposits”.',
     },
     {
       id: 'mc-same-bank',
@@ -359,35 +359,35 @@ export const kabLendingWithoutGoldLesson = defineLesson({
       tags: ['lending', 'reserves', 'clearing'],
       xp: 30,
       prompt:
-        'A borrower pays builder A 300 by cheque out of his new loan. A also banks with Sal, so the payment is just an entry in Sal’s own books. What would be different if A banked at another bank?',
+        'C pays builder A 300 by cheque, using his new loan. A also has an account at Sal’s bank, so Sal just moves 300 from one account to another in his books. What would change if A had his account at a different bank?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'gold-leaves',
-          label: 'Sal would have to pay the other bank, so 300 of gold would finally leave his vault',
+          label: 'Sal would have to pay the other bank, so 300 of gold would leave his vault',
         },
         {
           id: 'nothing',
           label: 'Nothing — a cheque is a cheque',
           feedback:
-            'For the two people involved it is the same cheque. For Sal it is the difference between moving a number between two of his own accounts and owing another bank real reserves.',
+            'For C and A it is the same cheque. For Sal it is different. He is no longer moving a number between his own accounts. He now owes real gold to another bank.',
         },
         {
           id: 'loan-cancels',
-          label: 'The loan would be cancelled, since the money left the bank',
+          label: 'The loan would be cancelled, because the money left the bank',
           feedback:
-            'The borrower still owes the 300 whatever happens. What changes is the bank’s reserves, not its loans.',
+            'C still owes the 300, whatever happens. What changes is the bank’s gold, not its loans.',
         },
         {
           id: 'more-money',
-          label: 'More money would be created, since two banks are involved',
+          label: 'More money would be created, because two banks are involved',
           feedback:
-            'The deposit exists either way; it just ends up at a different bank. Which bank the builder uses does not create any money.',
+            'The deposit exists either way. It just ends up at a different bank. Which bank A uses does not create any money.',
         },
       ],
       correctOptionId: 'gold-leaves',
       explanation:
-        'When Sal’s is the only bank in town, lending never costs him reserves, because every loan he makes comes straight back to him as a deposit; only the reserve requirement holds him back. The moment there is a second bank, lending leaks: the borrower spends, the money lands at the other bank, and Sal’s reserves have to follow it. That leak is a very practical limit on each bank, and it is why later videos need a place where banks settle with each other.',
+        'If Sal has the only bank, every loan comes back to him as a deposit, so lending never costs him gold. With a second bank, the money can move there, and Sal must send gold after it. This is a real limit on each bank. It is also why banks need a place to settle with each other, as later videos show.',
     },
     {
       id: 'mc-what-actually-changed',
@@ -395,40 +395,40 @@ export const kabLendingWithoutGoldLesson = defineLesson({
       tags: ['lending', 'money-creation'],
       xp: 25,
       prompt:
-        'Sal says lending by creating an account is "actually not that different" from the earlier version where he handed out gold and waited for it to be redeposited. What is the real difference?',
+        'Sal says that lending by opening an account is “not that different” from the older way, when he handed out gold and waited for it to be deposited again. What is the real difference?',
       instructions: 'Pick the best answer',
       options: [
         {
           id: 'timing',
-          label: 'Only the timing and the safety of the gold — the end result is the same balance sheet',
+          label: 'Only the timing and the safety of the gold. The balance sheet ends up the same',
         },
         {
           id: 'more-money',
           label: 'The new way creates money and the old way only moved it',
           feedback:
-            'Both create money. In the old version the gold went out, came back as a new deposit, and the money supply rose by exactly as much — the gold simply took a trip around the island first.',
+            'Both ways create money. In the old way the gold went out and came back as a new deposit. The money supply grew by the same amount. The gold just went round the island first.',
         },
         {
           id: 'no-reserves',
           label: 'The new way needs no reserves behind it at all',
           feedback:
-            'It needs exactly the same reserves, which is what the next video is about. What it avoids is having the metal out of the vault while the chain completes.',
+            'It needs exactly the same reserves. The next video is about that. The new way only avoids having the gold outside the vault for a while.',
         },
         {
           id: 'illegal',
-          label: 'The old way was legitimate lending and the new way is not',
+          label: 'The old way was honest lending, but the new way is not',
           feedback:
-            'They produce identical balance sheets. If one is legitimate, so is the other — which is rather the point Sal is making.',
+            'Both ways end with the same balance sheet. If one is honest, so is the other. That is Sal’s point.',
         },
       ],
       correctOptionId: 'timing',
       explanation:
-        'Lend the gold and it travels to the workers, gets deposited again and ends up back in the vault, with a loan and a deposit on the books. Create the account and you reach the same two entries without the trip. Seeing that these are the same operation stops fractional reserve banking looking like a trick: the multiplier never depended on paper, only on people depositing what they are paid.',
+        'In the old way, the gold goes to the workers, is deposited again and comes back to the vault. The books end with one loan and one deposit. In the new way, the bank writes the same two entries straight away. So it is the same thing, just faster, and the gold never leaves the vault.',
     },
   ],
   keyTakeaways: [
-    'A loan is created as a matched pair: an asset and a new deposit.',
-    'Making a loan does not change the bank’s equity — only its size and risk.',
-    'The binding constraint is the reserve ratio, not the amount of gold.',
+    'A bank makes a loan by writing two entries at once: the loan (an asset) and a new deposit (a liability).',
+    'A new loan does not change the bank’s equity. The bank gets bigger and takes more risk, but it is not richer.',
+    'What limits lending is the reserve ratio, not the amount of gold.',
   ],
 });

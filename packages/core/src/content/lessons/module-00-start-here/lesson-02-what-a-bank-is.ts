@@ -7,9 +7,9 @@ import { defineLesson } from '../../schema';
  */
 export const whatABankIsLesson = defineLesson({
   id: 'what-a-bank-actually-is',
-  title: 'What a Bank Actually Is',
+  title: 'What a Bank Really Is',
   subtitle:
-    'Two lists: what it owns, and what it owes. Every bank in the world is that, and so is every person.',
+    'Two lists: what it owns and what it owes. Every bank in the world works like this, and so does every person.',
   icon: '🏦',
   difficulty: 'intro',
   estimatedMinutes: 6,
@@ -21,7 +21,7 @@ export const whatABankIsLesson = defineLesson({
       tags: ['basics', 'balance-sheet'],
       xp: 10,
       prompt:
-        'A bank’s accounts are two lists: things it owns, and things it owes. Where does your deposit go?',
+        'A bank keeps two lists: what it owns and what it owes. On which list is your deposit?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -32,7 +32,7 @@ export const whatABankIsLesson = defineLesson({
           id: 'owns',
           label: 'On the "owns" list — the bank has your money',
           feedback:
-            'It is holding it, but it is not the bank’s. Think of a cloakroom ticket: the coat is in the building and it is still yours, and the cloakroom’s obligation is to give it back.',
+            'The bank holds it, but it is not the bank’s. Think of a cloakroom: your coat is in the building, but it is still yours, and they must give it back.',
         },
         {
           id: 'neither',
@@ -42,30 +42,30 @@ export const whatABankIsLesson = defineLesson({
           id: 'both',
           label: 'Both, since it holds it and owes it',
           feedback:
-            'Closer than it looks. The bank does hold *something* on the owns side after you deposit — but it is not your deposit, and the next screen shows exactly what it is.',
+            'Close. After you deposit, the bank does have something new on its “owns” list. But that is not your deposit. The next question shows what it is.',
         },
       ],
       correctOptionId: 'owes',
       explanation:
-        'Your deposit is the bank’s liability — the last lesson’s promise, written down in its accounts. This is the single most useful habit in the whole course: whenever you meet a sum of money, ask whose promise it is and which of their two lists it sits on. Everything else is that question, repeated at bigger and bigger institutions.',
+        'Your deposit is the bank’s liability (something it owes). It is the promise from the last lesson, written in the bank’s books. Here is the most useful habit in this course: when you see an amount of money, ask whose promise it is and on which of their two lists it sits.',
     },
     {
       id: 'deposit-posting',
       type: 't_account_flow',
       tags: ['basics', 'balance-sheet', 'deposits'],
       xp: 20,
-      prompt: 'You walk into a bank and deposit €1,000 in cash. Post it.',
+      prompt: 'You walk into a bank and deposit €1,000 in cash. Post it on both lists.',
       instructions:
         'Pick an entry, then choose whose list it belongs on. Four entries in total.',
       scenario:
-        'You hand over €1,000 of notes. Your side and the bank’s side both change — and nobody has become richer or poorer.',
+        'You hand over €1,000 in notes. Your lists and the bank’s lists both change, but nobody gets richer or poorer.',
       currency: 'EUR',
       entities: [
         {
           id: 'you',
           label: 'You',
           tier: 'fiduciary_core',
-          role: 'Owns things, owes things — same two lists as a bank',
+          role: 'Owns things and owes things: the same two lists as a bank',
           openingLines: [
             { account: 'Cash in your pocket', side: 'asset', amount: 1500 },
             { account: 'Money in the bank', side: 'asset', amount: 2400 },
@@ -115,7 +115,7 @@ export const whatABankIsLesson = defineLesson({
             delta: -1000,
           },
           feedback:
-            'The wrong direction. Taking your notes makes the bank owe you *more*, not less — it now has an extra €1,000 obligation to you that it did not have this morning.',
+            'Wrong direction. Taking your notes makes the bank owe you more, not less. It now owes you €1,000 that it did not owe you this morning.',
         },
       ],
       expectedShifts: [
@@ -137,7 +137,7 @@ export const whatABankIsLesson = defineLesson({
         },
       ],
       explanation:
-        'You are no richer: you swapped notes for a promise. The bank is no richer either: it gained €1,000 of notes and took on €1,000 of obligation, which cancel exactly. That is what a balance sheet does — it balances, always, for everyone, and if it does not then something has been left out. You have just done the thing the rest of this course is built on.',
+        'You are not richer: you swapped notes for a promise. The bank is not richer either: it got €1,000 in notes and now owes you €1,000, so the two cancel out. A balance sheet always balances, for everyone. If it does not, something is missing. This is the idea the rest of the course is built on.',
     },
     {
       id: 'mc-where-does-it-go',
@@ -156,7 +156,7 @@ export const whatABankIsLesson = defineLesson({
           id: 'keeps-all',
           label: 'Keeps all of it, ready for you',
           feedback:
-            'Then the bank would earn nothing and could not pay for branches, staff or interest. No bank has ever worked that way, and one that did would have to charge you for storage.',
+            'Then the bank would earn nothing. It could not pay for branches, staff or your interest. No bank has ever worked like that. One that did would have to charge you for storage.',
         },
         {
           id: 'central-bank',
@@ -166,18 +166,18 @@ export const whatABankIsLesson = defineLesson({
           id: 'spends',
           label: 'Spends it on its own costs',
           feedback:
-            'It cannot — it owes you that money. Lending it is different from spending it, because a loan is an asset the bank still owns.',
+            'It cannot, because it owes you that money. Lending it is different from spending it: a loan is something the bank still owns.',
         },
       ],
       correctOptionId: 'lends-most',
       explanation:
-        'This is the whole business: hold enough to meet the withdrawals that actually happen, and put the rest to work earning more than it pays you. It works because depositors do not all come at once — and the rare occasions when they do have a name, a bank run, which is the subject of a later lesson. What it does *not* explain is where most money comes from, and that is next.',
+        'This is how a bank makes money. It keeps enough for the withdrawals people really make, and puts the rest to work earning more than it pays you. This works because depositors do not all come at once. When they do, it is called a bank run, and a later lesson covers it.',
     },
   ],
   keyTakeaways: [
     'Every balance sheet is two lists: what is owned and what is owed. Yours too.',
-    'Your deposit sits on the bank’s "owes" list — it is the bank’s obligation to you.',
-    'Depositing cash makes nobody richer; it swaps notes for a promise.',
-    'Banks hold back only what is needed for normal withdrawals and put the rest to work.',
+    'Your deposit is on the bank’s “owes” list: the bank owes it to you.',
+    'Depositing cash makes nobody richer. It swaps notes for a promise.',
+    'Banks keep only what they need for normal withdrawals and put the rest to work.',
   ],
 });
