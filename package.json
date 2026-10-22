@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo/ui": "~57.0.25",
     "@openmacro/core": "*",
     "@openmacro/seasons": "*",
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -26,6 +27,7 @@
     "expo-system-ui": "~57.0.4",
     "expo-updates": "~57.0.22",
     "expo-web-browser": "~57.0.3",
+    "expo-widgets": "~57.0.26",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
