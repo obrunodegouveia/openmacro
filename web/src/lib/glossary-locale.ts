@@ -24,6 +24,7 @@ import type { GlossaryEntry } from '@/lib/glossary';
 import { GLOSSARY } from '@/lib/glossary';
 import type { Locale } from '@openmacro/core/i18n/locales';
 
+import { GLOSSARY_ES } from '@/lib/glossary-es';
 import { GLOSSARY_PT } from '@/lib/glossary-pt';
 
 /** The fields that carry prose. Everything else identifies or cites. */
@@ -36,6 +37,7 @@ export type TranslatableEntry = Partial<
 
 const OVERLAYS: Partial<Record<Locale, Record<string, TranslatableEntry>>> = {
   'pt-PT': GLOSSARY_PT,
+  'es-ES': GLOSSARY_ES,
 };
 
 function merge(entry: GlossaryEntry, overlay: TranslatableEntry | undefined): GlossaryEntry {

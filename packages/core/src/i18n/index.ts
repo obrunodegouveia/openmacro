@@ -23,15 +23,18 @@ export {
 
 export { en, type UiKey, type UiDictionary } from './ui/en';
 export { ptPT } from './ui/pt-PT';
+export { esES } from './ui/es-ES';
 
 import { en, type UiDictionary, type UiKey } from './ui/en';
 import { ptPT } from './ui/pt-PT';
+import { esES } from './ui/es-ES';
 import { DEFAULT_LOCALE, LOCALE_TAGS, type Locale } from './locales';
 import { formatMessage, messageArguments, type MessageValues } from './format';
 
 const CATALOGUES: Record<Locale, UiDictionary> = {
   en,
   'pt-PT': ptPT,
+  'es-ES': esES,
 };
 
 export type TranslationValues = MessageValues;

@@ -8,6 +8,7 @@ import { LocaleProvider } from "@/components/site/locale-provider";
 import { LOCALE_TAGS } from "@openmacro/core/i18n/locales";
 import { alternates, localeUrl, serverLocale } from "@/lib/locale-server";
 import { getSiteText } from "@/lib/site-text";
+import { OG_LOCALES } from "@/lib/locale-path";
 import { localisedCopy } from "@/lib/seo-copy";
 import { SmoothAnchors } from "@/components/site/smooth-anchors";
 import { ActivityHeartbeat } from "@/components/app/activity-heartbeat";
@@ -88,7 +89,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: SITE.name,
       title: pt.title ? `${SITE.name} — ${pt.title}` : `${SITE.name} — ${SITE.tagline}`,
       description: pt.description ?? SITE.description,
-      locale: locale === "pt-PT" ? "pt_PT" : "en_US",
+      locale: OG_LOCALES[locale],
     },
   };
 }

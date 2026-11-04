@@ -9,10 +9,12 @@
 import type { Locale } from '@openmacro/core/i18n/locales';
 
 import type { Answer } from '@/lib/answers';
+import { ANSWERS_ES } from '@/lib/answers-es';
 import { ANSWERS_PT } from '@/lib/answers-pt';
 
 const OVERLAYS: Partial<Record<Locale, Record<string, { question?: string; answer?: string }>>> = {
   'pt-PT': ANSWERS_PT,
+  'es-ES': ANSWERS_ES,
 };
 
 export function localisedAnswers(locale: Locale, answers: Answer[]): Answer[] {

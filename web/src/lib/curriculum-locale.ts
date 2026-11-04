@@ -28,7 +28,8 @@ import { MODULES } from '@openmacro/core/content';
 import { localisedModules } from '@openmacro/core/i18n/content';
 import type { Locale } from '@openmacro/core/i18n/locales';
 
-import { SYLLABUS, TIERS, type Tier, type Track } from '@/lib/curriculum';
+import { SYLLABUS, TIERS, TRACK_COUNT_LABEL, type Tier, type Track } from '@/lib/curriculum';
+import { CURRICULUM_ES } from '@/lib/curriculum-es';
 import { CURRICULUM_PT } from '@/lib/curriculum-pt';
 
 export interface TrackCopy {
@@ -52,7 +53,13 @@ export interface CurriculumOverlay {
 
 const OVERLAYS: Partial<Record<Locale, CurriculumOverlay>> = {
   'pt-PT': CURRICULUM_PT,
+  'es-ES': CURRICULUM_ES,
 };
+
+/** The English number word, or a numeral: an English word must not land in a translated headline. */
+export function trackCountLabel(locale: Locale): string {
+  return locale === 'en' ? TRACK_COUNT_LABEL : String(SYLLABUS.length);
+}
 
 export function localisedSyllabus(locale: Locale): Track[] {
   const overlay = OVERLAYS[locale]?.tracks;

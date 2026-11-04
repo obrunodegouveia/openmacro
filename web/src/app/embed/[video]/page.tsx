@@ -63,7 +63,7 @@ export default async function EmbedPage({
   // The app passes the learner's subtitle choice, already resolved from its
   // own language setting. Anything unrecognised means no subtitles, which is
   // what this page did before the parameter existed.
-  const captions: CaptionChoice = cc === "pt" || cc === "en" ? cc : "off";
+  const captions: CaptionChoice = cc === "pt" || cc === "es" || cc === "en" ? cc : "off";
   // Where to resume, when the app reopens the video full screen or back again.
   const seconds = Number.parseInt(t ?? "", 10);
   const start = Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds, 24 * 3600) : 0;

@@ -326,7 +326,7 @@ we have the mechanism wrong.
 
 ## Translating
 
-The course ships in English and European Portuguese, and a translation is an
+The course ships in English, European Portuguese and Spanish, and a translation is an
 **overlay**: a flat map of key to string that replaces individual fields.
 Anything the overlay does not mention renders in English — per key, not per
 language. A language can therefore ship at 5% and improve.

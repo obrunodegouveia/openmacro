@@ -1,6 +1,6 @@
 # Translating OpenMacro
 
-The course ships in English and European Portuguese. Adding a language is
+The course ships in English, European Portuguese and Spanish. Adding a language is
 adding catalogues — no code changes, and nothing in the app or the website
 knows what languages exist.
 

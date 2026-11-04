@@ -27,8 +27,9 @@ function localised(
   const languages = {
     en: localeUrl("en", path),
     "pt-PT": localeUrl("pt-PT", path),
+    "es-ES": localeUrl("es-ES", path),
   };
-  return (["en", "pt-PT"] as const).map((locale) => ({
+  return (["en", "pt-PT", "es-ES"] as const).map((locale) => ({
     url: localeUrl(locale, path),
     lastModified,
     changeFrequency,

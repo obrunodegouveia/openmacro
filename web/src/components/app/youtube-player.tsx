@@ -45,7 +45,7 @@ import * as React from "react";
  */
 
 /** 'off', or a language whose subtitles to show. */
-export type CaptionChoice = "off" | "pt" | "en";
+export type CaptionChoice = "off" | "pt" | "es" | "en";
 
 // The slice of the IFrame API this file uses. The real object has far more.
 interface CaptionTrack {
@@ -122,7 +122,7 @@ export function pickTrack(
   want: Exclude<CaptionChoice, "off">,
 ): Partial<CaptionTrack> | null {
   const base = (code: string) => code.toLowerCase().split("-")[0];
-  const regional = want === "pt" ? "pt-pt" : "en-gb";
+  const regional = { pt: "pt-pt", es: "es-es", en: "en-gb" }[want];
 
   const exact = tracks.find((t) => t.languageCode.toLowerCase() === regional);
   if (exact) return { languageCode: exact.languageCode };
@@ -218,7 +218,7 @@ export function YouTubePlayer({
     if (!inApp) return;
     window.openmacro = {
       setCaptions: (choice) => {
-        if (choice === "pt" || choice === "en" || choice === "off") setRemoteCaptions(choice);
+        if (choice === "pt" || choice === "es" || choice === "en" || choice === "off") setRemoteCaptions(choice);
       },
     };
     return () => {

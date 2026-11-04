@@ -122,14 +122,14 @@ export function LanguagePicker({
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
-      {/* Named out loud here. In the bar the two language names are their own
+      {/* Named out loud here. In the bar the language names are their own
           label; in a list of menu rows they need saying what they are. */}
       <span className="px-1 text-xs font-extrabold uppercase tracking-wider text-ink-faint">
         {t("language.label")}
       </span>
       <div
         aria-label={t("language.label")}
-        className="grid grid-cols-2 gap-1 rounded-lg border border-hairline p-1"
+        className="grid grid-cols-3 gap-1 rounded-lg border border-hairline p-1"
       >
         {options}
       </div>

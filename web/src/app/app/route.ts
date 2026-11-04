@@ -1,6 +1,8 @@
 import type { NextRequest } from "next/server";
 
 import { APP_STORE_URL, PLAY_STORE_LIVE, PLAY_STORE_URL, SITE } from "@/lib/site";
+import { localePath } from "@/lib/locale-path";
+import { isLocale } from "@openmacro/core/i18n/locales";
 import { LOCALE_HEADER } from "@/middleware";
 
 /**
@@ -21,8 +23,8 @@ import { LOCALE_HEADER } from "@/middleware";
  */
 export function GET(request: NextRequest) {
   const userAgent = request.headers.get("user-agent") ?? "";
-  const portuguese = request.headers.get(LOCALE_HEADER) === "pt-PT";
-  const fallback = new URL(portuguese ? "/pt#app" : "/#app", SITE.url);
+  const locale = request.headers.get(LOCALE_HEADER);
+  const fallback = new URL(localePath(isLocale(locale) ? locale : "en", "/#app"), SITE.url);
 
   const target = /iPhone|iPad|iPod/i.test(userAgent)
     ? APP_STORE_URL

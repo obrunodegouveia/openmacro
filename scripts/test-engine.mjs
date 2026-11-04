@@ -315,3 +315,12 @@ test('a kids run earns no more XP than the whole lesson can', () => {
     assert.ok(xp(lessonForMode(lesson, 'kids').challenges) < xp(lesson.challenges), lesson.id);
   }
 });
+
+test('Spanish writes numbers its own way, and a billion is not a billón', async () => {
+  const { formatCurrency, formatCompactCurrency } = await import('@openmacro/core/format');
+  const { resolveLocale } = await import('@openmacro/core/i18n/locales');
+  assert.equal(formatCurrency(1234.5, '€', 'es-ES'), '€1.234,50');
+  assert.match(formatCompactCurrency(2e9, 'EUR', 'es-ES'), /mM/);
+  assert.match(formatCompactCurrency(2e12, 'EUR', 'es-ES'), /billones/);
+  assert.equal(resolveLocale('es-MX'), 'es-ES');
+});

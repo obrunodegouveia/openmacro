@@ -222,6 +222,7 @@ export const ptPT: UiDictionary = {
   'lesson.video.captions': 'Legendas: {choice}',
   'lesson.video.captions.auto': 'Automáticas',
   'lesson.video.captions.pt': 'Português',
+  'lesson.video.captions.es': 'Espanhol',
   'lesson.video.captions.en': 'Inglês',
   'lesson.video.captions.off': 'Desligadas',
   'lesson.video.fullscreen': 'Ecrã inteiro',

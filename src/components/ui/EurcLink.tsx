@@ -20,6 +20,8 @@
 import { useEffect, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text } from 'react-native';
 
+import { localeSegment } from '@openmacro/core/content/links';
+
 import { Chevron } from '@/components/ui/CourseRows';
 import { useAuth } from '@/providers/AuthProvider';
 import { useLocale } from '@/providers/LocaleProvider';
@@ -59,7 +61,7 @@ export function EurcLink() {
 
   if (!enrolled) return null;
 
-  const url = `${SITE}${locale === 'pt-PT' ? '/pt' : ''}/dashboard`;
+  const url = `${SITE}${localeSegment(locale)}/dashboard`;
 
   return (
     <Pressable

@@ -14,7 +14,7 @@
  * `pt-BR` later a rename of every file.
  */
 
-export const LOCALES = ['en', 'pt-PT'] as const;
+export const LOCALES = ['en', 'pt-PT', 'es-ES'] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -25,12 +25,14 @@ export const DEFAULT_LOCALE: Locale = 'en';
 export const LOCALE_NAMES: Record<Locale, string> = {
   en: 'English',
   'pt-PT': 'Português',
+  'es-ES': 'Español',
 };
 
 /** For `<html lang>`, `Intl` and screen readers. */
 export const LOCALE_TAGS: Record<Locale, string> = {
   en: 'en',
   'pt-PT': 'pt-PT',
+  'es-ES': 'es-ES',
 };
 
 export function isLocale(value: unknown): value is Locale {
