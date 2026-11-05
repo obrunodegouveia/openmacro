@@ -170,7 +170,7 @@ export const theArithmeticLesson = defineLesson({
           id: 'austerity',
           label: 'Sustained primary surpluses over a decade or more',
           feedback:
-            'It has been done — post-war Britain, Belgium, Canada in the 1990s. It is the rarest of the four, because it requires a decade of governments agreeing with each other.',
+            'It has been done — post-war Britain, Belgium, Canada in the 1990s. It is rare, because it requires a decade of governments agreeing with each other.',
         },
         {
           id: 'growth',

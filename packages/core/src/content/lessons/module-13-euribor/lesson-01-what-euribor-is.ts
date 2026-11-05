@@ -121,7 +121,7 @@ export const whatEuriborIsLesson = defineLesson({
         },
       ],
       explanation:
-        'Two of these are measurements, one is a decision, and one is a contract term. Confusing the last with the first is the most expensive error a borrower makes: when Euribor falls, the spread does not, and when a bank advertises a low rate it is advertising the spread over an index nobody controls.',
+        'Two of these are measurements, one is a decision, and one is a contract term. Confusing the spread with Euribor is the most expensive error a borrower makes: when Euribor falls, the spread does not, and when a bank advertises a low rate it is advertising the spread over an index nobody controls.',
     },
     {
       id: 'mc-below-the-dfr',

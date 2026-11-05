@@ -49,7 +49,7 @@ export const goldAndRevaluationLesson = defineLesson({
       ],
       correctOptionId: 'statutory-price',
       explanation:
-        'The Gold Reserve Act price of $42.2222 per fine troy ounce was set in 1973 and never revised. The Eurosystem revalues its gold at market prices every quarter. Two central banks, comparable metal, and one of them is reporting a number from the Nixon administration.',
+        'The statutory price of $42.2222 per fine troy ounce was set in 1973 and never revised. The Eurosystem revalues its gold at market prices every quarter. Two central banks, comparable metal, and one of them is reporting a number from the Nixon administration.',
     },
 
     {
@@ -103,7 +103,7 @@ export const goldAndRevaluationLesson = defineLesson({
           id: 'eurosystem',
           label: 'Eurosystem',
           tier: 'central_bank',
-          role: 'ECB plus twenty national central banks',
+          role: 'ECB plus the euro area’s central banks',
           openingLines: [
             { account: 'Gold and gold receivables', side: 'asset', amount: 1232838000000 },
             { account: 'Securities held for monetary policy purposes', side: 'asset', amount: 3363311000000 },

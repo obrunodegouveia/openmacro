@@ -9,7 +9,7 @@ export const theCurveThatKeepsDyingLesson = defineLesson({
   id: 'the-curve-that-keeps-dying',
   title: 'The Relationship That Keeps Being Pronounced Dead',
   subtitle:
-    'Slack is supposed to lower inflation. For thirty years it barely did. Then in 2021 it did, violently, and everyone who had written the obituary had to explain.',
+    'Slack is supposed to lower inflation. For thirty years it barely did. Then in 2021 the link came back, violently, and everyone who had written the obituary had to explain.',
   icon: '📐',
   difficulty: 'advanced',
   estimatedMinutes: 12,

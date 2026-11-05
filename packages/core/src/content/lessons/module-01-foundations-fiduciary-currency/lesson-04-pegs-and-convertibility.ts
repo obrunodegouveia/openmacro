@@ -206,7 +206,7 @@ export const pegsAndConvertibilityLesson = defineLesson({
       ],
       correctOrder: ['divergence', 'doubt', 'drain', 'count', 'break'],
       explanation:
-        'The fourth step is what makes betting against a peg sensible. Reserves are published, so everyone can see the limit. The bet is almost one-way: if the peg holds you lose a little, and if it breaks you win a lot. The British pound in 1992 and the Swiss franc in 2015 both ended like this. In 2015 the central bank chose to stop before it ran out.',
+        'The fourth step is what makes betting against a peg sensible. Reserves are published, so everyone can see the limit. The bet is almost one-way: if the peg holds you lose a little, and if it breaks you win a lot. The British pound in 1992 ended like this. The Swiss franc in 2015 was different: the central bank was holding its currency down, so it could always create more francs, and it stopped because the buying had grown too large.',
     },
 
     {

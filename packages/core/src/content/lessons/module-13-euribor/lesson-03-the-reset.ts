@@ -92,7 +92,7 @@ export const theResetLesson = defineLesson({
         },
       },
       explanation:
-        'At the 2023 peak the same loan on the same terms cost about €1,093 a month against €598 — an 83% rise, with no renegotiation, no new borrowing and no change in the borrower’s circumstances. Notice what the spread slider does too: at a 1% spread the borrower’s rate rose about ninefold, and at a 3% spread it roughly doubled. A fat spread makes the good years worse and the bad years less bad, which is not how it is usually sold.',
+        'At the 2023 peak the same loan on the same terms cost about €1,093 a month against €598 — an 83% rise, with no renegotiation, no new borrowing and no change in the borrower’s circumstances. Notice what the spread slider does too: at a 1% spread the borrower’s rate rose about tenfold, and at a 3% spread it nearly tripled. A fat spread makes the good years worse and the bad years worse too; it only makes the jump look smaller.',
     },
     {
       id: 'mc-the-lag',

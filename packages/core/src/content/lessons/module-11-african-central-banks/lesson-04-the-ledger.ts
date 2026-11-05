@@ -53,7 +53,7 @@ export const theLedgerLesson = defineLesson({
       ],
       correctOptionId: 'peg-delivers-stability',
       explanation:
-        'This has to be faced squarely by anyone arguing the arrangement is purely extractive. A saver in Abidjan kept their purchasing power through 2022 and 2023; a saver in Accra lost roughly a third of it in a single year. That difference is the inflation tax from an earlier module, and it fell on the country without the peg. The benefit is not theoretical and it is not small.',
+        'This has to be faced squarely by anyone arguing the arrangement is purely extractive. A saver in Abidjan kept their purchasing power through 2022 and 2023; a saver in Accra lost more than a quarter of it in a single year. That difference is the inflation tax from an earlier module, and it fell on the country without the peg. The benefit is not theoretical and it is not small.',
     },
 
     {

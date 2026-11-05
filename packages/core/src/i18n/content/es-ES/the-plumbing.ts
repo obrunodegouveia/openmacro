@@ -27,7 +27,7 @@ export const thePlumbingEsES: ContentDictionary = {
   'settlement-is-the-product.mc-why-central-bank.option.efficiency.feedback': 'Las cámaras de compensación privadas han sido a menudo más baratas y rápidas. Lo que no pueden ser es libres de riesgo, y lo que se compra no es velocidad.',
   'settlement-is-the-product.mc-why-central-bank.option.data.label': 'Para ver en tiempo real los flujos de pagos de la economía',
   'settlement-is-the-product.mc-why-central-bank.option.data.feedback': 'Los datos son realmente valiosos, pero son un subproducto. El sistema existiría aunque nadie mirase lo que pasa por él.',
-  'settlement-is-the-product.match-settlement-designs.prompt': 'Dos diseños, y lo que cuesta cada uno. Relaciónalos.',
+  'settlement-is-the-product.match-settlement-designs.prompt': 'Tres diseños, y lo que cuesta cada uno. Relaciónalos.',
   'settlement-is-the-product.match-settlement-designs.instructions': 'Toca un término y luego su definición',
   'settlement-is-the-product.match-settlement-designs.explanation': 'Se cambia liquidez por riesgo, y esa es la decisión de diseño central en este campo. La liquidación bruta exige que cada banco tenga el dinero en el momento del pago; la compensación les permite deberse entre sí hasta el final del día y luego liquidar un pequeño resto. El mundo pasó a la liquidación bruta después de que la quiebra de Herstatt en 1974 mostrara cuánto cuesta una obligación sin liquidar entre husos horarios. Y luego pasó treinta años inventando formas de recuperar la eficiencia en liquidez de la compensación sin la exposición.',
   'settlement-is-the-product.match-settlement-designs.pair.rtgs.term': 'Liquidación bruta en tiempo real',

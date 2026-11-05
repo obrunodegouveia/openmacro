@@ -68,7 +68,7 @@ export const whyBanksHoldReservesLesson = defineLesson({
           id: 'requirement',
           label: 'They fall by the reserve requirement on the new deposit',
           feedback:
-            'A requirement determines how many reserves the bank must *hold*, not a payment it must make. And in the US and euro area that requirement is currently zero.',
+            'A requirement determines how many reserves the bank must *hold*, not a payment it must make. And in the US that requirement is currently zero.',
         },
       ],
       correctOptionId: 'unchanged',

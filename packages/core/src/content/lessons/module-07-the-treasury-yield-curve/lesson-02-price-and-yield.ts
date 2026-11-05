@@ -261,7 +261,7 @@ export const priceAndYieldLesson = defineLesson({
         },
       ],
       explanation:
-        'The loss had already happened — it happened when yields rose — but selling is what forces it onto the balance sheet. A bank that can hold to maturity never books it; a bank that needs cash books all of it at once. That difference, not the size of the loss, is what turned an ordinary interest rate move into three bank failures in March 2023.',
+        'The loss had already happened — it happened when yields rose — but selling is what forces it onto the balance sheet. A bank that can hold to maturity never books it; a bank that needs cash books all of it at once. That difference, not the size of the loss, is what turned an ordinary interest rate move into the bank failures of spring 2023.',
     },
 
     {

@@ -60,7 +60,7 @@ export const theCarryLesson = defineLesson({
           id: 'imi',
           term: 'IMI',
           definition:
-            '0.3% of a €200,000 VPT — about €600, and the smallest line here',
+            '0.3% of a €200,000 VPT — about €600, and the tax everyone complains about',
         },
         {
           id: 'maintenance',

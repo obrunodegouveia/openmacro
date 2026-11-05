@@ -107,7 +107,7 @@ export const readingTheFedBalanceSheetEsES: ContentDictionary = {
   'h41-anatomy.mc-what-is-h41.option.bank-deposits.feedback': 'Esa es la publicación H.8. Es fácil confundirlas: la Fed publica las dos, y describen balances distintos. El H.8 es el de los bancos; el H.4.1, el de la Fed.',
   'h41-anatomy.match-lines.prompt': 'Relaciona cada línea de la publicación con lo que es de verdad.',
   'h41-anatomy.match-lines.instructions': 'Elige un término y luego su definición',
-  'h41-anatomy.match-lines.explanation': 'Cuatro de estas cinco son pasivos. Eso es lo que conviene asimilar pronto: casi todo lo que se comenta del balance de la Fed (efectivo, reservas, el montón de efectivo del Tesoro) es dinero que la Fed debe, no dinero que tiene.',
+  'h41-anatomy.match-lines.explanation': 'Tres de estas cinco son pasivos. Eso es lo que conviene asimilar pronto: casi todo lo que se comenta del balance de la Fed (efectivo, reservas, el montón de efectivo del Tesoro) es dinero que la Fed debe, no dinero que tiene.',
   'h41-anatomy.match-lines.pair.treasuries.term': 'U.S. Treasury securities (valores del Tesoro de EE. UU.)',
   'h41-anatomy.match-lines.pair.treasuries.definition': 'Deuda pública que la Fed compró y sigue teniendo: su mayor activo, 4,55 billones de $',
   'h41-anatomy.match-lines.pair.mbs.term': 'Mortgage-backed securities (valores respaldados por hipotecas)',

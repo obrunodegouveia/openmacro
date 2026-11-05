@@ -53,7 +53,7 @@ export const blackWednesdayLesson = defineLesson({
       ],
       correctOrder: ['selling', 'rate-12', 'no-effect', 'rate-15', 'suspend'],
       explanation:
-        'The two rate rises in one day are the tell. A government that raises by two points, watches nothing happen, and then reaches for five more within hours is not tightening policy — it is signalling that it has run out of instruments. The market read the second announcement as the end, and it was: sterling left the mechanism that evening.',
+        'The two rate rises in one day are the tell. A government that raises by two points, watches nothing happen, and then reaches for three more within hours is not tightening policy — it is signalling that it has run out of instruments. The market read the second announcement as the end, and it was: sterling left the mechanism that evening.',
     },
 
     {
@@ -161,7 +161,7 @@ export const blackWednesdayLesson = defineLesson({
         },
       ],
       explanation:
-        'This is what the module is actually for. The 1992 trade was not genius about sterling — it was a checklist, applied to a country where every item pointed the same way. The same four questions were asked of the Thai baht in 1997 and of the Swiss franc cap in 2015, and both ended the same way. Where the answers point the other way, the peg holds: Hong Kong has been attacked repeatedly and its currency board has more reserves than there is domestic money to borrow.',
+        'This is what the module is actually for. The 1992 trade was not genius about sterling — it was a checklist, applied to a country where every item pointed the same way. The same four questions were asked of the Thai baht in 1997, and it ended the same way. Where the answers point the other way, the peg holds: Hong Kong has been attacked repeatedly and its currency board has more reserves than there is domestic money to borrow.',
     },
   ],
   keyTakeaways: [

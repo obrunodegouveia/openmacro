@@ -111,7 +111,7 @@ export const whatItLeavesOutLesson = defineLesson({
         },
       ],
       explanation:
-        'Three of the four make the honest break-even later than the model says, and one makes it dramatically earlier. That asymmetry is worth carrying: a simple model of a property purchase almost always flatters it, because the omissions are mostly costs and frictions, and the one large omission in the buyer’s favour applies only to people under 35 buying their first home.',
+        'Two of the four make the honest break-even later than the model says, one makes it dramatically earlier, and one does not move it. That asymmetry is worth carrying: a simple model of a property purchase almost always flatters it, because the omissions are mostly costs and frictions, and the one large omission in the buyer’s favour applies only to people under 35 buying their first home.',
     },
     {
       id: 'mc-desirable-assumption',
