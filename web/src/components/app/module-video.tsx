@@ -48,9 +48,6 @@ export function ModuleVideo({
   const collapsed = exercising
     ? (exerciseCollapsed ?? (playing ? preferCollapsed : true))
     : preferCollapsed;
-  React.useEffect(() => {
-    if (!exercising) setExerciseCollapsed(null);
-  }, [exercising]);
   const [captions, setCaptions] = useVideoCaptions();
   const { t, locale } = useLocale();
   // Track only this card's contribution, so unmounting mid-play releases it.

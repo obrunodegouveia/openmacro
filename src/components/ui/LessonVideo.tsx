@@ -129,10 +129,6 @@ export function LessonVideo({ url, title, minutes, source, exercising = false }:
   const collapsed = exercising
     ? (exerciseCollapsed ?? (playing ? preferCollapsed : true))
     : preferCollapsed;
-
-  useEffect(() => {
-    if (!exercising) setExerciseCollapsed(null);
-  }, [exercising]);
   const cc = resolveCaptions(captions, locale);
 
   // Hand a changed choice to whichever player is on screen.
