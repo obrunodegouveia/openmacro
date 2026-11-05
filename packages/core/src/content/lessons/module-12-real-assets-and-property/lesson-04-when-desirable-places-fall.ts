@@ -184,7 +184,7 @@ export const whenDesirablePlacesFallLesson = defineLesson({
           id: 'strong',
           label: 'Desirable property cannot fall, so leverage is free money',
           feedback:
-            'Ireland at −54% and Spain at −37% are the reply. Leverage that turns 4.4% a year into a 204% real return also turns a 30% fall into a wipeout of a 20% deposit.',
+            'Ireland at −54% and Spain at −37% are the reply. Leverage that turns 4.4% a year into a 204% real return also turns a 20% fall into a wipeout of a 20% deposit.',
         },
         {
           id: 'weak',

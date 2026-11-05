@@ -150,7 +150,7 @@ export const debtDebasementAndCapitalEsES: ContentDictionary = {
   'the-arithmetic-of-the-debt.mc-three-exits.instructions': 'Elige la mejor respuesta',
   'the-arithmetic-of-the-debt.mc-three-exits.explanation': 'Hay cuatro salidas: crecer hasta dejarla atrás, subir impuestos y recortar gastos, eliminarla con inflación o dejar de pagar. Solo dos son decisiones que un único gobierno puede tomar y, de esas dos, solo una no requiere ninguna votación. Esto no es una predicción sobre ningún país concreto: es una observación sobre qué puerta se ha usado más a menudo y sobre por qué importa la primera lección de este módulo.',
   'the-arithmetic-of-the-debt.mc-three-exits.option.austerity.label': 'Superávits primarios sostenidos durante una década o más',
-  'the-arithmetic-of-the-debt.mc-three-exits.option.austerity.feedback': 'Se ha hecho: Gran Bretaña en la posguerra, Bélgica y Canadá en los años noventa. Es la más rara de las cuatro, porque requiere una década de gobiernos de acuerdo entre sí.',
+  'the-arithmetic-of-the-debt.mc-three-exits.option.austerity.feedback': 'Se ha hecho: Gran Bretaña en la posguerra, Bélgica y Canadá en los años noventa. Es rara, porque requiere una década de gobiernos de acuerdo entre sí.',
   'the-arithmetic-of-the-debt.mc-three-exits.option.growth.label': 'Un crecimiento tan rápido que supere a la factura de intereses',
   'the-arithmetic-of-the-debt.mc-three-exits.option.growth.feedback': 'El mejor resultado y el menos controlable. Ningún gobierno lo ha elegido nunca y lo ha conseguido de forma fiable.',
   'the-arithmetic-of-the-debt.mc-three-exits.option.inflation.label': 'La inflación, que reduce el valor real de la deuda nominal sin votación',

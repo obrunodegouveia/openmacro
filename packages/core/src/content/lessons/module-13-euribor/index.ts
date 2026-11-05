@@ -30,7 +30,7 @@ export const moduleEuribor = defineModule({
   id: 'euribor',
   title: 'Euribor',
   description:
-    'The rate most euro area mortgages reset on, and almost nobody can define correctly. What it measures, why it moves before the ECB does, what a reset costs — and five questions that separate knowing from understanding.',
+    'The rate millions of euro area mortgages reset on, and almost nobody can define correctly. What it measures, why it moves before the ECB does, what a reset costs — and five questions that separate knowing from understanding.',
   accent: 'azure',
   level: 'intermediate',
   lessons: [

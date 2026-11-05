@@ -188,7 +188,7 @@ export const whatGdpCountsPtPT: ContentDictionary = {
   'who-pays-for-it.mc-deficit-inflation.option.never.feedback': 'Pode sempre criar mais da sua moeda. É esse o risco: não falhar o pagamento, mas pagar com dinheiro que compra menos.',
   'who-pays-for-it.mc-deficit-inflation.option.only-war.label': 'Só na despesa de guerra, porque o que compra é destruído',
   'who-pays-for-it.mc-deficit-inflation.option.only-war.feedback': 'A destruição muda o que um país possui, não os preços. A despesa de guerra causa inflação porque é grande e rápida, numa economia que já está no limite.',
-  'who-pays-for-it.mc-wwii-price-index.prompt': 'A despesa do Estado dos EUA subiu de cerca de 10% do PIB em 1940 para mais de 40% em 1944. Mesmo assim, os preços subiram só cerca de 3% em 1943. Depois subiram 8,5% em 1946 e 14,4% em 1947. O que aconteceu?',
+  'who-pays-for-it.mc-wwii-price-index.prompt': 'A despesa do Estado dos EUA subiu de cerca de 10% do PIB em 1940 para mais de 40% em 1944. Mesmo assim, os preços subiram só cerca de 2% ao ano em 1944 e 1945. Depois subiram 8,5% em 1946 e 14,4% em 1947. O que aconteceu?',
   'who-pays-for-it.mc-wwii-price-index.instructions': 'Escolhe a melhor resposta',
   'who-pays-for-it.mc-wwii-price-index.explanation': 'Este caso mostra os números e a realidade a separarem-se. O PIB subiu muito, mas a vida do dia a dia não melhorou; os bens eram racionados. A inflação medida ficou baixa, mas a conta chegou na mesma dois anos depois, a 14%. Quem argumentar com números do PIB em tempo de guerra tem de explicar tudo isto.',
   'who-pays-for-it.mc-wwii-price-index.option.suppressed.label': 'O controlo de preços e o racionamento seguraram os preços na guerra; a pressão saiu quando acabaram',

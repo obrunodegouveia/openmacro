@@ -134,7 +134,7 @@ export const kabYieldCurveArbitrageLesson = defineLesson({
       options: [
         {
           id: 'shortend',
-          label: 'The bank borrows at the shortest, cheapest rates and lends for longer at higher rates',
+          label: 'That banks borrow at the shortest, cheapest rates and lend for longer at higher rates',
         },
         {
           id: 'notloan',

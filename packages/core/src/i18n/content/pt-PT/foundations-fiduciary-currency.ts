@@ -205,7 +205,7 @@ export const foundationsFiduciaryCurrencyPtPT: ContentDictionary = {
   'pegs-and-convertibility.t-peg-defence.effect.2.note': 'As reservas em moeda estrangeira, o que de mais útil um banco central tem, estão mil milhões de dólares mais baixas, e o mercado vê isso.',
   'pegs-and-convertibility.order-peg-crisis.prompt': 'Como cai mesmo uma paridade? Põe os passos por ordem.',
   'pegs-and-convertibility.order-peg-crisis.instructions': 'Primeiro passo em cima',
-  'pegs-and-convertibility.order-peg-crisis.explanation': 'O quarto passo é o que torna sensato apostar contra uma paridade. As reservas são publicadas, por isso toda a gente vê o limite. A aposta é quase num só sentido: se a paridade aguentar perdes pouco, e se partir ganhas muito. A libra em 1992 e o franco suíço em 2015 acabaram assim. Em 2015, o banco central escolheu parar antes de ficar sem reservas.',
+  'pegs-and-convertibility.order-peg-crisis.explanation': 'O quarto passo é o que torna sensato apostar contra uma paridade. As reservas são publicadas, por isso toda a gente vê o limite. A aposta é quase num só sentido: se a paridade aguentar perdes pouco, e se partir ganhas muito. A libra em 1992 acabou assim. O franco suíço em 2015 foi diferente: o banco central estava a travar a subida, por isso podia sempre criar mais francos, e parou porque as compras tinham ficado grandes demais.',
   'pegs-and-convertibility.order-peg-crisis.event.divergence.label': 'A economia do país começa a precisar de algo diferente da do país âncora',
   'pegs-and-convertibility.order-peg-crisis.event.divergence.detail': 'O câmbio fixo deixa de servir o que a economia precisa',
   'pegs-and-convertibility.order-peg-crisis.event.doubt.label': 'Os operadores começam a testar se a paridade vai aguentar',

@@ -10,7 +10,7 @@ import type { ContentDictionary } from '../../localise';
 
 export const euriborPtPT: ContentDictionary = {
   'module.title': 'Euribor',
-  'module.description': 'A taxa a que é revisto quase todo o crédito à habitação da zona euro, e que quase ninguém sabe definir bem. O que mede, porque é que se mexe antes do BCE, quanto custa uma revisão — e cinco perguntas que separam saber de perceber.',
+  'module.description': 'A taxa a que são revistos milhões de créditos à habitação da zona euro, e que quase ninguém sabe definir bem. O que mede, porque é que se mexe antes do BCE, quanto custa uma revisão — e cinco perguntas que separam saber de perceber.',
   'what-euribor-actually-is.title': 'Não É Taxa Diretora, Não É Sem Risco, Nem Sempre É Uma Operação',
   'what-euribor-actually-is.subtitle': 'Três coisas que se presume rotineiramente que a Euribor é, e não é. Começa por tirá-las.',
   'what-euribor-actually-is.takeaway.0': 'A Euribor é um indexante privado feito a partir das submissões de um painel gerido pelo EMMI, não uma taxa diretora do BCE.',
@@ -38,7 +38,7 @@ export const euriborPtPT: ContentDictionary = {
   'what-euribor-actually-is.mc-hybrid.option.legacy.label': 'Porque os contratos escritos antes de 2019 exigem o método antigo',
   'what-euribor-actually-is.match-benchmarks.prompt': 'Liga cada taxa ao que ela mede de facto.',
   'what-euribor-actually-is.match-benchmarks.instructions': 'Escolhe um termo e depois o significado',
-  'what-euribor-actually-is.match-benchmarks.explanation': 'Duas destas são medições, uma é uma decisão, e uma é uma cláusula contratual. Confundir a última com a primeira é o erro mais caro que quem pede emprestado comete: quando a Euribor cai, o spread não cai, e quando um banco anuncia uma taxa baixa está a anunciar o spread sobre um índice que ninguém controla.',
+  'what-euribor-actually-is.match-benchmarks.explanation': 'Duas destas são medições, uma é uma decisão, e uma é uma cláusula contratual. Confundir o spread com a Euribor é o erro mais caro que quem pede emprestado comete: quando a Euribor cai, o spread não cai, e quando um banco anuncia uma taxa baixa está a anunciar o spread sobre um índice que ninguém controla.',
   'what-euribor-actually-is.match-benchmarks.pair.estr.term': '€STR',
   'what-euribor-actually-is.match-benchmarks.pair.estr.definition': 'A um dia, sem garantia, baseada em transações, publicada pelo BCE — 2,189% e na prática sem risco',
   'what-euribor-actually-is.match-benchmarks.pair.euribor.term': 'Euribor',
@@ -112,7 +112,7 @@ export const euriborPtPT: ContentDictionary = {
   'the-euribor-reset.takeaway.3': 'Se um índice negativo chegou a quem pedia emprestado dependeu de uma cláusula de limite mínimo redigida décadas antes.',
   'the-euribor-reset.sim-payment-shock.prompt': 'Revê um crédito de 200 000 € a qualquer Euribor dos últimos cinco anos.',
   'the-euribor-reset.sim-payment-shock.instructions': 'Mexe na fixação da Euribor e no spread do teu contrato',
-  'the-euribor-reset.sim-payment-shock.explanation': 'No pico de 2023 o mesmo empréstimo nas mesmas condições custava cerca de 1093 € por mês contra 598 € — uma subida de 83%, sem renegociação nenhuma, sem crédito novo e sem nenhuma mudança na situação de quem devia. Repara também no que o cursor do spread faz: com um spread de 1% a taxa de quem pedia emprestado subiu cerca de nove vezes, e com um spread de 3% mais ou menos duplicou. Um spread gordo torna os anos bons piores e os anos maus menos maus, o que não é como costuma ser vendido.',
+  'the-euribor-reset.sim-payment-shock.explanation': 'No pico de 2023 o mesmo empréstimo nas mesmas condições custava cerca de 1093 € por mês contra 598 € — uma subida de 83%, sem renegociação nenhuma, sem crédito novo e sem nenhuma mudança na situação de quem devia. Repara também no que o cursor do spread faz: com um spread de 1% a taxa de quem pedia emprestado subiu cerca de dez vezes, e com um spread de 3% quase triplicou. Um spread gordo torna piores os anos bons e também os maus; só faz o salto parecer mais pequeno.',
   'the-euribor-reset.sim-payment-shock.narrative': 'Trinta anos, prestações constantes, um spread acordado uma vez na assinatura e nunca mais revisto. A única coisa que muda em cada revisão é o índice. A Euribor a doze meses estava em −0,505% em Janeiro de 2021 e em +4,160% em Outubro de 2023, e a comparação abaixo é contra esse mínimo de 2021.',
   'the-euribor-reset.sim-payment-shock.objective': 'Compara o mínimo de 2021 com o pico de 2023, e deixa a prestação pelo menos 50% acima do mínimo',
   'the-euribor-reset.sim-payment-shock.slider.euribor.label': 'Euribor na revisão',

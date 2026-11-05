@@ -9,7 +9,7 @@ export const sameDecisionDifferentCountriesLesson = defineLesson({
   id: 'same-decision-different-countries',
   title: 'The Same Rise, Nine Times the Pain',
   subtitle:
-    'The ECB sets one rate for twenty countries whose mortgage markets transmit it at wildly different speeds. This is not a design flaw anyone forgot about.',
+    'The ECB sets one rate for more than twenty countries whose mortgage markets transmit it at wildly different speeds. This is not a design flaw anyone forgot about.',
   icon: '🏘️',
   difficulty: 'advanced',
   estimatedMinutes: 12,
@@ -86,7 +86,7 @@ export const sameDecisionDifferentCountriesLesson = defineLesson({
         target: { readoutKey: 'absorbed', comparator: 'gte', value: 0.07 },
       },
       explanation:
-        'The defaults are Portugal: 85% floating, debt at twice income, a four-point rise takes 7% of household income within a year. Now set floating to 5% and resets to 5% — the United States, where most borrowers hold a thirty-year fixed rate — and the same four points takes 0.8%. Nine times the impact, from the same decision by the same central bank, because of a contract convention. This is the concrete content of "transmission differs across the euro area", and it is why a single policy rate does not mean a single monetary policy. It also explains something that looks like a puzzle from outside: why American consumption barely flinched during the fastest tightening in forty years.',
+        'The defaults are Portugal: 85% floating, debt at twice income, a four-point rise takes 7% of household income within a year. Now set floating to 5% and resets to 5% — the United States, where most borrowers hold a thirty-year fixed rate — and the same four points takes 0.8%. Nine times the impact, from the same four-point rise, because of a contract convention. This is the concrete content of "transmission differs across the euro area", and it is why a single policy rate does not mean a single monetary policy. It also explains something that looks like a puzzle from outside: why American consumption barely flinched during the fastest tightening in forty years.',
     },
     {
       id: 'match-structural-differences',

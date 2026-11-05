@@ -107,7 +107,7 @@ export const readingTheFedBalanceSheetPtPT: ContentDictionary = {
   'h41-anatomy.mc-what-is-h41.option.bank-deposits.feedback': 'Isso é o documento H.8. Fácil de confundir — a Fed publica os dois, e descrevem balanços diferentes: o H.8 é o dos bancos, o H.4.1 é o da Fed.',
   'h41-anatomy.match-lines.prompt': 'Liga cada linha do documento ao que ela é de facto.',
   'h41-anatomy.match-lines.instructions': 'Escolhe um termo e depois o significado',
-  'h41-anatomy.match-lines.explanation': 'Quatro destas cinco são passivo. É isso que há a absorver cedo: quase tudo no balanço da Fed de que as pessoas falam — notas, reservas, o dinheiro do Tesouro — é dinheiro que a Fed deve, não dinheiro que tem.',
+  'h41-anatomy.match-lines.explanation': 'Três destas cinco são passivo. É isso que há a absorver cedo: quase tudo no balanço da Fed de que as pessoas falam — notas, reservas, o dinheiro do Tesouro — é dinheiro que a Fed deve, não dinheiro que tem.',
   'h41-anatomy.match-lines.pair.treasuries.term': 'Títulos do Tesouro dos EUA',
   'h41-anatomy.match-lines.pair.treasuries.definition': 'Dívida pública que a Fed comprou e ainda detém — o seu maior ativo isolado, 4,55 biliões de dólares',
   'h41-anatomy.match-lines.pair.mbs.term': 'Títulos garantidos por hipotecas',

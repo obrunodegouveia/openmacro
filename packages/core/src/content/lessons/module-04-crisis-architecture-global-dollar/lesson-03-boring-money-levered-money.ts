@@ -217,7 +217,7 @@ export const boringMoneyLeveredMoneyLesson = defineLesson({
         {
           aggregate: 'collateral',
           direction: 'unchanged',
-          note: 'The same bond now does two jobs: it is owned by the fund and pledged to the money fund. That double duty is what collateral re-use means.',
+          note: 'The same bond now does two jobs: it is owned by the fund and pledged to the money fund. Collateral re-use is a further step: the money fund pledging it onward.',
         },
       ],
       explanation:

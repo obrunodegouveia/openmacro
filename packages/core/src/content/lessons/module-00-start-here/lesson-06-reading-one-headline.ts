@@ -64,7 +64,7 @@ export const readingOneHeadlineLesson = defineLesson({
         {
           id: 'market',
           label: 'Money market rates move within days',
-          detail: 'Including Euribor, which most euro area mortgages follow',
+          detail: 'Including Euribor, which many euro area mortgages follow',
         },
         {
           id: 'new-loans',
@@ -120,7 +120,7 @@ export const readingOneHeadlineLesson = defineLesson({
       ],
       correctOptionId: 'reset-date',
       explanation:
-        'Most euro area mortgages follow Euribor and reset every three, six or twelve months. Two people who signed six months apart pay rates set six months apart. In 2022 and 2023 that meant hundreds of euros a month on the same loan. Nobody negotiated anything and nothing went wrong: the calendar did it. A later module covers Euribor.',
+        'Many euro area mortgages follow Euribor and reset every three, six or twelve months. Two people who signed six months apart pay rates set six months apart. In 2022 and 2023 that meant hundreds of euros a month on the same loan. Nobody negotiated anything and nothing went wrong: the calendar did it. A later module covers Euribor.',
     },
     {
       id: 'match-where-next',

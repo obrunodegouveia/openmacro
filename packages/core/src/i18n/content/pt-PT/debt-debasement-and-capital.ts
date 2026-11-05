@@ -150,7 +150,7 @@ export const debtDebasementAndCapitalPtPT: ContentDictionary = {
   'the-arithmetic-of-the-debt.mc-three-exits.instructions': 'Escolhe a melhor resposta',
   'the-arithmetic-of-the-debt.mc-three-exits.explanation': 'Há quatro saídas: crescer para fora dela, cobrar e cortar para fora dela, inflacioná-la até desaparecer, ou entrar em incumprimento. Só duas são decisões que um único governo pode tomar, e dessas duas só uma não exige que se vote seja o que for. Não é uma previsão sobre nenhum país em particular — é uma observação sobre que porta foi mais usada, e sobre por que a primeira lição deste módulo importa.',
   'the-arithmetic-of-the-debt.mc-three-exits.option.austerity.label': 'Excedentes primários sustentados ao longo de uma década ou mais',
-  'the-arithmetic-of-the-debt.mc-three-exits.option.austerity.feedback': 'Já se fez — a Grã-Bretanha do pós-guerra, a Bélgica, o Canadá nos anos 90. É a mais rara das quatro, porque exige uma década de governos a concordarem uns com os outros.',
+  'the-arithmetic-of-the-debt.mc-three-exits.option.austerity.feedback': 'Já se fez — a Grã-Bretanha do pós-guerra, a Bélgica, o Canadá nos anos 90. É rara, porque exige uma década de governos a concordarem uns com os outros.',
   'the-arithmetic-of-the-debt.mc-three-exits.option.growth.label': 'Crescimento rápido o suficiente para ultrapassar a fatura de juros',
   'the-arithmetic-of-the-debt.mc-three-exits.option.growth.feedback': 'O melhor resultado e o menos controlável. Nenhum governo alguma vez o escolheu e o conseguiu de forma fiável.',
   'the-arithmetic-of-the-debt.mc-three-exits.option.inflation.label': 'Inflação, que encolhe o valor real de um stock nominal sem votação nenhuma',

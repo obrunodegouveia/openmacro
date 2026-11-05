@@ -75,7 +75,7 @@ export const theFrancZoneMapLesson = defineLesson({
           id: 'ecowas',
           term: 'ECOWAS',
           definition:
-            'A fifteen-country political and economic bloc — not a currency union, and not the issuer of anything',
+            'A West African political and economic bloc — not a currency union, and not the issuer of anything',
         },
         {
           id: 'eco',
@@ -91,7 +91,7 @@ export const theFrancZoneMapLesson = defineLesson({
         },
       ],
       explanation:
-        'The third and fourth entries cause most of the confusion. ECOWAS is a bloc of fifteen countries with its own long-delayed currency plan, also called the Eco; UEMOA is the eight-country monetary union inside it. They are not the same body, they do not have the same members, and a headline about one is routinely read as being about the other.',
+        'The third and fourth entries cause most of the confusion. ECOWAS is a West African bloc with its own long-delayed currency plan, also called the Eco; UEMOA is the eight-country monetary union that overlaps it. They are not the same body, they do not have the same members, and a headline about one is routinely read as being about the other.',
     },
 
     {
@@ -162,7 +162,7 @@ export const theFrancZoneMapLesson = defineLesson({
   ],
   keyTakeaways: [
     'Two CFA francs, two central banks, two unions — plus the Comoros, on its own arrangement.',
-    'ECOWAS is a fifteen-country bloc, not a currency union; UEMOA is the eight-country monetary union inside it.',
+    'ECOWAS is a West African bloc, not a currency union; UEMOA is the eight-country monetary union that overlaps it.',
     'The Sahel states left ECOWAS in January 2025 and are still in UEMOA, still using the CFA franc.',
     '655.957 is a 1994 French franc rate carried across by the euro conversion factor.',
   ],
