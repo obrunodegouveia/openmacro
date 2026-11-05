@@ -456,7 +456,7 @@ export const en = {
   'treasury.copy': 'Copy',
   'treasury.networkWarning.lead': 'Send EURC and ETH on',
   'treasury.networkWarning.tail':
-    'only. The same address on another network will not arrive and cannot be recovered.',
+    ' only. The same address on another network will not arrive and cannot be recovered.',
   'treasury.attention': 'Needs attention',
   'treasury.attentionBody':
     'These stopped between broadcasting and recording. Look up the nonce on the treasury address in BaseScan: if a transaction exists the money moved, if not it did not. Do not retry the payment — a pending transaction can still be mined.',

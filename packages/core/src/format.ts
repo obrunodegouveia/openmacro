@@ -32,6 +32,9 @@ const SEPARATORS: Readonly<Record<string, { group: string; decimal: string }>> =
   // decimal with a comma — `1 234,50`. The space is non-breaking on purpose:
   // a readout must never wrap between a thousand and its hundreds.
   'pt-PT': { group: '\u00A0', decimal: ',' },
+  // Spanish groups with a point and separates the decimal with a comma:
+  // `1.234,50`, the way a Spanish newspaper or bank statement writes it.
+  'es-ES': { group: '.', decimal: ',' },
 };
 
 function separators(locale: string): { group: string; decimal: string } {
@@ -73,6 +76,14 @@ const MAGNITUDES: Readonly<Record<string, readonly (readonly [number, string, st
   ],
   'pt-PT': [
     [1e12, '\u00A0bilião', '\u00A0biliões'],
+    [1e9, '\u00A0mM', '\u00A0mM'],
+    [1e6, '\u00A0M', '\u00A0M'],
+    [1e3, '\u00A0mil', '\u00A0mil'],
+  ],
+  // Spanish has the same trap as Portuguese: *billón* is 10^12 and 10^9 is
+  // *mil millones*, so it gets the same answer. See above.
+  'es-ES': [
+    [1e12, '\u00A0billón', '\u00A0billones'],
     [1e9, '\u00A0mM', '\u00A0mM'],
     [1e6, '\u00A0M', '\u00A0M'],
     [1e3, '\u00A0mil', '\u00A0mil'],

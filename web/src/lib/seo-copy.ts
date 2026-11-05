@@ -21,7 +21,9 @@
 
 import type { Locale } from '@openmacro/core/i18n/locales';
 
-interface PageCopy {
+import { SEO_ES } from '@/lib/seo-copy-es';
+
+export interface PageCopy {
   title: string;
   description: string;
   keywords?: string[];
@@ -105,5 +107,5 @@ export const SEO_PT: Record<string, PageCopy> = {
  */
 export function localisedCopy(path: string, locale: Locale): Partial<PageCopy> {
   if (locale === 'en') return {};
-  return SEO_PT[path] ?? {};
+  return (locale === 'es-ES' ? SEO_ES : SEO_PT)[path] ?? {};
 }

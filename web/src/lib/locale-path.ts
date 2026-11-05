@@ -13,7 +13,10 @@
 import type { Locale } from '@openmacro/core/i18n/locales';
 
 /** URL segment per locale. English has none: `/learn`, not `/en/learn`. */
-const SEGMENTS: Partial<Record<Locale, string>> = { 'pt-PT': 'pt' };
+const SEGMENTS: Partial<Record<Locale, string>> = { 'pt-PT': 'pt', 'es-ES': 'es' };
+
+/** For `og:locale`, which wants an underscore and a region. */
+export const OG_LOCALES: Record<Locale, string> = { en: 'en_US', 'pt-PT': 'pt_PT', 'es-ES': 'es_ES' };
 
 /**
  * `('pt-PT', '/learn')` → `/pt/learn`. `('en', '/learn')` → `/learn`.

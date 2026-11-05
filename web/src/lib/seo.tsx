@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Locale } from "@openmacro/core/i18n/locales";
 import { SITE } from "@/lib/site";
 import { alternates as localeAlternates, localeUrl } from "@/lib/locale-server";
+import { OG_LOCALES } from "@/lib/locale-path";
 
 /**
  * Shared metadata helpers.
@@ -48,7 +49,7 @@ export function pageMetadata({
       siteName: SITE.name,
       title,
       description,
-      locale: locale === "pt-PT" ? "pt_PT" : "en_US",
+      locale: OG_LOCALES[locale],
       ...(publishedTime ? { publishedTime } : {}),
     },
     twitter: {

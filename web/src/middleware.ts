@@ -21,7 +21,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 /** URL segment → BCP-47 tag. The segment is short because it is public. */
-export const LOCALE_SEGMENTS = { pt: 'pt-PT' } as const;
+export const LOCALE_SEGMENTS = { pt: 'pt-PT', es: 'es-ES' } as const;
 
 export const LOCALE_HEADER = 'x-openmacro-locale';
 

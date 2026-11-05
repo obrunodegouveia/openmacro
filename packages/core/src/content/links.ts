@@ -31,9 +31,9 @@ export const SITE_ORIGIN = 'https://openmacro.org';
  * locale, this one has to as well — a link with the wrong prefix does not
  * fail, it silently sends a Portuguese reader to the English course.
  */
-const SEGMENTS: Partial<Record<Locale, string>> = { 'pt-PT': 'pt' };
+const SEGMENTS: Partial<Record<Locale, string>> = { 'pt-PT': 'pt', 'es-ES': 'es' };
 
-function localeSegment(locale: Locale): string {
+export function localeSegment(locale: Locale): string {
   const segment = SEGMENTS[locale];
   return segment ? `/${segment}` : '';
 }

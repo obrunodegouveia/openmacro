@@ -8,8 +8,7 @@ import { AnswerList } from "@/components/site/answer-list";
 import { Badge } from "@/components/ui/badge";
 import { LEARN_ANSWERS, faqPageLd } from "@/lib/answers";
 import { localisedAnswers } from "@/lib/answers-locale";
-import { TRACK_COUNT_LABEL } from "@/lib/curriculum";
-import { localisedSyllabus } from "@/lib/curriculum-locale";
+import { localisedSyllabus, trackCountLabel } from "@/lib/curriculum-locale";
 import { CourseMap } from "@/components/app/course-map";
 import { JsonLd, ORGANIZATION, breadcrumbs, pageMetadata } from "@/lib/seo";
 import { localisedCopy } from "@/lib/seo-copy";
@@ -128,7 +127,7 @@ export default async function LearnPage() {
                 },
                 {
                   icon: <GraduationCap className="size-5" aria-hidden />,
-                  title: s("learn.step.3.title", { count: TRACK_COUNT_LABEL.toLowerCase() }),
+                  title: s("learn.step.3.title", { count: trackCountLabel(locale).toLowerCase() }),
                   body: s("learn.step.3.body"),
                   href: "/#curriculum",
                   cta: s("learn.step.3.cta"),

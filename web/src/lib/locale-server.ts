@@ -42,6 +42,7 @@ export function alternates(locale: Locale, path: string) {
     languages: {
       en: localeUrl('en', path),
       'pt-PT': localeUrl('pt-PT', path),
+      'es-ES': localeUrl('es-ES', path),
       'x-default': localeUrl('en', path),
     },
   };

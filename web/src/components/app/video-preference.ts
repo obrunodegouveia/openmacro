@@ -83,10 +83,10 @@ export function useVideosCollapsed(): [boolean, (next: boolean) => void] {
 // most people never touch it. The app keeps the identical choice in
 // src/services/videoPreference.ts.
 
-export type CaptionPreference = "auto" | "pt" | "en" | "off";
+export type CaptionPreference = "auto" | "pt" | "es" | "en" | "off";
 
 const CAPTIONS_KEY = "openmacro.videoCaptions.v1";
-const CAPTION_VALUES: readonly CaptionPreference[] = ["auto", "pt", "en", "off"];
+const CAPTION_VALUES: readonly CaptionPreference[] = ["auto", "pt", "es", "en", "off"];
 
 let captions: CaptionPreference = "auto";
 const captionListeners = new Set<() => void>();
@@ -135,9 +135,10 @@ export function useVideoCaptions(): [CaptionPreference, (next: CaptionPreference
 export function resolveCaptions(
   preference: CaptionPreference,
   locale: string,
-): "pt" | "en" | "off" {
+): "pt" | "es" | "en" | "off" {
   if (preference !== "auto") return preference;
-  return locale.startsWith("pt") ? "pt" : "off";
+  if (locale.startsWith("pt")) return "pt";
+  return locale.startsWith("es") ? "es" : "off";
 }
 
 /** The next choice when the learner taps the subtitles control. */

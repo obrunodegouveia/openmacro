@@ -30,6 +30,7 @@ import { COURSE, MODULES } from '../../content/registry';
 import { DEFAULT_LOCALE, type Locale } from '../locales';
 import { collectKeys, coverage, localiseModule, type ContentDictionary } from '../localise';
 import { ptPTContent } from './pt-PT';
+import { esESContent } from './es-ES';
 
 /**
  * One language's content overlay.
@@ -50,6 +51,7 @@ const EMPTY: ContentTranslation = { modules: {} };
 const TRANSLATIONS: Record<Locale, ContentTranslation> = {
   en: EMPTY,
   'pt-PT': ptPTContent,
+  'es-ES': esESContent,
 };
 
 /** The course's own translatable strings, as key → English. */
