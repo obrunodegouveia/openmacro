@@ -72,7 +72,7 @@ export const overnightRatesLesson = defineLesson({
       ],
       correctOptionId: 'reserves',
       explanation:
-        'The overnight market is where banks that ended the day with more reserves than they need lend to banks that ended short. The rate on that trade is the shortest, most heavily collateralised price in the financial system, which is why it anchors nearly everything else: a mortgage or a corporate loan is ultimately priced off the expected path of this one number.',
+        'The overnight market is where banks that ended the day with more reserves than they need lend to banks that ended short. The rate on that trade is the shortest, lowest-risk price in the financial system, which is why it anchors nearly everything else: a mortgage or a corporate loan is ultimately priced off the expected path of this one number.',
     },
 
     {

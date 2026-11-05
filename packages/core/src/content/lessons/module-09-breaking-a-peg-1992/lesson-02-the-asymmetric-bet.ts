@@ -131,7 +131,7 @@ export const theAsymmetricBetLesson = defineLesson({
         },
       },
       explanation:
-        'Sterling actually reached $1.7082 within a week, which on this position pays about $873m — against a carry cost of roughly $31m for three months. That is the reported outcome: a position reported near $10bn and a profit reported near $1bn, reproduced from the published exchange rates. The asymmetry is the whole trade. Being wrong costs you a rounding error; being right pays twenty-nine times it.',
+        'Sterling actually reached $1.7082 within a week, which on this position pays about $873m — against a carry cost of roughly $31m for three months. That is the reported outcome: a position reported near $10bn and a profit reported near $1bn, reproduced from the published exchange rates. The asymmetry is the whole trade. Being wrong costs you a rounding error; being right pays twenty-eight times it.',
     },
 
     {

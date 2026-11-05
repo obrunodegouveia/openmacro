@@ -71,7 +71,7 @@ export const capitalIsNotCashLesson = defineLesson({
         {
           id: 'reserves',
           term: 'Reserve requirement',
-          definition: 'A minimum balance at the central bank, set to zero in much of the world since 2020',
+          definition: 'A minimum balance at the central bank, now zero or small in many rich countries',
         },
       ],
       explanation:

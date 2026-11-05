@@ -134,7 +134,7 @@ export const theListIsAPolicyLesson = defineLesson({
           id: 'secret',
           label: 'It is decided in private, away from any published debate',
           feedback:
-            'The lists and haircut schedules are published in detail. Being public and being noticed are different things, and this is the clearest case of the second.',
+            'The lists and haircut schedules are published in detail. Being public and being noticed are different things, and this is the clearest case of one without the other.',
         },
         {
           id: 'legal',

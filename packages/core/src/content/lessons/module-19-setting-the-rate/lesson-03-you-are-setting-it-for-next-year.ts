@@ -134,7 +134,7 @@ export const youAreSettingItForNextYearLesson = defineLesson({
         },
       ],
       explanation:
-        'Read those four and you can see why one policy rate for twenty countries is genuinely hard, and why the same ECB decision lands on Portugal and Germany at different speeds and in different sectors. Knowing your own country’s financing structure is not a detail of the job. It is the difference between a rate rise that works in six months and one that works in three years.',
+        'Read those four and you can see why one policy rate for more than twenty countries is genuinely hard, and why the same ECB decision lands on Portugal and Germany at different speeds and in different sectors. Knowing your own country’s financing structure is not a detail of the job. It is the difference between a rate rise that works in six months and one that works in three years.',
     },
   ],
   keyTakeaways: [

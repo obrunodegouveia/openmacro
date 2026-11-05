@@ -14,7 +14,7 @@ export const wholesaleIsNotRetailLesson = defineLesson({
   id: 'cbdc-wholesale-is-not-retail',
   title: 'Two Machines, One Acronym',
   subtitle:
-    'Wholesale CBDC and retail CBDC share three letters and almost nothing else. Separating them is the difference between scrutiny and noise.',
+    'Wholesale CBDC and retail CBDC share four letters and almost nothing else. Separating them is the difference between scrutiny and noise.',
   icon: '🔍',
   difficulty: 'core',
   estimatedMinutes: 10,
@@ -43,7 +43,7 @@ export const wholesaleIsNotRetailLesson = defineLesson({
           id: 'public-access',
           label: 'It gives the public a direct claim on the central bank',
           feedback:
-            'That is a retail CBDC. The BIS glossary is explicit: a wholesale CBDC is "available to commercial banks and other licenced financial institutions". Households do not appear anywhere in it.',
+            'That is a retail CBDC. The BIS report on Mariana is explicit: a wholesale CBDC is "available to commercial banks and other licenced financial institutions". Households do not appear anywhere in it.',
         },
         {
           id: 'more-money',

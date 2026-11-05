@@ -139,7 +139,7 @@ export const whoPaysForItLesson = defineLesson({
       tags: ['inflation', 'history', 'price-controls'],
       xp: 35,
       prompt:
-        'US government spending rose from about 10% of GDP in 1940 to over 40% in 1944. Yet prices rose only about 3% in 1943. Then they rose 8.5% in 1946 and 14.4% in 1947. What happened?',
+        'US government spending rose from about 10% of GDP in 1940 to over 40% in 1944. Yet prices rose only about 2% a year in 1944 and 1945. Then they rose 8.5% in 1946 and 14.4% in 1947. What happened?',
       instructions: 'Pick the best answer',
       options: [
         {

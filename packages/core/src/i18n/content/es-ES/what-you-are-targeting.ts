@@ -109,7 +109,7 @@ export const whatYouAreTargetingEsES: ContentDictionary = {
   'core-and-headline.order-which-measure.event.expect.label': 'Comprobar si se han movido las expectativas',
   'core-and-headline.order-which-measure.event.decide.label': 'Decidir según la previsión de la general en el horizonte de la política',
   'the-curve-that-keeps-dying.title': 'La relación que siguen dando por muerta',
-  'the-curve-that-keeps-dying.subtitle': 'Se supone que la holgura baja la inflación. Durante treinta años apenas lo hizo. Luego, en 2021, lo hizo de forma violenta, y todos los que habían escrito la necrológica tuvieron que dar explicaciones.',
+  'the-curve-that-keeps-dying.subtitle': 'Se supone que la holgura baja la inflación. Durante treinta años apenas lo hizo. Luego, en 2021, el vínculo volvió de forma violenta, y todos los que habían escrito la necrológica tuvieron que dar explicaciones.',
   'the-curve-that-keeps-dying.takeaway.0': 'La curva moderna es expectativas más holgura más shocks: domina el término de las expectativas.',
   'the-curve-that-keeps-dying.takeaway.1': 'Una curva plana es prueba de credibilidad, y dura solo lo que dure la credibilidad.',
   'the-curve-that-keeps-dying.takeaway.2': 'Cada medida de expectativas falla de una forma distinta; los acuerdos salariales deciden el resultado.',

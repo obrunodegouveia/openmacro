@@ -224,7 +224,7 @@ export const bailInBailOutLesson = defineLesson({
           id: 'illegal',
           label: 'It was illegal',
           feedback:
-            'Swiss regulators had the authority, and the bond terms permitted it. Lawful and surprising are not exclusive.',
+            'A Swiss court did rule against the order in 2025, and that went to appeal. But markets moved the next morning, long before any ruling.',
         },
         {
           id: 'inverted',

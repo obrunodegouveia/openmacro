@@ -53,7 +53,7 @@ export const settlementIsTheProductLesson = defineLesson({
       type: 'concept_match',
       tags: ['rtgs', 'netting', 'payments'],
       xp: 30,
-      prompt: 'Two designs, and what each costs. Match them.',
+      prompt: 'Three designs, and what each costs. Match them.',
       instructions: 'Tap a term, then its definition',
       pairs: [
         {

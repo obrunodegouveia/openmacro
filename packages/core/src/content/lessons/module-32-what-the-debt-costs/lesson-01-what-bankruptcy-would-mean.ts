@@ -116,7 +116,7 @@ export const whatBankruptcyWouldMeanLesson = defineLesson({
         },
       ],
       explanation:
-        'The word "debt" covers four different situations here and only one of them is about solvency. Argentina can genuinely run out of dollars. Italy is the interesting middle case — the euro is its currency but not its central bank’s sole mandate, which is why 2012 happened and why the ECB eventually had to say it would act. Japan has carried a ratio nobody thought survivable for thirty years, because the debt is held domestically at rates near zero. Before asking whether a debt is too big, ask what currency it is in and who holds it.',
+        'The word "debt" covers four different situations here and only one of them is about solvency. Argentina can genuinely run out of dollars. Italy is the interesting middle case — the euro is its currency but its central bank does not control it alone, which is why 2012 happened and why the ECB eventually had to say it would act. Japan has carried a ratio nobody thought survivable for thirty years, because the debt is held domestically at rates near zero. Before asking whether a debt is too big, ask what currency it is in and who holds it.',
     },
     {
       id: 'order-postwar',

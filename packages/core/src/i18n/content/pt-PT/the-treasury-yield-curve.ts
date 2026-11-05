@@ -83,7 +83,7 @@ export const theTreasuryYieldCurvePtPT: ContentDictionary = {
   'bond-price-and-yield.sim-price-yield.readout.change.caption': 'O par é onde o rendimento iguala o cupão, e em mais lado nenhum',
   'bond-price-and-yield.realise-the-loss.prompt': 'Um banco vende essa obrigação a 85 dólares para arranjar dinheiro. Faz os lançamentos.',
   'bond-price-and-yield.realise-the-loss.instructions': 'Três linhas num balanço, duas no outro. Repara onde a perda aterra.',
-  'bond-price-and-yield.realise-the-loss.explanation': 'A perda já tinha acontecido — aconteceu quando as yields subiram — mas é vender que a força para dentro do balanço. Um banco que possa manter até à maturidade nunca a regista; um banco que precisa de dinheiro regista-a toda de uma vez. É essa diferença, e não o tamanho da perda, que transformou um movimento vulgar de taxas de juro em três falências bancárias em março de 2023.',
+  'bond-price-and-yield.realise-the-loss.explanation': 'A perda já tinha acontecido — aconteceu quando as yields subiram — mas é vender que a força para dentro do balanço. Um banco que possa manter até à maturidade nunca a regista; um banco que precisa de dinheiro regista-a toda de uma vez. É essa diferença, e não o tamanho da perda, que transformou um movimento vulgar de taxas de juro nas falências bancárias da primavera de 2023.',
   'bond-price-and-yield.realise-the-loss.scenario': 'Um banco comprou 100 milhões de dólares de obrigações do Tesouro a 10 anos ao par. Os rendimentos subiram, e ele precisa de dinheiro agora, por isso vende a posição por 85 milhões a um fundo de pensões.',
   'bond-price-and-yield.realise-the-loss.entity.bank.label': 'O Banco que Vende',
   'bond-price-and-yield.realise-the-loss.entity.bank.role': 'Comprou ao par, vende a 85',

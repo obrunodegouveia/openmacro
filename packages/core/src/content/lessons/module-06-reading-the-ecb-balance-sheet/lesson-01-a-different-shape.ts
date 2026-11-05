@@ -111,7 +111,7 @@ export const aDifferentShapeLesson = defineLesson({
         },
         {
           id: 'ecb-plus-ncbs',
-          label: 'The Eurosystem is the ECB plus the twenty national central banks',
+          label: 'The Eurosystem is the ECB plus the euro area’s central banks',
         },
         {
           id: 'eu-wide',
@@ -126,7 +126,7 @@ export const aDifferentShapeLesson = defineLesson({
       ],
       correctOptionId: 'ecb-plus-ncbs',
       explanation:
-        'The Banque de France, the Bundesbank and eighteen others hold most of these assets on their own books; the ECB itself is a small share. That matters for who bears a loss: when a bond in the APP portfolio defaults, most of the pain sits with the national central bank that bought it, not with Frankfurt.',
+        'The Banque de France, the Bundesbank and the other national central banks hold most of these assets on their own books; the ECB itself is a small share. That matters for who bears a loss: when a bond in the APP portfolio defaults, most of the pain sits with the national central bank that bought it, not with Frankfurt.',
     },
 
     {
@@ -167,7 +167,7 @@ export const aDifferentShapeLesson = defineLesson({
     },
   ],
   keyTakeaways: [
-    'The Eurosystem publishes a consolidated weekly statement, and it is the ECB plus twenty national central banks.',
+    'The Eurosystem publishes a consolidated weekly statement, and it is the ECB plus the euro area’s national central banks.',
     'Gold is a fifth of its assets. On the Fed’s sheet gold is a rounding error.',
     'Banks hold euros in two places — current accounts and the deposit facility — where at the Fed there is one line.',
     'Similar size, different shape: 57% securities against the Fed’s 96%.',

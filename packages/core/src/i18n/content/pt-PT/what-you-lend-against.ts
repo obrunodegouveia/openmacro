@@ -53,7 +53,7 @@ export const whatYouLendAgainstPtPT: ContentDictionary = {
   'the-list-is-a-policy.mc-what-it-decides.explanation': 'Torne uma classe de ativo elegível e financiar-se contra ela fica mais barato, logo emite-se e detém-se mais. O módulo anterior argumentou que um banco central a escolher setores está a fazer política industrial sem mandato — e o quadro de garantias faz uma versão mais silenciosa disso todos os dias, ao decidir de quem é o papel que se parece com dinheiro e de quem não é. As propostas para o inclinar para ativos verdes não estão a introduzir um poder novo. Estão a propor usar de propósito um poder que já existe.',
   'the-list-is-a-policy.mc-what-it-decides.option.allocation.label': 'Decide que devedores são mais baratos de financiar',
   'the-list-is-a-policy.mc-what-it-decides.option.secret.label': 'É decidido em privado, longe de qualquer debate público',
-  'the-list-is-a-policy.mc-what-it-decides.option.secret.feedback': 'As listas e as tabelas de cortes são publicadas em detalhe. Ser público e ser notado são coisas diferentes, e este é o caso mais claro da segunda.',
+  'the-list-is-a-policy.mc-what-it-decides.option.secret.feedback': 'As listas e as tabelas de cortes são publicadas em detalhe. Ser público e ser notado são coisas diferentes, e este é o caso mais claro de uma sem a outra.',
   'the-list-is-a-policy.mc-what-it-decides.option.legal.label': 'Exige legislação na maioria das jurisdições',
   'the-list-is-a-policy.mc-what-it-decides.option.legal.feedback': 'É normalmente uma decisão operacional dentro de um mandato existente, que é precisamente por que não atrai debate.',
   'the-list-is-a-policy.mc-what-it-decides.option.size.label': 'Os montantes envolvidos são maiores do que as compras de ativos',

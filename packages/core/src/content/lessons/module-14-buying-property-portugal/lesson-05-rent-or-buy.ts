@@ -143,12 +143,12 @@ export const rentOrBuyLesson = defineLesson({
         {
           id: 'interest',
           label: 'Interest to the bank',
-          detail: 'About €780 of the first payment — money that does not come back',
+          detail: 'About €790 of the first payment — money that does not come back',
         },
         {
           id: 'principal',
           label: 'Principal repaid',
-          detail: 'About €360 — this part is saving, not spending',
+          detail: 'About €350 — this part is saving, not spending',
         },
         {
           id: 'maintenance',
@@ -163,7 +163,7 @@ export const rentOrBuyLesson = defineLesson({
       ],
       correctOrder: ['interest', 'principal', 'maintenance', 'imi'],
       explanation:
-        'Only two of these four are genuinely gone. Principal repaid is savings — it comes back at sale, which is why counting the whole mortgage payment as a cost overstates the case badly in the later years, when the split reverses. Early on it is roughly two-thirds interest, and that is the honest cost of borrowing rather than paying cash.',
+        'Three of these four are genuinely gone. Principal repaid is savings — it comes back at sale, which is why counting the whole mortgage payment as a cost overstates the case badly in the later years, when the split reverses. Early on it is roughly two-thirds interest, and that is the honest cost of borrowing rather than paying cash.',
     },
     {
       id: 'mc-euribor-risk',
@@ -238,6 +238,6 @@ export const rentOrBuyLesson = defineLesson({
     'Interest belongs in the rent-versus-buy question and nowhere else — charging it without crediting rent compares buying against living for free.',
     'At 3% appreciation and a normal rent, owning is ahead within a handful of years even with the mortgage counted.',
     'The rent you would otherwise pay moves the answer more than the loan rate does.',
-    'Only the interest is truly spent — principal repaid is saving, and it comes back at the sale.',
+    'Interest is the biggest cost that never comes back — principal repaid is saving, and it comes back at the sale.',
   ],
 });

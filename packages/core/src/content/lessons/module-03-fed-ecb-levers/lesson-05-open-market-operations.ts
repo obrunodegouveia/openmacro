@@ -236,7 +236,7 @@ export const openMarketOperationsLesson = defineLesson({
       ],
       correctOptionId: 'reverse',
       explanation:
-        'The names are from the central bank’s point of view, which is a constant source of confusion. In a reverse repo the central bank borrows: counterparties hand over cash and receive collateral, so reserves fall. The Fed’s ON RRP facility is exactly this, offered as a standing option rather than an auction — and at its 2022 peak it was draining more than $2 trillion, which is how a facility built to plug a leak in the floor became one of the largest positions on the balance sheet.',
+        'The names are from the counterparty’s point of view, which is a constant source of confusion. In a reverse repo the central bank borrows: counterparties hand over cash and receive collateral, so reserves fall. The Fed’s ON RRP facility is exactly this, offered as a standing option rather than an auction — and at its 2022 peak it was draining more than $2 trillion, which is how a facility built to plug a leak in the floor became one of the largest positions on the balance sheet.',
     },
   ],
 });

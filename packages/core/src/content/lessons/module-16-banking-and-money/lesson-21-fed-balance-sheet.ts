@@ -82,7 +82,7 @@ export const kabFedBalanceSheetLesson = defineLesson({
       ],
       correctOptionId: 'spread',
       explanation:
-        'Its debts cost nothing, and its assets pay interest. That is the biggest gap in all of finance, so the video calls it easy money. It also works the other way: if the Fed ever went broke, the US government would stand behind it. That is what “obligations of the United States” on the notes means.',
+        'Its debts cost nothing, and its assets pay interest. That is the biggest gap in all of finance, so the video calls it easy money. It also works the other way: if the Fed ever went broke, the US government would stand behind it. That is what the law means when it calls the notes “obligations of the United States”.',
     },
     {
       id: 'mc-fed-leverage',

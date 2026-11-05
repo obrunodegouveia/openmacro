@@ -109,7 +109,7 @@ export const whatYouAreTargetingPtPT: ContentDictionary = {
   'core-and-headline.order-which-measure.event.expect.label': 'Verificar se as expectativas se moveram',
   'core-and-headline.order-which-measure.event.decide.label': 'Decidir com base na previsão da taxa global no horizonte da política',
   'the-curve-that-keeps-dying.title': 'A Relação Que Não Para de Ser Dada como Morta',
-  'the-curve-that-keeps-dying.subtitle': 'A folga devia baixar a inflação. Durante trinta anos quase não baixou. Depois, em 2021, baixou com violência, e todos os que tinham escrito o obituário tiveram de dar explicações.',
+  'the-curve-that-keeps-dying.subtitle': 'A folga devia baixar a inflação. Durante trinta anos quase não baixou. Depois, em 2021, a ligação voltou com violência, e todos os que tinham escrito o obituário tiveram de dar explicações.',
   'the-curve-that-keeps-dying.takeaway.0': 'A curva moderna é expectativas mais folga mais choques — o termo das expectativas domina.',
   'the-curve-that-keeps-dying.takeaway.1': 'Uma curva plana é prova de credibilidade, e dura exatamente o tempo que a credibilidade durar.',
   'the-curve-that-keeps-dying.takeaway.2': 'Todas as medidas de expectativas são pouco fiáveis de maneiras diferentes; são as negociações salariais que decidem o resultado.',

@@ -82,7 +82,7 @@ export const whyTwoPercentLesson = defineLesson({
       ],
       correctOptionId: 'convention',
       explanation:
-        'Don Brash, then governor of the Reserve Bank of New Zealand, mentioned a 0–2% range in a 1988 television interview; it went into the 1989 Act and then into most of the world by imitation. That history is not an argument against it — a convention that has anchored expectations for thirty years has earned enormous standing, and the anchoring is worth more than any refinement of the number. But it is why a governor should be able to say plainly that the value is conventional. Defending it as a derived optimum invites a challenge the evidence cannot support.',
+        'Roger Douglas, then New Zealand’s finance minister, floated a goal of 0–1% in a 1988 television interview; the Reserve Bank made it 0–2%, it became the target under the 1989 Act, and it then spread to most of the world by imitation. That history is not an argument against it — a convention that has anchored expectations for thirty years has earned enormous standing, and the anchoring is worth more than any refinement of the number. But it is why a governor should be able to say plainly that the value is conventional. Defending it as a derived optimum invites a challenge the evidence cannot support.',
     },
     {
       id: 'mc-why-not-four',

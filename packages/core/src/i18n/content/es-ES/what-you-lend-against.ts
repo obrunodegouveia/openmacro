@@ -53,7 +53,7 @@ export const whatYouLendAgainstEsES: ContentDictionary = {
   'the-list-is-a-policy.mc-what-it-decides.explanation': 'Haz admisible un tipo de activo y prestar contra él se abarata, así que se emite y se tiene más de ese activo. El módulo anterior sostenía que un banco central que elige sectores hace política industrial sin mandato, y el marco de garantías hace cada día una versión más discreta de eso, al decidir los títulos de qué emisores son casi dinero y los de cuáles no. Las propuestas de inclinarlo hacia los activos verdes no introducen un poder nuevo. Proponen usar a propósito uno que ya existe.',
   'the-list-is-a-policy.mc-what-it-decides.option.allocation.label': 'Decide qué prestatarios se financian más barato',
   'the-list-is-a-policy.mc-what-it-decides.option.secret.label': 'Se decide en privado, lejos de todo debate público',
-  'the-list-is-a-policy.mc-what-it-decides.option.secret.feedback': 'Las listas y las tablas de recortes se publican con detalle. Ser público y que te presten atención son cosas distintas, y este es el caso más claro de lo segundo.',
+  'the-list-is-a-policy.mc-what-it-decides.option.secret.feedback': 'Las listas y las tablas de recortes se publican con detalle. Ser público y que te presten atención son cosas distintas, y este es el caso más claro de lo uno sin lo otro.',
   'the-list-is-a-policy.mc-what-it-decides.option.legal.label': 'Requiere una ley en la mayoría de los países',
   'the-list-is-a-policy.mc-what-it-decides.option.legal.feedback': 'Suele ser una decisión operativa dentro de un mandato ya existente, y justo por eso no atrae debate.',
   'the-list-is-a-policy.mc-what-it-decides.option.size.label': 'Las sumas son mayores que las compras de activos',

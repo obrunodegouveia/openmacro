@@ -35,7 +35,7 @@ export const whoFailsAndHowLesson = defineLesson({
       ],
       correctOrder: ['equity', 'at1', 'tier2', 'senior', 'large', 'insured'],
       explanation:
-        'The order is the product, not the detail. Every investor prices their instrument on the assumption that this sequence holds, and an authority that departs from it in a crisis is not saving money — it is repricing every comparable instrument in the market the following Monday. Credit Suisse in March 2023 wrote AT1 down to zero while shareholders received value, inverting two of these rungs; the AT1 market shut for months afterwards and the legal argument continues.',
+        'The order is the product, not the detail. Every investor prices their instrument on the assumption that this sequence holds, and an authority that departs from it in a crisis is not saving money — it is repricing every comparable instrument in the market the following Monday. In March 2023 the Swiss regulator, FINMA, had Credit Suisse’s AT1 written down to zero while shareholders received value, inverting two of these rungs; the AT1 market shut for months afterwards and the legal argument continues.',
     },
     {
       id: 'mc-why-resolution',

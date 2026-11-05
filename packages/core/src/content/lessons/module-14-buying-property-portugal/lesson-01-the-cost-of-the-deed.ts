@@ -90,7 +90,7 @@ export const theCostOfTheDeedLesson = defineLesson({
           id: 'jovem',
           term: 'IMT Jovem',
           definition:
-            'Full exemption from IMT and stamp duty under 35 on a first permanent home to €330,539',
+            'Full exemption from IMT and stamp duty at 35 or under on a first permanent home to €330,539',
         },
       ],
       explanation:
@@ -107,11 +107,11 @@ export const theCostOfTheDeedLesson = defineLesson({
       options: [
         {
           id: 'exemption-cliff',
-          label: 'Far more than €5,000 — €330,539 is where the young-buyer exemption stops being full',
+          label: 'About €5,400 — above €330,539 the exemption stops being full',
         },
         {
           id: 'five-thousand',
-          label: '€5,000, plus a little IMT',
+          label: 'Exactly €5,000 — the exemption covers both prices',
           feedback:
             'That is the answer if you ignore where the thresholds fall. Here the price is sitting exactly on the line that decides whether the exemption is full or partial.',
         },
@@ -119,7 +119,7 @@ export const theCostOfTheDeedLesson = defineLesson({
           id: 'nothing',
           label: 'Nothing, since you are exempt either way',
           feedback:
-            'The full exemption runs to €330,539. Above it the relief becomes partial, tapering out entirely at €660,982.',
+            'The full exemption runs to €330,539. Above it the relief becomes partial, ending at €660,982.',
         },
         {
           id: 'tax-deductible',
@@ -128,7 +128,7 @@ export const theCostOfTheDeedLesson = defineLesson({
       ],
       correctOptionId: 'exemption-cliff',
       explanation:
-        'Thresholds are where the money is. Every one of these tables has edges — €106,346, €330,539, €660,982 — and a price sitting just above one costs materially more than the same property just below it. It is the single most valuable thing to check before agreeing a number, and it takes about a minute.',
+        'Above €330,539 a young buyer pays 8% IMT and 0.8% stamp duty, but only on the part over the line: about €390 here. That is an edge, not a cliff. The real cliff is €660,982, where the relief ends and the bill jumps by about €16,000. It is worth checking before agreeing a number, and it takes about a minute.',
     },
     {
       id: 'mc-selling-side',
@@ -147,7 +147,7 @@ export const theCostOfTheDeedLesson = defineLesson({
           id: 'five',
           label: '5% — the commission',
           feedback:
-            'The commission is subject to VAT at 23%, so the invoice is 6.15%. It is a common omission and it is worth about €3,700 on a €300,000 sale.',
+            'The commission is subject to VAT at 23%, so the invoice is 6.15%. It is a common omission and it is worth about €3,450 on a €300,000 sale.',
         },
         {
           id: 'nothing',
@@ -168,7 +168,7 @@ export const theCostOfTheDeedLesson = defineLesson({
   keyTakeaways: [
     'IMT applies its rate to the whole price and subtracts a deduction: €10,542 on a €300,000 permanent home.',
     'Add 0.8% stamp duty and the deed, and entry costs are €13,942 — 4.65% of the price.',
-    'Under 35 buying a first permanent home, IMT and stamp duty are waived to €330,539.',
+    'At 35 or under buying a first permanent home, IMT and stamp duty are waived to €330,539.',
     'Selling costs about 6.15%, so the round trip is roughly 11% before you have owned it for a day.',
   ],
 });

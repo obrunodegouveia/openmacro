@@ -10,7 +10,7 @@ import type { ContentDictionary } from '../../localise';
 
 export const euriborEsES: ContentDictionary = {
   'module.title': 'Euríbor',
-  'module.description': 'El tipo al que se revisan la mayoría de las hipotecas de la zona del euro y que casi nadie sabe definir bien. Qué mide, por qué se mueve antes que el BCE, cuánto cuesta una revisión, y cinco preguntas que separan saber de entender.',
+  'module.description': 'El tipo al que se revisan millones de hipotecas de la zona del euro y que casi nadie sabe definir bien. Qué mide, por qué se mueve antes que el BCE, cuánto cuesta una revisión, y cinco preguntas que separan saber de entender.',
   'what-euribor-actually-is.title': 'Ni tipo oficial, ni libre de riesgo, ni siempre una operación',
   'what-euribor-actually-is.subtitle': 'Se suele dar por hecho que el euríbor es tres cosas que no es. Empieza por quitarlas de en medio.',
   'what-euribor-actually-is.takeaway.0': 'El euríbor es una referencia privada basada en las aportaciones del panel de EMMI, no un tipo oficial del BCE.',
@@ -38,7 +38,7 @@ export const euriborEsES: ContentDictionary = {
   'what-euribor-actually-is.mc-hybrid.option.legacy.label': 'Porque los contratos firmados antes de 2019 exigen el método antiguo',
   'what-euribor-actually-is.match-benchmarks.prompt': 'Relaciona cada tipo con lo que de verdad mide.',
   'what-euribor-actually-is.match-benchmarks.instructions': 'Elige un término y luego su definición',
-  'what-euribor-actually-is.match-benchmarks.explanation': 'Dos son mediciones, uno es una decisión y otro es una condición del contrato. Confundir el último con el primero es el error más caro de quien pide un préstamo: cuando el euríbor baja, el diferencial no baja, y cuando un banco anuncia un tipo bajo, anuncia el diferencial sobre un índice que nadie controla.',
+  'what-euribor-actually-is.match-benchmarks.explanation': 'Dos son mediciones, uno es una decisión y otro es una condición del contrato. Confundir el diferencial con el euríbor es el error más caro de quien pide un préstamo: cuando el euríbor baja, el diferencial no baja, y cuando un banco anuncia un tipo bajo, anuncia el diferencial sobre un índice que nadie controla.',
   'what-euribor-actually-is.match-benchmarks.pair.estr.term': '€STR',
   'what-euribor-actually-is.match-benchmarks.pair.estr.definition': 'A un día, sin garantía, basado en operaciones, publicado por el BCE: 2,189 % y en la práctica sin riesgo',
   'what-euribor-actually-is.match-benchmarks.pair.euribor.term': 'Euríbor',
@@ -112,7 +112,7 @@ export const euriborEsES: ContentDictionary = {
   'the-euribor-reset.takeaway.3': 'Que un índice negativo llegara a quien tenía el préstamo dependió de una cláusula suelo redactada décadas antes.',
   'the-euribor-reset.sim-payment-shock.prompt': 'Revisa una hipoteca de 200.000 € con cualquier euríbor de los últimos cinco años.',
   'the-euribor-reset.sim-payment-shock.instructions': 'Mueve el valor del euríbor y el diferencial de tu contrato',
-  'the-euribor-reset.sim-payment-shock.explanation': 'En el máximo de 2023, el mismo préstamo con las mismas condiciones costaba unos 1.093 € al mes frente a 598 €: una subida del 83 %, sin renegociación, sin nueva deuda y sin ningún cambio en la situación de quien lo tenía. Fíjate también en lo que hace el control del diferencial: con un diferencial del 1 %, el tipo subió unas nueve veces, y con uno del 3 %, más o menos se duplicó. Un diferencial alto empeora los años buenos y hace menos malos los años malos, y no es así como suele venderse.',
+  'the-euribor-reset.sim-payment-shock.explanation': 'En el máximo de 2023, el mismo préstamo con las mismas condiciones costaba unos 1.093 € al mes frente a 598 €: una subida del 83 %, sin renegociación, sin nueva deuda y sin ningún cambio en la situación de quien lo tenía. Fíjate también en lo que hace el control del diferencial: con un diferencial del 1 %, el tipo subió unas diez veces, y con uno del 3 %, casi se triplicó. Un diferencial alto empeora los años buenos y también los malos; solo hace que el salto parezca menor.',
   'the-euribor-reset.sim-payment-shock.narrative': 'Treinta años, cuotas iguales y un diferencial acordado una vez al firmar y nunca revisado. Lo único que cambia en cada revisión es el índice. El euríbor a doce meses estaba en −0,505 % en enero de 2021 y en +4,160 % en octubre de 2023, y la comparación de abajo se hace con ese mínimo de 2021.',
   'the-euribor-reset.sim-payment-shock.objective': 'Compara el mínimo de 2021 con el máximo de 2023, y deja la cuota al menos un 50 % por encima del mínimo',
   'the-euribor-reset.sim-payment-shock.slider.euribor.label': 'Euríbor en la revisión',

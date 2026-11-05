@@ -93,7 +93,7 @@ export const h41AnatomyLesson = defineLesson({
         },
       ],
       explanation:
-        'Four of these five are liabilities. That is the thing to absorb early: almost everything on the Fed’s balance sheet that people talk about — cash, reserves, the Treasury’s cash pile — is money the Fed owes, not money it has.',
+        'Three of these five are liabilities. That is the thing to absorb early: almost everything on the Fed’s balance sheet that people talk about — cash, reserves, the Treasury’s cash pile — is money the Fed owes, not money it has.',
     },
 
     {

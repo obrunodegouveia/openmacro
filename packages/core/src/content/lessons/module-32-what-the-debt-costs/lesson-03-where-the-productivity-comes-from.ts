@@ -86,7 +86,7 @@ export const whereTheProductivityComesFromLesson = defineLesson({
       ],
       correctOptionId: 'accounting',
       explanation:
-        'Intellectual property is mobile in a way that a steel mill is not. A pharmaceutical patent or a software licence can be held by a subsidiary in a low-tax jurisdiction, so the profit on a sale made anywhere in the world lands in the national accounts of a country with a few million people. Ireland’s output statistics moved so violently after one such restructuring that its own central bank invented a different measure to see through it. This is not an argument that Ireland is poor — it is prosperous by any honest measure. It is a warning that the top of a productivity table is the place where accounting distortions are largest, and the ranking is doing less work than it appears to.',
+        'Intellectual property is mobile in a way that a steel mill is not. A pharmaceutical patent or a software licence can be held by a subsidiary in a low-tax jurisdiction, so the profit on a sale made anywhere in the world lands in the national accounts of a country with a few million people. Ireland’s output statistics moved so violently after one such restructuring that its own statistics office invented a different measure to see through it. This is not an argument that Ireland is poor — it is prosperous by any honest measure. It is a warning that the top of a productivity table is the place where accounting distortions are largest, and the ranking is doing less work than it appears to.',
     },
     {
       id: 'sim-scale',
@@ -208,7 +208,7 @@ export const whereTheProductivityComesFromLesson = defineLesson({
           id: 'foreign',
           label: 'Foreign governments hold far too much of it',
           feedback:
-            'Foreign holders are mostly a sign of demand rather than of vulnerability, and the largest single holder of Treasuries is American. Japan’s debt is held almost entirely at home and is twice the size.',
+            'Foreign holders are mostly a sign of demand rather than of vulnerability, and the largest single holder of Treasuries is American. Japan’s debt is held almost entirely at home and is twice the size relative to its economy.',
         },
         {
           id: 'ratio',
