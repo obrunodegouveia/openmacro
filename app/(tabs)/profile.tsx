@@ -18,10 +18,13 @@ import { Linking, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimens
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SymbolView } from 'expo-symbols';
 
+import { MODULES } from '@openmacro/core/content/registry';
+import { kidsPathLessonCount } from '@openmacro/core/engine/lessonMode';
 import { AccountBar } from '@/components/ui/AccountBar';
 import { Chevron } from '@/components/ui/CourseRows';
 import { DeleteAccount } from '@/components/ui/DeleteAccount';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
+import { KidsModeToggle } from '@/components/ui/KidsModeToggle';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { MusicToggle } from '@/components/ui/MusicToggle';
@@ -143,6 +146,8 @@ export default function ProfileScreen() {
         <View style={styles.card}>
           <LanguagePicker />
         </View>
+
+        <KidsModeToggle lessons={kidsPathLessonCount(MODULES)} />
 
         <View style={styles.card}>
           <MusicToggle />

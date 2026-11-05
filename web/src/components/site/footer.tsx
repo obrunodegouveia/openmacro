@@ -8,6 +8,9 @@ import { LanguagePicker } from "@/components/site/language-picker";
 import { BrandLogo } from "@/components/site/brand-logo";
 import { SeasonalFooter } from "@/components/site/seasonal-decor";
 import { SeasonSettings } from "@/components/site/season-settings";
+import { KidsModeSwitch } from "@/components/app/kids-mode-switch";
+import { MODULES } from "@openmacro/core/content/registry";
+import { kidsPathLessonCount } from "@openmacro/core/engine/lessonMode";
 import {
   GITHUB_CONTRIBUTING_URL,
   GITHUB_ISSUES_URL,
@@ -115,6 +118,13 @@ export async function Footer() {
             body={s("footer.rewardsBody")}
           />
         </div>
+
+        <section id="settings" aria-labelledby="settings-heading" className="mt-10 scroll-mt-24 border-t border-hairline pt-8">
+          <h2 id="settings-heading" className="mb-3 font-display text-sm font-extrabold text-ink">
+            {s("footer.settings")}
+          </h2>
+          <KidsModeSwitch lessons={kidsPathLessonCount(MODULES)} />
+        </section>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-5 border-t border-hairline pt-8 sm:flex-row sm:items-center">
           <div>

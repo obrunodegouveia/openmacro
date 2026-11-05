@@ -336,17 +336,18 @@ function LessonRunner({ lesson, mode, resumeAs }: LessonRunnerProps) {
       <ComboPill combo={state.combo} />
 
       {/*
-        Lessons built around a video play it inline, before the questions and
-        only before the first answer. Once answering is under way it would be
-        the largest thing on screen and the least useful.
+        Lessons built around a video show it before the questions. Once answering
+        is under way it shrinks to a bar, so it is always there to go back to
+        without being the largest thing on screen. The website does the same.
       */}
-      {lesson.video && state.stepSerial === 0 && !state.feedback ? (
+      {lesson.video ? (
         <View style={styles.videoWrap}>
           <LessonVideo
             url={lesson.video.url}
             title={lesson.title}
             minutes={lesson.video.minutes}
             source={lesson.video.source}
+            exercising={state.stepSerial > 0 || Boolean(state.feedback)}
           />
         </View>
       ) : null}

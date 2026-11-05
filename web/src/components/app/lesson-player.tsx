@@ -299,13 +299,13 @@ function LessonRun({
 
         {/*
           Lessons built around somebody else's video show it before the
-          questions, and only before they start — once answering is under way
-          it would be the largest thing on screen and the least useful.
+          questions. Once answering is under way it shrinks to a bar, so it is
+          always there to go back to without being the largest thing on screen.
           Reuses ModuleVideo, so nothing reaches Google until play is pressed.
         */}
-        {!started && lesson.video ? (
+        {playing && lesson.video ? (
           <div className="mb-6">
-            <ModuleVideo video={lesson.video} moduleTitle={lesson.title} />
+            <ModuleVideo video={lesson.video} moduleTitle={lesson.title} exercising={started} />
           </div>
         ) : null}
 

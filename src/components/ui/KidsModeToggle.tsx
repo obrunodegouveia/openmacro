@@ -1,5 +1,5 @@
 /**
- * The kids mode switch, on the page of a module that has a kids path.
+ * The kids mode switch, in Profile with the other settings.
  * See `src/services/kidsMode.ts`.
  */
 

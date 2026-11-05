@@ -55,6 +55,7 @@ export const esES = {
   'footer.glossary': 'Glosario',
   'footer.privacy': 'Privacidad',
   'footer.contributors': 'colaboradores. Contenido solo educativo —',
+  'footer.settings': 'Ajustes',
   'footer.mit': 'MIT',
   'footer.mitLicensed': 'Licencia MIT',
   'footer.coppa': 'Diseñado teniendo en cuenta la COPPA',
