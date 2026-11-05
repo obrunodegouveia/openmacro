@@ -34,7 +34,7 @@ export const ANSWERS_ES: Record<string, { question?: string; answer?: string }> 
   'how-long': {
     question: '¿Cuánto se tarda en entender cómo funciona el sistema monetario?',
     answer:
-      'El mecanismo central, que los préstamos crean depósitos y que el pasivo del banco central lo liquida todo, se puede entender bien en una tarde. Soltarse lo suficiente para leer el balance de un banco central o seguir una decisión de política monetaria lleva unas semanas de sesiones cortas y regulares. Por eso OpenMacro se basa en lecciones de cinco minutos.',
+      'El mecanismo central, que los préstamos crean depósitos y que el pasivo del banco central lo liquida todo, se puede entender bien en una tarde. Ganar la soltura necesaria para leer el balance de un banco central o seguir una decisión de política monetaria lleva unas semanas de sesiones cortas y regulares. Por eso OpenMacro se basa en lecciones de cinco minutos.',
   },
   'best-free-resource': {
     question: '¿Cuál es el mejor recurso gratuito para aprender sobre banca central?',
@@ -56,7 +56,7 @@ export const ANSWERS_ES: Record<string, { question?: string; answer?: string }> 
   'what-age': {
     question: '¿A qué edad deberían empezar los niños a aprender cómo funciona el dinero?',
     answer:
-      'Hacia los 7 u 8 años, la idea de que el dinero es un derecho frente a alguien y no una cosa con valor propio. Hacia los 10 a 12 años, de dónde sale el dinero de los bancos. Los adolescentes pueden con todo el mecanismo (reservas, bancos centrales, inflación) y suelen encontrarlo más interesante que los presupuestos, porque explica algo que han notado y que nadie les ha explicado.',
+      'Hacia los 7 u 8 años, la idea de que el dinero es un derecho frente a alguien y no una cosa con valor propio. Entre los 10 y los 12 años, de dónde sale el dinero de los bancos. Los adolescentes pueden con todo el mecanismo (reservas, bancos centrales, inflación) y suelen encontrarlo más interesante que los presupuestos, porque explica algo que han notado y que nadie les ha explicado.',
   },
   'explain-inflation': {
     question: '¿Cómo le explico la inflación a un niño?',
@@ -74,7 +74,7 @@ export const ANSWERS_ES: Record<string, { question?: string; answer?: string }> 
       'Sí, y es gratis para eso, sin licencia que comprar. Las lecciones son de código abierto y con licencia MIT, así que un docente puede usarlas, traducirlas, reordenarlas o escribir las suyas y enviarlas. Las lecciones son archivos JSON sin más, lo que significa que un profesor de economía sin experiencia en programación puede escribir una en un editor de texto y hacer que la revisen las personas responsables del proyecto.',
   },
   'is-it-safe': {
-    question: '¿Es seguro para los niños? ¿Qué datos recogéis?',
+    question: '¿Es seguro para los niños? ¿Qué datos se recogen?',
     answer:
       'El sitio web no tiene analítica, publicidad ni scripts de rastreo de terceros, y puedes leer todas las páginas y terminar todas las lecciones sin cuenta. Sin sesión iniciada, el progreso y los puntos de recompensa se quedan en el dispositivo y nunca se suben. Iniciar sesión es opcional (con Google o, en la app de iOS, con Apple) y solo guarda tus XP, tu racha de días y las lecciones que has terminado, almacenados en la UE. No es una comprobación de edad y no lo tratamos como tal; lo que protege aquí a un menor es que no hay nada que recoger, ni publicidad, ni forma de contactar con otra persona desde el producto. No recogemos a sabiendas información personal de menores de 13 años.',
   },

@@ -46,7 +46,7 @@ export const CURRICULUM_ES: CurriculumOverlay = {
       name: 'El núcleo fiduciario',
       subject: 'El Estado y el marco legal',
       premise:
-        'Por qué se acepta siquiera una ficha sin respaldo: obligaciones fiscales, curso legal y confianza institucional.',
+        'Por qué se acepta una ficha sin respaldo: obligaciones fiscales, curso legal y confianza institucional.',
       assets: ['Derechos fiscales futuros', 'Infraestructura pública'],
       liabilities: ['Deuda soberana', 'La propia moneda'],
       levers: ['Cartalismo y demanda impulsada por los impuestos', 'Ley de curso legal', 'Tipos de cambio fijos', 'Confianza y credibilidad'],
@@ -60,14 +60,14 @@ export const CURRICULUM_ES: CurriculumOverlay = {
       concepts: [
         'Los depósitos como promesas',
         'Qué es un banco',
-        'Qué paga un tipo de interés',
+        'Qué compensa un tipo de interés',
         'Quién manda y quién no',
         'Qué hace la inflación y a quién',
       ],
     },
     'foundations-fiduciary-currency': {
       promise:
-        'Explicar por qué se acepta siquiera un papel sin respaldo, sin recurrir a vaguedades sobre la confianza.',
+        'Explicar por qué se acepta un papel sin respaldo, sin recurrir a vaguedades sobre la confianza.',
       concepts: ['De las fichas de mercancía al cartalismo', 'Curso legal y obligaciones fiscales', 'Poder adquisitivo', 'Tipos de cambio fijos y respaldo en reservas'],
     },
     'commercial-central-interface': {
@@ -161,7 +161,7 @@ export const CURRICULUM_ES: CurriculumOverlay = {
     },
     'real-assets-and-property': {
       promise:
-        'Averiguar quién paga un auge inmobiliario, y qué tendría que ser cierto para que se invirtiera.',
+        'Averiguar quién paga un auge inmobiliario, y qué tendría que ser cierto para que se diera la vuelta.',
       concepts: [
         'Activos reales frente a derechos nominales',
         'El efecto Cantillon',
@@ -183,7 +183,7 @@ export const CURRICULUM_ES: CurriculumOverlay = {
     },
     'buying-property-portugal': {
       promise:
-        'Saber al euro lo que cuesta una compra, y cuántos años de revalorización hacen falta para compensarlo.',
+        'Saber hasta el último euro lo que cuesta una compra, y cuántos años de revalorización hacen falta para compensarlo.',
       concepts: [
         'La tabla del IMT de 2026',
         'El impuesto de timbre y la escritura',

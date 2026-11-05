@@ -32,12 +32,12 @@ export const esES = {
   // ---- hero ---------------------------------------------------------------
   'hero.title.lead': 'Entiende la',
   'hero.title.emphasis': 'máquina',
-  'hero.title.tail': 'detrás del dinero.',
+  'hero.title.tail': 'que hay detrás del dinero.',
   'hero.stat.tiers': 'Niveles de balance',
   'hero.stat.lessons': 'Lecciones disponibles',
   'hero.stat.free': 'Gratis, para siempre',
   'hero.subtitle':
-    'La plataforma gamificada y de código abierto que enseña macroeconomía, banca central y creación de crédito, un asiento de balance cada vez.',
+    'La plataforma gamificada y de código abierto que enseña macroeconomía, banca central y creación de crédito, apunte a apunte.',
   'hero.start': 'Empezar a aprender',
   'hero.continue': 'Seguir aprendiendo',
   'hero.signInA11y': 'Inicia sesión para empezar a aprender',
@@ -47,7 +47,7 @@ export const esES = {
   'hero.or': 'O',
   'hero.browse': 'mira las {count, number} lecciones',
   'hero.noAccount': '— sin necesidad de cuenta.',
-  'hero.openSource': 'Código abierto · Licencia MIT · Creado con educadores',
+  'hero.openSource': 'Código abierto · Licencia MIT · Creado con docentes',
 
   // ---- footer -------------------------------------------------------------
   'footer.aria': 'Pie de página',
@@ -57,14 +57,14 @@ export const esES = {
   'footer.contributors': 'colaboradores. Contenido solo educativo —',
   'footer.mit': 'MIT',
   'footer.mitLicensed': 'Licencia MIT',
-  'footer.coppa': 'Pensado para cumplir la COPPA desde el diseño',
+  'footer.coppa': 'Diseñado teniendo en cuenta la COPPA',
   'footer.rewards': 'Recompensas pagadas por gente que conoces',
   'footer.mitBody':
-    'El código y las lecciones se pueden usar, bifurcar, traducir y enseñar gratis, también con fines comerciales.',
+    'Puedes usar el código y las lecciones, hacer un fork, traducirlos y enseñar con ellos gratis, también con fines comerciales.',
   'footer.coppaBody':
     'No hace falta cuenta para aprender, no hay anuncios basados en el comportamiento y no se recogen datos personales de menores de 13 años.',
   'footer.rewardsBody':
-    'MacroXP y MintBucks son una puntuación de aprendizaje que nadie puede comprar ni intercambiar. Un padre, una madre o un docente puede decidir pagar por ella a quien aprende en euros (EURC). Eso se configura y se retira en la web, nunca en la app.',
+    'MacroXP y MintBucks son una puntuación de aprendizaje que nadie puede comprar ni intercambiar. Un padre, una madre o un docente puede decidir pagar por ella en euros (EURC) a quien aprende. Eso se configura y se retira en la web, nunca en la app.',
   'footer.disclaimer': 'nada de esto es asesoramiento financiero.',
   'footer.githubA11y': 'OpenMacro en GitHub',
   'footer.chatA11y': 'Chat de la comunidad de OpenMacro',
@@ -77,7 +77,7 @@ export const esES = {
   'features.lede': 'Tres convicciones dan forma a cada lección que publicamos.',
   'features.budgeting.title': 'No es otra app de presupuestos',
   'features.budgeting.body':
-    'Saber que debes saltarte el café diario no te dirá por qué el alquiler ha subido más que tu sueldo. Y los cursos de «conceptos básicos del dinero» se detienen justo donde se pone interesante: en el punto en que tendrías que abrir el balance de un banco central.',
+    'Saber que debes renunciar al café de cada día no te dirá por qué el alquiler ha subido más que tu sueldo. Y los cursos de «conceptos básicos del dinero» se detienen justo donde se pone interesante: en el punto en que tendrías que abrir el balance de un banco central.',
   'features.budgeting.theirsHeading': 'Las apps de presupuestos preguntan',
   'features.budgeting.theirs.0': '¿Adónde ha ido mi dinero?',
   'features.budgeting.theirs.1': '¿Me lo puedo permitir?',
@@ -92,16 +92,16 @@ export const esES = {
   'features.openSource.step.0': 'Haz un fork del repositorio',
   'features.openSource.step.1': 'Añade un archivo de lección en src/content/lessons',
   'features.openSource.step.2': 'La CI comprueba que todos los balances cuadran de verdad',
-  'features.openSource.step.3': 'Una persona responsable revisa la economía',
+  'features.openSource.step.3': 'Una persona responsable del proyecto revisa la economía',
   'features.educator.title': 'Guiado por familias y docentes',
   'features.educator.body':
-    'Creado con quienes de verdad se sientan junto a quien aprende. Las herramientas para el aula y para la mesa de la cocina son funciones de primera clase, no un extra de pago para empresas.',
+    'Creado con quienes de verdad se sientan junto a quien aprende. Las herramientas para el aula y para la mesa de la cocina son parte central del producto, no un extra de pago para empresas.',
   'features.educator.tracks.title': 'Itinerarios a medida',
   'features.educator.tracks.body':
     'Reordena módulos, oculta lo que aún no hayas visto y fija una lección como los deberes de esta semana.',
   'features.educator.prizes.title': 'Bolsas de premios patrocinadas',
   'features.educator.prizes.body':
-    'Financia un premio para tu clase o para tu hijo o hija: libros, equipos o privilegios. Tú fijas el objetivo y lo entregas directamente.',
+    'Financia un premio para tu clase o para tu hijo o hija: libros, aparatos o privilegios. Tú fijas el objetivo y lo entregas directamente.',
   'features.educator.ledger.title': 'Recompensas reales, si quieres',
   'features.educator.ledger.body':
     'Un padre, una madre o un docente puede recompensar en euros (EURC) los XP y el tiempo activo que gane quien aprende. El dinero es suyo y solo se retira en la web. La app muestra XP, nunca dinero.',
@@ -147,7 +147,7 @@ export const esES = {
   'sheet.total': 'Total',
   'sheet.note':
     'Los dos lados se mueven juntos. Las reservas con las que paga el banco se crean en el momento: el balance siempre cuadra.',
-  'sheet.assets.bonds': 'Deuda pública',
+  'sheet.assets.bonds': 'Bonos del Estado',
   'sheet.assets.loans': 'Préstamos a bancos',
   'sheet.assets.fx': 'Divisas y oro',
   'sheet.liabilities.reserves': 'Reservas bancarias',
@@ -158,13 +158,13 @@ export const esES = {
   'contribute.overline': 'Centro de colaboradores',
   'contribute.title.lead': 'Una lección es un',
   'contribute.title.emphasis': 'archivo JSON',
-  'contribute.title.tail': 'Esa es toda la barrera.',
+  'contribute.title.tail': 'No hay más barrera.',
   'contribute.lede':
-    'Economistas, docentes y desarrolladores colaboran todos igual: un archivo, un pull request. Codifica una operación de un banco central como asientos y la app la reproduce.',
+    'Economistas, docentes y desarrolladores colaboran todos igual: un archivo, un pull request. Codifica una operación de un banco central como apuntes y la app la reproduce.',
   'contribute.validated': 'Validado en la CI con',
   'contribute.validatedBy': 'por',
   'contribute.validatedTail':
-    'que rechaza cualquier escenario cuyos asientos esperados dejen un balance sin cuadrar, el error que comete todo el que colabora por primera vez.',
+    'que rechaza cualquier escenario cuyos apuntes esperados dejen un balance sin cuadrar, el error que comete todo el que colabora por primera vez.',
   'contribute.live': 'En directo desde GitHub',
   'contribute.awaiting': 'A la espera de la primera versión',
   'contribute.stars': 'Estrellas en GitHub',
@@ -172,9 +172,9 @@ export const esES = {
   'contribute.contributors': 'Colaboradores',
   'contribute.forks': 'Forks',
   'contribute.countersNote':
-    'Los contadores se activan en cuanto el repositorio sea público. Hasta entonces preferimos mostrar un guion antes que un número inventado.',
+    'Los contadores se activarán en cuanto el repositorio sea público. Hasta entonces preferimos mostrar un guion antes que un número inventado.',
   'contribute.startHere': 'Empieza aquí',
-  'contribute.goodFirst': 'Las buenas primeras incidencias llevan la etiqueta',
+  'contribute.goodFirst': 'Las incidencias para empezar llevan la etiqueta',
   'contribute.goodFirstTail':
     'Tú pones la economía; nosotros te ayudamos con las herramientas. Las revisiones tratan del mecanismo, no de la sintaxis.',
   'contribute.viewRepo': 'Ver el repositorio',
@@ -186,14 +186,14 @@ export const esES = {
   // ---- playable teaser ----------------------------------------------------
   'demo.overline': 'Avance jugable',
   'demo.title.lead': 'No leas sobre la QE.',
-  'demo.title.emphasis': 'Registra los asientos.',
+  'demo.title.emphasis': 'Registra los apuntes.',
   'demo.lede':
-    'Este es un paso real de una lección, corregido por el mismo motor que usa la app: coloca cada asiento en el balance y el lado correctos, y luego descubre qué se ha movido de verdad. Sin registro ni descargas.',
+    'Este es un paso real de una lección, corregido por el mismo motor que usa la app: coloca cada apunte en el balance y el lado correctos, y luego descubre qué se ha movido de verdad. Sin registro ni descargas.',
   'demo.correct': 'Esa es la operación.',
   'demo.wrong': 'No del todo: prueba la lección completa.',
-  'demo.prompt': 'Coloca todos los asientos y comprueba.',
+  'demo.prompt': 'Coloca todos los apuntes y comprueba.',
   'demo.reset': 'Restablecer',
-  'demo.check': 'Comprobar asientos',
+  'demo.check': 'Comprobar apuntes',
   'demo.note':
     'Simplificado en un aspecto: el balance del propio dealer queda fuera de la pantalla para que quepan dos cuentas en T en un móvil. En la app, el dealer aparece como tercera entidad, y la misma operación se repite con contrapartes e importes aleatorios para que la respuesta no se pueda memorizar.',
 
@@ -217,7 +217,7 @@ export const esES = {
   'rewards.title.emphasis': 'retención',
   'rewards.title.tail': 'es el producto.',
   'rewards.lede':
-    'Todos los bancos centrales publican su balance. Casi nadie lee uno dos veces. Las recompensas existen para arreglar eso, y se ganan demostrando el mecanismo, nunca por aparecer.',
+    'Todos los bancos centrales publican su balance. Casi nadie lee uno dos veces. Las recompensas existen para arreglar eso, y se ganan demostrando que dominas el mecanismo, nunca por aparecer.',
   'rewards.competency.title': 'Prueba de competencia',
   'rewards.competency.body':
     'Micropruebas adaptativas y escenarios de cuentas en T con parámetros aleatorios. La misma operación vuelve con otras contrapartes e importes, así que memorizar las respuestas no te lleva a ninguna parte.',
@@ -229,10 +229,10 @@ export const esES = {
     'Certificados criptográficos de una habilidad demostrada: «Especialista en operaciones de mercado abierto», «Mecánica de balances: arquitectura del BCE». Cualquiera puede verificarlos, y solo se emiten tras superar una evaluación.',
   'rewards.prizes.title': 'Bolsas de premios y recompensas',
   'rewards.prizes.body':
-    'Patrocinados por familias, docentes y la comunidad: libros (Mehrling, Bagehot, Stigum), equipos o privilegios fijados en casa. Quienes patrocinan los financian y entregan directamente, nunca la plataforma.',
+    'Patrocinadas por familias, docentes y la comunidad: libros (Mehrling, Bagehot, Stigum), aparatos o privilegios fijados en casa. Quienes patrocinan las financian y entregan directamente, nunca la plataforma.',
   'rewards.notTitle': 'Los puntos y el dinero van por separado',
   'rewards.notBody':
-    'MacroXP y MintBucks son una puntuación de aprendizaje. Nadie puede comprarlos, venderlos ni intercambiarlos. Aparte, un padre, una madre o un docente puede decidir pagar en euros (EURC) los XP y el tiempo activo que gane quien aprende. Ese dinero lo pone quien lo configura, solo se retira en la web y nunca aparece en la app. Nada de esto es una apuesta, y nada le cuesta nada a quien aprende.',
+    'MacroXP y MintBucks son una puntuación de aprendizaje. Nadie puede comprarlos, venderlos ni intercambiarlos. Aparte, un padre, una madre o un docente puede decidir pagar en euros (EURC) los XP y el tiempo activo que gane quien aprende. Ese dinero lo pone quien lo configura, solo se retira en la web y nunca aparece en la app. Nada de esto es una apuesta, y a quien aprende no le cuesta nada.',
 
   // ---- footer link groups -------------------------------------------------
   'footer.group.learn': 'Aprender',
@@ -265,7 +265,7 @@ export const esES = {
   'teach.stage.1.age': 'De 7 a 9 años',
   'teach.stage.1.idea': 'El dinero es una promesa, no una cosa',
   'teach.stage.1.body':
-    'Una moneda no tiene valor por su metal. Funciona porque todo el mundo la acepta y el Estado la respalda. Pregunta qué pasaría si una tienda dejara de aceptarla: esa pregunta hace casi todo el trabajo de enseñar.',
+    'Una moneda no tiene valor por su metal. Funciona porque todo el mundo la acepta y el Estado la respalda. Pregunta qué pasaría si una tienda dejara de aceptarla: esa pregunta enseña casi por sí sola.',
   'teach.stage.2.age': 'De 10 a 12 años',
   'teach.stage.2.idea': 'Los bancos crean dinero cuando prestan',
   'teach.stage.2.body':
@@ -277,7 +277,7 @@ export const esES = {
   'teach.stage.4.age': 'A partir de 16 años',
   'teach.stage.4.idea': 'Toda la máquina',
   'teach.stage.4.body':
-    'Balances de bancos centrales, expansión cuantitativa, el sistema de dólares offshore. A estas alturas pueden registrar ellos mismos los asientos y contrastar una afirmación con una fuente de la Reserva Federal.',
+    'Balances de bancos centrales, expansión cuantitativa, el sistema de dólares offshore. A estas alturas pueden registrar ellos mismos los apuntes y contrastar una afirmación con una fuente de la Reserva Federal.',
   'teach.questionsTitle': 'Preguntas que hacen las familias y los docentes',
   'teach.safetyTitle': 'Qué recogemos de tu hijo o hija',
   'teach.safety.1':
@@ -290,7 +290,7 @@ export const esES = {
   'teach.safety.5':
     'Las cuentas y el progreso se guardan en la UE (Irlanda), y nadie que aprenda puede leer los datos de otra persona.',
   'teach.readPrivacy': 'Lee el aviso completo de privacidad y COPPA',
-  'teach.tryLesson': 'Prueba antes una lección tú',
+  'teach.tryLesson': 'Prueba tú antes una lección',
   'teach.learnYourself': 'Apréndelo tú',
 
   // ---- learn page ---------------------------------------------------------
@@ -302,11 +302,11 @@ export const esES = {
   'learn.pathTitle': 'El camino, en orden',
   'learn.step.1.title': 'Haz una operación real, antes de leer nada',
   'learn.step.1.body':
-    'La demo te da una compra de 10.000 millones de $ de un banco central y te pide que registres los asientos en los dos balances. Diez minutos aquí hacen legible cualquier artículo sobre la Fed.',
+    'La demo te da una compra de 10.000 millones de $ de un banco central y te pide que registres los apuntes en los dos balances. Con diez minutos aquí podrás entender cualquier artículo sobre la Fed.',
   'learn.step.1.cta': 'Abrir la demo',
   'learn.step.2.title': 'Aprende el vocabulario como mecanismos, no como definiciones',
   'learn.step.2.body':
-    'Reservas, repo, la base monetaria, la expansión cuantitativa. Cada entrada del glosario explica qué se mueve en el balance de quién, nombra el error habitual y enlaza la fuente primaria.',
+    'Reservas, repo, la base monetaria, la expansión cuantitativa. Cada entrada del glosario explica qué se mueve y en el balance de quién, nombra el error habitual y enlaza la fuente primaria.',
   'learn.step.2.cta': 'Leer el glosario',
   'learn.step.3.title': 'Sigue los {count} itinerarios en orden',
   'learn.step.3.body':
@@ -368,17 +368,17 @@ export const esES = {
   'term.sources': 'Fuentes primarias',
   'term.postIt': 'Regístralo tú',
   'term.postItBody':
-    'Leer una definición no es lo mismo que saber manejar el mecanismo. La demo te da una operación real y te pide que coloques los asientos.',
+    'Leer una definición no es lo mismo que saber manejar el mecanismo. La demo te da una operación real y te pide que coloques los apuntes.',
   'term.tryDemo': 'Prueba la demo de cuentas en T',
 
   // ---- privacy & COPPA notice ---------------------------------------------
   'privacy.back': 'Volver a openmacro.org',
-  'privacy.title': 'Aviso de privacidad y de privacidad infantil',
+  'privacy.title': 'Aviso de privacidad general e infantil',
   'privacy.updated': 'Última actualización: 16 de octubre de 2026. Cubre {domain} y la app móvil de OpenMacro.',
   'privacy.authoritative': 'Esta es una traducción de cortesía. En caso de discrepancia, prevalece la versión inglesa.',
   'privacy.short.title': 'La versión corta',
   'privacy.short.body':
-    'Puedes leer todas las páginas, usar todas las simulaciones y terminar todas las lecciones de este sitio sin cuenta, y no usamos analítica, publicidad ni scripts de rastreo de terceros. Si decides iniciar sesión (con Google o, en la app de iOS, con Apple), guardamos tus XP y tu racha de días para que te sigan entre dispositivos; esa es la única razón por la que existe una cuenta, y los únicos datos personales que conservamos.',
+    'Puedes leer todas las páginas, usar todas las simulaciones y terminar todas las lecciones de este sitio sin cuenta, y no usamos analítica, publicidad ni scripts de rastreo de terceros. Si decides iniciar sesión (con Google o, en la app de iOS, con Apple), guardamos tus XP y tu racha de días para que te sigan entre dispositivos; esa es la única razón por la que existe una cuenta, y esos son los únicos datos personales que conservamos.',
   'privacy.collect.title': 'Qué recogemos',
   'privacy.collect.signin.label': 'Si inicias sesión.',
   'privacy.collect.signin.body':
@@ -391,13 +391,13 @@ export const esES = {
     'Nuestro proveedor de alojamiento guarda registros estándar de peticiones (dirección IP, fecha y hora, ruta solicitada, agente de usuario) para mantener el servicio en marcha y bloquear abusos. Se conservan 30 días y después se eliminan.',
   'privacy.collect.sim.label': 'Nada del simulador.',
   'privacy.collect.sim.body':
-    'El control deslizante, las lecturas y la cadena de préstamos funcionan en tu navegador. Tus datos nunca se nos envían.',
+    'El control deslizante, las lecturas y la cadena de préstamos funcionan en tu navegador. Los valores que introduces nunca se nos envían.',
   'privacy.notCollect.title': 'Qué no recogemos',
   'privacy.notCollect.1': 'Ninguna cookie de publicidad, elaboración de perfiles o rastreo entre sitios.',
   'privacy.notCollect.2': 'Ningún servicio de analítica o de grabación de sesiones.',
   'privacy.notCollect.3':
     'Ninguna dirección postal, número de teléfono ni dato de tarjeta. Nunca pedimos una contraseña: Apple y Google se encargan del inicio de sesión, así que no tenemos ninguna que guardar.',
-  'privacy.notCollect.4': 'Ninguna venta, alquiler ni intercambio de datos, nunca.',
+  'privacy.notCollect.4': 'Nunca vendemos, alquilamos ni intercambiamos datos.',
   'privacy.coppa.title': 'Menores de 13 años (COPPA)',
   'privacy.coppa.intro':
     'OpenMacro está escrito para jóvenes y niños, así que tratamos la privacidad infantil como una condición de diseño y no como una página de políticas.',
@@ -461,7 +461,7 @@ export const esES = {
   'treasury.wasPaid': 'Se pagó',
   'treasury.neverSent': 'Nunca se envió',
   'treasury.recipients': 'A quién se puede pagar',
-  'treasury.recipientsBody.lead': 'Una dirección nueva empieza',
+  'treasury.recipientsBody.lead': 'Una dirección nueva empieza como',
   'treasury.recipientsBody.pending': 'pendiente',
   'treasury.recipientsBody.tail':
     'y no puede recibir una recompensa del juego. Envía una prueba, confirma que ha llegado a su cuenta de Coinbase y actívala.',
@@ -485,7 +485,7 @@ export const esES = {
   'treasury.field.key': 'Clave (la usa el juego)',
   'treasury.field.keyPlaceholder': 'hija',
   'treasury.field.name': 'Nombre',
-  'treasury.field.namePlaceholder': 'Sofia',
+  'treasury.field.namePlaceholder': 'Sofía',
   'treasury.field.address': 'Dirección de depósito de Coinbase en Base',
   'treasury.field.keyHint': 'Minúsculas, dígitos, - o _, de 2 a 31 caracteres. Sin puntos ni espacios.',
   'treasury.field.addressOptional': 'Dirección de depósito en Base (opcional: la puede fijar quien aprende)',
@@ -521,7 +521,7 @@ export const esES = {
     'No se ha podido cargar tu progreso ahora mismo. Tus lecciones siguen funcionando: prueba a recargar la página.',
   'dash.progressAria': 'Tu progreso',
   'dash.totalXp': 'XP totales',
-  'dash.dayStreak': 'Racha de días',
+  'dash.dayStreak': 'Días de racha',
   'dash.courseComplete': 'Curso completado',
   'dash.lessonsOf': '{done, number} de {total, number} lecciones',
   'dash.continueAria': 'Continuar',
@@ -549,7 +549,7 @@ export const esES = {
   'today.xp': '{xp, number} XP ganados',
   'today.start': 'Empezar',
   'today.continue': 'Continuar',
-  'today.sharpen.title': 'Afina',
+  'today.sharpen.title': 'Para pulir',
   'today.sharpen.body': 'Lecciones terminadas en las que aún puedes ganar XP.',
   'today.sharpen.redo': 'Repetir',
   'today.course.title': 'Tu curso',
@@ -586,7 +586,7 @@ export const esES = {
   'earnings.addressSaved': 'Dirección guardada.',
   'earnings.withdraw': 'Retirar {amount}',
   'earnings.sending': 'Enviando…',
-  'earnings.withdrawn': 'Enviados {amount} EURC.',
+  'earnings.withdrawn': 'Enviado: {amount} EURC.',
   'earnings.needAddress': 'Añade tu dirección para retirar.',
   'earnings.minimum': 'Puedes retirar a partir de {amount}.',
   'earnings.paidLink': 'Pagado ↗',
@@ -614,12 +614,12 @@ export const esES = {
   'level.intermediate.blurb': 'Da por sabido qué es un depósito',
   'level.advanced': 'Avanzado',
   'level.advanced.blurb': 'Da por sabidas la interfaz y las palancas',
-  'tflow.entries': 'Asientos por registrar',
-  'tflow.placed': '{done, number} de {total, number} asientos colocados',
+  'tflow.entries': 'Apuntes por registrar',
+  'tflow.placed': '{done, number} de {total, number} apuntes colocados',
   'tflow.decoys': 'Trampas: no forman parte de esta operación',
-  'tflow.chooseSide': 'Ahora elige en qué balance cae y en qué lado.',
+  'tflow.chooseSide': 'Ahora elige en qué balance va y en qué lado.',
   'tflow.pickEntry':
-    'Elige un asiento y luego en qué balance cae y en qué lado. Todos los balances deben cuadrar.',
+    'Elige un apunte y luego en qué balance va y en qué lado. Todos los balances deben cuadrar.',
   'tflow.startOver': 'Empezar de nuevo',
   'tflow.balanced': 'Cuadra',
   'tflow.offBalance': 'No cuadra',
@@ -632,14 +632,14 @@ export const esES = {
   'tflow.liabilitiesEquity': 'Pasivo + patrimonio neto',
   'tflow.liabilitiesEquityHint': 'Lo que debe + lo que es realmente suyo',
   'tflow.equity': 'Patrimonio neto',
-  'tflow.removeA11y': 'Quitar {account} de {side} de {entity}',
-  'tflow.placeA11y': 'Colocar el asiento seleccionado en {side} de {entity}',
+  'tflow.removeA11y': 'Quitar {account} del {side} de {entity}',
+  'tflow.placeA11y': 'Colocar el apunte seleccionado en el {side} de {entity}',
   'tflow.placeHere': 'Colocar aquí',
   'tflow.opening': 'Saldo inicial: {amount}',
   'match.nowDefinition': 'Ahora elige su definición',
   'match.pickTerm': 'Elige un término y luego su definición',
   'match.change': 'Cambiar',
-  'order.earliestTop': 'La causa más temprana arriba',
+  'order.earliestTop': 'La primera causa, arriba',
   'order.moveEarlier': 'Mover «{label}» antes',
   'order.moveLater': 'Mover «{label}» después',
   'sim.done': '— hecho',
@@ -671,13 +671,13 @@ export const esES = {
   'learn.badge.mit': 'Licencia MIT',
   'login.noAccount.lead': '¿No tienes cuenta? Al iniciar sesión con Google se crea una. También puedes simplemente',
   'login.noAccount.link': 'empezar a aprender',
-  'login.noAccount.tail': ': todas las lecciones son gratis, con sesión iniciada o sin ella.',
+  'login.noAccount.tail': '— todas las lecciones son gratis, con sesión iniciada o sin ella.',
   'roadmap.track': 'Itinerario {n, number}',
   'roadmap.lessons': '{count, plural, one {# lección} other {# lecciones}}',
   'roadmap.operatesOn': 'Opera sobre',
   'tflow.effect.expand': '{aggregate} se ha expandido',
   'tflow.effect.contract': '{aggregate} se ha contraído',
-  'tflow.effect.unchanged': '{aggregate} no cambia',
+  'tflow.effect.unchanged': '{aggregate} no ha cambiado',
   'tflow.aggregate.M0': 'M0',
   'tflow.aggregate.M1': 'M1',
   'tflow.aggregate.M2': 'M2',
@@ -698,12 +698,12 @@ export const esES = {
   'app.perk.free.title': 'Gratis. Sin anuncios. Sin rastreo.',
   'app.perk.free.body':
     'No necesitas cuenta y no hay nada que comprar. De código abierto, como todo lo demás aquí.',
-  'app.store.apple.eyebrow': 'Descárgala en',
+  'app.store.apple.eyebrow': 'Descárgala en el',
   'app.store.google.eyebrow': 'Consíguela en',
   'app.store.google.soon': 'Próximamente en',
   'app.qr.alt': 'Código QR que abre la app de OpenMacro en la tienda de aplicaciones de tu móvil',
   'app.qr.title': '¿Estás en un ordenador?',
-  'app.qr.body': 'Apunta aquí con la cámara del móvil para abrir la app en tu tienda.',
+  'app.qr.body': 'Apunta aquí con la cámara del móvil para abrir la app en tu tienda de aplicaciones.',
   'app.shot.today': 'La pantalla Hoy de la app de OpenMacro: una racha de 12 días, 420 XP y la siguiente lección',
   'app.shot.lesson': 'Una lección en la app de OpenMacro, con la explicación tras una respuesta correcta',
   'app.chip.streak': 'Racha de 12 días',

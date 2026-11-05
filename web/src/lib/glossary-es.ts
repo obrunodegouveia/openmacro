@@ -51,14 +51,14 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
     definition:
       'El total de billetes en circulación y reservas de los bancos comerciales: todas las formas de dinero que son un pasivo directo del banco central.',
     explanation: [
-      'La base es lo que emite el propio banco central. Todo lo demás que la gente llama dinero, como el saldo de una cuenta corriente o una participación en un fondo del mercado monetario, es la promesa de otro, que al final se liquida en dinero base.',
-      'Sus dos componentes sirven a usuarios distintos. Los billetes son el dinero base que puede tener el público; las reservas, el que solo pueden tener los bancos. Una retirada de efectivo convierte uno en otro sin cambiar el total.',
+      'La base es lo que emite el propio banco central. Todo lo demás que la gente llama dinero, como el saldo de una cuenta corriente o una participación en un fondo del mercado monetario, es la promesa de otro, que al final se liquida en base monetaria.',
+      'Sus dos componentes sirven a usuarios distintos. Los billetes son la base monetaria que puede tener el público; las reservas, el que solo pueden tener los bancos. Una retirada de efectivo convierte uno en otro sin cambiar el total.',
       'Una base que crece no produce de forma mecánica inflación ni préstamos. Después de 2008 la base creció enormemente, mientras que el dinero en sentido amplio y el crédito bancario crecieron mucho más despacio, y esa es la prueba más clara de que el multiplicador de los manuales es un techo y no una descripción.',
     ],
     mechanics: [
       { label: 'Componentes', detail: 'Efectivo en circulación + saldos de reservas en el banco central.' },
       { label: 'Se expande cuando', detail: 'El banco central compra activos o presta; la expansión cuantitativa es el mayor ejemplo.' },
-      { label: 'Se contrae cuando', detail: 'Lo que tiene vence sin reinvertirse, o el efectivo vuelve y se retira.' },
+      { label: 'Se contrae cuando', detail: 'Sus activos vencen sin reinvertirse, o el efectivo vuelve y se retira.' },
     ],
     misreading:
       'Que la base y «la oferta monetaria» son lo mismo. La mayor parte del dinero que la gente gasta de verdad es dinero en sentido amplio, depósitos en bancos comerciales, que se crea prestando y no en el banco central.',
@@ -85,10 +85,10 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
     term: 'Intereses sobre los saldos de reservas',
     aliases: ['intereses sobre reservas', 'IOER'],
     definition:
-      'El tipo que la Reserva Federal paga a los bancos por las reservas que tienen en ella: el tipo administrado que ancla el suelo del corredor de política de EE. UU. para los bancos.',
+      'El tipo que la Reserva Federal paga a los bancos por las reservas que tienen en ella: el tipo administrado que ancla el suelo del corredor de tipos de EE. UU. para los bancos.',
     explanation: [
       'En un sistema con reservas abundantes, la Fed no puede dirigir los tipos haciendo escasas las reservas. En su lugar fija la remuneración del activo más seguro que puede tener un banco y deja que la competencia haga el resto: un banco no prestará a un día a nadie por menos de lo que gana sin hacer nada.',
-      'En 2021, IORB sustituyó a la antigua separación entre intereses sobre reservas obligatorias y sobre reservas excedentes, una vez que los requisitos de reservas se habían fijado en cero y la distinción ya no tenía sentido.',
+      'En 2021, IORB sustituyó a la antigua separación entre intereses sobre reservas obligatorias y sobre reservas excedentes, una vez que el coeficiente de reservas obligatorio se había fijado en cero y la distinción ya no tenía sentido.',
       'Es un tipo administrado, no un tipo de mercado. Lo fija directamente la Junta, y eso es lo que lo convierte en una palanca y no en una observación.',
     ],
     mechanics: [
@@ -107,7 +107,7 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
     explanation: [
       'Los fondos del mercado monetario, las empresas patrocinadas por el Gobierno y los dealers tienen enormes saldos de efectivo, pero no pueden tener reservas. Sin alternativa, tendrían que prestar a los bancos al tipo que estos ofrezcan. ON RRP les da una opción sin riesgo a un tipo publicado, así que no prestarán a nadie por debajo de él.',
       'El uso de la facilidad es un termómetro, no un ajuste de política. Los saldos grandes indican que el efectivo no encuentra mejor remuneración en los mercados privados; una caída suele indicar que la oferta de letras o los tipos de repo se han vuelto más atractivos.',
-      'La operación drena reservas sin reducir el balance de la Fed. El pasivo total no cambia: el dinero simplemente pasa de la línea de reservas a la de repo inverso, y solo una de ellas es dinero base.',
+      'La operación drena reservas sin reducir el balance de la Fed. El pasivo total no cambia: el dinero simplemente pasa de la línea de reservas a la de repo inverso, y solo una de ellas es base monetaria.',
     ],
     mechanics: [
       { label: 'Dirección del efectivo', detail: 'Del fondo a la Fed, a un día; la Fed entrega deuda del Tesoro como garantía.' },
@@ -125,7 +125,7 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
     explanation: [
       'Mecánicamente, la QE es un intercambio de activos. Quien vende entrega un bono y recibe un depósito; su banco recibe reservas. La riqueza neta de nadie cambia mucho: lo que cambia es la composición de lo que tiene el sector privado.',
       'Como retira duración y saca del mercado garantías de alta calidad, la QE funciona sobre todo a través del precio del riesgo y la forma de la curva de rendimientos, no entregando a nadie dinero para gastar.',
-      'El BCE aplicó el mismo mecanismo con su Programa de Compra de Activos y, desde 2020, con el Programa de Compras de Emergencia frente a la Pandemia. Los nombres de los instrumentos cambian; los asientos del balance, no.',
+      'El BCE aplicó el mismo mecanismo con su Programa de Compra de Activos y, desde 2020, con el Programa de Compras de Emergencia frente a la Pandemia. Los nombres de los instrumentos cambian; los apuntes del balance, no.',
     ],
     mechanics: [
       { label: 'Banco central', detail: 'Activo: suben los bonos. Pasivo: suben las reservas en la misma cantidad.' },
@@ -141,7 +141,7 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
     definition:
       'Lo contrario de la QE: reducir el balance del banco central, normalmente dejando vencer bonos sin reinvertirlos, lo que destruye reservas.',
     explanation: [
-      'La reducción es pasiva. Cuando vence un bono del banco central, el emisor lo paga y el banco central simplemente no compra otro. El activo desaparece de un lado del balance y las reservas desaparecen del otro.',
+      'La reducción es pasiva. Cuando vence un bono que tiene el banco central, el emisor lo paga y el banco central simplemente no compra otro. El activo desaparece de un lado del balance y las reservas desaparecen del otro.',
       'Eso hace que la QT sea más lenta y menos controlable que la QE. El ritmo lo marcan el perfil de vencimientos de lo que se tiene y cualquier límite mensual, no una decisión tomada de reunión en reunión.',
       'La pregunta decisiva es dónde empieza la escasez de reservas. Nadie conoce ese nivel de antemano, y pasarse se nota primero como tensión en los mercados de repo, como descubrió EE. UU. en septiembre de 2019.',
     ],
@@ -159,7 +159,7 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
     definition:
       'El tipo que el BCE paga a los bancos de la zona del euro por los depósitos a un día en el Eurosistema; desde 2022, el tipo con el que el BCE dirige los tipos del euro a corto plazo.',
     explanation: [
-      'La zona del euro funciona con un corredor de tres tipos: la facilidad de depósito abajo, el tipo de las operaciones principales de financiación en medio y la facilidad marginal de crédito arriba. Con un exceso de liquidez abundante, los tipos de mercado se pegan al suelo, así que el DFR es el tipo que de verdad muerde.',
+      'La zona del euro funciona con un corredor de tres tipos: la facilidad de depósito abajo, el tipo de las operaciones principales de financiación en medio y la facilidad marginal de crédito arriba. Con un exceso de liquidez abundante, los tipos de mercado se pegan al suelo, así que el DFR es el tipo que de verdad manda.',
       'Entre 2014 y 2022 el DFR fue negativo: los bancos pagaban por dejar dinero en el BCE. Fue un intento deliberado de sacar la liquidez de la facilidad de depósito y llevarla al préstamo, y convierte a la zona del euro en el mayor experimento con tipos oficiales negativos jamás realizado.',
       'En 2024, el BCE redujo el diferencial entre MRO y DFR como parte de la revisión de su marco operativo, con lo que estrechó el corredor en torno al suelo.',
     ],
@@ -200,7 +200,7 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
     ],
     mechanics: [
       { label: 'Qué mide', detail: 'Préstamos de efectivo a un día con garantía de deuda del Tesoro, ponderados por operación.' },
-      { label: 'Lo publica', detail: 'El Banco de la Reserva Federal de Nueva York, cada mañana hábil.' },
+      { label: 'Lo publica', detail: 'El Banco de la Reserva Federal de Nueva York, cada día hábil por la mañana.' },
       { label: 'Se compara con', detail: 'IORB y el tipo de ON RRP, el suelo administrado cerca del cual debería estar.' },
     ],
     misreading:
@@ -288,8 +288,8 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
       'Esto hace de la TGA una de las mayores fuentes de volatilidad semanal en los saldos de reservas, a menudo mayor que cualquier cosa que el banco central haga a propósito. Los episodios del techo de deuda, en los que el saldo se agota y luego se reconstruye, mueven cientos de miles de millones.',
     ],
     mechanics: [
-      { label: 'Pago de impuestos', detail: 'Bajan los depósitos, bajan las reservas, sube la TGA. Baja el dinero base.' },
-      { label: 'Gasto público', detail: 'Baja la TGA, suben las reservas, suben los depósitos. Sube el dinero base.' },
+      { label: 'Pago de impuestos', detail: 'Bajan los depósitos, bajan las reservas, sube la TGA. Baja la base monetaria.' },
+      { label: 'Gasto público', detail: 'Baja la TGA, suben las reservas, suben los depósitos. Sube la base monetaria.' },
       { label: 'Emisión de bonos', detail: 'Drena reservas cuando pagan los compradores, hasta que lo recaudado se vuelve a gastar.' },
     ],
     misreading:
@@ -302,7 +302,7 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
       'La facilidad permanente de la Reserva Federal para prestar directamente a los bancos con garantía: la red de seguridad que debería limitar cuánto pueden subir los tipos a corto plazo.',
     explanation: [
       'En teoría, ningún banco debería pagar más que el tipo de descuento por pedir prestado a un día, porque siempre puede pedírselo a la Fed. En la práctica, ese techo tiene fugas, porque pedir prestado ahí conlleva un estigma.',
-      'El estigma es el problema central de diseño de la ventanilla. Un banco que la usa puede interpretarse como incapaz de financiarse en privado, así que los bancos la evitan justo cuando más la necesitan, lo contrario de lo que debería hacer una red de seguridad.',
+      'El estigma es el problema central de diseño de la ventanilla. A un banco que la usa se le puede considerar incapaz de financiarse en privado, así que los bancos la evitan justo cuando más la necesitan, lo contrario de lo que debería hacer una red de seguridad.',
       'La regla de Bagehot (prestar libremente, con buena garantía, a un tipo de penalización) es la doctrina detrás de la facilidad, y sigue siendo el resumen más certero en una línea de para qué sirve un prestamista de última instancia.',
     ],
     mechanics: [
@@ -311,7 +311,7 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
       { label: 'Equivalente en la zona del euro', detail: 'La facilidad marginal de crédito, en lo alto del corredor del BCE.' },
     ],
     misreading:
-      'Que pedir prestado en la ventanilla de descuento indica que un banco está quebrando. Indica que le falta liquidez, que no es lo mismo que le falte capital; confundir ambas cosas es como un problema de financiación se convierte en uno de solvencia.',
+      'Que pedir prestado en la ventanilla de descuento indica que un banco está quebrando. Indica que le falta liquidez, que no es lo mismo que le falte capital; confundir ambas cosas es lo que convierte un problema de financiación en uno de solvencia.',
   },
   'central-bank-swap-line': {
     term: 'Línea de swap de liquidez entre bancos centrales',
@@ -337,14 +337,14 @@ export const GLOSSARY_ES: Record<string, TranslatableEntry> = {
     definition:
       'El cociente de los manuales, m = 1/R, que describe el máximo de dinero en depósitos que un sistema bancario podría sostener sobre una base de reservas dada: un techo, no una descripción de cómo funcionan de verdad los bancos.',
     explanation: [
-      'El modelo sigue una cadena: llega un depósito, el banco guarda una fracción R y presta el resto, el préstamo vuelve a depositarse, y así sucesivamente. Sumado hasta el infinito, una unidad de dinero base sostiene 1/R unidades de depósitos.',
-      'Es un primer modelo mental útil y una mala descripción de la realidad. Los bancos centrales modernos fijan como objetivo un tipo de interés y no una cantidad de reservas, varios han fijado en cero los requisitos de reservas (la Fed lo hizo en marzo de 2020) y a los bancos los limitan el capital, la regulación y la demanda de crédito mucho antes que las reservas.',
+      'El modelo sigue una cadena: llega un depósito, el banco guarda una fracción R y presta el resto, el préstamo vuelve a depositarse, y así sucesivamente. Sumado hasta el infinito, una unidad de base monetaria sostiene 1/R unidades de depósitos.',
+      'Es un primer modelo mental útil y una mala descripción de la realidad. Los bancos centrales modernos fijan como objetivo un tipo de interés y no una cantidad de reservas, varios han fijado en cero el coeficiente de reservas obligatorio (la Fed lo hizo en marzo de 2020) y a los bancos los limitan el capital, la regulación y la demanda de crédito mucho antes que las reservas.',
       'Lo honesto es conservar el modelo conociendo sus límites. Te dice lo que podría hacer un sistema sin restricciones, y la distancia entre eso y el préstamo observado es en sí la cantidad interesante.',
     ],
     mechanics: [
       { label: 'Fórmula', detail: 'm = 1 / R, por lo que los depósitos totales son M = D × (1 / R).' },
-      { label: 'Supone', detail: 'Ninguna fuga de efectivo, todos los bancos prestando al límite y un requisito de reservas que restringe.' },
-      { label: 'Contraste con la realidad', detail: 'Después de 2008, el dinero base se multiplicó y el dinero en sentido amplio no.' },
+      { label: 'Supone', detail: 'Ninguna fuga de efectivo, todos los bancos prestando al límite y un coeficiente de reservas obligatorio que restringe.' },
+      { label: 'Contraste con la realidad', detail: 'Después de 2008, la base monetaria se multiplicó y el dinero en sentido amplio no.' },
     ],
     misreading:
       'Que el multiplicador describe la causalidad: que las reservas se prestan y se multiplican. Prestar crea primero depósitos; las reservas se gestionan después, y el banco central aporta la cantidad que requiera su objetivo de tipos.',

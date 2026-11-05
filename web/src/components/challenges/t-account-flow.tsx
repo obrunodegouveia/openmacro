@@ -337,7 +337,7 @@ function SheetColumn({
   const openingLines = (entity.openingLines ?? []).filter((line) => line.side === side);
   // `${side}s` produced "liabilitys" in every one of these labels, which is
   // what a screen reader actually said out loud.
-  const sideNoun = side === "asset" ? "assets" : "liabilities";
+  const sideNoun = s(side === "asset" ? "tflow.assets" : "tflow.liabilities").toLocaleLowerCase(locale);
   // Equity sits in the right column — assets = liabilities + equity — but in
   // its own section under the debts, so the sheet never files what is truly
   // the owner's under "what it owes".
@@ -422,7 +422,7 @@ function SheetColumn({
             {s("tflow.equity")}
           </p>
           {renderLines(equityLines)}
-          {renderPostings(equityPostings, "equity")}
+          {renderPostings(equityPostings, s("tflow.equity").toLocaleLowerCase(locale))}
         </div>
       ) : null}
 

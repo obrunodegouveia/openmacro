@@ -10,5 +10,5 @@ import type { ContentDictionary } from '../../localise';
 
 export const courseEsES: ContentDictionary = {
   'course.title': 'Fundamentos de macroeconomía',
-  'course.description': 'Dinero, banca y política monetaria, construidos desde los primeros principios, cinco minutos cada vez.',
+  'course.description': 'Dinero, banca y política monetaria, explicados desde la base, cinco minutos cada vez.',
 };

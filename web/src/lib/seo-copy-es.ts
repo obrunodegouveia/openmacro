@@ -12,7 +12,7 @@ import type { PageCopy } from '@/lib/seo-copy';
 
 export const SEO_ES: Record<string, PageCopy> = {
   '/': {
-    title: 'Aprende Cómo Funciona el Dinero',
+    title: 'Aprende cómo funciona el dinero',
     description:
       'Lecciones gratis y de código abierto sobre cómo se crea el dinero, qué hace un banco central y por qué suben los precios. Sin cuenta y sin registro.',
     keywords: [
@@ -27,7 +27,7 @@ export const SEO_ES: Record<string, PageCopy> = {
     ],
   },
   '/learn': {
-    title: 'Cómo Aprender Sobre el Dinero',
+    title: 'Cómo aprender sobre el dinero',
     description:
       'Por dónde empezar para entender cómo funciona el dinero: quién lo crea, qué hace un banco central y por qué suben los precios. Gratis y sin cuenta.',
     keywords: [
@@ -39,7 +39,7 @@ export const SEO_ES: Record<string, PageCopy> = {
     ],
   },
   '/glossary': {
-    title: 'Glosario de Dinero y Banca Central',
+    title: 'Glosario de dinero y banca central',
     description:
       'Reservas, repo, QE, IORB, eurodólares y más: cada término explicado como movimientos de balance, en español sencillo y con la fuente primaria.',
     keywords: [
@@ -51,7 +51,7 @@ export const SEO_ES: Record<string, PageCopy> = {
     ],
   },
   '/teach': {
-    title: 'Cómo Enseñar a los Niños Sobre el Dinero',
+    title: 'Cómo enseñar a los niños sobre el dinero',
     description:
       'Qué enseñar a cada edad, cómo explicar la inflación y de dónde sale el dinero de los bancos, con lecciones gratis para hacer sin cuenta y sin rastreo.',
     keywords: [
