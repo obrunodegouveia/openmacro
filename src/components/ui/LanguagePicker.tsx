@@ -40,7 +40,7 @@
  * thumb.
  *
  * The group carries `radiogroup`, which is what lets a screen reader announce
- * "2 of 2" rather than reading two unrelated radios.
+ * "2 of 3" rather than reading unrelated radios.
  */
 
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     borderColor: palette.border,
   },
   option: {
-    // Equal halves whatever the label says, and 44 tall — the smallest target
+    // Equal widths whatever the label says, and 44 tall — the smallest target
     // Apple's guidance allows.
     flex: 1,
     minHeight: 44,

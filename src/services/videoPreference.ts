@@ -93,15 +93,15 @@ export function useVideosCollapsed(): [boolean, (next: boolean) => void] {
 // ---------------------------------------------------------------------------
 //
 // The same choice the website keeps in web/src/components/app/video-preference.ts,
-// with the same values and the same meaning of 'auto': Portuguese subtitles
-// when the app is in Portuguese, none in English. The resolved value is handed
+// with the same values and the same meaning of 'auto': subtitles in the app's
+// language when it is Portuguese or Spanish, none in English. The resolved value is handed
 // to the /embed page, whose player picks the actual track.
 
-export type CaptionPreference = 'auto' | 'pt' | 'en' | 'off';
+export type CaptionPreference = 'auto' | 'pt' | 'es' | 'en' | 'off';
 
 const CAPTIONS_KEY = 'openmacro.videoCaptions.v1';
 const CAPTIONS_VERSION = 1;
-const CAPTION_VALUES: readonly CaptionPreference[] = ['auto', 'pt', 'en', 'off'];
+const CAPTION_VALUES: readonly CaptionPreference[] = ['auto', 'pt', 'es', 'en', 'off'];
 
 interface StoredCaptions {
   captions: CaptionPreference;
@@ -159,9 +159,10 @@ export function useVideoCaptions(): [CaptionPreference, (next: CaptionPreference
 }
 
 /** What 'auto' means in a given app language. */
-export function resolveCaptions(preference: CaptionPreference, locale: string): 'pt' | 'en' | 'off' {
+export function resolveCaptions(preference: CaptionPreference, locale: string): 'pt' | 'es' | 'en' | 'off' {
   if (preference !== 'auto') return preference;
-  return locale.startsWith('pt') ? 'pt' : 'off';
+  if (locale.startsWith('pt')) return 'pt';
+  return locale.startsWith('es') ? 'es' : 'off';
 }
 
 /** The next choice when the learner taps the subtitles control. */

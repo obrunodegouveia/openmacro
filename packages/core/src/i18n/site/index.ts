@@ -22,6 +22,7 @@ import { formatMessage, type MessageValues } from '../format';
 import { DEFAULT_LOCALE, LOCALE_TAGS, type Locale } from '../locales';
 import { en } from './en';
 import { ptPT } from './pt-PT';
+import { esES } from './es-ES';
 
 export { en as siteEn } from './en';
 
@@ -31,6 +32,7 @@ export type SiteDictionary = Record<SiteKey, string>;
 const CATALOGUES: Record<Locale, Partial<SiteDictionary>> = {
   en,
   'pt-PT': ptPT,
+  'es-ES': esES,
 };
 
 /** Per-key fallback to English. See `../index.ts` for why the tag follows the template. */

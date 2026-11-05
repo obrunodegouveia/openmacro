@@ -7,8 +7,8 @@ import { motion } from "motion/react";
 import { ChevronRight, Lock } from "lucide-react";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
-import { type Track, TRACK_COUNT_LABEL } from "@/lib/curriculum";
-import { localisedSyllabus, localisedTiers } from "@/lib/curriculum-locale";
+import { type Track } from "@/lib/curriculum";
+import { localisedSyllabus, localisedTiers, trackCountLabel } from "@/lib/curriculum-locale";
 import { useLocale } from "@/components/site/locale-provider";
 import { cn } from "@/lib/utils";
 
@@ -55,7 +55,7 @@ export function Roadmap() {
         overline={s("roadmap.overline")}
         title={
           <>
-            {s("roadmap.title", { count: TRACK_COUNT_LABEL })}{" "}
+            {s("roadmap.title", { count: trackCountLabel(locale) })}{" "}
             <span className="text-gradient">{s("roadmap.title.first")}</span>{" "}
             {s("roadmap.title.to")}{" "}
             <span className="text-gradient">{s("roadmap.title.second")}</span>.

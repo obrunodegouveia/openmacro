@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useLocale } from "@/components/site/locale-provider";
 import { useSiteText } from "@/lib/use-site-text";
 import { Button } from "@/components/ui/button";
 import { AppleIcon, GoogleIcon } from "@/components/ui/icons";
@@ -35,7 +36,7 @@ import { useAuth } from "@/components/site/auth-provider";
 export function GoogleSignIn({
   /** Where to land afterwards. Omit to return to the current page. */
   redirectTo,
-  label = "Continue with Google",
+  label,
   className,
 }: {
   redirectTo?: string;
@@ -43,6 +44,7 @@ export function GoogleSignIn({
   className?: string;
 }) {
   const s = useSiteText();
+  const { t } = useLocale();
   const { signIn, signingIn, error } = useAuth();
   // signingIn is shared by both providers; remember which one was pressed so
   // only that button says it is opening.
@@ -77,7 +79,7 @@ export function GoogleSignIn({
           }}
         >
           <GoogleIcon className="size-4" aria-hidden />
-          {signingIn && pressed === "google" ? s("google.opening") : label}
+          {signingIn && pressed === "google" ? s("google.opening") : (label ?? t("account.signIn"))}
         </Button>
       </div>
 

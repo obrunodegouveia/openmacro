@@ -240,6 +240,7 @@ export const en = {
   'lesson.video.captions': 'Subtitles: {choice}',
   'lesson.video.captions.auto': 'Auto',
   'lesson.video.captions.pt': 'Português',
+  'lesson.video.captions.es': 'Español',
   'lesson.video.captions.en': 'English',
   'lesson.video.captions.off': 'Off',
   'lesson.video.fullscreen': 'Full screen',

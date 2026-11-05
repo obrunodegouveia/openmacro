@@ -104,7 +104,7 @@ export interface LessonVideoProps {
  * under it and the video never restarts.
  */
 interface EmbedLoad {
-  cc: 'pt' | 'en' | 'off';
+  cc: 'pt' | 'es' | 'en' | 'off';
   start: number;
 }
 
