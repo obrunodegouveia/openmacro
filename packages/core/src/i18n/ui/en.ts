@@ -353,6 +353,29 @@ export const en = {
   'level.advanced': 'Advanced',
   'level.advanced.blurb': 'Assumes the interface and the levers',
 
+  'exam.card.eyebrow': 'Exam',
+  'exam.card.title': 'Your teacher has sent you an exam',
+  'exam.intro.title': 'Exam from your teacher',
+  'exam.intro.body': '{count, plural, one {# question} other {# questions}} from lessons you have finished. You get one attempt, you see your results at the end, and your teacher sees your score. Your answers are not saved.',
+  'exam.start': 'Start the exam',
+  'exam.later': 'Not now',
+  'exam.exit': 'Leave the exam',
+  'exam.question': 'Question {number, number} of {total, number}',
+  'exam.next': 'Next question',
+  'exam.finish': 'Finish the exam',
+  'exam.close': 'Close',
+  'exam.none.title': 'No exam for now',
+  'exam.none.body': 'When your teacher sends you an exam, it will appear here.',
+  'exam.empty.title': 'Finish a lesson first',
+  'exam.empty.body': 'This exam only asks about lessons you have finished. Finish one and come back.',
+  'exam.result.title': 'Your results',
+  'exam.result.score': '{correct, number} of {asked, number} correct',
+  'exam.result.weak': 'Worth going back to',
+  'exam.result.sending': 'Sending your score to your teacher…',
+  'exam.result.sent': 'Your teacher can now see your score.',
+  'exam.result.failed': 'Your score has not been sent yet. Check your connection and try again.',
+  'exam.result.retry': 'Send again',
+
   /**
    * What finishing a level lets you do.
    *

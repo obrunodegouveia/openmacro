@@ -2,6 +2,7 @@ import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Section } from "@/components/ui/section";
 import { Dashboard } from "@/components/app/dashboard";
+import { AssignedExamCard } from "@/components/app/assigned-exam-card";
 import { ModuleRewards } from "@/components/app/module-rewards";
 import { EarningsPanel } from "@/components/app/earnings";
 import { DeleteAccount } from "@/components/app/delete-account";
@@ -38,6 +39,8 @@ export default function DashboardPage() {
             <Dashboard
               money={
                 <>
+                  {/* Renders nothing unless a teacher has assigned an exam. */}
+                  <AssignedExamCard />
                   {/* Each renders nothing unless this account is paid. */}
                   <ModuleRewards />
                   <EarningsPanel />

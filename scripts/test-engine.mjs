@@ -324,3 +324,63 @@ test('Spanish writes numbers its own way, and a billion is not a billón', async
   assert.match(formatCompactCurrency(2e12, 'EUR', 'es-ES'), /billones/);
   assert.equal(resolveLocale('es-MX'), 'es-ES');
 });
+
+test('an assigned exam asks only about lessons the learner has finished', async () => {
+  const { assembleAssignedExam } = await import('@openmacro/core/engine/assignedExam');
+  const done = new Set(MODULES[0].lessons.slice(0, 3).map((lesson) => lesson.id));
+  const assignment = { seed: 'fixture-seed', itemCount: 20 };
+
+  const { exam } = assembleAssignedExam(MODULES, (id) => done.has(id), assignment);
+  assert.ok(exam.items.length > 0);
+  assert.ok(exam.items.every((item) => done.has(item.lessonId)));
+  assert.equal(new Set(exam.items.map((item) => item.id)).size, exam.items.length);
+
+  // The app and the website must set the same paper from the same inputs.
+  const again = assembleAssignedExam(MODULES, (id) => done.has(id), assignment);
+  assert.deepEqual(again.exam.items, exam.items);
+});
+
+test('an assigned exam is empty before any lesson is finished, and capped after many', async () => {
+  const { assembleAssignedExam } = await import('@openmacro/core/engine/assignedExam');
+  const assignment = { seed: 'fixture-seed', itemCount: 20 };
+  assert.equal(assembleAssignedExam(MODULES, () => false, assignment).exam.items.length, 0);
+
+  const everything = assembleAssignedExam(MODULES, () => true, assignment).exam;
+  assert.equal(everything.items.length, 20);
+  const levels = new Set(everything.items.map((item) => item.level));
+  assert.ok(levels.size > 1, 'a learner who has done every level is asked about more than one');
+});
+
+test('an assigned exam shown in Portuguese grades, and sends scores without answers', async () => {
+  const { assembleAssignedExam, assignedExamSubmission } = await import(
+    '@openmacro/core/engine/assignedExam'
+  );
+  const { gradeExam } = await import('@openmacro/core/engine/exam');
+  const { localisedModules, localisedLessonById } = await import('@openmacro/core/i18n/content');
+  const { createTranslator } = await import('@openmacro/core/i18n');
+
+  const modules = localisedModules('pt-PT');
+  const { exam } = assembleAssignedExam(modules, () => true, { seed: 'pt', itemCount: 10 });
+  const result = gradeExam(
+    exam,
+    {},
+    (item) =>
+      localisedLessonById('pt-PT', item.lessonId)?.challenges.find(
+        (entry) => entry.id === item.challengeId,
+      ),
+    createTranslator('pt-PT'),
+  );
+  assert.equal(result.asked, 10);
+  assert.equal(result.correct, 0);
+
+  const sent = assignedExamSubmission('exam-id', result);
+  assert.deepEqual(Object.keys(sent).sort(), [
+    'p_asked',
+    'p_by_level',
+    'p_correct',
+    'p_exam',
+    'p_fingerprint',
+    'p_weak_modules',
+  ]);
+  assert.equal(sent.p_asked, 10);
+});
