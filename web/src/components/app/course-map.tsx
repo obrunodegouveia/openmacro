@@ -13,7 +13,6 @@ import type { LessonProgress } from "@openmacro/core/progress/types";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import { Permalink } from "@/components/ui/permalink";
 import { ModuleVideo } from "@/components/app/module-video";
-import { KidsModeSwitch } from "@/components/app/kids-mode-switch";
 import { useLessonMode } from "@/components/app/kids-mode";
 import { lessonsForMode, moduleHasKidsPath } from "@openmacro/core/engine/lessonMode";
 import { cn } from "@/lib/utils";
@@ -414,8 +413,15 @@ export function CourseMap() {
                       </p>
 
                       <div id={panel} hidden={!moduleOpen}>
-                        {moduleHasKidsPath(module) ? (
-                          <KidsModeSwitch lessons={lessonsForMode(module, "kids").length} />
+                        {/* The switch lives in the footer's settings; this
+                            explains why the lessons are filtered. */}
+                        {mode === "kids" && moduleHasKidsPath(module) ? (
+                          <a
+                            href="#settings"
+                            className="mt-4 block max-w-2xl rounded-2xl border border-mint/50 bg-mint/[0.06] p-3 text-xs font-bold text-ink hover:underline"
+                          >
+                            {t("kids.onNotice")}
+                          </a>
                         ) : null}
                         {module.video ? (
                           <div className="max-w-2xl">

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The kids mode switch, shown in a module that has a kids path.
+ * The kids mode switch, in the footer's settings.
  * See `kids-mode.ts`; the app draws the same card in KidsModeToggle.tsx.
  */
 
@@ -17,7 +17,7 @@ export function KidsModeSwitch({ lessons }: { lessons: number }) {
   return (
     <div
       className={cn(
-        "mt-4 flex max-w-2xl items-center gap-4 rounded-2xl border p-4 transition-colors",
+        "flex max-w-2xl items-center gap-4 rounded-2xl border p-4 transition-colors",
         on ? "border-mint/50 bg-mint/[0.06]" : "border-hairline bg-veil/[0.03]",
       )}
     >

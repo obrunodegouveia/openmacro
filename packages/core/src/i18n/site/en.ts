@@ -58,6 +58,7 @@ export const en = {
   'footer.glossary': 'Glossary',
   'footer.privacy': 'Privacy',
   'footer.contributors': 'contributors. Educational content only —',
+  'footer.settings': 'Settings',
   'footer.mit': 'MIT',
   'footer.mitLicensed': 'MIT licensed',
   'footer.coppa': 'COPPA-conscious by design',

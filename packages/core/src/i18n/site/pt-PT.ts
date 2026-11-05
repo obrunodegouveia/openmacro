@@ -55,6 +55,7 @@ export const ptPT = {
   'footer.glossary': 'Glossário',
   'footer.privacy': 'Privacidade',
   'footer.contributors': 'contribuidores. Conteúdo apenas educativo —',
+  'footer.settings': 'Definições',
   'footer.mit': 'MIT',
   'footer.mitLicensed': 'Licenciado sob MIT',
   'footer.coppa': 'Concebido com a COPPA em mente',
