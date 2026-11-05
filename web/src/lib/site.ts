@@ -45,4 +45,4 @@ export const GITHUB_CONTRIBUTING_URL = `${GITHUB_URL}/blob/main/README.md#contri
  */
 export const APP_STORE_URL = "https://apps.apple.com/app/openmacro-economics/id6810758729";
 export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=org.openmacro.app";
-export const PLAY_STORE_LIVE = false;
+export const PLAY_STORE_LIVE = true;
