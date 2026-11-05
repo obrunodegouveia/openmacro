@@ -96,6 +96,8 @@ export interface LessonVideoProps {
   minutes?: number;
   /** Attribution — a viewer is owed the knowledge of whose video this is. */
   source?: string;
+  /** The learner has started the questions, so the video stays as a bar until asked for. */
+  exercising?: boolean;
 }
 
 /**
@@ -108,10 +110,12 @@ interface EmbedLoad {
   start: number;
 }
 
-export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
+export function LessonVideo({ url, title, minutes, source, exercising = false }: LessonVideoProps) {
   const [load, setLoad] = useState<EmbedLoad | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
-  const [collapsed, setCollapsed] = useVideosCollapsed();
+  const [preferCollapsed, setPreferCollapsed] = useVideosCollapsed();
+  // Open or shut during the questions, for this lesson only; null until pressed.
+  const [exerciseCollapsed, setExerciseCollapsed] = useState<boolean | null>(null);
   const [captions, setCaptions] = useVideoCaptions();
   const { t, locale } = useLocale();
   const screen = useWindowDimensions();
@@ -120,6 +124,15 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
   const position = useRef(0);
   const id = youTubeId(url);
   const playing = load !== null;
+  // Once answering starts the video shrinks to its bar, so the question keeps
+  // the screen, but it never goes away. One already playing is left playing.
+  const collapsed = exercising
+    ? (exerciseCollapsed ?? (playing ? preferCollapsed : true))
+    : preferCollapsed;
+
+  useEffect(() => {
+    if (!exercising) setExerciseCollapsed(null);
+  }, [exercising]);
   const cc = resolveCaptions(captions, locale);
 
   // Hand a changed choice to whichever player is on screen.
@@ -136,7 +149,8 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
     // comes back to the placeholder rather than resuming — the same press is
     // still required to contact Google, which is the promise this card makes.
     if (!collapsed) setLoad(null);
-    setCollapsed(!collapsed);
+    if (exercising) setExerciseCollapsed(!collapsed);
+    else setPreferCollapsed(!collapsed);
   };
 
   // Entering or leaving full screen swaps one WebView for another, so the new
@@ -236,7 +250,7 @@ export function LessonVideo({ url, title, minutes, source }: LessonVideoProps) {
               carry the title the frame was showing. */}
           {collapsed ? (
             <Text style={styles.metaTitle} numberOfLines={1}>
-              {title}
+              {exercising ? t('lesson.video.rewatch') : title}
             </Text>
           ) : null}
           <Text style={styles.metaText}>

@@ -32,12 +32,25 @@ import { setWatching } from "@/lib/activity";
 export function ModuleVideo({
   video,
   moduleTitle,
+  exercising = false,
 }: {
   video: ModuleVideoData;
   moduleTitle: string;
+  /** The learner has started the questions, so the video stays as a bar until asked for. */
+  exercising?: boolean;
 }) {
   const [playing, setPlaying] = React.useState(false);
-  const [collapsed, setCollapsed] = useVideosCollapsed();
+  const [preferCollapsed, setPreferCollapsed] = useVideosCollapsed();
+  // Open or shut during the questions, for this lesson only; null until pressed.
+  const [exerciseCollapsed, setExerciseCollapsed] = React.useState<boolean | null>(null);
+  // Once answering starts the video shrinks to its bar, so the question keeps
+  // the screen, but it never goes away. One already playing is left playing.
+  const collapsed = exercising
+    ? (exerciseCollapsed ?? (playing ? preferCollapsed : true))
+    : preferCollapsed;
+  React.useEffect(() => {
+    if (!exercising) setExerciseCollapsed(null);
+  }, [exercising]);
   const [captions, setCaptions] = useVideoCaptions();
   const { t, locale } = useLocale();
   // Track only this card's contribution, so unmounting mid-play releases it.
@@ -56,7 +69,8 @@ export function ModuleVideo({
     // the placeholder rather than resuming, so play is still a deliberate act
     // and the promise on the card stays true.
     if (!collapsed) setPlaying(false);
-    setCollapsed(!collapsed);
+    if (exercising) setExerciseCollapsed(!collapsed);
+    else setPreferCollapsed(!collapsed);
   };
   const Chevron = collapsed ? ChevronRight : ChevronDown;
 
@@ -109,7 +123,13 @@ export function ModuleVideo({
         <span className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-ink-faint">
           {/* Collapsed, this row is the whole card, so it carries the title
               the frame was showing. */}
-          <span className="text-ink">{collapsed ? moduleTitle : t("lesson.video.watchFirst")}</span>
+          <span className="text-ink">
+            {exercising
+              ? t("lesson.video.rewatch")
+              : collapsed
+                ? moduleTitle
+                : t("lesson.video.watchFirst")}
+          </span>
           {video.minutes ? <span>{t("lesson.video.minutes", { count: video.minutes })}</span> : null}
           {video.source ? <span>{video.source}</span> : null}
           {!playing && !collapsed ? (

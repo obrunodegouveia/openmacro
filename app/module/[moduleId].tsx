@@ -30,12 +30,11 @@
 import { useCallback } from 'react';
 import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 
 import { ActionButton } from '@/components/ui/ActionButton';
 import { LessonRow, type LessonState } from '@/components/ui/CourseRows';
-import { KidsModeToggle } from '@/components/ui/KidsModeToggle';
 import { LessonVideo } from '@/components/ui/LessonVideo';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { useCourse } from '@/hooks/useCourse';
@@ -59,6 +58,7 @@ export default function ModuleScreen() {
   const { statusOf } = useCourse();
   const status = moduleId ? statusOf(moduleId) : undefined;
   const mode = useLessonMode();
+  const router = useRouter();
 
   const share = useCallback(async () => {
     if (!status) return;
@@ -162,7 +162,16 @@ export default function ModuleScreen() {
           </Text>
         </View>
 
-        {kidsPath ? <KidsModeToggle lessons={lessonsForMode(module, 'kids').length} /> : null}
+        {/* The switch lives in Profile; this explains why lessons are filtered. */}
+        {kidsPath && mode === 'kids' ? (
+          <Pressable
+            accessibilityRole="link"
+            onPress={() => router.push('/(tabs)/profile')}
+            style={styles.kidsNotice}
+          >
+            <Text style={styles.kidsNoticeText}>{t('kids.onNotice')}</Text>
+          </Pressable>
+        ) : null}
 
         {module.video ? (
           <LessonVideo
@@ -211,6 +220,15 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, gap: spacing.lg },
   missing: { alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
   missingText: { ...typography.body, color: palette.inkMuted },
+
+  kidsNotice: {
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: palette.mint,
+    backgroundColor: palette.surface,
+  },
+  kidsNoticeText: { ...typography.caption, color: palette.ink, fontWeight: '600' },
 
   head: { gap: spacing.sm },
   eyebrow: { ...typography.overline, color: palette.mintDark, textTransform: 'uppercase' },

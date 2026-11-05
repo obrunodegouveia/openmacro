@@ -39,6 +39,11 @@ export function moduleHasKidsPath(module: Module): boolean {
   return module.lessons.some(onKidsPath);
 }
 
+/** How many lessons the kids path has across the course, for the settings switch. */
+export function kidsPathLessonCount(modules: readonly Module[]): number {
+  return modules.reduce((sum, module) => sum + module.lessons.filter(onKidsPath).length, 0);
+}
+
 /**
  * The mode that actually applies to a lesson: kids mode only reaches lessons
  * on the kids path, so anywhere else it falls back to standard.
