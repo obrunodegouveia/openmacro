@@ -121,6 +121,27 @@ export interface LocaleContextValue {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
+function localeValue(locale: Locale, setLocale: (locale: Locale) => void): LocaleContextValue {
+  const modules = localisedModules(locale);
+  const translated = contentCoverage(locale);
+  const done = translated.reduce((sum, entry) => sum + entry.translated, 0);
+  const all = translated.reduce((sum, entry) => sum + entry.total, 0);
+
+  return {
+    locale,
+    t: createTranslator(locale),
+    available: LOCALES,
+    names: LOCALE_NAMES,
+    setLocale,
+    // Below 90% there is enough English mixed in to be worth explaining.
+    partial: locale !== DEFAULT_LOCALE && (all === 0 || done / all < 0.9 || uiCoverage(locale) < 1),
+    course: localisedCourse(locale),
+    modules,
+    lessonById: (lessonId) => localisedLessonById(locale, lessonId),
+    nextLesson: (lessonId) => localisedNextLesson(locale, lessonId),
+  };
+}
+
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(deviceLocale);
 
@@ -145,27 +166,19 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     writeVersioned(STORAGE_KEY, STORAGE_VERSION, { locale: next }).catch(() => {});
   }, []);
 
-  const value = useMemo<LocaleContextValue>(() => {
-    const modules = localisedModules(locale);
-    const translated = contentCoverage(locale);
-    const done = translated.reduce((sum, entry) => sum + entry.translated, 0);
-    const all = translated.reduce((sum, entry) => sum + entry.total, 0);
+  const value = useMemo(() => localeValue(locale, setLocale), [locale, setLocale]);
 
-    return {
-      locale,
-      t: createTranslator(locale),
-      available: LOCALES,
-      names: LOCALE_NAMES,
-      setLocale,
-      // Below 90% there is enough English mixed in to be worth explaining.
-      partial: locale !== DEFAULT_LOCALE && (all === 0 || done / all < 0.9 || uiCoverage(locale) < 1),
-      course: localisedCourse(locale),
-      modules,
-      lessonById: (lessonId) => localisedLessonById(locale, lessonId),
-      nextLesson: (lessonId) => localisedNextLesson(locale, lessonId),
-    };
-  }, [locale, setLocale]);
+  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
+}
 
+/**
+ * Shows everything inside it in one language, whatever the app is set to, and
+ * leaves the learner's own choice untouched. An assigned exam is set in the
+ * language its teacher chose.
+ */
+export function ForcedLocale({ locale, children }: { locale: Locale; children: ReactNode }) {
+  const { setLocale } = useLocale();
+  const value = useMemo(() => localeValue(locale, setLocale), [locale, setLocale]);
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
 
