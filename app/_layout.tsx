@@ -134,6 +134,11 @@ export default function RootLayout() {
                 name="review"
                 options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
               />
+              {/* So is an exam a teacher has assigned. */}
+              <Stack.Screen
+                name="exam"
+                options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+              />
             </Stack>
             </ThemeProvider>
           </ProgressProvider>

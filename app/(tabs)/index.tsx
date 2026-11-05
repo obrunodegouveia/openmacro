@@ -46,12 +46,14 @@ import { StreakBadge } from '@/components/ui/StatusPills';
 import { TopScrim } from '@/components/ui/TopScrim';
 import { UpdateBanner } from '@/components/ui/UpdateBanner';
 import { emitFeedback } from '@/feedback';
+import { useAssignedExam } from '@/hooks/useAssignedExam';
 import { useCourse } from '@/hooks/useCourse';
 import { openLesson, openModule } from '@/navigation/routes';
 import { useReview } from '@/hooks/useReview';
 import { useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
+import { createTranslator } from '@openmacro/core/i18n';
 import type { Lesson } from '@openmacro/core/content/schema';
 
 export default function TodayScreen() {
@@ -59,6 +61,7 @@ export default function TodayScreen() {
   const { profile, loading, error, isLessonComplete } = useProgress();
   const { t, course } = useLocale();
   const { due: reviewDue } = useReview();
+  const { exam: assignedExam } = useAssignedExam();
   const { next, statuses } = useCourse();
   const reduceMotion = useReducedMotion();
   // The lockup is an image, so it cannot follow a dynamic colour by itself.
@@ -206,6 +209,35 @@ export default function TodayScreen() {
             <Text maxFontSizeMultiplier={fontScale.title} style={styles.heroLessonMeta}>{t('today.allDoneBody')}</Text>
           </Animated.View>
         )}
+
+        {/* ---- an exam from a teacher, in the language it is set in ------- */}
+        {assignedExam ? (
+          <Animated.View entering={enter(1)}>
+            <Pressable
+              onPress={() => router.push('/exam')}
+              accessibilityRole="button"
+              accessibilityLabel={createTranslator(assignedExam.locale)('exam.card.title')}
+              style={({ pressed }) => [styles.review, pressed && styles.pressed]}
+            >
+              <View style={styles.reviewIcon}>
+                <SymbolView
+                  // Decorative: the control around it carries the label.
+                  accessible={false}
+                  accessibilityElementsHidden
+                  name={{ ios: 'checklist', android: 'checklist', web: 'checklist' }}
+                  size={20}
+                  tintColor={palette.blueDark}
+                  weight="semibold"
+                />
+              </View>
+              <View style={styles.reviewBody}>
+                <Text style={styles.reviewEyebrow}>{createTranslator(assignedExam.locale)('exam.card.eyebrow')}</Text>
+                <Text style={styles.reviewTitle}>{createTranslator(assignedExam.locale)('exam.card.title')}</Text>
+              </View>
+              <Chevron />
+            </Pressable>
+          </Animated.View>
+        ) : null}
 
         {/* ---- review --------------------------------------------------- */}
         {reviewDue.length > 0 ? (
