@@ -39,7 +39,19 @@ alter table public.assigned_exams
   add column if not exists started_at       timestamptz,
   add column if not exists duration_seconds integer check (duration_seconds >= 0),
   add column if not exists bonus_xp         integer not null default 0 check (bonus_xp >= 0),
-  add column if not exists leaves           integer not null default 0 check (leaves >= 0);
+  add column if not exists leaves           integer not null default 0 check (leaves >= 0),
+  -- A retake: draw only from these lessons, and never ask these items
+  -- (`lessonId#challengeId`). Set by the teacher; null means the whole course.
+  add column if not exists focus_lessons    text[],
+  add column if not exists exclude_items    text[],
+  -- Advice shown before a retake: the items missed last time, and lessons
+  -- to go back to. Set by the teacher.
+  add column if not exists review_items     text[],
+  add column if not exists review_lessons   text[],
+  -- Written at hand-in: which items were asked and which were missed. Ids
+  -- only, never the answers, so a retake can be set on exactly those.
+  add column if not exists paper_items      text[],
+  add column if not exists missed_items     text[];
 
 -- ---------------------------------------------------------------------------
 -- Starting
@@ -122,8 +134,9 @@ grant execute on function public.leave_assigned_exam(uuid) to authenticated;
 -- Handing it in, now with the time and the bonus
 -- ---------------------------------------------------------------------------
 --
--- Same arguments and the same one-attempt rule as 0008. It now returns what
--- was recorded, and a retry after a dropped connection returns the row as it
+-- The arguments of 0008 plus the paper's item ids and the missed ones, both
+-- optional so a client from before this migration still hands in. Same
+-- one-attempt rule. It now returns what was recorded, and a retry after a dropped connection returns the row as it
 -- was first written, so the learner sees the same bonus either way.
 
 drop function if exists public.submit_assigned_exam(uuid, integer, integer, jsonb, text[], text);
@@ -134,7 +147,9 @@ create function public.submit_assigned_exam(
   p_correct      integer,
   p_by_level     jsonb,
   p_weak_modules text[],
-  p_fingerprint  text
+  p_fingerprint  text,
+  p_paper_items  text[] default null,
+  p_missed_items text[] default null
 )
 returns table (duration_seconds integer, bonus_xp integer, leaves integer)
 language plpgsql
@@ -185,6 +200,8 @@ begin
            by_level         = p_by_level,
            weak_modules     = p_weak_modules,
            fingerprint      = p_fingerprint,
+           paper_items      = p_paper_items[1:60],
+           missed_items     = p_missed_items[1:60],
            duration_seconds = v_duration,
            bonus_xp         = v_bonus
      where e.id = p_exam;
@@ -201,7 +218,7 @@ begin
 end;
 $$;
 
-revoke all on function public.submit_assigned_exam(uuid, integer, integer, jsonb, text[], text)
+revoke all on function public.submit_assigned_exam(uuid, integer, integer, jsonb, text[], text, text[], text[])
   from public, anon;
-grant execute on function public.submit_assigned_exam(uuid, integer, integer, jsonb, text[], text)
+grant execute on function public.submit_assigned_exam(uuid, integer, integer, jsonb, text[], text, text[], text[])
   to authenticated;

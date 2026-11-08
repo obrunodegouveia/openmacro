@@ -388,6 +388,14 @@ export const en = {
   'exam.intro.leave': 'Stay in the exam until you finish. Switching to another app or tab, or closing the exam, costs you the speed bonus, and your teacher sees how many times you left.',
   'exam.left': '{count, plural, one {You have left the exam once.} other {You have left the exam # times.}} There is no speed bonus now, and your teacher will see this.',
   'exam.result.leaves': '{count, plural, one {You left the exam once.} other {You left the exam # times.}}',
+  'exam.study.title': 'Before you start',
+  'exam.study.missed': 'Last time, you got these questions wrong:',
+  'exam.study.lessons': 'Go back to these lessons first. Your teacher chose them for you.',
+  'exam.study.video': 'Watch the video and redo the lesson',
+  'exam.study.redo': 'Redo the lesson',
+  'exam.study.redone': 'Done again',
+  'exam.study.progress': '{done, number} of {total, number} lessons done again',
+  'exam.study.ready': 'When you have gone through them, start the exam. The questions will be new.',
 
   /**
    * What finishing a level lets you do.

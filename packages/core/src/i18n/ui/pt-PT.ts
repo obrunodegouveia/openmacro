@@ -386,4 +386,12 @@ export const ptPT: UiDictionary = {
   'exam.intro.leave': 'Fica no exame até acabares. Mudar para outra aplicação ou separador, ou fechar o exame, faz-te perder o bónus de rapidez, e o teu professor vê quantas vezes saíste.',
   'exam.left': '{count, plural, one {Já saíste do exame uma vez.} other {Já saíste do exame # vezes.}} Já não há bónus de rapidez, e o teu professor vai ver isto.',
   'exam.result.leaves': '{count, plural, one {Saíste do exame uma vez.} other {Saíste do exame # vezes.}}',
+  'exam.study.title': 'Antes de começares',
+  'exam.study.missed': 'Da última vez, erraste estas perguntas:',
+  'exam.study.lessons': 'Volta primeiro a estas lições. O teu professor escolheu-as para ti.',
+  'exam.study.video': 'Vê o vídeo e repete a lição',
+  'exam.study.redo': 'Repete a lição',
+  'exam.study.redone': 'Já repetida',
+  'exam.study.progress': '{done, number} de {total, number} lições repetidas',
+  'exam.study.ready': 'Quando as tiveres revisto, começa o exame. As perguntas vão ser novas.',
 };

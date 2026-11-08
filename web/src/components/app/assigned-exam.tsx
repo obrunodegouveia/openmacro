@@ -7,10 +7,12 @@ import {
   assembleAssignedExam,
   assignedExamSubmission,
   examStartFromReply,
+  examStudyPlan,
   examTimingFromReply,
   formatExamClock,
   type AssignedExam,
   type ExamTiming,
+  type StudyPlan,
 } from "@openmacro/core/engine/assignedExam";
 import { gradeExam, type ExamResult } from "@openmacro/core/engine/exam";
 
@@ -96,6 +98,11 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
         (lessonId) => (snapshot.progress[lessonId]?.completions ?? 0) > 0,
         exam,
       ).exam,
+  );
+  const plan = examStudyPlan(
+    modules,
+    exam,
+    (lessonId) => snapshot.progress[lessonId]?.lastCompletedAt,
   );
   const lookup = (item: { lessonId: string; challengeId: string }) =>
     lessonById(item.lessonId)?.challenges.find((entry) => entry.id === item.challengeId);
@@ -273,6 +280,7 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
         <h1 className="font-display text-3xl font-extrabold tracking-tight">
           {t("exam.intro.title")}
         </h1>
+        {plan ? <StudyPlanView plan={plan} /> : null}
         <p className="text-ink-muted">{t("exam.intro.body", { count: paper.items.length })}</p>
         <p className="text-ink-muted">
           {t("exam.intro.clock", {
@@ -346,6 +354,64 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
         {last ? t("exam.finish") : t("exam.next")}
       </Button>
     </Shell>
+  );
+}
+
+/**
+ * The advice before a retake: what was missed, and which lessons to go back
+ * to. Each lesson opens on click; its video, if it has one, plays there.
+ */
+function StudyPlanView({ plan }: { plan: StudyPlan }) {
+  const { t } = useLocale();
+  return (
+    <section className="glass grid gap-4 rounded-card p-5 sm:p-7">
+      <h2 className="font-display text-xl font-extrabold">{t("exam.study.title")}</h2>
+      {plan.missed.length > 0 ? (
+        <div className="grid gap-2">
+          <p>{t("exam.study.missed")}</p>
+          <ul className="grid gap-1">
+            {plan.missed.map((item) => (
+              <li key={item.itemId} className="text-ink-muted">
+                <span aria-hidden>✗ </span>
+                {item.prompt}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {plan.lessons.length > 0 ? (
+        <div className="grid gap-2">
+          <p>{t("exam.study.lessons")}</p>
+          <ul className="grid gap-2">
+            {plan.lessons.map((lesson) => (
+              <li key={lesson.lessonId}>
+                <LocaleLink
+                  href={`/learn/${lesson.lessonId}`}
+                  className="grid gap-0.5 rounded-lg py-1 hover:opacity-80"
+                >
+                  <span className="font-display font-extrabold">
+                    {lesson.redone ? <span aria-hidden>✓ </span> : null}
+                    {lesson.title}
+                  </span>
+                  <span className="text-sm text-ink-muted">
+                    {lesson.moduleTitle} ·{" "}
+                    {lesson.redone
+                      ? t("exam.study.redone")
+                      : lesson.hasVideo
+                        ? t("exam.study.video")
+                        : t("exam.study.redo")}
+                  </span>
+                </LocaleLink>
+              </li>
+            ))}
+          </ul>
+          <p className="text-sm text-ink-muted">
+            {t("exam.study.progress", { done: plan.redoneCount, total: plan.lessons.length })}
+          </p>
+        </div>
+      ) : null}
+      <p>{t("exam.study.ready")}</p>
+    </section>
   );
 }
 

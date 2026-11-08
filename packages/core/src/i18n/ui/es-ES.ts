@@ -374,4 +374,12 @@ export const esES: UiDictionary = {
   'exam.intro.leave': 'Quédate en el examen hasta terminar. Cambiar a otra aplicación o pestaña, o cerrar el examen, te hace perder el premio por rapidez, y tu profesor ve cuántas veces saliste.',
   'exam.left': '{count, plural, one {Has salido del examen una vez.} other {Has salido del examen # veces.}} Ya no hay premio por rapidez, y tu profesor lo verá.',
   'exam.result.leaves': '{count, plural, one {Saliste del examen una vez.} other {Saliste del examen # veces.}}',
+  'exam.study.title': 'Antes de empezar',
+  'exam.study.missed': 'La última vez fallaste estas preguntas:',
+  'exam.study.lessons': 'Vuelve primero a estas lecciones. Tu profesor las ha elegido para ti.',
+  'exam.study.video': 'Mira el vídeo y repite la lección',
+  'exam.study.redo': 'Repite la lección',
+  'exam.study.redone': 'Ya repetida',
+  'exam.study.progress': '{done, number} de {total, number} lecciones repetidas',
+  'exam.study.ready': 'Cuando las hayas repasado, empieza el examen. Las preguntas serán nuevas.',
 };

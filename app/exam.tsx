@@ -32,17 +32,19 @@ import { useAssignedExam } from '@/hooks/useAssignedExam';
 import { ForcedLocale, useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { supabase } from '@/services/supabaseClient';
-import { fontScale, palette, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
 import {
   EXAM_SPEED_BONUS,
   assembleAssignedExam,
   assignedExamSubmission,
   examStartFromReply,
+  examStudyPlan,
   examTimingFromReply,
   formatExamClock,
   type AssignedExam,
   type ExamTiming,
+  type StudyPlan,
 } from '@openmacro/core/engine/assignedExam';
 import { gradeExam, type ExamResult } from '@openmacro/core/engine/exam';
 
@@ -84,7 +86,11 @@ function Nothing({ kind }: { kind: 'none' | 'empty' }) {
 function ExamRunner({ exam }: { exam: AssignedExam }) {
   const insets = useSafeAreaInsets();
   const { t, modules, lessonById } = useLocale();
-  const { isLessonComplete } = useProgress();
+  const { isLessonComplete, progress } = useProgress();
+  const plan = useMemo(
+    () => examStudyPlan(modules, exam, (lessonId) => progress[lessonId]?.lastCompletedAt),
+    [modules, exam, progress],
+  );
 
   // Drawn once: finishing a lesson elsewhere must not change a paper in hand.
   const [paper] = useState(() => assembleAssignedExam(modules, isLessonComplete, exam).exam);
@@ -293,10 +299,17 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
 
   if (!started) {
     return (
-      <View style={[styles.centred, { paddingTop: insets.top + spacing.xl }]}>
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={[
+          styles.introContent,
+          { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl },
+        ]}
+      >
         <Text maxFontSizeMultiplier={fontScale.title} style={styles.doneTitle}>
           {t('exam.intro.title')}
         </Text>
+        {plan ? <StudyPlanView plan={plan} /> : null}
         <Text style={styles.doneBody}>{t('exam.intro.body', { count: paper.items.length })}</Text>
         <Text style={styles.doneBody}>
           {t('exam.intro.clock', {
@@ -320,7 +333,7 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
           tone="ghost"
           style={styles.endButton}
         />
-      </View>
+      </ScrollView>
     );
   }
 
@@ -379,6 +392,59 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
   );
 }
 
+/**
+ * The advice before a retake: what was missed, and which lessons to go back
+ * to. Each lesson opens on tap; its video, if it has one, plays there.
+ */
+function StudyPlanView({ plan }: { plan: StudyPlan }) {
+  const { t } = useLocale();
+  return (
+    <View style={styles.study}>
+      <Text style={styles.weakTitle}>{t('exam.study.title')}</Text>
+      {plan.missed.length > 0 ? (
+        <View style={styles.studyGroup}>
+          <Text style={styles.levelName}>{t('exam.study.missed')}</Text>
+          {plan.missed.map((item) => (
+            <Text key={item.itemId} style={styles.missed}>
+              ✗ {item.prompt}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+      {plan.lessons.length > 0 ? (
+        <View style={styles.studyGroup}>
+          <Text style={styles.levelName}>{t('exam.study.lessons')}</Text>
+          {plan.lessons.map((lesson) => (
+            <Pressable
+              key={lesson.lessonId}
+              accessibilityRole="button"
+              onPress={() => router.push(`/lesson/${lesson.lessonId}`)}
+              style={({ pressed }) => [styles.studyLesson, pressed && styles.pressed]}
+            >
+              <Text style={styles.studyLessonTitle}>
+                {lesson.redone ? '✓ ' : ''}
+                {lesson.title}
+              </Text>
+              <Text style={styles.levelScore}>
+                {lesson.moduleTitle} ·{' '}
+                {lesson.redone
+                  ? t('exam.study.redone')
+                  : lesson.hasVideo
+                    ? t('exam.study.video')
+                    : t('exam.study.redo')}
+              </Text>
+            </Pressable>
+          ))}
+          <Text style={styles.status}>
+            {t('exam.study.progress', { done: plan.redoneCount, total: plan.lessons.length })}
+          </Text>
+        </View>
+      ) : null}
+      <Text style={styles.levelName}>{t('exam.study.ready')}</Text>
+    </View>
+  );
+}
+
 /** A running clock, counting on from what the server said at Start. */
 function Clock({ from, label }: { from: { seconds: number; at: number }; label: string }) {
   const [now, setNow] = useState(() => Date.now());
@@ -417,6 +483,20 @@ const styles = StyleSheet.create({
     backgroundColor: palette.canvas,
   },
   resultContent: { padding: spacing.xl, gap: spacing.md },
+  introContent: { padding: spacing.xl, gap: spacing.md, alignItems: 'center' },
+  study: {
+    alignSelf: 'stretch',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: palette.border,
+    backgroundColor: palette.surface,
+  },
+  studyGroup: { gap: spacing.sm },
+  missed: { ...typography.body, color: palette.inkMuted },
+  studyLesson: { gap: 2, paddingVertical: spacing.xs },
+  studyLessonTitle: { ...typography.heading, color: palette.ink },
   endButton: { alignSelf: 'stretch' },
   doneTitle: { ...typography.display, color: palette.ink, textAlign: 'center' },
   doneBody: {

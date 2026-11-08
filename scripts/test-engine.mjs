@@ -380,9 +380,62 @@ test('an assigned exam shown in Portuguese grades, and sends scores without answ
     'p_correct',
     'p_exam',
     'p_fingerprint',
+    'p_missed_items',
+    'p_paper_items',
     'p_weak_modules',
   ]);
   assert.equal(sent.p_asked, 10);
+  assert.equal(sent.p_paper_items.length, 10);
+  // Nothing was answered, so every item was missed. Ids only, no answers.
+  assert.deepEqual(sent.p_missed_items, sent.p_paper_items);
+  assert.ok(sent.p_missed_items.every((id) => /^[^#]+#[^#]+$/.test(id)));
+});
+
+test('a retake draws only from its focus lessons and never repeats an excluded item', async () => {
+  const { assembleAssignedExam } = await import('@openmacro/core/engine/assignedExam');
+  const first = assembleAssignedExam(MODULES, () => true, { seed: 'first', itemCount: 20 }).exam;
+  const focusLessons = [...new Set(first.items.map((item) => item.lessonId))];
+  const excludeItems = first.items.map((item) => item.id);
+
+  const retake = assembleAssignedExam(MODULES, () => true, {
+    seed: 'retake',
+    itemCount: 20,
+    focusLessons,
+    excludeItems,
+  }).exam;
+  assert.ok(retake.items.length > 0);
+  assert.ok(retake.items.every((item) => focusLessons.includes(item.lessonId)));
+  assert.ok(retake.items.every((item) => !excludeItems.includes(item.id)));
+
+  // Focus never reaches past what the learner has finished.
+  const none = assembleAssignedExam(MODULES, () => false, {
+    seed: 'retake',
+    itemCount: 20,
+    focusLessons,
+  }).exam;
+  assert.equal(none.items.length, 0);
+});
+
+test('the study plan names the missed questions in the exam language, and ticks redone lessons', async () => {
+  const { examStudyPlan } = await import('@openmacro/core/engine/assignedExam');
+  const { localisedModules } = await import('@openmacro/core/i18n/content');
+  const modules = localisedModules('pt-PT');
+  const lesson = modules[0].lessons[0];
+  const other = modules[0].lessons[1];
+  const exam = {
+    reviewItems: [`${lesson.id}#${lesson.challenges[0].id}`, 'gone#nothing'],
+    reviewLessons: [other.id, lesson.id],
+    assignedAt: '2026-11-08T12:00:00Z',
+  };
+  const done = { [lesson.id]: '2026-11-09T10:00:00Z', [other.id]: '2026-11-01T10:00:00Z' };
+  const plan = examStudyPlan(modules, exam, (id) => done[id]);
+  assert.equal(plan.missed.length, 1, 'an item the course no longer has is left out');
+  assert.equal(plan.missed[0].prompt, lesson.challenges[0].prompt);
+  assert.deepEqual(plan.lessons.map((entry) => entry.lessonId), [lesson.id, other.id]);
+  // Finished after the exam was assigned counts; finished before does not.
+  assert.deepEqual(plan.lessons.map((entry) => entry.redone), [true, false]);
+  assert.equal(plan.redoneCount, 1);
+  assert.equal(examStudyPlan(modules, { reviewItems: [], reviewLessons: [], assignedAt: exam.assignedAt }, () => null), null);
 });
 
 test('the exam speed bonus: never below the pass mark, full when fast, half when steady', async () => {
