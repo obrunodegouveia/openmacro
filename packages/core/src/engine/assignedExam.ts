@@ -15,7 +15,7 @@
  */
 
 import { MODULE_LEVELS, type Module, type ModuleLevel } from '../content/schema';
-import { isPrivateModule } from '../content/private';
+import { isOptionalModule } from '../content/optional';
 import { isLocale, type Locale } from '../i18n/locales';
 import {
   assembleExam,
@@ -58,7 +58,7 @@ export function assembleAssignedExam(
   assignment: Pick<AssignedExam, 'seed' | 'itemCount'>,
 ): AssembledExam {
   const finished = modules
-    .filter((module) => !isPrivateModule(module.id))
+    .filter((module) => !isOptionalModule(module.id))
     .map((module) => ({
       ...module,
       lessons: module.lessons.filter((lesson) => isLessonDone(lesson.id)),

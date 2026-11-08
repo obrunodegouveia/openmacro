@@ -20,6 +20,7 @@
 import { defineModule } from '../../schema';
 import { btcTheSixForcesLesson } from './lesson-01-the-six-forces';
 import { btcTheOrderBookLesson } from './lesson-02-the-order-book';
+import { btcCvdFromScratchLesson } from './lesson-07-cvd-from-scratch';
 import { btcLeverageAndLiquidationsLesson } from './lesson-03-leverage-and-liquidations';
 import { btcWhoHoldsWhatLesson } from './lesson-04-who-holds-what';
 import { btcTheMoneyComingInLesson } from './lesson-05-the-money-coming-in';
@@ -31,10 +32,22 @@ export const moduleBitcoinPriceFormation = defineModule({
   description:
     'Order books, leverage, on-chain holders and macro capital — the six forces behind Bitcoin’s price, and how to diagnose a crash without fooling yourself.',
   accent: 'gold',
+  /**
+   * Khan Academy's own introduction to what Bitcoin is, for anyone arriving
+   * without it. Optional depth at the module, so it adds nothing to any
+   * lesson's time on the path; the lessons themselves are about price
+   * formation, which the video does not cover.
+   */
+  video: {
+    url: 'https://www.youtube.com/watch?v=EA0LkCkvUeU',
+    minutes: 9,
+    source: 'Khan Academy — Bitcoin: What is it? (CC BY-NC-SA)',
+  },
   level: 'advanced',
   lessons: [
     btcTheSixForcesLesson,
     btcTheOrderBookLesson,
+    btcCvdFromScratchLesson,
     btcLeverageAndLiquidationsLesson,
     btcWhoHoldsWhatLesson,
     btcTheMoneyComingInLesson,

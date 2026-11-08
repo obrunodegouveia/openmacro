@@ -61,7 +61,9 @@ import {
   localisedNextLesson,
 } from '@openmacro/core/i18n/content';
 import type { Course, Lesson, Module } from '@openmacro/core/content/schema';
+import { unlockedModules } from '@openmacro/core/content/optional';
 import { useModuleGrants } from '@/hooks/useModuleGrants';
+import { useBitcoinMode } from '@/services/bitcoinMode';
 import { readVersioned, writeVersioned } from '@/services/localStore';
 
 const STORAGE_KEY = 'openmacro.locale.v1';
@@ -188,18 +190,20 @@ export function ForcedLocale({ locale, children }: { locale: Locale; children: R
 }
 
 /**
- * Adds the private modules this learner has been granted to the course
- * everything inside it sees (`content/private.ts`).
+ * Adds the optional modules this learner has unlocked to the course
+ * everything inside it sees (`content/optional.ts`): Bitcoin mode's, when it
+ * is on, and any granted to this account.
  *
  * Separate from `LocaleProvider` because grants need the account, and the
  * account sits inside the language: the sign-in screens are translated too.
  * Mounted just inside `AuthProvider`, so the path, the course map and the
  * lesson screen all read the same list.
  */
-export function GrantedModules({ children }: { children: ReactNode }) {
+export function UnlockedModules({ children }: { children: ReactNode }) {
   const { locale, setLocale } = useLocale();
-  const unlocked = useModuleGrants();
-  const key = unlocked.join(',');
+  const grants = useModuleGrants();
+  const [bitcoinMode] = useBitcoinMode();
+  const key = unlockedModules(grants, bitcoinMode).join(',');
   const value = useMemo(
     () => (key ? localeValue(locale, setLocale, key.split(',')) : null),
     [key, locale, setLocale],
