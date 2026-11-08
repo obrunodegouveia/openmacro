@@ -10,6 +10,7 @@ import { courseEsES } from './course';
 import { africanCentralBanksEsES } from './african-central-banks';
 import { bankingAndMoneyEsES } from './banking-and-money';
 import { beforeItBreaksEsES } from './before-it-breaks';
+import { bitcoinPriceFormationEsES } from './bitcoin-price-formation';
 import { breakingAPeg1992EsES } from './breaking-a-peg-1992';
 import { buyingPropertyPortugalEsES } from './buying-property-portugal';
 import { commercialCentralInterfaceEsES } from './commercial-central-interface';
@@ -47,6 +48,7 @@ export const esESContent: ContentTranslation = {
     'african-central-banks': africanCentralBanksEsES,
     'banking-and-money': bankingAndMoneyEsES,
     'before-it-breaks': beforeItBreaksEsES,
+    'bitcoin-price-formation': bitcoinPriceFormationEsES,
     'breaking-a-peg-1992': breakingAPeg1992EsES,
     'buying-property-portugal': buyingPropertyPortugalEsES,
     'commercial-central-interface': commercialCentralInterfaceEsES,

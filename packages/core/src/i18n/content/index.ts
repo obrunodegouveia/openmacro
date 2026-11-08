@@ -164,9 +164,10 @@ export interface ModuleCoverage {
   readonly ratio: number;
 }
 
+/** Public and private modules alike: a granted learner reads both. */
 export function contentCoverage(locale: Locale): ModuleCoverage[] {
   const translation = TRANSLATIONS[locale] ?? EMPTY;
-  return MODULES.map((module) => {
+  return [...MODULES, ...PRIVATE_MODULES].map((module) => {
     const dictionary = translation.modules[module.id] ?? {};
     const ratio = locale === DEFAULT_LOCALE ? 1 : coverage(module, dictionary);
     const total = Object.keys(collectKeys(module)).length;
