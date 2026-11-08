@@ -107,13 +107,20 @@ jobs:
       - name: Lint the app for untranslated strings
         run: npm run lint
 
-      # Messages, not content. Catches a translation that invented a
-      # placeholder name or dropped a brace — both render as visible nonsense
-      # and neither is a type error. Untranslated content never fails this;
-      # a rule that blocks a new lesson until every language has caught up is
-      # a rule that stops lessons being written.
+      # One language per screen. Fails on a broken message (an invented
+      # placeholder, a dropped brace), on any interface, website or content
+      # string missing in a shipped language — private modules included —
+      # and on a translation older than its English. A missing string falls
+      # back to English, which is how Portuguese menus came to sit around an
+      # English lesson.
       - name: Validate translations
         run: npm run i18n:status -- --strict
+
+      # The other way a language leaks: a string that *is* translated, but
+      # still in English (copied across, or half-done), or English source
+      # with Portuguese or Spanish in it. scripts/check-language.mjs.
+      - name: One language per string
+        run: npm run check:language
 
       # An objective no combination of sliders can satisfy typechecks,
       # validates and renders perfectly. The learner simply cannot finish it

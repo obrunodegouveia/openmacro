@@ -57,6 +57,7 @@
     "gen:sounds": "node ./scripts/generate-sounds.mjs",
     "audit:content": "node ./scripts/audit-content.mjs",
     "lint:content": "node ./scripts/validate-content.mjs",
+    "check:language": "node ./scripts/check-language.mjs",
     "check:exam": "node ./scripts/check-exam.mjs",
     "test:engine": "node --test ./scripts/test-engine.mjs",
     "check:feedback": "node ./scripts/check-feedback.mjs",

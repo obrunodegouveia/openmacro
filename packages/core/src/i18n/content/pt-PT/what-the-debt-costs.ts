@@ -249,7 +249,7 @@ export const whatTheDebtCostsPtPT: ContentDictionary = {
   'demand-before-supply.mc-right-version.option.useless.label': 'Não fazem diferença nenhuma à inflação',
   'demand-before-supply.mc-right-version.option.useless.feedback': 'Forte demais no sentido contrário. Aliviar uma restrição ativa de oferta — a habitação acima de tudo — baixa a inflação medida de forma direta e atribuível.',
   'demand-before-supply.mc-right-version.option.only-tech.label': 'Só a tecnologia conta; os ativos físicos são irrelevantes',
-  'demand-before-supply.mc-right-version.option.only-tech.feedback': 'A tecnologia tem o tecto mais alto e o capital físico é a parte que um governo pode de facto comprar. Descartá-lo deita fora a única alavanca disponível a quem toma a decisão.',
+  'demand-before-supply.mc-right-version.option.only-tech.feedback': 'A tecnologia tem o teto mais alto e o capital físico é a parte que um governo pode de facto comprar. Descartá-lo deita fora a única alavanca disponível a quem toma a decisão.',
   'the-same-rise-twice.title': 'Um Quarto de Ponto, Contado Duas Vezes',
   'the-same-rise-twice.subtitle': 'A Reserva Federal sobe 25 pontos base para travar a inflação. Os mesmos 25 pontos base aumentam o que o Tesouro deve, durante anos, muito depois de a decisão estar esquecida.',
   'the-same-rise-twice.takeaway.0': 'Uma subida de juros chega ao orçamento à velocidade a que a dívida se renova — anos, não meses.',
