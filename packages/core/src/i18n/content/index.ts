@@ -27,7 +27,7 @@
 
 import type { Course, Lesson, Module } from '../../content/schema';
 import { COURSE, MODULES } from '../../content/registry';
-import { PRIVATE_MODULES } from '../../content/private';
+import { OPTIONAL_MODULES } from '../../content/optional';
 import { DEFAULT_LOCALE, type Locale } from '../locales';
 import { collectKeys, coverage, localiseModule, type ContentDictionary } from '../localise';
 import { ptPTContent } from './pt-PT';
@@ -80,13 +80,13 @@ export function contentDictionary(locale: Locale, moduleId: string): ContentDict
  * The modules a learner may see.
  *
  * The public course, then any private module whose id is in `unlocked` (see
- * `content/private.ts`). Nobody passes `unlocked` except the providers that
+ * `content/optional.ts`). Nobody passes `unlocked` except the providers that
  * read the signed-in learner's grants, so every public page gets the public
  * course and nothing else.
  */
 function visibleModules(unlocked: readonly string[]): readonly Module[] {
   if (unlocked.length === 0) return MODULES;
-  const extra = PRIVATE_MODULES.filter((module) => unlocked.includes(module.id));
+  const extra = OPTIONAL_MODULES.filter((module) => unlocked.includes(module.id));
   return extra.length === 0 ? MODULES : [...MODULES, ...extra];
 }
 
@@ -167,7 +167,7 @@ export interface ModuleCoverage {
 /** Public and private modules alike: a granted learner reads both. */
 export function contentCoverage(locale: Locale): ModuleCoverage[] {
   const translation = TRANSLATIONS[locale] ?? EMPTY;
-  return [...MODULES, ...PRIVATE_MODULES].map((module) => {
+  return [...MODULES, ...OPTIONAL_MODULES].map((module) => {
     const dictionary = translation.modules[module.id] ?? {};
     const ratio = locale === DEFAULT_LOCALE ? 1 : coverage(module, dictionary);
     const total = Object.keys(collectKeys(module)).length;

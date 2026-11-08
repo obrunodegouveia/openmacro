@@ -60,9 +60,9 @@ registerHooks({
 });
 
 const { MODULES: PUBLIC_MODULES } = await import('@openmacro/core/content/registry');
-const { PRIVATE_MODULES } = await import('@openmacro/core/content/private');
-// Private modules (content/private.ts) are held to the same standard.
-const MODULES = [...PUBLIC_MODULES, ...PRIVATE_MODULES];
+const { OPTIONAL_MODULES } = await import('@openmacro/core/content/optional');
+// Private modules (content/optional.ts) are held to the same standard.
+const MODULES = [...PUBLIC_MODULES, ...OPTIONAL_MODULES];
 
 const findings = [];
 const note = (severity, where, message) => findings.push({ severity, where, message });

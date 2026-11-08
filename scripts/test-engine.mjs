@@ -385,15 +385,15 @@ test('an assigned exam shown in Portuguese grades, and sends scores without answ
   assert.equal(sent.p_asked, 10);
 });
 
-test('private modules: hidden unless granted, never in an assigned exam', async () => {
-  const { PRIVATE_MODULES, isPrivateModule, unlockedFromRows } = await import(
-    '@openmacro/core/content/private'
+test('optional modules: hidden unless unlocked, never in an assigned exam', async () => {
+  const { OPTIONAL_MODULES, isOptionalModule, unlockedFromRows } = await import(
+    '@openmacro/core/content/optional'
   );
   const { localisedModules, localisedLessonById, localisedCourse } = await import(
     '@openmacro/core/i18n/content'
   );
   const { assembleAssignedExam } = await import('@openmacro/core/engine/assignedExam');
-  const [first] = PRIVATE_MODULES;
+  const [first] = OPTIONAL_MODULES;
   const lessonId = first.lessons[0].id;
 
   // Not in the public registry at all, so no public page can list it.
@@ -401,7 +401,7 @@ test('private modules: hidden unless granted, never in an assigned exam', async 
   assert.equal(getLessonById(lessonId), undefined);
 
   for (const locale of ['en', 'pt-PT', 'es-ES']) {
-    assert.ok(!localisedModules(locale).some((module) => isPrivateModule(module.id)));
+    assert.ok(!localisedModules(locale).some((module) => isOptionalModule(module.id)));
     assert.equal(localisedLessonById(locale, lessonId), undefined);
     const granted = localisedModules(locale, [first.id]);
     assert.equal(granted.at(-1).id, first.id);
@@ -423,11 +423,11 @@ test('private modules: hidden unless granted, never in an assigned exam', async 
 
 test('every module, private ones included, is fully translated in every language', async () => {
   const { contentCoverage } = await import('@openmacro/core/i18n/content');
-  const { PRIVATE_MODULES } = await import('@openmacro/core/content/private');
+  const { OPTIONAL_MODULES } = await import('@openmacro/core/content/optional');
   const { LOCALES } = await import('@openmacro/core/i18n');
   for (const locale of LOCALES) {
     const coverage = contentCoverage(locale);
-    for (const module of PRIVATE_MODULES) {
+    for (const module of OPTIONAL_MODULES) {
       assert.ok(coverage.some((entry) => entry.moduleId === module.id), `${module.id} counted`);
     }
     const gaps = coverage.filter((entry) => entry.ratio < 1);
@@ -435,5 +435,20 @@ test('every module, private ones included, is fully translated in every language
       gaps.map((entry) => `${locale}/${entry.moduleId}: ${entry.total - entry.translated} missing`),
       [],
     );
+  }
+});
+
+test('Bitcoin mode unlocks the Bitcoin modules; grants add to it, in one order', async () => {
+  const { unlockedModules, BITCOIN_MODE_MODULES, OPTIONAL_MODULES, isBitcoinModeModule } =
+    await import('@openmacro/core/content/optional');
+  assert.deepEqual(unlockedModules([], false), []);
+  assert.deepEqual(unlockedModules([], true), [...BITCOIN_MODE_MODULES]);
+  // A grant and the mode for the same module is still one module.
+  assert.deepEqual(unlockedModules([...BITCOIN_MODE_MODULES], true), [...BITCOIN_MODE_MODULES]);
+  // Unknown ids unlock nothing.
+  assert.deepEqual(unlockedModules(['not-a-module'], false), []);
+  for (const id of BITCOIN_MODE_MODULES) {
+    assert.ok(OPTIONAL_MODULES.some((module) => module.id === id), `${id} is an optional module`);
+    assert.ok(isBitcoinModeModule(id));
   }
 });

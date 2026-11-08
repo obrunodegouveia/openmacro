@@ -17,7 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { DEFAULT_CHALLENGE_XP, MODULES } from "@openmacro/core/content";
-import { PRIVATE_MODULES } from "@openmacro/core/content/private";
+import { OPTIONAL_MODULES } from "@openmacro/core/content/optional";
 import type { Lesson, Module } from "@openmacro/core/content/schema";
 import { Button } from "@/components/ui/button";
 import { AccountPanel } from "@/components/site/account-button";
@@ -472,7 +472,7 @@ function Avatar({ learner }: { learner: { name: string; avatarUrl: string | null
 function useVisibleModules(): readonly Module[] {
   const { modules } = useLocale();
   return React.useMemo(() => {
-    const extra = PRIVATE_MODULES.filter((module) =>
+    const extra = OPTIONAL_MODULES.filter((module) =>
       modules.some((candidate) => candidate.id === module.id),
     );
     return extra.length === 0 ? MODULES : [...MODULES, ...extra];

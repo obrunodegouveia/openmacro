@@ -9,6 +9,7 @@ import { BrandLogo } from "@/components/site/brand-logo";
 import { SeasonalFooter } from "@/components/site/seasonal-decor";
 import { SeasonSettings } from "@/components/site/season-settings";
 import { KidsModeSwitch } from "@/components/app/kids-mode-switch";
+import { BitcoinModeSwitch } from "@/components/app/bitcoin-mode-switch";
 import { MODULES } from "@openmacro/core/content/registry";
 import { kidsPathLessonCount } from "@openmacro/core/engine/lessonMode";
 import {
@@ -123,7 +124,10 @@ export async function Footer() {
           <h2 id="settings-heading" className="mb-3 font-display text-sm font-extrabold text-ink">
             {s("footer.settings")}
           </h2>
-          <KidsModeSwitch lessons={kidsPathLessonCount(MODULES)} />
+          <div className="flex flex-col gap-3">
+            <KidsModeSwitch lessons={kidsPathLessonCount(MODULES)} />
+            <BitcoinModeSwitch />
+          </div>
         </section>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-5 border-t border-hairline pt-8 sm:flex-row sm:items-center">

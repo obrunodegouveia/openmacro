@@ -29,7 +29,7 @@
 import './i18n-loader.mjs';
 
 const { MODULES } = await import('@openmacro/core/content/registry');
-const { PRIVATE_MODULES } = await import('@openmacro/core/content/private');
+const { OPTIONAL_MODULES } = await import('@openmacro/core/content/optional');
 const { LOCALES, DEFAULT_LOCALE, collectKeys, en, uiCatalogue } = await import(
   '@openmacro/core/i18n'
 );
@@ -98,7 +98,7 @@ function check(locale, scope, sources, targets) {
   }
 }
 
-const modules = [...MODULES, ...PRIVATE_MODULES];
+const modules = [...MODULES, ...OPTIONAL_MODULES];
 for (const locale of LOCALES) {
   check(locale, 'ui', en, uiCatalogue(locale));
   check(locale, 'site', siteEn, siteCatalogue(locale));

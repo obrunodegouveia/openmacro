@@ -1837,6 +1837,32 @@ export const FORMULAS = {
     return read(inputs, 'price') / realized - 1;
   },
 
+  /**
+   * One bar's volume delta: aggressive buying minus aggressive selling.
+   *
+   *   delta = volume x buyShare - volume x (1 - buyShare)
+   *         = volume x (2 x buyShare - 1)
+   *
+   * `buyShare` is the fraction of the bar's volume where the buyer crossed
+   * the spread. At 0.5 the aggressors cancel out and the delta is zero,
+   * however much traded.
+   *
+   * Expects: `barVolume` (BTC), `buyShare` (decimal). Returns BTC.
+   */
+  btc_bar_delta: (inputs) =>
+    read(inputs, 'barVolume') * (2 * read(inputs, 'buyShare') - 1),
+
+  /**
+   * How far CVD moves over a run of identical bars: the running sum of
+   * `barDelta`, which for equal bars is barDelta x bars.
+   *
+   * A change, not a level. CVD's level depends only on when the sum started,
+   * so the lesson reads this as how much it moved, never where it is.
+   *
+   * Expects: `bars`, and the `barDelta` readout computed before it.
+   */
+  btc_cvd_change: (inputs) => read(inputs, 'barDelta') * read(inputs, 'bars'),
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
