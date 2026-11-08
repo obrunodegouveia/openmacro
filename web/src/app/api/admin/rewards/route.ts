@@ -9,6 +9,7 @@ import {
   listRecipients,
   normaliseAddress,
   setRecipientAddress,
+  setRecipientLock,
   setRecipientRates,
   setRecipientStatus,
 } from "@/lib/rewards/recipients";
@@ -331,6 +332,30 @@ export async function POST(request: Request) {
         key: before.key,
         from: { xp: before.xpRateEuros, hour: before.hourRateEuros },
         to: { xp: result.recipient.xpRateEuros, hour: result.recipient.hourRateEuros },
+      });
+      return NextResponse.json({ recipient: result.recipient });
+    }
+
+    // -----------------------------------------------------------------------
+    /**
+     * Hold an earnings recipient's withdrawals until they pass a final exam,
+     * or release the hold. The balance keeps growing either way.
+     */
+    case "set-lock": {
+      const id = str("id");
+      const before = await getRecipientById(id);
+      if (!before) return NextResponse.json({ error: "No such recipient." }, { status: 404 });
+      const locked = body.locked === true;
+
+      const result = await setRecipientLock(id, locked);
+      if ("error" in result) {
+        return NextResponse.json({ error: result.error }, { status: 400 });
+      }
+
+      await recordAdminEvent(admin.email, "recipient.lock-changed", {
+        key: before.key,
+        from: before.lockedUntilFinalExam,
+        to: result.recipient.lockedUntilFinalExam,
       });
       return NextResponse.json({ recipient: result.recipient });
     }
