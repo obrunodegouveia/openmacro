@@ -42,7 +42,7 @@ student has not finished enough lessons to fill it.
 
 ```sql
 select e.assigned_at, e.started_at, e.submitted_at, e.correct, e.asked,
-       e.duration_seconds, e.bonus_xp, e.by_level, e.weak_modules
+       e.duration_seconds, e.leaves, e.bonus_xp, e.by_level, e.weak_modules
 from public.assigned_exams e
 join auth.users u on u.id = e.user_id
 where lower(replace(split_part(u.email, '@', 1), '.', '')) = 'studentname'
@@ -54,12 +54,20 @@ order by e.assigned_at desc;
 `duration_seconds` is the time from the first tap on Start to handing in, by
 the database's clock. It is empty for an exam handed in before migration 0010,
 or one started while the database could not be reached.
+`leaves` is how many times the student left the exam before handing it in.
 
 ## The clock and the speed bonus
 
 - The clock starts the first time the student taps Start and keeps running if
   they leave. Starting again does not reset it.
 - Below 70% correct there is no bonus, however fast.
+- Leaving the exam even once costs the whole bonus. Leaving means the app
+  going to the background, the browser tab being hidden (another tab, another
+  app, a minimised window), or closing the exam and starting it again. The
+  student is told straight away, and the count is in `leaves`. While the exam
+  runs the screen is kept awake, so the phone locking itself does not count.
+  Pulling down the notification shade or Control Centre does not count either.
+  A second window placed beside the browser is not detected.
 - At 70% or more: 30 seconds a question or less earns 5 XP per question; 60
   seconds a question or less earns half of that; slower earns nothing. A
   20-question exam is worth up to 100 XP.

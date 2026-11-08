@@ -383,4 +383,7 @@ export const ptPT: UiDictionary = {
   'exam.result.time': 'Tempo: {time}',
   'exam.result.bonus': '+{xp, number} XP por acabares depressa',
   'exam.result.noBonus': 'Desta vez não houve bónus de rapidez.',
+  'exam.intro.leave': 'Fica no exame até acabares. Mudar para outra aplicação ou separador, ou fechar o exame, faz-te perder o bónus de rapidez, e o teu professor vê quantas vezes saíste.',
+  'exam.left': '{count, plural, one {Já saíste do exame uma vez.} other {Já saíste do exame # vezes.}} Já não há bónus de rapidez, e o teu professor vai ver isto.',
+  'exam.result.leaves': '{count, plural, one {Saíste do exame uma vez.} other {Saíste do exame # vezes.}}',
 };

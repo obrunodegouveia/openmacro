@@ -385,6 +385,9 @@ export const en = {
   'exam.result.time': 'Time taken: {time}',
   'exam.result.bonus': '+{xp, number} XP for finishing fast',
   'exam.result.noBonus': 'No speed bonus this time.',
+  'exam.intro.leave': 'Stay in the exam until you finish. Switching to another app or tab, or closing the exam, costs you the speed bonus, and your teacher sees how many times you left.',
+  'exam.left': '{count, plural, one {You have left the exam once.} other {You have left the exam # times.}} There is no speed bonus now, and your teacher will see this.',
+  'exam.result.leaves': '{count, plural, one {You left the exam once.} other {You left the exam # times.}}',
 
   /**
    * What finishing a level lets you do.

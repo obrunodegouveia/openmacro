@@ -6,6 +6,7 @@ import {
   EXAM_SPEED_BONUS,
   assembleAssignedExam,
   assignedExamSubmission,
+  examStartFromReply,
   examTimingFromReply,
   formatExamClock,
   type AssignedExam,
@@ -37,6 +38,12 @@ import type { ProgressSnapshot } from "@/lib/progress";
  * The clock is the database's (`supabase/migrations/0010_exam_timer.sql`).
  * The one on screen counts on from the seconds the server reported at Start,
  * so a computer whose clock is wrong still shows the right time.
+ *
+ * Leaving counts: the tab being hidden mid-exam (another tab, another app,
+ * a minimised window) is reported when the learner comes back
+ * (`leave_assigned_exam`), and costs the speed bonus. The screen is kept
+ * awake where the browser allows it, so a phone locking itself while the
+ * learner thinks is not mistaken for leaving.
  */
 export function AssignedExamScreen() {
   const { exam, loading } = useAssignedExam();
@@ -104,6 +111,53 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
   const [clock, setClock] = React.useState<{ seconds: number; at: number } | null>(null);
   const [timing, setTiming] = React.useState<ExamTiming | null>(null);
   const [starting, setStarting] = React.useState(false);
+  const [leaves, setLeaves] = React.useState(0);
+
+  // While the exam is in progress: keep the screen on, and count every time
+  // the tab is hidden.
+  const running = started && !result;
+  React.useEffect(() => {
+    if (!running) return;
+    let lock: WakeLockSentinel | null = null;
+    let live = true;
+    const holdScreen = async () => {
+      try {
+        const next = (await navigator.wakeLock?.request("screen")) ?? null;
+        if (live) lock = next;
+        else void next?.release();
+      } catch {
+        // Not supported, or refused: the exam still runs.
+      }
+    };
+    void holdScreen();
+    let away = false;
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        away = true;
+        return;
+      }
+      if (!away) return;
+      away = false;
+      // A wake lock is released whenever the page is hidden.
+      void holdScreen();
+      setLeaves((count) => count + 1);
+      void (async () => {
+        try {
+          const reply = await getSupabase()?.rpc("leave_assigned_exam", { p_exam: exam.id });
+          // The server's count is the one the teacher sees.
+          if (typeof reply?.data === "number") setLeaves(reply.data);
+        } catch {
+          // Offline: the count on screen still says it happened.
+        }
+      })();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      live = false;
+      document.removeEventListener("visibilitychange", onVisibility);
+      void lock?.release().catch(() => {});
+    };
+  }, [running, exam.id]);
 
   async function start() {
     setStarting(true);
@@ -113,7 +167,11 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
       // but the learner can still take the exam.
       const supabase = getSupabase();
       const reply = supabase ? await supabase.rpc("start_assigned_exam", { p_exam: exam.id }) : null;
-      if (typeof reply?.data === "number") seconds = reply.data;
+      if (reply && !reply.error) {
+        const started = examStartFromReply(reply.data);
+        seconds = started.seconds;
+        setLeaves(started.leaves);
+      }
     } catch {
       // Offline: the exam still runs.
     }
@@ -185,6 +243,9 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
                 ? t("exam.result.bonus", { xp: timing.bonusXp })
                 : t("exam.result.noBonus")}
             </p>
+            {timing.leaves > 0 ? (
+              <p className="text-ink-muted">{t("exam.result.leaves", { count: timing.leaves })}</p>
+            ) : null}
           </section>
         ) : null}
         <p role="status" className="text-sm text-ink-muted">
@@ -221,6 +282,7 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
             xp: EXAM_SPEED_BONUS.xpPerQuestion * paper.items.length,
           })}
         </p>
+        <p className="text-ink-muted">{t("exam.intro.leave")}</p>
         <Button size="lg" onClick={() => void start()} disabled={starting}>
           {t("exam.start")}
         </Button>
@@ -261,6 +323,11 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
         </h1>
         {clock ? <Clock from={clock} label={t("exam.clock")} /> : null}
       </header>
+      {leaves > 0 ? (
+        <p role="status" className="text-sm font-semibold">
+          {t("exam.left", { count: leaves })}
+        </p>
+      ) : null}
       {challenge ? (
         <section className="glass rounded-card p-5 sm:p-7">
           <h2 className="mb-5 font-display text-xl font-extrabold leading-snug tracking-tight">

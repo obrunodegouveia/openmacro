@@ -115,7 +115,9 @@ export function assignedExamSubmission(examId: string, result: ExamResult) {
  * and minted to euros like lesson XP. This copy of the rule is for explaining
  * it on screen; a test keeps the two in step.
  *
- * No bonus below the pass mark, so rushing and guessing never pay.
+ * No bonus below the pass mark, so rushing and guessing never pay, and none
+ * after leaving the exam even once (switching apps, hiding the tab, or
+ * closing it and starting again), so looking answers up does not either.
  */
 export const EXAM_SPEED_BONUS = {
   /** The share of answers that must be right before speed counts at all. */
@@ -129,8 +131,14 @@ export const EXAM_SPEED_BONUS = {
 } as const;
 
 /** The bonus for a result and a time, by the same rule as the database. */
-export function examSpeedBonusXp(asked: number, correct: number, seconds: number | null): number {
+export function examSpeedBonusXp(
+  asked: number,
+  correct: number,
+  seconds: number | null,
+  leaves = 0,
+): number {
   const rule = EXAM_SPEED_BONUS;
+  if (leaves > 0) return 0;
   if (seconds === null || asked <= 0 || correct < Math.ceil(asked * rule.minShare)) return 0;
   const full = asked * rule.xpPerQuestion;
   if (seconds <= asked * rule.fastSecondsPerQuestion) return full;
@@ -143,6 +151,8 @@ export interface ExamTiming {
   /** Null when the exam was never started through the clock. */
   seconds: number | null;
   bonusXp: number;
+  /** Times the learner left the exam before handing it in. */
+  leaves: number;
 }
 
 /**
@@ -152,10 +162,22 @@ export interface ExamTiming {
 export function examTimingFromReply(data: unknown): ExamTiming | null {
   const row = Array.isArray(data) ? data[0] : data;
   if (typeof row !== 'object' || row === null) return null;
-  const { duration_seconds: seconds, bonus_xp: bonus } = row as Record<string, unknown>;
+  const { duration_seconds: seconds, bonus_xp: bonus, leaves } = row as Record<string, unknown>;
   return {
     seconds: typeof seconds === 'number' ? seconds : null,
     bonusXp: typeof bonus === 'number' ? bonus : 0,
+    leaves: typeof leaves === 'number' ? leaves : 0,
+  };
+}
+
+/** The reply from `start_assigned_exam`: the clock so far, and the leaves. */
+export function examStartFromReply(data: unknown): { seconds: number; leaves: number } {
+  const row = Array.isArray(data) ? data[0] : data;
+  const { elapsed_seconds: seconds, leaves } =
+    typeof row === 'object' && row !== null ? (row as Record<string, unknown>) : {};
+  return {
+    seconds: typeof seconds === 'number' ? seconds : 0,
+    leaves: typeof leaves === 'number' ? leaves : 0,
   };
 }
 

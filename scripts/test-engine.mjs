@@ -397,6 +397,8 @@ test('the exam speed bonus: never below the pass mark, full when fast, half when
   assert.equal(examSpeedBonusXp(20, 13, 10), 0);
   assert.equal(examSpeedBonusXp(20, 20, null), 0);
   assert.equal(examSpeedBonusXp(0, 0, 0), 0);
+  // Leaving once, however briefly, costs the whole bonus.
+  assert.equal(examSpeedBonusXp(20, 20, 300, 1), 0);
   // An odd full bonus halves down, as integer division does in SQL.
   assert.equal(examSpeedBonusXp(3, 3, 120), 7);
 });
@@ -410,6 +412,7 @@ test('the speed bonus in core is the one the database pays', async () => {
   assert.match(body, new RegExp(`v_duration <= v_asked \\* ${EXAM_SPEED_BONUS.fastSecondsPerQuestion}\\b`));
   assert.match(body, new RegExp(`v_duration <= v_asked \\* ${EXAM_SPEED_BONUS.steadySecondsPerQuestion}\\b`));
   assert.match(body, new RegExp(`v_bonus := v_asked \\* ${EXAM_SPEED_BONUS.xpPerQuestion};`));
+  assert.match(body, /if v_row\.leaves = 0\b/);
   assert.match(body, new RegExp(`v_bonus := \\(v_asked \\* ${EXAM_SPEED_BONUS.xpPerQuestion}\\) / 2;`));
 });
 
@@ -419,15 +422,20 @@ test('the exam clock and the reply from handing in', async () => {
   assert.equal(formatExamClock(65.9), '1:05');
   assert.equal(formatExamClock(3725), '1:02:05');
   assert.equal(formatExamClock(-3), '0:00');
-  assert.deepEqual(examTimingFromReply([{ duration_seconds: 412, bonus_xp: 100 }]), {
+  assert.deepEqual(examTimingFromReply([{ duration_seconds: 412, bonus_xp: 100, leaves: 0 }]), {
     seconds: 412,
     bonusXp: 100,
+    leaves: 0,
   });
-  assert.deepEqual(examTimingFromReply([{ duration_seconds: null, bonus_xp: 0 }]), {
+  assert.deepEqual(examTimingFromReply([{ duration_seconds: null, bonus_xp: 0, leaves: 2 }]), {
     seconds: null,
     bonusXp: 0,
+    leaves: 2,
   });
   assert.equal(examTimingFromReply([]), null);
+  const { examStartFromReply } = await import('@openmacro/core/engine/assignedExam');
+  assert.deepEqual(examStartFromReply([{ elapsed_seconds: 90, leaves: 1 }]), { seconds: 90, leaves: 1 });
+  assert.deepEqual(examStartFromReply(null), { seconds: 0, leaves: 0 });
   assert.equal(examTimingFromReply(null), null);
 });
 

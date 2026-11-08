@@ -371,4 +371,7 @@ export const esES: UiDictionary = {
   'exam.result.time': 'Tiempo: {time}',
   'exam.result.bonus': '+{xp, number} XP por terminar rápido',
   'exam.result.noBonus': 'Esta vez no hay premio por rapidez.',
+  'exam.intro.leave': 'Quédate en el examen hasta terminar. Cambiar a otra aplicación o pestaña, o cerrar el examen, te hace perder el premio por rapidez, y tu profesor ve cuántas veces saliste.',
+  'exam.left': '{count, plural, one {Has salido del examen una vez.} other {Has salido del examen # veces.}} Ya no hay premio por rapidez, y tu profesor lo verá.',
+  'exam.result.leaves': '{count, plural, one {Saliste del examen una vez.} other {Saliste del examen # veces.}}',
 };
