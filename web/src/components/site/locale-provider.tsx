@@ -52,6 +52,7 @@ import {
   localisedNextLesson,
 } from "@openmacro/core/i18n/content";
 import type { Course, Lesson, Module } from "@openmacro/core/content/schema";
+import { useModuleGrants } from "@/lib/use-module-grants";
 
 const STORAGE_KEY = "openmacro.locale";
 
@@ -66,6 +67,8 @@ interface LocaleContextValue {
   modules: readonly Module[];
   lessonById: (lessonId: string) => Lesson | undefined;
   nextLesson: (lessonId: string) => Lesson | undefined;
+  /** True while the signed-in learner's private modules are being read. */
+  grantsLoading: boolean;
 }
 
 const LocaleContext = React.createContext<LocaleContextValue | null>(null);
@@ -155,27 +158,51 @@ export function LocaleProvider({
     document.documentElement.lang = LOCALE_TAGS[locale];
   }, [locale]);
 
-  const value = React.useMemo<LocaleContextValue>(() => {
-    const translated = contentCoverage(locale);
-    const done = translated.reduce((sum, entry) => sum + entry.translated, 0);
-    const all = translated.reduce((sum, entry) => sum + entry.total, 0);
+  const value = React.useMemo(() => localeValue(locale, [], false), [locale]);
 
-    return {
-      locale,
-      t: createTranslator(locale),
-      available: LOCALES,
-      names: LOCALE_NAMES,
-      setLocale: publish,
-      partial:
-        locale !== DEFAULT_LOCALE &&
-        (all === 0 || done / all < 0.9 || uiCoverage(locale) < 1),
-      course: localisedCourse(locale),
-      modules: localisedModules(locale),
-      lessonById: (lessonId) => localisedLessonById(locale, lessonId),
-      nextLesson: (lessonId) => localisedNextLesson(locale, lessonId),
-    };
-  }, [locale]);
+  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
+}
 
+function localeValue(
+  locale: Locale,
+  unlocked: readonly string[],
+  grantsLoading: boolean,
+): LocaleContextValue {
+  const translated = contentCoverage(locale);
+  const done = translated.reduce((sum, entry) => sum + entry.translated, 0);
+  const all = translated.reduce((sum, entry) => sum + entry.total, 0);
+
+  return {
+    locale,
+    t: createTranslator(locale),
+    available: LOCALES,
+    names: LOCALE_NAMES,
+    setLocale: publish,
+    partial:
+      locale !== DEFAULT_LOCALE &&
+      (all === 0 || done / all < 0.9 || uiCoverage(locale) < 1),
+    course: localisedCourse(locale, unlocked),
+    modules: localisedModules(locale, unlocked),
+    lessonById: (lessonId) => localisedLessonById(locale, lessonId, unlocked),
+    nextLesson: (lessonId) => localisedNextLesson(locale, lessonId, unlocked),
+    grantsLoading,
+  };
+}
+
+/**
+ * Adds the private modules this learner has been granted to the course
+ * everything inside it sees (`content/private.ts`). Mounted just inside
+ * `AuthProvider`, because grants need the account and the account sits inside
+ * the language. The app's twin is `GrantedModules` in its `LocaleProvider`.
+ */
+export function GrantedModules({ children }: { children: React.ReactNode }) {
+  const { locale } = useLocale();
+  const { unlocked, loading } = useModuleGrants();
+  const key = unlocked.join(",");
+  const value = React.useMemo(
+    () => localeValue(locale, key ? key.split(",") : [], loading),
+    [key, locale, loading],
+  );
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
 

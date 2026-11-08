@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useSiteText } from "@/lib/use-site-text";
 import { LocaleLink } from "@/components/site/locale-link";
+import { useLocale } from "@/components/site/locale-provider";
 import {
   ArrowRight,
   Check,
@@ -16,6 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { DEFAULT_CHALLENGE_XP, MODULES } from "@openmacro/core/content";
+import { PRIVATE_MODULES } from "@openmacro/core/content/private";
 import type { Lesson, Module } from "@openmacro/core/content/schema";
 import { Button } from "@/components/ui/button";
 import { AccountPanel } from "@/components/site/account-button";
@@ -104,7 +106,8 @@ export function DashboardView({
   money?: React.ReactNode;
 }) {
   const s = useSiteText();
-  const progress = summarise(snapshot);
+  const course = useVisibleModules();
+  const progress = summarise(course, snapshot);
   const loading = state === "loading";
   const firstName = learner.name.trim().split(/\s+/)[0] ?? "";
 
@@ -264,7 +267,7 @@ export function DashboardView({
         {/* minmax(0,1fr) on these grids: an `auto` track grows to the longest
             lesson title and pushed the page wider than a phone. */}
         <ul className="grid grid-cols-[minmax(0,1fr)] gap-2" aria-label={s("dash.allModulesAria")}>
-          {MODULES.map((module) => (
+          {course.map((module) => (
             <li key={module.id}>
               <ModuleRow
                 module={module}
@@ -460,13 +463,30 @@ function Avatar({ learner }: { learner: { name: string; avatarUrl: string | null
 }
 
 /**
+ * The public course, then any private module this learner has been granted.
+ *
+ * English objects, as before: the rows translate themselves. Which private
+ * modules count is read from the locale context, the one place that knows the
+ * learner's grants.
+ */
+function useVisibleModules(): readonly Module[] {
+  const { modules } = useLocale();
+  return React.useMemo(() => {
+    const extra = PRIVATE_MODULES.filter((module) =>
+      modules.some((candidate) => candidate.id === module.id),
+    );
+    return extra.length === 0 ? MODULES : [...MODULES, ...extra];
+  }, [modules]);
+}
+
+/**
  * Folds the snapshot and the course together.
  *
  * "Next" is the first lesson in course order with no record — which is what
  * "where I left off" means when lessons can be played in any order.
  */
-function summarise(snapshot: ProgressSnapshot | null) {
-  const all = MODULES.flatMap((module) =>
+function summarise(course: readonly Module[], snapshot: ProgressSnapshot | null) {
+  const all = course.flatMap((module) =>
     module.lessons.map((lesson) => ({ module, lesson })),
   );
   const completed = snapshot

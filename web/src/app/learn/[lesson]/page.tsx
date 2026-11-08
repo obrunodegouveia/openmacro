@@ -6,18 +6,26 @@ import {
   getLessonById,
   getModuleForLesson,
 } from "@openmacro/core/content";
+import { PRIVATE_LESSONS, privateModuleForLesson } from "@openmacro/core/content/private";
 import { localisedLessonById } from "@openmacro/core/i18n/content";
 import { FooterMinimal } from "@/components/site/footer";
 import { LessonPlayer } from "@/components/app/lesson-player";
+import { PrivateLesson } from "@/components/app/private-lesson";
 import { getSiteText } from "@/lib/site-text";
 import { serverLocale } from "@/lib/locale-server";
 import { JsonLd, breadcrumbs, pageMetadata } from "@/lib/seo";
 
-/** Every lesson is known at build time, so these prerender as static HTML. */
+/**
+ * Every lesson is known at build time, so these prerender as static HTML.
+ *
+ * Private lessons get an address too, but prerender empty: `PrivateLesson`
+ * fills them in the browser only for a learner granted the module.
+ */
 export function generateStaticParams() {
-  return MODULES.flatMap((module) =>
-    module.lessons.map((lesson) => ({ lesson: lesson.id })),
-  );
+  return [
+    ...MODULES.flatMap((module) => module.lessons.map((lesson) => ({ lesson: lesson.id }))),
+    ...PRIVATE_LESSONS.map((lesson) => ({ lesson: lesson.id })),
+  ];
 }
 
 /** Anything that is not a lesson is a genuine 404, not an empty player. */
@@ -29,6 +37,10 @@ export async function generateMetadata({
   params: Promise<{ lesson: string }>;
 }): Promise<Metadata> {
   const { lesson: id } = await params;
+  // Nothing about a private lesson in the tab, the share card or a search.
+  if (privateModuleForLesson(id)) {
+    return { title: "Lesson", robots: { index: false, follow: false } };
+  }
   const locale = await serverLocale();
   /**
    * The localised lesson, not the English one.
@@ -69,6 +81,17 @@ export default async function LessonPage({
   params: Promise<{ lesson: string }>;
 }) {
   const { lesson: id } = await params;
+  const privateModule = privateModuleForLesson(id);
+  if (privateModule) {
+    return (
+      <>
+        <main id="main">
+          <PrivateLesson lessonId={id} moduleId={privateModule.id} />
+        </main>
+        <FooterMinimal />
+      </>
+    );
+  }
   const lesson = getLessonById(id);
   if (!lesson) notFound();
 
