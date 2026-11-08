@@ -380,6 +380,11 @@ export const en = {
   'exam.result.sent': 'Your teacher can now see your score.',
   'exam.result.failed': 'Your score has not been sent yet. Check your connection and try again.',
   'exam.result.retry': 'Send again',
+  'exam.intro.clock': 'The clock starts when you tap Start and keeps running if you leave. Get {share} or more right in under {fast, number} seconds a question for a bonus of {xp, number} XP, or half of it in under {steady, number} seconds.',
+  'exam.clock': 'Time',
+  'exam.result.time': 'Time taken: {time}',
+  'exam.result.bonus': '+{xp, number} XP for finishing fast',
+  'exam.result.noBonus': 'No speed bonus this time.',
 
   /**
    * What finishing a level lets you do.

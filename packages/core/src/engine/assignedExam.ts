@@ -103,3 +103,67 @@ export function assignedExamSubmission(examId: string, result: ExamResult) {
     p_fingerprint: result.fingerprint,
   };
 }
+
+/**
+ * ---------------------------------------------------------------------------
+ * The clock, and the bonus for finishing fast
+ * ---------------------------------------------------------------------------
+ *
+ * The database times the exam (`supabase/migrations/0010_exam_timer.sql`):
+ * the clock starts the first time the learner taps Start, keeps running if
+ * they leave, and stops when they hand in. The bonus is worked out there too,
+ * and minted to euros like lesson XP. This copy of the rule is for explaining
+ * it on screen; a test keeps the two in step.
+ *
+ * No bonus below the pass mark, so rushing and guessing never pay.
+ */
+export const EXAM_SPEED_BONUS = {
+  /** The share of answers that must be right before speed counts at all. */
+  minShare: 0.7,
+  /** At or under this many seconds a question: the full bonus. */
+  fastSecondsPerQuestion: 30,
+  /** At or under this many seconds a question: half the bonus. */
+  steadySecondsPerQuestion: 60,
+  /** The full bonus, per question asked. */
+  xpPerQuestion: 5,
+} as const;
+
+/** The bonus for a result and a time, by the same rule as the database. */
+export function examSpeedBonusXp(asked: number, correct: number, seconds: number | null): number {
+  const rule = EXAM_SPEED_BONUS;
+  if (seconds === null || asked <= 0 || correct < Math.ceil(asked * rule.minShare)) return 0;
+  const full = asked * rule.xpPerQuestion;
+  if (seconds <= asked * rule.fastSecondsPerQuestion) return full;
+  if (seconds <= asked * rule.steadySecondsPerQuestion) return Math.floor(full / 2);
+  return 0;
+}
+
+/** What the database recorded when the exam was handed in. */
+export interface ExamTiming {
+  /** Null when the exam was never started through the clock. */
+  seconds: number | null;
+  bonusXp: number;
+}
+
+/**
+ * The reply from `submit_assigned_exam` as a timing, or null when it said
+ * nothing usable. Supabase returns a set-returning function as an array.
+ */
+export function examTimingFromReply(data: unknown): ExamTiming | null {
+  const row = Array.isArray(data) ? data[0] : data;
+  if (typeof row !== 'object' || row === null) return null;
+  const { duration_seconds: seconds, bonus_xp: bonus } = row as Record<string, unknown>;
+  return {
+    seconds: typeof seconds === 'number' ? seconds : null,
+    bonusXp: typeof bonus === 'number' ? bonus : 0,
+  };
+}
+
+/** `m:ss`, or `h:mm:ss` from an hour, for a clock on screen. */
+export function formatExamClock(totalSeconds: number): string {
+  const seconds = Math.max(0, Math.floor(totalSeconds));
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = String(seconds % 60).padStart(2, '0');
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`;
+}

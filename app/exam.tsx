@@ -7,9 +7,13 @@
  *
  * The whole screen is in the language of the assignment, whatever the app is
  * set to. The website's twin is `web/src/components/app/assigned-exam.tsx`.
+ *
+ * The clock is the database's (`supabase/migrations/0010_exam_timer.sql`).
+ * The one on screen counts on from the seconds the server reported at Start,
+ * so a phone whose clock is wrong still shows the right time.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -25,9 +29,13 @@ import { supabase } from '@/services/supabaseClient';
 import { fontScale, palette, spacing, typography } from '@/theme/tokens';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
 import {
+  EXAM_SPEED_BONUS,
   assembleAssignedExam,
   assignedExamSubmission,
+  examTimingFromReply,
+  formatExamClock,
   type AssignedExam,
+  type ExamTiming,
 } from '@openmacro/core/engine/assignedExam';
 import { gradeExam, type ExamResult } from '@openmacro/core/engine/exam';
 
@@ -87,6 +95,25 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [clock, setClock] = useState<{ seconds: number; at: number } | null>(null);
+  const [timing, setTiming] = useState<ExamTiming | null>(null);
+  const [starting, setStarting] = useState(false);
+
+  const start = useCallback(async () => {
+    setStarting(true);
+    let seconds = 0;
+    try {
+      // Without the server's start there is no official time and no bonus,
+      // but the learner can still take the exam.
+      const reply = supabase ? await supabase.rpc('start_assigned_exam', { p_exam: exam.id }) : null;
+      if (typeof reply?.data === 'number') seconds = reply.data;
+    } catch {
+      // Offline: the exam still runs.
+    }
+    setClock({ seconds, at: Date.now() });
+    setStarting(false);
+    setStarted(true);
+  }, [exam.id]);
 
   const moduleTitles = useMemo(
     () => new Map(modules.map((module) => [module.id, module.title])),
@@ -99,11 +126,12 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
       setFailed(false);
       try {
         if (!supabase) throw new Error('No account backend.');
-        const { error } = await supabase.rpc(
+        const { data, error } = await supabase.rpc(
           'submit_assigned_exam',
           assignedExamSubmission(exam.id, graded),
         );
         if (error) throw error;
+        setTiming(examTimingFromReply(data));
         setSaved(true);
       } catch {
         setFailed(true);
@@ -175,6 +203,18 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
             ))}
           </View>
         ) : null}
+        {timing?.seconds != null ? (
+          <View style={styles.timing}>
+            <Text style={styles.levelName}>
+              {t('exam.result.time', { time: formatExamClock(timing.seconds) })}
+            </Text>
+            <Text style={timing.bonusXp > 0 ? styles.bonus : styles.levelScore}>
+              {timing.bonusXp > 0
+                ? t('exam.result.bonus', { xp: timing.bonusXp })
+                : t('exam.result.noBonus')}
+            </Text>
+          </View>
+        ) : null}
         <Text accessibilityLiveRegion="polite" style={styles.status}>
           {saved ? t('exam.result.sent') : failed ? t('exam.result.failed') : t('exam.result.sending')}
         </Text>
@@ -205,9 +245,18 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
           {t('exam.intro.title')}
         </Text>
         <Text style={styles.doneBody}>{t('exam.intro.body', { count: paper.items.length })}</Text>
+        <Text style={styles.doneBody}>
+          {t('exam.intro.clock', {
+            share: `${Math.round(EXAM_SPEED_BONUS.minShare * 100)}%`,
+            fast: EXAM_SPEED_BONUS.fastSecondsPerQuestion,
+            steady: EXAM_SPEED_BONUS.steadySecondsPerQuestion,
+            xp: EXAM_SPEED_BONUS.xpPerQuestion * paper.items.length,
+          })}
+        </Text>
         <ActionButton
           label={t('exam.start')}
-          onPress={() => setStarted(true)}
+          onPress={() => void start()}
+          disabled={starting}
           tone="primary"
           style={styles.endButton}
         />
@@ -237,6 +286,7 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
           <Text maxFontSizeMultiplier={fontScale.title} style={styles.headerTitle}>
             {t('exam.question', { number: index + 1, total: paper.items.length })}
           </Text>
+          {clock ? <Clock from={clock} label={t('exam.clock')} /> : null}
         </View>
         <ProgressBar progress={index / paper.items.length} />
       </View>
@@ -270,13 +320,33 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
   );
 }
 
+/** A running clock, counting on from what the server said at Start. */
+function Clock({ from, label }: { from: { seconds: number; at: number }; label: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const time = formatExamClock(from.seconds + (now - from.at) / 1000);
+  return (
+    <Text
+      accessibilityLabel={`${label} ${time}`}
+      maxFontSizeMultiplier={fontScale.chrome}
+      style={styles.clock}
+    >
+      {time}
+    </Text>
+  );
+}
+
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: palette.canvas },
   header: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },
   headerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   close: { ...typography.heading, color: palette.inkFaint },
   pressed: { opacity: 0.6 },
-  headerTitle: { ...typography.title, color: palette.ink, flexShrink: 1 },
+  headerTitle: { ...typography.title, color: palette.ink, flexShrink: 1, flexGrow: 1 },
+  clock: { ...typography.heading, color: palette.inkMuted, fontVariant: ['tabular-nums'] },
   content: { padding: spacing.lg, gap: spacing.lg },
   footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
   centred: {
@@ -304,5 +374,7 @@ const styles = StyleSheet.create({
   weak: { gap: spacing.xs },
   weakTitle: { ...typography.heading, color: palette.ink },
   weakItem: { ...typography.body, color: palette.inkMuted },
+  timing: { gap: spacing.xs, alignItems: 'center' },
+  bonus: { ...typography.heading, color: palette.ink },
   status: { ...typography.caption, color: palette.inkMuted, textAlign: 'center' },
 });

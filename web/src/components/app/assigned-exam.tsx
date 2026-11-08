@@ -3,9 +3,13 @@
 import * as React from "react";
 import type { ChallengeAnswer } from "@openmacro/core/engine/answers";
 import {
+  EXAM_SPEED_BONUS,
   assembleAssignedExam,
   assignedExamSubmission,
+  examTimingFromReply,
+  formatExamClock,
   type AssignedExam,
+  type ExamTiming,
 } from "@openmacro/core/engine/assignedExam";
 import { gradeExam, type ExamResult } from "@openmacro/core/engine/exam";
 
@@ -29,6 +33,10 @@ import type { ProgressSnapshot } from "@/lib/progress";
  *
  * The whole screen is in the language of the assignment, whatever the site is
  * set to. The app's twin is `app/exam.tsx`.
+ *
+ * The clock is the database's (`supabase/migrations/0010_exam_timer.sql`).
+ * The one on screen counts on from the seconds the server reported at Start,
+ * so a computer whose clock is wrong still shows the right time.
  */
 export function AssignedExamScreen() {
   const { exam, loading } = useAssignedExam();
@@ -93,6 +101,26 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
   const [saving, setSaving] = React.useState(false);
   const [saved, setSaved] = React.useState(false);
   const [failed, setFailed] = React.useState(false);
+  const [clock, setClock] = React.useState<{ seconds: number; at: number } | null>(null);
+  const [timing, setTiming] = React.useState<ExamTiming | null>(null);
+  const [starting, setStarting] = React.useState(false);
+
+  async function start() {
+    setStarting(true);
+    let seconds = 0;
+    try {
+      // Without the server's start there is no official time and no bonus,
+      // but the learner can still take the exam.
+      const supabase = getSupabase();
+      const reply = supabase ? await supabase.rpc("start_assigned_exam", { p_exam: exam.id }) : null;
+      if (typeof reply?.data === "number") seconds = reply.data;
+    } catch {
+      // Offline: the exam still runs.
+    }
+    setClock({ seconds, at: Date.now() });
+    setStarting(false);
+    setStarted(true);
+  }
 
   async function send(graded: ExamResult) {
     setSaving(true);
@@ -100,11 +128,12 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
     try {
       const supabase = getSupabase();
       if (!supabase) throw new Error("No account backend.");
-      const { error } = await supabase.rpc(
+      const { data, error } = await supabase.rpc(
         "submit_assigned_exam",
         assignedExamSubmission(exam.id, graded),
       );
       if (error) throw error;
+      setTiming(examTimingFromReply(data));
       setSaved(true);
     } catch {
       setFailed(true);
@@ -148,6 +177,16 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
             ))}
           </section>
         ) : null}
+        {timing?.seconds != null ? (
+          <section className="grid gap-1">
+            <p>{t("exam.result.time", { time: formatExamClock(timing.seconds) })}</p>
+            <p className={timing.bonusXp > 0 ? "font-display text-lg font-extrabold" : "text-ink-muted"}>
+              {timing.bonusXp > 0
+                ? t("exam.result.bonus", { xp: timing.bonusXp })
+                : t("exam.result.noBonus")}
+            </p>
+          </section>
+        ) : null}
         <p role="status" className="text-sm text-ink-muted">
           {saved
             ? t("exam.result.sent")
@@ -174,7 +213,15 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
           {t("exam.intro.title")}
         </h1>
         <p className="text-ink-muted">{t("exam.intro.body", { count: paper.items.length })}</p>
-        <Button size="lg" onClick={() => setStarted(true)}>
+        <p className="text-ink-muted">
+          {t("exam.intro.clock", {
+            share: `${Math.round(EXAM_SPEED_BONUS.minShare * 100)}%`,
+            fast: EXAM_SPEED_BONUS.fastSecondsPerQuestion,
+            steady: EXAM_SPEED_BONUS.steadySecondsPerQuestion,
+            xp: EXAM_SPEED_BONUS.xpPerQuestion * paper.items.length,
+          })}
+        </p>
+        <Button size="lg" onClick={() => void start()} disabled={starting}>
           {t("exam.start")}
         </Button>
         <Button variant="ghost" asChild>
@@ -209,9 +256,10 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
         <LocaleLink href="/dashboard" aria-label={t("exam.exit")} className="text-xl text-ink-faint">
           ✕
         </LocaleLink>
-        <h1 className="font-display text-lg font-extrabold">
+        <h1 className="grow font-display text-lg font-extrabold">
           {t("exam.question", { number: index + 1, total: paper.items.length })}
         </h1>
+        {clock ? <Clock from={clock} label={t("exam.clock")} /> : null}
       </header>
       {challenge ? (
         <section className="glass rounded-card p-5 sm:p-7">
@@ -231,5 +279,20 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
         {last ? t("exam.finish") : t("exam.next")}
       </Button>
     </Shell>
+  );
+}
+
+/** A running clock, counting on from what the server said at Start. */
+function Clock({ from, label }: { from: { seconds: number; at: number }; label: string }) {
+  const [now, setNow] = React.useState(() => Date.now());
+  React.useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const time = formatExamClock(from.seconds + (now - from.at) / 1000);
+  return (
+    <span aria-label={`${label} ${time}`} className="font-display text-lg font-extrabold tabular-nums text-ink-muted">
+      {time}
+    </span>
   );
 }

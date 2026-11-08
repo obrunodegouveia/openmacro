@@ -9,7 +9,8 @@ belong only in the query you run.
 
 ## Before you start
 
-1. Apply `supabase/migrations/0008_assigned_exams.sql` to the project.
+1. Apply `supabase/migrations/0008_assigned_exams.sql` and
+   `0010_exam_timer.sql` to the project.
 2. Ship the app and the website that contain the exam screen.
 3. Make sure the student has signed in on their device. Progress made while
    signed out stays on that device, and an exam cannot reach it.
@@ -40,7 +41,8 @@ student has not finished enough lessons to fill it.
 ## Read the result
 
 ```sql
-select e.assigned_at, e.submitted_at, e.correct, e.asked, e.by_level, e.weak_modules
+select e.assigned_at, e.started_at, e.submitted_at, e.correct, e.asked,
+       e.duration_seconds, e.bonus_xp, e.by_level, e.weak_modules
 from public.assigned_exams e
 join auth.users u on u.id = e.user_id
 where lower(replace(split_part(u.email, '@', 1), '.', '')) = 'studentname'
@@ -49,6 +51,24 @@ order by e.assigned_at desc;
 ```
 
 `weak_modules` lists the modules where the student got nothing right.
+`duration_seconds` is the time from the first tap on Start to handing in, by
+the database's clock. It is empty for an exam handed in before migration 0010,
+or one started while the database could not be reached.
+
+## The clock and the speed bonus
+
+- The clock starts the first time the student taps Start and keeps running if
+  they leave. Starting again does not reset it.
+- Below 70% correct there is no bonus, however fast.
+- At 70% or more: 30 seconds a question or less earns 5 XP per question; 60
+  seconds a question or less earns half of that; slower earns nothing. A
+  20-question exam is worth up to 100 XP.
+- The database works the bonus out when the exam is handed in
+  (`submit_assigned_exam`), and it is minted to euros like lesson XP for a
+  student on the earnings scheme (`web/src/lib/rewards/earnings.ts`).
+- The rule is copied in `EXAM_SPEED_BONUS` in
+  `packages/core/src/engine/assignedExam.ts` for the screens, and a test fails
+  if the two disagree.
 
 ## How it behaves
 
@@ -60,5 +80,7 @@ order by e.assigned_at desc;
 - The first result handed in stands. To test again, assign a new exam.
 - Scores are saved, and answers are not.
 - Grading runs on the student's device, so this is a progress check rather than
-  a credential: a determined student could send a false score.
+  a credential: a determined student could send a false score, and with it
+  claim a speed bonus. The time cannot be faked, and the bonus is at most 5 XP
+  per question the teacher set, once per exam.
 - Deleting the account deletes the exam and its result.

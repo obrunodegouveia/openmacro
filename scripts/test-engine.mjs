@@ -385,6 +385,52 @@ test('an assigned exam shown in Portuguese grades, and sends scores without answ
   assert.equal(sent.p_asked, 10);
 });
 
+test('the exam speed bonus: never below the pass mark, full when fast, half when steady', async () => {
+  const { examSpeedBonusXp } = await import('@openmacro/core/engine/assignedExam');
+  // 20 questions: 14 right is the pass mark; 600 s is 30 s a question.
+  assert.equal(examSpeedBonusXp(20, 20, 300), 100);
+  assert.equal(examSpeedBonusXp(20, 14, 600), 100);
+  assert.equal(examSpeedBonusXp(20, 14, 601), 50);
+  assert.equal(examSpeedBonusXp(20, 14, 1200), 50);
+  assert.equal(examSpeedBonusXp(20, 14, 1201), 0);
+  // Rushing and guessing never pay, however fast.
+  assert.equal(examSpeedBonusXp(20, 13, 10), 0);
+  assert.equal(examSpeedBonusXp(20, 20, null), 0);
+  assert.equal(examSpeedBonusXp(0, 0, 0), 0);
+  // An odd full bonus halves down, as integer division does in SQL.
+  assert.equal(examSpeedBonusXp(3, 3, 120), 7);
+});
+
+test('the speed bonus in core is the one the database pays', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { EXAM_SPEED_BONUS } = await import('@openmacro/core/engine/assignedExam');
+  const sql = readFileSync(new URL('../supabase/migrations/0010_exam_timer.sql', import.meta.url), 'utf8');
+  const body = sql.slice(sql.indexOf('create function public.submit_assigned_exam'));
+  assert.match(body, new RegExp(`ceil\\(v_asked \\* ${EXAM_SPEED_BONUS.minShare}\\)`));
+  assert.match(body, new RegExp(`v_duration <= v_asked \\* ${EXAM_SPEED_BONUS.fastSecondsPerQuestion}\\b`));
+  assert.match(body, new RegExp(`v_duration <= v_asked \\* ${EXAM_SPEED_BONUS.steadySecondsPerQuestion}\\b`));
+  assert.match(body, new RegExp(`v_bonus := v_asked \\* ${EXAM_SPEED_BONUS.xpPerQuestion};`));
+  assert.match(body, new RegExp(`v_bonus := \\(v_asked \\* ${EXAM_SPEED_BONUS.xpPerQuestion}\\) / 2;`));
+});
+
+test('the exam clock and the reply from handing in', async () => {
+  const { formatExamClock, examTimingFromReply } = await import('@openmacro/core/engine/assignedExam');
+  assert.equal(formatExamClock(0), '0:00');
+  assert.equal(formatExamClock(65.9), '1:05');
+  assert.equal(formatExamClock(3725), '1:02:05');
+  assert.equal(formatExamClock(-3), '0:00');
+  assert.deepEqual(examTimingFromReply([{ duration_seconds: 412, bonus_xp: 100 }]), {
+    seconds: 412,
+    bonusXp: 100,
+  });
+  assert.deepEqual(examTimingFromReply([{ duration_seconds: null, bonus_xp: 0 }]), {
+    seconds: null,
+    bonusXp: 0,
+  });
+  assert.equal(examTimingFromReply([]), null);
+  assert.equal(examTimingFromReply(null), null);
+});
+
 test('optional modules: hidden unless unlocked, never in an assigned exam', async () => {
   const { OPTIONAL_MODULES, isOptionalModule, unlockedFromRows } = await import(
     '@openmacro/core/content/optional'

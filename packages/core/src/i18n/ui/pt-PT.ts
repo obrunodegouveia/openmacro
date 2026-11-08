@@ -378,4 +378,9 @@ export const ptPT: UiDictionary = {
   'exam.result.sent': 'O teu professor já pode ver a tua nota.',
   'exam.result.failed': 'A tua nota ainda não foi enviada. Verifica a ligação e tenta outra vez.',
   'exam.result.retry': 'Enviar outra vez',
+  'exam.intro.clock': 'O relógio começa quando carregas em Começar e continua a contar se saíres. Acerta {share} ou mais em menos de {fast, number} segundos por pergunta para ganhares um bónus de {xp, number} XP, ou metade em menos de {steady, number} segundos.',
+  'exam.clock': 'Tempo',
+  'exam.result.time': 'Tempo: {time}',
+  'exam.result.bonus': '+{xp, number} XP por acabares depressa',
+  'exam.result.noBonus': 'Desta vez não houve bónus de rapidez.',
 };

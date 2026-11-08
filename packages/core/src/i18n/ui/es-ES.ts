@@ -366,4 +366,9 @@ export const esES: UiDictionary = {
   'exam.result.sent': 'Tu profesor ya puede ver tu nota.',
   'exam.result.failed': 'Tu nota aún no se ha enviado. Comprueba la conexión e inténtalo de nuevo.',
   'exam.result.retry': 'Enviar de nuevo',
+  'exam.intro.clock': 'El reloj empieza cuando pulsas Empezar y sigue contando si sales. Acierta {share} o más en menos de {fast, number} segundos por pregunta para ganar un premio de {xp, number} XP, o la mitad en menos de {steady, number} segundos.',
+  'exam.clock': 'Tiempo',
+  'exam.result.time': 'Tiempo: {time}',
+  'exam.result.bonus': '+{xp, number} XP por terminar rápido',
+  'exam.result.noBonus': 'Esta vez no hay premio por rapidez.',
 };
