@@ -2,6 +2,7 @@ import "server-only";
 
 import { MODULES } from "@openmacro/core/content/registry";
 import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content/schema";
+import { EXAM_SPEED_BONUS } from "@openmacro/core/engine/assignedExam";
 
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { eurosToBaseUnits } from "@/lib/blockchain/payout";
@@ -126,7 +127,8 @@ export async function recordActiveMinute(userId: string): Promise<boolean> {
  * Mint whatever XP the learner has earned and not yet been paid for.
  *
  * Earned XP is each lesson's best score, capped at the most that lesson can
- * award, summed — the same rule as before minting. A replay counts only when
+ * award, summed — the same rule as before minting — plus any speed bonus
+ * from an assigned exam. A replay counts only when
  * it beats the old best, and then only by the difference. Whatever the sum
  * has grown by since the last mint is minted now, at the recipient's current
  * rate, and never re-priced.
@@ -137,21 +139,30 @@ export async function recordActiveMinute(userId: string): Promise<boolean> {
 async function mintNewXp(userId: string, recipient: Recipient): Promise<void> {
   const db = getSupabaseAdmin();
 
-  const [progress, mints] = await Promise.all([
+  const [progress, mints, exams] = await Promise.all([
     db.from("lesson_progress").select("lesson_id, best_xp").eq("user_id", userId),
     db.from("xp_mints").select("xp").eq("user_id", userId),
+    db.from("assigned_exams").select("bonus_xp, item_count").eq("user_id", userId),
   ]);
-  for (const result of [progress, mints]) {
+  for (const result of [progress, mints, exams]) {
     // Minting from a partial read could mint twice what was earned.
     if (result.error) throw new Error(`xp mint read failed: ${result.error.message}`);
   }
 
-  const earned = (progress.data ?? []).reduce((sum, row) => {
+  const fromLessons = (progress.data ?? []).reduce((sum, row) => {
     const cap = MAX_XP_BY_LESSON.get(row.lesson_id as string);
     // A lesson the registry does not know — removed, or invented — earns nothing.
     if (cap === undefined) return sum;
     return sum + Math.min(Math.max(0, row.best_xp as number), cap);
   }, 0);
+  // Speed bonuses on assigned exams (migration 0010). Written only by
+  // submit_assigned_exam, from the server's clock; capped again here at the
+  // most the rule can give for that exam.
+  const fromExams = (exams.data ?? []).reduce((sum, row) => {
+    const cap = (row.item_count as number) * EXAM_SPEED_BONUS.xpPerQuestion;
+    return sum + Math.min(Math.max(0, (row.bonus_xp as number) ?? 0), cap);
+  }, 0);
+  const earned = fromLessons + fromExams;
   const minted = (mints.data ?? []).reduce((sum, row) => sum + (row.xp as number), 0);
 
   // Minted XP only grows: if the best scores ever read lower, nothing happens.

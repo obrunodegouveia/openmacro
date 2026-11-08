@@ -7,12 +7,22 @@
  *
  * The whole screen is in the language of the assignment, whatever the app is
  * set to. The website's twin is `web/src/components/app/assigned-exam.tsx`.
+ *
+ * The clock is the database's (`supabase/migrations/0010_exam_timer.sql`).
+ * The one on screen counts on from the seconds the server reported at Start,
+ * so a phone whose clock is wrong still shows the right time.
+ *
+ * Leaving counts: the app going to the background mid-exam is reported when
+ * the learner comes back (`leave_assigned_exam`), and costs the speed bonus.
+ * The screen is kept awake meanwhile, so the phone locking itself while the
+ * learner thinks is not mistaken for leaving.
  */
 
-import { useCallback, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AppState, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 import { ChallengeView } from '@/components/challenges/ChallengeView';
 import { ActionButton } from '@/components/ui/ActionButton';
@@ -22,12 +32,19 @@ import { useAssignedExam } from '@/hooks/useAssignedExam';
 import { ForcedLocale, useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { supabase } from '@/services/supabaseClient';
-import { fontScale, palette, spacing, typography } from '@/theme/tokens';
+import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
 import {
+  EXAM_SPEED_BONUS,
   assembleAssignedExam,
   assignedExamSubmission,
+  examStartFromReply,
+  examStudyPlan,
+  examTimingFromReply,
+  formatExamClock,
   type AssignedExam,
+  type ExamTiming,
+  type StudyPlan,
 } from '@openmacro/core/engine/assignedExam';
 import { gradeExam, type ExamResult } from '@openmacro/core/engine/exam';
 
@@ -69,7 +86,11 @@ function Nothing({ kind }: { kind: 'none' | 'empty' }) {
 function ExamRunner({ exam }: { exam: AssignedExam }) {
   const insets = useSafeAreaInsets();
   const { t, modules, lessonById } = useLocale();
-  const { isLessonComplete } = useProgress();
+  const { isLessonComplete, progress } = useProgress();
+  const plan = useMemo(
+    () => examStudyPlan(modules, exam, (lessonId) => progress[lessonId]?.lastCompletedAt),
+    [modules, exam, progress],
+  );
 
   // Drawn once: finishing a lesson elsewhere must not change a paper in hand.
   const [paper] = useState(() => assembleAssignedExam(modules, isLessonComplete, exam).exam);
@@ -87,6 +108,66 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [clock, setClock] = useState<{ seconds: number; at: number } | null>(null);
+  const [timing, setTiming] = useState<ExamTiming | null>(null);
+  const [starting, setStarting] = useState(false);
+  const [leaves, setLeaves] = useState(0);
+
+  const start = useCallback(async () => {
+    setStarting(true);
+    let seconds = 0;
+    try {
+      // Without the server's start there is no official time and no bonus,
+      // but the learner can still take the exam.
+      const reply = supabase ? await supabase.rpc('start_assigned_exam', { p_exam: exam.id }) : null;
+      if (reply && !reply.error) {
+        const started = examStartFromReply(reply.data);
+        seconds = started.seconds;
+        setLeaves(started.leaves);
+      }
+    } catch {
+      // Offline: the exam still runs.
+    }
+    setClock({ seconds, at: Date.now() });
+    setStarting(false);
+    setStarted(true);
+  }, [exam.id]);
+
+  // While the exam is in progress: keep the screen on, and count every trip
+  // to the background.
+  const running = started && !result;
+  useEffect(() => {
+    if (!running) return;
+    const tag = `exam-${exam.id}`;
+    activateKeepAwakeAsync(tag).catch(() => {});
+    let away = false;
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'background') {
+        away = true;
+        return;
+      }
+      if (state !== 'active' || !away) return;
+      away = false;
+      setLeaves((count) => count + 1);
+      void (async () => {
+        try {
+          const reply = await supabase?.rpc('leave_assigned_exam', { p_exam: exam.id });
+          // The server's count is the one the teacher sees.
+          if (typeof reply?.data === 'number') setLeaves(reply.data);
+        } catch {
+          // Offline: the count on screen still says it happened.
+        }
+      })();
+    });
+    return () => {
+      subscription.remove();
+      try {
+        deactivateKeepAwake(tag);
+      } catch {
+        // Nothing to release.
+      }
+    };
+  }, [running, exam.id]);
 
   const moduleTitles = useMemo(
     () => new Map(modules.map((module) => [module.id, module.title])),
@@ -99,11 +180,12 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
       setFailed(false);
       try {
         if (!supabase) throw new Error('No account backend.');
-        const { error } = await supabase.rpc(
+        const { data, error } = await supabase.rpc(
           'submit_assigned_exam',
           assignedExamSubmission(exam.id, graded),
         );
         if (error) throw error;
+        setTiming(examTimingFromReply(data));
         setSaved(true);
       } catch {
         setFailed(true);
@@ -175,6 +257,23 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
             ))}
           </View>
         ) : null}
+        {timing?.seconds != null ? (
+          <View style={styles.timing}>
+            <Text style={styles.levelName}>
+              {t('exam.result.time', { time: formatExamClock(timing.seconds) })}
+            </Text>
+            <Text style={timing.bonusXp > 0 ? styles.bonus : styles.levelScore}>
+              {timing.bonusXp > 0
+                ? t('exam.result.bonus', { xp: timing.bonusXp })
+                : t('exam.result.noBonus')}
+            </Text>
+            {timing.leaves > 0 ? (
+              <Text style={styles.levelScore}>
+                {t('exam.result.leaves', { count: timing.leaves })}
+              </Text>
+            ) : null}
+          </View>
+        ) : null}
         <Text accessibilityLiveRegion="polite" style={styles.status}>
           {saved ? t('exam.result.sent') : failed ? t('exam.result.failed') : t('exam.result.sending')}
         </Text>
@@ -200,14 +299,31 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
 
   if (!started) {
     return (
-      <View style={[styles.centred, { paddingTop: insets.top + spacing.xl }]}>
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={[
+          styles.introContent,
+          { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl },
+        ]}
+      >
         <Text maxFontSizeMultiplier={fontScale.title} style={styles.doneTitle}>
           {t('exam.intro.title')}
         </Text>
+        {plan ? <StudyPlanView plan={plan} /> : null}
         <Text style={styles.doneBody}>{t('exam.intro.body', { count: paper.items.length })}</Text>
+        <Text style={styles.doneBody}>
+          {t('exam.intro.clock', {
+            share: `${Math.round(EXAM_SPEED_BONUS.minShare * 100)}%`,
+            fast: EXAM_SPEED_BONUS.fastSecondsPerQuestion,
+            steady: EXAM_SPEED_BONUS.steadySecondsPerQuestion,
+            xp: EXAM_SPEED_BONUS.xpPerQuestion * paper.items.length,
+          })}
+        </Text>
+        <Text style={styles.doneBody}>{t('exam.intro.leave')}</Text>
         <ActionButton
           label={t('exam.start')}
-          onPress={() => setStarted(true)}
+          onPress={() => void start()}
+          disabled={starting}
           tone="primary"
           style={styles.endButton}
         />
@@ -217,7 +333,7 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
           tone="ghost"
           style={styles.endButton}
         />
-      </View>
+      </ScrollView>
     );
   }
 
@@ -237,8 +353,14 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
           <Text maxFontSizeMultiplier={fontScale.title} style={styles.headerTitle}>
             {t('exam.question', { number: index + 1, total: paper.items.length })}
           </Text>
+          {clock ? <Clock from={clock} label={t('exam.clock')} /> : null}
         </View>
         <ProgressBar progress={index / paper.items.length} />
+        {leaves > 0 ? (
+          <Text accessibilityLiveRegion="polite" style={styles.left}>
+            {t('exam.left', { count: leaves })}
+          </Text>
+        ) : null}
       </View>
 
       <ScrollView
@@ -270,13 +392,86 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
   );
 }
 
+/**
+ * The advice before a retake: what was missed, and which lessons to go back
+ * to. Each lesson opens on tap; its video, if it has one, plays there.
+ */
+function StudyPlanView({ plan }: { plan: StudyPlan }) {
+  const { t } = useLocale();
+  return (
+    <View style={styles.study}>
+      <Text style={styles.weakTitle}>{t('exam.study.title')}</Text>
+      {plan.missed.length > 0 ? (
+        <View style={styles.studyGroup}>
+          <Text style={styles.levelName}>{t('exam.study.missed')}</Text>
+          {plan.missed.map((item) => (
+            <Text key={item.itemId} style={styles.missed}>
+              ✗ {item.prompt}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+      {plan.lessons.length > 0 ? (
+        <View style={styles.studyGroup}>
+          <Text style={styles.levelName}>{t('exam.study.lessons')}</Text>
+          {plan.lessons.map((lesson) => (
+            <Pressable
+              key={lesson.lessonId}
+              accessibilityRole="button"
+              onPress={() => router.push(`/lesson/${lesson.lessonId}`)}
+              style={({ pressed }) => [styles.studyLesson, pressed && styles.pressed]}
+            >
+              <Text style={styles.studyLessonTitle}>
+                {lesson.redone ? '✓ ' : ''}
+                {lesson.title}
+              </Text>
+              <Text style={styles.levelScore}>
+                {lesson.moduleTitle} ·{' '}
+                {lesson.redone
+                  ? t('exam.study.redone')
+                  : lesson.hasVideo
+                    ? t('exam.study.video')
+                    : t('exam.study.redo')}
+              </Text>
+            </Pressable>
+          ))}
+          <Text style={styles.status}>
+            {t('exam.study.progress', { done: plan.redoneCount, total: plan.lessons.length })}
+          </Text>
+        </View>
+      ) : null}
+      <Text style={styles.levelName}>{t('exam.study.ready')}</Text>
+    </View>
+  );
+}
+
+/** A running clock, counting on from what the server said at Start. */
+function Clock({ from, label }: { from: { seconds: number; at: number }; label: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const time = formatExamClock(from.seconds + (now - from.at) / 1000);
+  return (
+    <Text
+      accessibilityLabel={`${label} ${time}`}
+      maxFontSizeMultiplier={fontScale.chrome}
+      style={styles.clock}
+    >
+      {time}
+    </Text>
+  );
+}
+
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: palette.canvas },
   header: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },
   headerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   close: { ...typography.heading, color: palette.inkFaint },
   pressed: { opacity: 0.6 },
-  headerTitle: { ...typography.title, color: palette.ink, flexShrink: 1 },
+  headerTitle: { ...typography.title, color: palette.ink, flexShrink: 1, flexGrow: 1 },
+  clock: { ...typography.heading, color: palette.inkMuted, fontVariant: ['tabular-nums'] },
   content: { padding: spacing.lg, gap: spacing.lg },
   footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
   centred: {
@@ -288,6 +483,20 @@ const styles = StyleSheet.create({
     backgroundColor: palette.canvas,
   },
   resultContent: { padding: spacing.xl, gap: spacing.md },
+  introContent: { padding: spacing.xl, gap: spacing.md, alignItems: 'center' },
+  study: {
+    alignSelf: 'stretch',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: palette.border,
+    backgroundColor: palette.surface,
+  },
+  studyGroup: { gap: spacing.sm },
+  missed: { ...typography.body, color: palette.inkMuted },
+  studyLesson: { gap: 2, paddingVertical: spacing.xs },
+  studyLessonTitle: { ...typography.heading, color: palette.ink },
   endButton: { alignSelf: 'stretch' },
   doneTitle: { ...typography.display, color: palette.ink, textAlign: 'center' },
   doneBody: {
@@ -304,5 +513,8 @@ const styles = StyleSheet.create({
   weak: { gap: spacing.xs },
   weakTitle: { ...typography.heading, color: palette.ink },
   weakItem: { ...typography.body, color: palette.inkMuted },
+  timing: { gap: spacing.xs, alignItems: 'center' },
+  left: { ...typography.caption, color: palette.ink },
+  bonus: { ...typography.heading, color: palette.ink },
   status: { ...typography.caption, color: palette.inkMuted, textAlign: 'center' },
 });
