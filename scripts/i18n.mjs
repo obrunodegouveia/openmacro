@@ -22,22 +22,29 @@
  *                       catalogues, validating every string first. Without
  *                       this, translating is a developer-only activity.
  *
- * `--strict` makes `status` exit non-zero on two things, and only two:
+ * `--strict` makes `status` exit non-zero when a learner could see two
+ * languages on one screen:
  *
  *   • a **broken** catalogue — unbalanced braces, or a message naming an
  *     argument the English source does not provide. Both render as visible
- *     nonsense and neither is a type error, so this is the only thing that
- *     catches them.
+ *     nonsense and neither is a type error.
  *
- *   • a shipped language **missing an interface string**. Content may stay
- *     incomplete forever — that is the whole design — but a half-translated
- *     menu beside fully translated lessons reads as a bug.
+ *   • a shipped language **missing an interface or website string**.
  *
- * Untranslated content never fails the build. Deliberately: a rule that
- * punishes adding a lesson until every language has caught up is a rule that
- * stops lessons being added.
+ *   • a shipped language **missing any content string**, in any module,
+ *     private ones included. A missing string falls back to English, so a
+ *     Portuguese menu around English lessons is exactly what it produces —
+ *     which is what the Bitcoin module did before this rule existed.
  *
- * Requires Node 22.18+, like the rest of the tooling here.
+ *   • a **stale** translation: the English changed after it was translated,
+ *     so the two no longer say the same thing.
+ *
+ * This used to let content stay incomplete, so that a new lesson could ship
+ * before its translations. Every module is translated in every language now,
+ * and a lesson that is not ready in all three is not ready: translate it in
+ * the same pull request (`i18n:extract`, fill, `i18n:import`).
+ *
+  * Requires Node 22.18+, like the rest of the tooling here.
  */
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -45,7 +52,11 @@ import { join } from 'node:path';
 
 import './i18n-loader.mjs';
 
-const { MODULES } = await import('@openmacro/core/content/registry');
+const { MODULES: PUBLIC_MODULES } = await import('@openmacro/core/content/registry');
+const { PRIVATE_MODULES } = await import('@openmacro/core/content/private');
+// Private modules are translated like any other. Leaving them out is how the
+// Bitcoin module shipped in English inside a Portuguese app.
+const MODULES = [...PUBLIC_MODULES, ...PRIVATE_MODULES];
 const { en, uiCatalogue } = await import('@openmacro/core/i18n');
 const {
   LOCALES,
@@ -403,6 +414,18 @@ for (const locale of LOCALES) {
         );
       }
     }
+    const incomplete = modules.filter((entry) => entry.ratio < 1);
+    if (incomplete.length) {
+      console.log('');
+      console.log(
+        `    ${incomplete.length} module${incomplete.length === 1 ? '' : 's'} not fully translated — would show English beside ${LOCALE_NAMES[locale]}:`,
+      );
+      for (const entry of incomplete) {
+        console.log(`      ${entry.moduleId} (${Math.max(1, entry.total - entry.translated)} missing)`);
+      }
+      console.log(`    Translate with:  npm run i18n:extract -- ${locale} <moduleId>`);
+      if (strict) failed = true;
+    }
     const untouched = modules.length - started.length;
     if (untouched > 0) {
       console.log('');
@@ -427,6 +450,7 @@ for (const locale of LOCALES) {
       staleIn(module.id, collectKeys(module), contentDictionary(locale, module.id));
     }
     if (stale.length) {
+      if (strict) failed = true;
       console.log('');
       console.log(`    ${stale.length} STALE — the English changed after these were translated:`);
       for (const key of (verbose ? stale : stale.slice(0, 10))) console.log(`      ${key}`);
@@ -503,7 +527,7 @@ for (const locale of LOCALES) {
 }
 
 console.log('');
-console.log('A missing string is not a broken one — it renders in English.');
+console.log('A missing string renders in English, so --strict fails on it.');
 console.log('Add a module with:  npm run i18n:extract -- <moduleId>');
 console.log('');
 

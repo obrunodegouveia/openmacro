@@ -10,6 +10,7 @@ import { coursePtPT } from './course';
 import { africanCentralBanksPtPT } from './african-central-banks';
 import { bankingAndMoneyPtPT } from './banking-and-money';
 import { beforeItBreaksPtPT } from './before-it-breaks';
+import { bitcoinPriceFormationPtPT } from './bitcoin-price-formation';
 import { breakingAPeg1992PtPT } from './breaking-a-peg-1992';
 import { buyingPropertyPortugalPtPT } from './buying-property-portugal';
 import { commercialCentralInterfacePtPT } from './commercial-central-interface';
@@ -47,6 +48,7 @@ export const ptPTContent: ContentTranslation = {
     'african-central-banks': africanCentralBanksPtPT,
     'banking-and-money': bankingAndMoneyPtPT,
     'before-it-breaks': beforeItBreaksPtPT,
+    'bitcoin-price-formation': bitcoinPriceFormationPtPT,
     'breaking-a-peg-1992': breakingAPeg1992PtPT,
     'buying-property-portugal': buyingPropertyPortugalPtPT,
     'commercial-central-interface': commercialCentralInterfacePtPT,

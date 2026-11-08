@@ -420,3 +420,20 @@ test('private modules: hidden unless granted, never in an assigned exam', async 
   const privateLessons = new Set(first.lessons.map((lesson) => lesson.id));
   assert.ok(exam.items.every((item) => !privateLessons.has(item.lessonId)));
 });
+
+test('every module, private ones included, is fully translated in every language', async () => {
+  const { contentCoverage } = await import('@openmacro/core/i18n/content');
+  const { PRIVATE_MODULES } = await import('@openmacro/core/content/private');
+  const { LOCALES } = await import('@openmacro/core/i18n');
+  for (const locale of LOCALES) {
+    const coverage = contentCoverage(locale);
+    for (const module of PRIVATE_MODULES) {
+      assert.ok(coverage.some((entry) => entry.moduleId === module.id), `${module.id} counted`);
+    }
+    const gaps = coverage.filter((entry) => entry.ratio < 1);
+    assert.deepEqual(
+      gaps.map((entry) => `${locale}/${entry.moduleId}: ${entry.total - entry.translated} missing`),
+      [],
+    );
+  }
+});

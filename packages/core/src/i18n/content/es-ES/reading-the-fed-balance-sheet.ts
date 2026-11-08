@@ -114,7 +114,7 @@ export const readingTheFedBalanceSheetEsES: ContentDictionary = {
   'h41-anatomy.match-lines.pair.mbs.definition': 'Paquetes de préstamos hipotecarios comprados en ciclos de relajación, 1,91 billones de $, que solo bajan al vencer',
   'h41-anatomy.match-lines.pair.notes.term': 'Federal Reserve notes (billetes de la Reserva Federal)',
   'h41-anatomy.match-lines.pair.notes.definition': 'El efectivo físico de tu cartera, registrado como pasivo de la Fed, 2,43 billones de $',
-  'h41-anatomy.match-lines.pair.reserves.term': 'Deposits of depository institutions (depósitos de entidades de depósito)',
+  'h41-anatomy.match-lines.pair.reserves.term': 'Depósitos de entidades de depósito',
   'h41-anatomy.match-lines.pair.reserves.definition': 'Las cuentas de los bancos comerciales en la Fed, es decir, las reservas: 2,93 billones de $',
   'h41-anatomy.match-lines.pair.tga.term': 'U.S. Treasury, General Account (Cuenta General del Tesoro)',
   'h41-anatomy.match-lines.pair.tga.definition': 'La cuenta corriente del propio Gobierno federal en la Fed, 944.000 millones de $',
