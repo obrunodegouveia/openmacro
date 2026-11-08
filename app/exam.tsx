@@ -36,6 +36,7 @@ import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens'
 import type { ChallengeAnswer } from '@openmacro/core/engine/answers';
 import {
   EXAM_SPEED_BONUS,
+  examPassed,
   assembleAssignedExam,
   assignedExamSubmission,
   examStartFromReply,
@@ -274,6 +275,13 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
             ) : null}
           </View>
         ) : null}
+        {exam.isFinal && saved ? (
+          <Text style={styles.bonus}>
+            {examPassed(result.asked, result.correct)
+              ? t('exam.result.finalPassed')
+              : t('exam.result.finalFailed')}
+          </Text>
+        ) : null}
         <Text accessibilityLiveRegion="polite" style={styles.status}>
           {saved ? t('exam.result.sent') : failed ? t('exam.result.failed') : t('exam.result.sending')}
         </Text>
@@ -320,6 +328,9 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
           })}
         </Text>
         <Text style={styles.doneBody}>{t('exam.intro.leave')}</Text>
+        {exam.isFinal ? (
+          <Text style={[styles.doneBody, { fontWeight: '700' }]}>{t('exam.intro.final')}</Text>
+        ) : null}
         <ActionButton
           label={t('exam.start')}
           onPress={() => void start()}

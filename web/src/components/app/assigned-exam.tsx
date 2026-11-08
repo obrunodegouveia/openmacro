@@ -4,6 +4,7 @@ import * as React from "react";
 import type { ChallengeAnswer } from "@openmacro/core/engine/answers";
 import {
   EXAM_SPEED_BONUS,
+  examPassed,
   assembleAssignedExam,
   assignedExamSubmission,
   examStartFromReply,
@@ -255,6 +256,13 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
             ) : null}
           </section>
         ) : null}
+        {exam.isFinal && saved ? (
+          <p className="font-display text-lg font-extrabold">
+            {examPassed(result.asked, result.correct)
+              ? t("exam.result.finalPassed")
+              : t("exam.result.finalFailed")}
+          </p>
+        ) : null}
         <p role="status" className="text-sm text-ink-muted">
           {saved
             ? t("exam.result.sent")
@@ -291,6 +299,9 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
           })}
         </p>
         <p className="text-ink-muted">{t("exam.intro.leave")}</p>
+        {exam.isFinal ? (
+          <p className="font-bold text-ink">{t("exam.intro.final")}</p>
+        ) : null}
         <Button size="lg" onClick={() => void start()} disabled={starting}>
           {t("exam.start")}
         </Button>

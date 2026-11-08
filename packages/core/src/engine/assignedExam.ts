@@ -42,11 +42,16 @@ export interface AssignedExam {
   reviewLessons: readonly string[];
   /** ISO time the exam was assigned: a lesson finished after it counts as redone. */
   assignedAt: string;
+  /**
+   * A final exam. Passing one releases earnings a teacher locked until then
+   * (migration 0011), so the intro says what is at stake.
+   */
+  isFinal: boolean;
 }
 
 /** The `assigned_exams` columns a client reads. */
 export const ASSIGNED_EXAM_COLUMNS =
-  'id, locale, seed, item_count, assigned_at, focus_lessons, exclude_items, review_items, review_lessons';
+  'id, locale, seed, item_count, assigned_at, focus_lessons, exclude_items, review_items, review_lessons, is_final';
 
 /** A database row as an exam, or null if its language is not one we ship. */
 export function assignedExamFromRow(row: {
@@ -59,6 +64,7 @@ export function assignedExamFromRow(row: {
   exclude_items?: string[] | null;
   review_items?: string[] | null;
   review_lessons?: string[] | null;
+  is_final?: boolean | null;
 }): AssignedExam | null {
   if (!isLocale(row.locale)) return null;
   return {
@@ -71,6 +77,7 @@ export function assignedExamFromRow(row: {
     reviewItems: row.review_items ?? [],
     reviewLessons: row.review_lessons ?? [],
     assignedAt: row.assigned_at ?? new Date(0).toISOString(),
+    isFinal: row.is_final === true,
   };
 }
 
@@ -241,6 +248,17 @@ export const EXAM_SPEED_BONUS = {
   /** The full bonus, per question asked. */
   xpPerQuestion: 5,
 } as const;
+
+/**
+ * Whether a result passes: at least 70% right, the same mark the speed bonus
+ * needs. Passing a final exam is what releases locked earnings
+ * (`web/src/lib/rewards/earnings.ts`).
+ */
+export function examPassed(asked: number | null, correct: number | null): boolean {
+  if (asked === null || correct === null || asked <= 0) return false;
+  if (correct < 0 || correct > asked) return false;
+  return correct >= Math.ceil(asked * EXAM_SPEED_BONUS.minShare);
+}
 
 /** The bonus for a result and a time, by the same rule as the database. */
 export function examSpeedBonusXp(

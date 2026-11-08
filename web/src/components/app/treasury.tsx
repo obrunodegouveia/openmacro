@@ -30,6 +30,7 @@ interface Recipient {
   amountEuros: string | null;
   xpRateEuros: string | null;
   hourRateEuros: string | null;
+  lockedUntilFinalExam: boolean;
   claimantEmail: string | null;
   note: string | null;
   activatedAt: string | null;
@@ -413,6 +414,26 @@ export function Treasury() {
                   busy={busy !== null}
                   onSave={(rates) => act("set-rates", { id: r.id, ...rates }, r.id)}
                 />
+              ) : null}
+
+              {/* Holds withdrawals, never the balance: it lifts by itself
+                  when the learner passes an assigned exam marked final. */}
+              {r.scheme === "earnings" ? (
+                <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-ink-muted">
+                  <span>
+                    {r.lockedUntilFinalExam ? s("treasury.lock.on") : s("treasury.lock.off")}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={busy !== null}
+                    onClick={() =>
+                      void act("set-lock", { id: r.id, locked: !r.lockedUntilFinalExam }, r.id)
+                    }
+                    className="underline underline-offset-2 disabled:opacity-50"
+                  >
+                    {r.lockedUntilFinalExam ? s("treasury.lock.release") : s("treasury.lock.hold")}
+                  </button>
+                </p>
               ) : null}
             </li>
           ))}

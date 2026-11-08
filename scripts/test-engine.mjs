@@ -559,3 +559,21 @@ test('Bitcoin mode unlocks the Bitcoin modules; grants add to it, in one order',
     assert.ok(isBitcoinModeModule(id));
   }
 });
+
+test('a final exam passes at 70%, the same mark as the speed bonus', async () => {
+  const { examPassed, assignedExamFromRow, ASSIGNED_EXAM_COLUMNS } = await import(
+    '@openmacro/core/engine/assignedExam'
+  );
+  assert.equal(examPassed(20, 14), true);
+  assert.equal(examPassed(20, 13), false);
+  assert.equal(examPassed(7, 5), true); // ceil(4.9)
+  assert.equal(examPassed(7, 4), false);
+  // Nothing handed in, or a score that cannot be, never passes.
+  assert.equal(examPassed(null, null), false);
+  assert.equal(examPassed(0, 0), false);
+  assert.equal(examPassed(20, 21), false);
+  assert.ok(ASSIGNED_EXAM_COLUMNS.includes('is_final'));
+  const row = { id: 'x', locale: 'en', seed: 's', item_count: 20 };
+  assert.equal(assignedExamFromRow(row)?.isFinal, false);
+  assert.equal(assignedExamFromRow({ ...row, is_final: true })?.isFinal, true);
+});

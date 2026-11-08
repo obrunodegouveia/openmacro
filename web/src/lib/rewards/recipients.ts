@@ -44,6 +44,11 @@ export interface Recipient {
   xpRateEuros: string | null;
   /** Euros per active hour for an 'earnings' recipient; null means the default. */
   hourRateEuros: string | null;
+  /**
+   * Withdrawals wait until the claimant passes a final exam (migration 0011).
+   * The balance still grows.
+   */
+  lockedUntilFinalExam: boolean;
   /** The signed-in account allowed to claim into this wallet, if any. */
   claimantEmail: string | null;
   note: string | null;
@@ -61,6 +66,7 @@ interface RecipientRow {
   amount_euros: string | null;
   xp_rate_euros: string | null;
   hour_rate_euros: string | null;
+  locked_until_final_exam?: boolean | null;
   claimant_email: string | null;
   note: string | null;
   created_at: string;
@@ -79,6 +85,8 @@ function toRecipient(row: RecipientRow): Recipient {
     amountEuros: row.amount_euros,
     xpRateEuros: row.xp_rate_euros,
     hourRateEuros: row.hour_rate_euros,
+    // Before migration 0011 the column does not exist; nobody was locked.
+    lockedUntilFinalExam: row.locked_until_final_exam === true,
     claimantEmail: row.claimant_email,
     note: row.note,
     createdAt: row.created_at,
@@ -374,6 +382,38 @@ export async function setRecipientRates(
     }
     console.error("[rewards] rate change failed", error);
     return { error: "Could not change those rates." };
+  }
+  if (!data) return { error: "No such recipient on XP and active time." };
+  return { recipient: toRecipient(data as RecipientRow) };
+}
+
+/**
+ * Lock or unlock an earnings recipient's withdrawals until a final exam.
+ *
+ * Locking holds the balance; it never takes any of it away. The lock lifts by
+ * itself once the claimant passes an assigned exam marked final, so unlocking
+ * here is only for a teacher who changes their mind.
+ *
+ * @param id      The recipient row.
+ * @param locked  True to hold withdrawals until a final exam is passed.
+ * @return The updated recipient, or why it was refused.
+ */
+export async function setRecipientLock(
+  id: string,
+  locked: boolean,
+): Promise<{ recipient: Recipient } | { error: string }> {
+  const { data, error } = await getSupabaseAdmin()
+    .from("reward_recipients")
+    .update({ locked_until_final_exam: locked, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    // A per-module recipient has no balance to hold.
+    .eq("scheme", "earnings")
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    console.error("[rewards] lock change failed", error);
+    return { error: "Could not change that lock." };
   }
   if (!data) return { error: "No such recipient on XP and active time." };
   return { recipient: toRecipient(data as RecipientRow) };
