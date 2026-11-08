@@ -52,6 +52,8 @@ import {
   localisedNextLesson,
 } from "@openmacro/core/i18n/content";
 import type { Course, Lesson, Module } from "@openmacro/core/content/schema";
+import { unlockedModules } from "@openmacro/core/content/optional";
+import { useBitcoinMode } from "@/components/app/bitcoin-mode";
 import { useModuleGrants } from "@/lib/use-module-grants";
 
 const STORAGE_KEY = "openmacro.locale";
@@ -67,8 +69,8 @@ interface LocaleContextValue {
   modules: readonly Module[];
   lessonById: (lessonId: string) => Lesson | undefined;
   nextLesson: (lessonId: string) => Lesson | undefined;
-  /** True while the signed-in learner's private modules are being read. */
-  grantsLoading: boolean;
+  /** True while grants and Bitcoin mode are still being read. */
+  unlockedLoading: boolean;
 }
 
 const LocaleContext = React.createContext<LocaleContextValue | null>(null);
@@ -166,7 +168,7 @@ export function LocaleProvider({
 function localeValue(
   locale: Locale,
   unlocked: readonly string[],
-  grantsLoading: boolean,
+  unlockedLoading: boolean,
 ): LocaleContextValue {
   const translated = contentCoverage(locale);
   const done = translated.reduce((sum, entry) => sum + entry.translated, 0);
@@ -185,23 +187,26 @@ function localeValue(
     modules: localisedModules(locale, unlocked),
     lessonById: (lessonId) => localisedLessonById(locale, lessonId, unlocked),
     nextLesson: (lessonId) => localisedNextLesson(locale, lessonId, unlocked),
-    grantsLoading,
+    unlockedLoading,
   };
 }
 
 /**
- * Adds the private modules this learner has been granted to the course
- * everything inside it sees (`content/private.ts`). Mounted just inside
- * `AuthProvider`, because grants need the account and the account sits inside
- * the language. The app's twin is `GrantedModules` in its `LocaleProvider`.
+ * Adds the optional modules this learner has unlocked to the course
+ * everything inside it sees (`content/optional.ts`): Bitcoin mode's, when it
+ * is on, and any granted to this account. Mounted just inside `AuthProvider`,
+ * because grants need the account and the account sits inside the language.
+ * The app's twin is `UnlockedModules` in its `LocaleProvider`.
  */
-export function GrantedModules({ children }: { children: React.ReactNode }) {
+export function UnlockedModules({ children }: { children: React.ReactNode }) {
   const { locale } = useLocale();
-  const { unlocked, loading } = useModuleGrants();
-  const key = unlocked.join(",");
+  const { unlocked: grants, loading } = useModuleGrants();
+  const [bitcoinMode, , bitcoinReady] = useBitcoinMode();
+  const key = unlockedModules(grants, bitcoinMode).join(",");
+  const deciding = loading || !bitcoinReady;
   const value = React.useMemo(
-    () => localeValue(locale, key ? key.split(",") : [], loading),
-    [key, locale, loading],
+    () => localeValue(locale, key ? key.split(",") : [], deciding),
+    [key, locale, deciding],
   );
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }

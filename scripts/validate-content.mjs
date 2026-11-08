@@ -79,10 +79,10 @@ registerHooks({
 });
 
 const { MODULES: PUBLIC_MODULES } = await import('@openmacro/core/content/registry');
-const { PRIVATE_MODULES } = await import('@openmacro/core/content/private');
+const { OPTIONAL_MODULES } = await import('@openmacro/core/content/optional');
 // Private modules are checked by the same rules, and together with the public
 // ones so a lesson id cannot be reused across the two.
-const MODULES = [...PUBLIC_MODULES, ...PRIVATE_MODULES];
+const MODULES = [...PUBLIC_MODULES, ...OPTIONAL_MODULES];
 const { validateModules } = await import('@openmacro/core/content/validate');
 
 const lessonCount = MODULES.reduce((total, module) => total + module.lessons.length, 0);

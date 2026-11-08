@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { MODULE_GRANT_COLUMNS, unlockedFromRows } from "@openmacro/core/content/private";
+import { MODULE_GRANT_COLUMNS, unlockedFromRows } from "@openmacro/core/content/optional";
 
 import { useAuth } from "@/components/site/auth-provider";
 import { getSupabase } from "@/lib/supabase";

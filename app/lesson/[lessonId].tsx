@@ -52,6 +52,8 @@ import {
 import { useLessonMode } from '@/services/kidsMode';
 import { useProgress } from '@/providers/ProgressProvider';
 import { useCourse } from '@/hooks/useCourse';
+import { isBitcoinModeModule, optionalModuleForLesson } from '@openmacro/core/content/optional';
+import { useBitcoinMode } from '@/services/bitcoinMode';
 import { fontScale, palette, radius, spacing, typography } from '@/theme/tokens';
 
 export default function LessonRunnerRoute() {
@@ -597,6 +599,32 @@ function LessonFailed({
 function LessonNotFound({ lessonId }: { lessonId?: string }) {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
+  const [, setBitcoinMode] = useBitcoinMode();
+  // A Bitcoin lesson with Bitcoin mode off (a shared link, or the switch
+  // turned off): say how to get it rather than that it does not exist.
+  // Turning the mode on brings the lesson in on the next render.
+  const parent = lessonId ? optionalModuleForLesson(lessonId) : undefined;
+  if (parent && isBitcoinModeModule(parent.id)) {
+    return (
+      <ScrollView
+        style={styles.endRoot}
+        contentContainerStyle={[
+          styles.endContent,
+          { paddingTop: insets.top + spacing.xxxl, paddingBottom: insets.bottom + spacing.xl },
+        ]}
+      >
+        <Text style={styles.endEmoji}>₿</Text>
+        <Text style={styles.endTitle}>{t('bitcoin.locked.title')}</Text>
+        <Text style={styles.endSubtitle}>{t('bitcoin.locked.body')}</Text>
+        <ActionButton label={t('bitcoin.turnOn')} onPress={() => setBitcoinMode(true)} tone="primary" />
+        <ActionButton
+          label={t('complete.backToPath')}
+          onPress={() => router.replace('/')}
+          tone="ghost"
+        />
+      </ScrollView>
+    );
+  }
   return (
     <ScrollView
       style={styles.endRoot}

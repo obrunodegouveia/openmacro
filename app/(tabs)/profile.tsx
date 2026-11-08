@@ -24,6 +24,7 @@ import { AccountBar } from '@/components/ui/AccountBar';
 import { Chevron } from '@/components/ui/CourseRows';
 import { DeleteAccount } from '@/components/ui/DeleteAccount';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
+import { BitcoinModeToggle } from '@/components/ui/BitcoinModeToggle';
 import { KidsModeToggle } from '@/components/ui/KidsModeToggle';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -148,6 +149,8 @@ export default function ProfileScreen() {
         </View>
 
         <KidsModeToggle lessons={kidsPathLessonCount(MODULES)} />
+
+        <BitcoinModeToggle />
 
         <View style={styles.card}>
           <MusicToggle />

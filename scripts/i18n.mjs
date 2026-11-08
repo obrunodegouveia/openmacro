@@ -53,10 +53,10 @@ import { join } from 'node:path';
 import './i18n-loader.mjs';
 
 const { MODULES: PUBLIC_MODULES } = await import('@openmacro/core/content/registry');
-const { PRIVATE_MODULES } = await import('@openmacro/core/content/private');
+const { OPTIONAL_MODULES } = await import('@openmacro/core/content/optional');
 // Private modules are translated like any other. Leaving them out is how the
 // Bitcoin module shipped in English inside a Portuguese app.
-const MODULES = [...PUBLIC_MODULES, ...PRIVATE_MODULES];
+const MODULES = [...PUBLIC_MODULES, ...OPTIONAL_MODULES];
 const { en, uiCatalogue } = await import('@openmacro/core/i18n');
 const {
   LOCALES,

@@ -11,7 +11,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { MODULE_GRANT_COLUMNS, unlockedFromRows } from '@openmacro/core/content/private';
+import { MODULE_GRANT_COLUMNS, unlockedFromRows } from '@openmacro/core/content/optional';
 import { useAuth } from '@/providers/AuthProvider';
 import { readVersioned, writeVersioned } from '@/services/localStore';
 import { supabase } from '@/services/supabaseClient';
