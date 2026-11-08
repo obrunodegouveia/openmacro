@@ -28,7 +28,8 @@ import {
  *
  *   heartbeat    "I am here and active." The server stamps the minute.
  *   set-address  The learner's own EURC address on Base. Immediate.
- *   withdraw     Pays the whole balance, down to the cent, to that address.
+ *   withdraw     Pays the whole balance, down to the cent, to that address,
+ *                unless it is held until a final exam (migration 0011).
  *
  * Every request resolves the recipient from the signed-in account. Nothing in
  * a request body names a recipient or an amount, and the only address a body
@@ -59,6 +60,7 @@ function serialise(recipient: Recipient, summary: EarningsSummary) {
     balance: summary.balance.toString(),
     withdrawable: summary.withdrawable.toString(),
     minWithdrawal: MIN_WITHDRAWAL_BASE_UNITS.toString(),
+    locked: summary.locked,
     withdrawals: summary.withdrawals.map((w) => ({
       id: w.id,
       amount: w.amount.toString(),
@@ -185,6 +187,14 @@ async function withdraw(userId: string, recipient: Recipient) {
   } catch (error) {
     console.error("[earnings] read failed", error);
     return NextResponse.json({ error: "Could not read your balance." }, { status: 500 });
+  }
+
+  // Before any claim row exists, so a locked balance cannot start a payout.
+  if (summary.locked) {
+    return NextResponse.json(
+      { error: "Your earnings are released when you pass your final exam." },
+      { status: 423 },
+    );
   }
 
   if (summary.withdrawable < MIN_WITHDRAWAL_BASE_UNITS) {

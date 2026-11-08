@@ -2,7 +2,7 @@ import "server-only";
 
 import { MODULES } from "@openmacro/core/content/registry";
 import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content/schema";
-import { EXAM_SPEED_BONUS } from "@openmacro/core/engine/assignedExam";
+import { EXAM_SPEED_BONUS, examPassed } from "@openmacro/core/engine/assignedExam";
 
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { eurosToBaseUnits } from "@/lib/blockchain/payout";
@@ -93,6 +93,11 @@ export interface EarningsSummary {
   }[];
   /** Total rows ever opened, VOID included — the next withdrawal is n + 1. */
   withdrawalCount: number;
+  /**
+   * True while withdrawals wait for a final exam (migration 0011): the
+   * recipient is locked and no final exam has been passed yet.
+   */
+  locked: boolean;
 }
 
 export function withdrawalClaimKey(n: number): string {
@@ -194,7 +199,7 @@ export async function readEarnings(
   const startOfToday = new Date();
   startOfToday.setUTCHours(0, 0, 0, 0);
 
-  const [mints, minutesAll, minutesToday, claims] = await Promise.all([
+  const [mints, minutesAll, minutesToday, claims, finals] = await Promise.all([
     db.from("xp_mints").select("xp, amount_base_units").eq("user_id", userId),
     db
       .from("activity_minutes")
@@ -211,9 +216,19 @@ export async function readEarnings(
       .eq("user_id", userId)
       .like("claim_key", "withdrawal:%")
       .order("created_at", { ascending: false }),
+    // Read only for a locked recipient. Anybody else is never held back by a
+    // failed read of their exams.
+    recipient.lockedUntilFinalExam
+      ? db
+          .from("assigned_exams")
+          .select("asked, correct")
+          .eq("user_id", userId)
+          .eq("is_final", true)
+          .not("submitted_at", "is", null)
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
-  for (const result of [mints, minutesAll, minutesToday, claims]) {
+  for (const result of [mints, minutesAll, minutesToday, claims, finals]) {
     // A partial read would understate what was withdrawn and overstate the
     // balance. Refuse rather than guess.
     if (result.error) throw new Error(`earnings read failed: ${result.error.message}`);
@@ -240,6 +255,11 @@ export async function readEarnings(
   const earned = earnedFromXp + earnedFromTime;
   const balance = earned > withdrawn ? earned - withdrawn : 0n;
   const withdrawable = (balance / CENT_BASE_UNITS) * CENT_BASE_UNITS;
+  const locked =
+    recipient.lockedUntilFinalExam &&
+    !((finals.data ?? []) as { asked: number | null; correct: number | null }[]).some((row) =>
+      examPassed(row.asked, row.correct),
+    );
 
   return {
     xp,
@@ -261,5 +281,6 @@ export async function readEarnings(
       createdAt: row.created_at as string,
     })),
     withdrawalCount: rows.length,
+    locked,
   };
 }

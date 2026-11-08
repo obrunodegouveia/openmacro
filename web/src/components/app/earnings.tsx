@@ -49,6 +49,8 @@ interface Earnings {
   balance: string;
   withdrawable: string;
   minWithdrawal: string;
+  /** Held until a final exam is passed (migration 0011). Absent before it. */
+  locked?: boolean;
   withdrawals: Withdrawal[];
 }
 
@@ -195,8 +197,9 @@ export function EarningsPanel() {
   if (!data) return null;
 
   const totalSeconds = data.activeMinutes * 60 + localSeconds;
+  const locked = data.locked === true;
   const canWithdraw =
-    data.address !== null && BigInt(data.withdrawable) >= BigInt(data.minWithdrawal);
+    !locked && data.address !== null && BigInt(data.withdrawable) >= BigInt(data.minWithdrawal);
   const hourRate = new Intl.NumberFormat(tag, { style: "currency", currency: "EUR" }).format(
     Number(data.hourRateEuros),
   );
@@ -227,7 +230,9 @@ export function EarningsPanel() {
           {money(data.balance)}
         </p>
         <p className="mt-1 text-sm text-white/80">
-          {canWithdraw
+          {locked
+            ? s("earnings.locked")
+            : canWithdraw
             ? s("earnings.ready")
             : !data.address
               ? s("earnings.needAddress")
@@ -246,7 +251,9 @@ export function EarningsPanel() {
             >
               {busy === "withdraw"
                 ? s("earnings.sending")
-                : s("earnings.withdraw", { amount: money(data.withdrawable) })}
+                : locked
+                  ? s("earnings.lockedButton")
+                  : s("earnings.withdraw", { amount: money(data.withdrawable) })}
             </button>
           ) : (
             <button

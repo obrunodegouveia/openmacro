@@ -124,6 +124,38 @@ and the exact questions.
   `packages/core/src/engine/assignedExam.ts` for the screens, and a test fails
   if the two disagree.
 
+## Holding earnings until a final exam
+
+Migration 0011. A student on the earnings scheme can have their withdrawals
+held until they pass a final exam. The balance keeps growing the whole time;
+only the Withdraw button waits.
+
+1. In the treasury dashboard, on the student's recipient, choose
+   **Hold until final exam**. Or in SQL:
+
+   ```sql
+   update public.reward_recipients
+      set locked_until_final_exam = true, updated_at = now()
+    where key = '<recipient key>';
+   ```
+
+2. Assign the final exam as usual, with `is_final = true` (or set it on an
+   exam already assigned and not yet handed in):
+
+   ```sql
+   update public.assigned_exams set is_final = true where id = '<exam id>';
+   ```
+
+The exam's intro tells the student it is final and what passing releases,
+and the result screen says whether they passed. Passing is 70% or more right
+(`examPassed` in `packages/core/src/engine/assignedExam.ts`). The lock lifts by
+itself on the next read of the balance; nobody has to unlock it. A failed final
+exam is one attempt, so the student stays locked until you assign another one.
+
+`/api/earnings` refuses a locked withdrawal before it opens a claim. The
+score is graded on the student's device, so the fingerprint is how to check a
+pass you doubt (see the retake section).
+
 ## How it behaves
 
 - Questions come only from lessons the student has finished, in proportion to
