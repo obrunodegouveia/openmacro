@@ -4,7 +4,7 @@ import { SITE } from "@/lib/site";
 import "./globals.css";
 import { AuthProvider } from "@/components/site/auth-provider";
 import { MotionPreferences } from "@/components/site/motion-preferences";
-import { LocaleProvider } from "@/components/site/locale-provider";
+import { GrantedModules, LocaleProvider } from "@/components/site/locale-provider";
 import { LOCALE_TAGS } from "@openmacro/core/i18n/locales";
 import { alternates, localeUrl, serverLocale } from "@/lib/locale-server";
 import { getSiteText } from "@/lib/site-text";
@@ -154,11 +154,14 @@ export default async function RootLayout({
           <SeasonsProvider>
           {/* Inert when no Supabase project is configured — see lib/supabase.ts. */}
           <AuthProvider>
+            {/* Private modules this account has been granted, for every page. */}
+            <GrantedModules>
             <MotionPreferences>{children}</MotionPreferences>
             {/* Silent unless this account is paid for active time. */}
             <ActivityHeartbeat />
             {/* Once a day, by name, while a season is on. */}
             <SeasonalWelcome />
+            </GrantedModules>
           </AuthProvider>
           <SeasonalDecor />
           </SeasonsProvider>

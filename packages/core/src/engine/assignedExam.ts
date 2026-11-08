@@ -15,6 +15,7 @@
  */
 
 import { MODULE_LEVELS, type Module, type ModuleLevel } from '../content/schema';
+import { isPrivateModule } from '../content/private';
 import { isLocale, type Locale } from '../i18n/locales';
 import {
   assembleExam,
@@ -44,13 +45,20 @@ export function assignedExamFromRow(row: {
   return { id: row.id, locale: row.locale, seed: row.seed, itemCount: row.item_count };
 }
 
-/** Draw the paper from the lessons this learner has finished. */
+/**
+ * Draw the paper from the lessons this learner has finished.
+ *
+ * A private module is left out even when the learner can see it: a teacher
+ * sets the exam on the course, and the two clients must draw the same paper
+ * whatever else the learner happens to be granted.
+ */
 export function assembleAssignedExam(
   modules: readonly Module[],
   isLessonDone: (lessonId: string) => boolean,
   assignment: Pick<AssignedExam, 'seed' | 'itemCount'>,
 ): AssembledExam {
   const finished = modules
+    .filter((module) => !isPrivateModule(module.id))
     .map((module) => ({
       ...module,
       lessons: module.lessons.filter((lesson) => isLessonDone(lesson.id)),

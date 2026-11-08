@@ -27,6 +27,7 @@
 
 import type { Course, Lesson, Module } from '../../content/schema';
 import { COURSE, MODULES } from '../../content/registry';
+import { PRIVATE_MODULES } from '../../content/private';
 import { DEFAULT_LOCALE, type Locale } from '../locales';
 import { collectKeys, coverage, localiseModule, type ContentDictionary } from '../localise';
 import { ptPTContent } from './pt-PT';
@@ -75,21 +76,41 @@ export function contentDictionary(locale: Locale, moduleId: string): ContentDict
   return (TRANSLATIONS[locale] ?? EMPTY).modules[moduleId] ?? {};
 }
 
+/**
+ * The modules a learner may see.
+ *
+ * The public course, then any private module whose id is in `unlocked` (see
+ * `content/private.ts`). Nobody passes `unlocked` except the providers that
+ * read the signed-in learner's grants, so every public page gets the public
+ * course and nothing else.
+ */
+function visibleModules(unlocked: readonly string[]): readonly Module[] {
+  if (unlocked.length === 0) return MODULES;
+  const extra = PRIVATE_MODULES.filter((module) => unlocked.includes(module.id));
+  return extra.length === 0 ? MODULES : [...MODULES, ...extra];
+}
+
 /** Every module, with `locale`'s overlay applied where it has one. */
-export function localisedModules(locale: Locale): readonly Module[] {
-  if (locale === DEFAULT_LOCALE) return MODULES;
+export function localisedModules(
+  locale: Locale,
+  unlocked: readonly string[] = [],
+): readonly Module[] {
+  const modules = visibleModules(unlocked);
+  if (locale === DEFAULT_LOCALE) return modules;
   const translation = TRANSLATIONS[locale] ?? EMPTY;
-  return MODULES.map((module) => {
+  return modules.map((module) => {
     const dictionary = translation.modules[module.id];
     return dictionary ? localiseModule(module, dictionary) : module;
   });
 }
 
 /** The course, with its own title and description translated too. */
-export function localisedCourse(locale: Locale): Course {
-  if (locale === DEFAULT_LOCALE) return COURSE;
+export function localisedCourse(locale: Locale, unlocked: readonly string[] = []): Course {
+  const modules = localisedModules(locale, unlocked);
+  if (locale === DEFAULT_LOCALE) {
+    return modules === MODULES ? COURSE : { ...COURSE, modules: [...modules] };
+  }
   const translation = TRANSLATIONS[locale] ?? EMPTY;
-  const modules = localisedModules(locale);
   return {
     ...COURSE,
     title: translation.course?.['course.title'] ?? COURSE.title,
@@ -99,12 +120,19 @@ export function localisedCourse(locale: Locale): Course {
 }
 
 /** Flat, in path order — the localised twin of `ALL_LESSONS`. */
-export function localisedLessons(locale: Locale): readonly Lesson[] {
-  return localisedModules(locale).flatMap((module) => module.lessons);
+export function localisedLessons(
+  locale: Locale,
+  unlocked: readonly string[] = [],
+): readonly Lesson[] {
+  return localisedModules(locale, unlocked).flatMap((module) => module.lessons);
 }
 
-export function localisedLessonById(locale: Locale, lessonId: string): Lesson | undefined {
-  return localisedLessons(locale).find((lesson) => lesson.id === lessonId);
+export function localisedLessonById(
+  locale: Locale,
+  lessonId: string,
+  unlocked: readonly string[] = [],
+): Lesson | undefined {
+  return localisedLessons(locale, unlocked).find((lesson) => lesson.id === lessonId);
 }
 
 /**
@@ -114,8 +142,12 @@ export function localisedLessonById(locale: Locale, lessonId: string): Lesson | 
  * `getNextLesson`, which would hand back the English object and quietly undo
  * the translation on the completion screen.
  */
-export function localisedNextLesson(locale: Locale, lessonId: string): Lesson | undefined {
-  const lessons = localisedLessons(locale);
+export function localisedNextLesson(
+  locale: Locale,
+  lessonId: string,
+  unlocked: readonly string[] = [],
+): Lesson | undefined {
+  const lessons = localisedLessons(locale, unlocked);
   const index = lessons.findIndex((lesson) => lesson.id === lessonId);
   return index >= 0 ? lessons[index + 1] : undefined;
 }

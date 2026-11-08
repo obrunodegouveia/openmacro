@@ -1752,6 +1752,91 @@ export const FORMULAS = {
   total_output: (inputs) =>
     read(inputs, 'workers') * read(inputs, 'hoursPerWorker') * read(inputs, 'outputPerHour'),
 
+  // -------------------------------------------------------------------------
+  // Bitcoin price formation (private module `bitcoin-price-formation`)
+  // -------------------------------------------------------------------------
+
+  /**
+   * Price change from net aggressive flow hitting a book of uniform depth.
+   *
+   *   impact = netFlow / depthPerPercent x 1%
+   *
+   * `bookDepth` is the dollars resting within each 1% of price, so a book
+   * with $50m per 1% absorbs $100m of market selling by moving 2%. Real books
+   * are not uniform and real impact is concave in size (closer to a square
+   * root than a straight line), which the lesson says; the linear version is
+   * the one that makes depth's role visible.
+   *
+   * Expects: `netFlow` (signed dollars, negative = net selling), `bookDepth`.
+   * Returns a decimal fraction.
+   */
+  btc_price_impact: (inputs) => {
+    const depth = read(inputs, 'bookDepth');
+    if (depth <= 0) return 0;
+    return (read(inputs, 'netFlow') / depth) * 0.01;
+  },
+
+  /**
+   * The impact ratio: absolute price change per $100m of net aggressive flow.
+   *
+   * Descriptive, not a law. It is undefined at zero flow and explodes near
+   * it, so below $1m of net flow this returns 0 rather than a huge number.
+   *
+   * Expects: `netFlow`, and the `impact` readout computed before it.
+   */
+  btc_impact_per_100m: (inputs) => {
+    const flow = Math.abs(read(inputs, 'netFlow'));
+    if (flow < 1_000_000) return 0;
+    return (Math.abs(read(inputs, 'impact')) / flow) * 100_000_000;
+  },
+
+  /**
+   * How far the price can fall before a leveraged long is liquidated.
+   *
+   *   distance = 1 / leverage - maintenance margin
+   *
+   * Isolated margin, ignoring fees and funding. At 20x a 5% fall wipes out
+   * the margin; the exchange closes the position a little earlier than that,
+   * which is the maintenance margin.
+   *
+   * Expects: `leverage`, `maintenanceMargin` (decimal). Returns a decimal.
+   */
+  btc_liquidation_distance: (inputs) => {
+    const leverage = read(inputs, 'leverage');
+    if (leverage <= 0) return 0;
+    return Math.max(0, 1 / leverage - read(inputs, 'maintenanceMargin'));
+  },
+
+  /**
+   * The position a given margin controls: margin x leverage.
+   *
+   * Expects: `margin`, `leverage`.
+   */
+  btc_position_notional: (inputs) => read(inputs, 'margin') * read(inputs, 'leverage'),
+
+  /**
+   * MVRV: market value over realized value, which for the whole supply is
+   * the same as price over the average price each coin last moved at.
+   *
+   * Expects: `price`, `realizedPrice`.
+   */
+  btc_mvrv: (inputs) => {
+    const realized = read(inputs, 'realizedPrice');
+    if (realized <= 0) return 0;
+    return read(inputs, 'price') / realized;
+  },
+
+  /**
+   * The average holder's unrealised gain (or loss): MVRV - 1.
+   *
+   * Expects: `price`, `realizedPrice`. Returns a decimal.
+   */
+  btc_average_unrealised: (inputs) => {
+    const realized = read(inputs, 'realizedPrice');
+    if (realized <= 0) return 0;
+    return read(inputs, 'price') / realized - 1;
+  },
+
 } satisfies Record<string, Formula>;
 
 export type KnownFormulaId = keyof typeof FORMULAS;
