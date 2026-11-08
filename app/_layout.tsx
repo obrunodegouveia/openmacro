@@ -14,6 +14,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 
 import { env } from '@/config/env';
 import { MODULES } from '@openmacro/core/content/registry';
+import { PRIVATE_MODULES } from '@openmacro/core/content/private';
 import { validateModules } from '@openmacro/core/content/validate';
 import {
   preloadSounds,
@@ -24,7 +25,7 @@ import {
 } from '@/feedback';
 import { startMusic } from '@/feedback/music';
 import { AuthProvider } from '@/providers/AuthProvider';
-import { LocaleProvider } from '@/providers/LocaleProvider';
+import { GrantedModules, LocaleProvider } from '@/providers/LocaleProvider';
 import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';
 import { SeasonsProvider } from '@/seasons';
@@ -78,7 +79,7 @@ export default function RootLayout() {
    */
   useEffect(() => {
     if (!env.validateContentOnBoot) return;
-    const issues = validateModules(MODULES);
+    const issues = validateModules([...MODULES, ...PRIVATE_MODULES]);
     if (issues.length === 0) return;
     console.error(
       `[OpenMacro] ${issues.length} content issue(s) found. Run \`npm run lint:content\` for details.`,
@@ -95,6 +96,8 @@ export default function RootLayout() {
         {/* Seasons, for every screen, in the learner's language. */}
         <SeasonsProvider>
         <AuthProvider>
+          {/* Private modules this account has been granted, for every screen. */}
+          <GrantedModules>
           <ContentUpdateProvider>
           <ProgressProvider>
             <StatusBar style="auto" />
@@ -143,6 +146,7 @@ export default function RootLayout() {
             </ThemeProvider>
           </ProgressProvider>
           </ContentUpdateProvider>
+          </GrantedModules>
         </AuthProvider>
         </SeasonsProvider>
         </LocaleProvider>

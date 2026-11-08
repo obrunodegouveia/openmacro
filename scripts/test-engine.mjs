@@ -384,3 +384,39 @@ test('an assigned exam shown in Portuguese grades, and sends scores without answ
   ]);
   assert.equal(sent.p_asked, 10);
 });
+
+test('private modules: hidden unless granted, never in an assigned exam', async () => {
+  const { PRIVATE_MODULES, isPrivateModule, unlockedFromRows } = await import(
+    '@openmacro/core/content/private'
+  );
+  const { localisedModules, localisedLessonById, localisedCourse } = await import(
+    '@openmacro/core/i18n/content'
+  );
+  const { assembleAssignedExam } = await import('@openmacro/core/engine/assignedExam');
+  const [first] = PRIVATE_MODULES;
+  const lessonId = first.lessons[0].id;
+
+  // Not in the public registry at all, so no public page can list it.
+  assert.ok(!MODULES.some((module) => module.id === first.id));
+  assert.equal(getLessonById(lessonId), undefined);
+
+  for (const locale of ['en', 'pt-PT', 'es-ES']) {
+    assert.ok(!localisedModules(locale).some((module) => isPrivateModule(module.id)));
+    assert.equal(localisedLessonById(locale, lessonId), undefined);
+    const granted = localisedModules(locale, [first.id]);
+    assert.equal(granted.at(-1).id, first.id);
+    assert.ok(localisedLessonById(locale, lessonId, [first.id]));
+    assert.equal(localisedCourse(locale, [first.id]).modules.length, MODULES.length + 1);
+  }
+
+  // Unknown ids from the database unlock nothing.
+  assert.deepEqual(unlockedFromRows([{ module_id: 'nope' }, { module_id: first.id }]), [first.id]);
+  assert.deepEqual(unlockedFromRows(null), []);
+
+  const { exam } = assembleAssignedExam(localisedModules('en', [first.id]), () => true, {
+    seed: 'private',
+    itemCount: 60,
+  });
+  const privateLessons = new Set(first.lessons.map((lesson) => lesson.id));
+  assert.ok(exam.items.every((item) => !privateLessons.has(item.lessonId)));
+});
