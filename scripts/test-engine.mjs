@@ -380,9 +380,116 @@ test('an assigned exam shown in Portuguese grades, and sends scores without answ
     'p_correct',
     'p_exam',
     'p_fingerprint',
+    'p_missed_items',
+    'p_paper_items',
     'p_weak_modules',
   ]);
   assert.equal(sent.p_asked, 10);
+  assert.equal(sent.p_paper_items.length, 10);
+  // Nothing was answered, so every item was missed. Ids only, no answers.
+  assert.deepEqual(sent.p_missed_items, sent.p_paper_items);
+  assert.ok(sent.p_missed_items.every((id) => /^[^#]+#[^#]+$/.test(id)));
+});
+
+test('a retake draws only from its focus lessons and never repeats an excluded item', async () => {
+  const { assembleAssignedExam } = await import('@openmacro/core/engine/assignedExam');
+  const first = assembleAssignedExam(MODULES, () => true, { seed: 'first', itemCount: 20 }).exam;
+  const focusLessons = [...new Set(first.items.map((item) => item.lessonId))];
+  const excludeItems = first.items.map((item) => item.id);
+
+  const retake = assembleAssignedExam(MODULES, () => true, {
+    seed: 'retake',
+    itemCount: 20,
+    focusLessons,
+    excludeItems,
+  }).exam;
+  assert.ok(retake.items.length > 0);
+  assert.ok(retake.items.every((item) => focusLessons.includes(item.lessonId)));
+  assert.ok(retake.items.every((item) => !excludeItems.includes(item.id)));
+
+  // Focus never reaches past what the learner has finished.
+  const none = assembleAssignedExam(MODULES, () => false, {
+    seed: 'retake',
+    itemCount: 20,
+    focusLessons,
+  }).exam;
+  assert.equal(none.items.length, 0);
+});
+
+test('the study plan names the missed questions in the exam language, and ticks redone lessons', async () => {
+  const { examStudyPlan } = await import('@openmacro/core/engine/assignedExam');
+  const { localisedModules } = await import('@openmacro/core/i18n/content');
+  const modules = localisedModules('pt-PT');
+  const lesson = modules[0].lessons[0];
+  const other = modules[0].lessons[1];
+  const exam = {
+    reviewItems: [`${lesson.id}#${lesson.challenges[0].id}`, 'gone#nothing'],
+    reviewLessons: [other.id, lesson.id],
+    assignedAt: '2026-11-08T12:00:00Z',
+  };
+  const done = { [lesson.id]: '2026-11-09T10:00:00Z', [other.id]: '2026-11-01T10:00:00Z' };
+  const plan = examStudyPlan(modules, exam, (id) => done[id]);
+  assert.equal(plan.missed.length, 1, 'an item the course no longer has is left out');
+  assert.equal(plan.missed[0].prompt, lesson.challenges[0].prompt);
+  assert.deepEqual(plan.lessons.map((entry) => entry.lessonId), [lesson.id, other.id]);
+  // Finished after the exam was assigned counts; finished before does not.
+  assert.deepEqual(plan.lessons.map((entry) => entry.redone), [true, false]);
+  assert.equal(plan.redoneCount, 1);
+  assert.equal(examStudyPlan(modules, { reviewItems: [], reviewLessons: [], assignedAt: exam.assignedAt }, () => null), null);
+});
+
+test('the exam speed bonus: never below the pass mark, full when fast, half when steady', async () => {
+  const { examSpeedBonusXp } = await import('@openmacro/core/engine/assignedExam');
+  // 20 questions: 14 right is the pass mark; 600 s is 30 s a question.
+  assert.equal(examSpeedBonusXp(20, 20, 300), 100);
+  assert.equal(examSpeedBonusXp(20, 14, 600), 100);
+  assert.equal(examSpeedBonusXp(20, 14, 601), 50);
+  assert.equal(examSpeedBonusXp(20, 14, 1200), 50);
+  assert.equal(examSpeedBonusXp(20, 14, 1201), 0);
+  // Rushing and guessing never pay, however fast.
+  assert.equal(examSpeedBonusXp(20, 13, 10), 0);
+  assert.equal(examSpeedBonusXp(20, 20, null), 0);
+  assert.equal(examSpeedBonusXp(0, 0, 0), 0);
+  // Leaving once, however briefly, costs the whole bonus.
+  assert.equal(examSpeedBonusXp(20, 20, 300, 1), 0);
+  // An odd full bonus halves down, as integer division does in SQL.
+  assert.equal(examSpeedBonusXp(3, 3, 120), 7);
+});
+
+test('the speed bonus in core is the one the database pays', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { EXAM_SPEED_BONUS } = await import('@openmacro/core/engine/assignedExam');
+  const sql = readFileSync(new URL('../supabase/migrations/0010_exam_timer.sql', import.meta.url), 'utf8');
+  const body = sql.slice(sql.indexOf('create function public.submit_assigned_exam'));
+  assert.match(body, new RegExp(`ceil\\(v_asked \\* ${EXAM_SPEED_BONUS.minShare}\\)`));
+  assert.match(body, new RegExp(`v_duration <= v_asked \\* ${EXAM_SPEED_BONUS.fastSecondsPerQuestion}\\b`));
+  assert.match(body, new RegExp(`v_duration <= v_asked \\* ${EXAM_SPEED_BONUS.steadySecondsPerQuestion}\\b`));
+  assert.match(body, new RegExp(`v_bonus := v_asked \\* ${EXAM_SPEED_BONUS.xpPerQuestion};`));
+  assert.match(body, /if v_row\.leaves = 0\b/);
+  assert.match(body, new RegExp(`v_bonus := \\(v_asked \\* ${EXAM_SPEED_BONUS.xpPerQuestion}\\) / 2;`));
+});
+
+test('the exam clock and the reply from handing in', async () => {
+  const { formatExamClock, examTimingFromReply } = await import('@openmacro/core/engine/assignedExam');
+  assert.equal(formatExamClock(0), '0:00');
+  assert.equal(formatExamClock(65.9), '1:05');
+  assert.equal(formatExamClock(3725), '1:02:05');
+  assert.equal(formatExamClock(-3), '0:00');
+  assert.deepEqual(examTimingFromReply([{ duration_seconds: 412, bonus_xp: 100, leaves: 0 }]), {
+    seconds: 412,
+    bonusXp: 100,
+    leaves: 0,
+  });
+  assert.deepEqual(examTimingFromReply([{ duration_seconds: null, bonus_xp: 0, leaves: 2 }]), {
+    seconds: null,
+    bonusXp: 0,
+    leaves: 2,
+  });
+  assert.equal(examTimingFromReply([]), null);
+  const { examStartFromReply } = await import('@openmacro/core/engine/assignedExam');
+  assert.deepEqual(examStartFromReply([{ elapsed_seconds: 90, leaves: 1 }]), { seconds: 90, leaves: 1 });
+  assert.deepEqual(examStartFromReply(null), { seconds: 0, leaves: 0 });
+  assert.equal(examTimingFromReply(null), null);
 });
 
 test('optional modules: hidden unless unlocked, never in an assigned exam', async () => {
