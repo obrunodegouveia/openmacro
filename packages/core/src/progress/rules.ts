@@ -144,6 +144,19 @@ export function applyLessonResult(
   };
 }
 
+/**
+ * Adds XP earned outside a lesson (a video watched) to the total. The streak,
+ * the day and every lesson's record stay as they are: only lessons keep a
+ * streak alive.
+ */
+export function applyBonusXp(snapshot: ProgressSnapshot, xp: number): ProgressSnapshot {
+  if (!Number.isFinite(xp) || xp <= 0) return snapshot;
+  return {
+    ...snapshot,
+    profile: { ...snapshot.profile, totalXp: snapshot.profile.totalXp + Math.round(xp) },
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Seed
 // ---------------------------------------------------------------------------

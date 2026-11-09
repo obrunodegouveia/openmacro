@@ -24,6 +24,7 @@
  */
 
 import {
+  applyBonusXp,
   applyLessonResult,
   localDateKey,
   mergeSnapshots,
@@ -208,6 +209,19 @@ export function createSyncedDataProvider(
         const today = localDateKey();
         const current = await hydrate();
         const next = applyLessonResult(reconcileSnapshot(current.snapshot, today), result, today);
+        await persistMirror({ snapshot: next, dirty: true, lastError: null });
+        return next;
+      });
+
+      void enqueue(push);
+      return { profile: { ...snapshot.profile }, progress: { ...snapshot.progress } };
+    },
+
+    async recordBonusXp(xp: number) {
+      // Like a lesson: the local write is the commit, the push follows.
+      const snapshot = await enqueue(async () => {
+        const current = await hydrate();
+        const next = applyBonusXp(reconcileSnapshot(current.snapshot, localDateKey()), xp);
         await persistMirror({ snapshot: next, dirty: true, lastError: null });
         return next;
       });

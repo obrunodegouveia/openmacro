@@ -21,6 +21,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
+  applyBonusXp,
   applyLessonResult,
   hasLocalProgress,
   localDateKey,
@@ -280,6 +281,29 @@ export async function recordCompletion(
 
   if (!account) return next;
   return syncLocalIntoAccount(account);
+}
+
+/**
+ * Adds XP earned outside a lesson (a video watched).
+ *
+ * Signed in, it goes straight onto the account: the local store is empty
+ * then, and `mergeSnapshots` takes the larger total rather than adding, so
+ * XP added locally would be lost against the account's. Signed out it stays
+ * local, like a lesson, and joins the account at sign-in.
+ */
+export async function recordBonusXp(
+  xp: number,
+  account?: { client: SupabaseClient; userId: string; displayName: string },
+): Promise<ProgressSnapshot> {
+  if (!account) {
+    const next = applyBonusXp(readLocalProgress(), xp);
+    writeLocalProgress(next);
+    return next;
+  }
+  const cloud = await readCloudProgress(account.client, account.userId, account.displayName);
+  const next = applyBonusXp(cloud, xp);
+  await writeCloudProgress(account.client, account.userId, next);
+  return next;
 }
 
 /**

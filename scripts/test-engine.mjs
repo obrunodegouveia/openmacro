@@ -707,3 +707,33 @@ test('the study plan ticks a video by how much of it was played', async () => {
     [[true, 0.95], [false, 0.4], [true, null]],
   );
 });
+
+test('a watched video earns XP once, by its listed length, never the player’s', async () => {
+  const { videoXp, videoXpForRow, videoMinutesByKey, VIDEO_XP_CAP, VIDEO_XP_PER_MINUTE } = await import(
+    '@openmacro/core/engine/videoProgress'
+  );
+  const { applyBonusXp, seedSnapshot } = await import('@openmacro/core/progress/rules');
+  assert.equal(videoXp(10), 10 * VIDEO_XP_PER_MINUTE);
+  assert.equal(videoXp(100), VIDEO_XP_CAP);
+  assert.equal(videoXp(undefined), 0);
+  assert.equal(videoXp(0), 0);
+
+  const minutes = videoMinutesByKey(MODULES);
+  const [key, listed] = [...minutes.entries()][0];
+  assert.ok(minutes.size > 20, 'the course videos are counted');
+  const watched = { video_key: key, duration_seconds: listed * 60, completed_at: '2026-11-09T15:00:00Z' };
+  assert.equal(videoXpForRow(watched, minutes), videoXp(listed));
+  // Not watched, not a course video, or a length far below the listed one: nothing.
+  assert.equal(videoXpForRow({ ...watched, completed_at: null }, minutes), 0);
+  assert.equal(videoXpForRow({ ...watched, video_key: 'invented' }, minutes), 0);
+  assert.equal(videoXpForRow({ ...watched, duration_seconds: 30 }, minutes), 0);
+
+  const seed = seedSnapshot('2026-11-09');
+  const after = applyBonusXp(seed, 24);
+  assert.equal(after.profile.totalXp, seed.profile.totalXp + 24);
+  // The streak and the lessons are untouched; nonsense adds nothing.
+  assert.equal(after.profile.dayStreak, seed.profile.dayStreak);
+  assert.deepEqual(after.progress, seed.progress);
+  assert.equal(applyBonusXp(seed, -5), seed);
+  assert.equal(applyBonusXp(seed, Number.NaN), seed);
+});

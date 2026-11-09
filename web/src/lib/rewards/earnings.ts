@@ -3,6 +3,7 @@ import "server-only";
 import { MODULES } from "@openmacro/core/content/registry";
 import { DEFAULT_CHALLENGE_XP } from "@openmacro/core/content/schema";
 import { EXAM_SPEED_BONUS, examPassed } from "@openmacro/core/engine/assignedExam";
+import { videoMinutesByKey, videoXp, videoXpForRow } from "@openmacro/core/engine/videoProgress";
 
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { eurosToBaseUnits } from "@/lib/blockchain/payout";
@@ -35,8 +36,9 @@ import type { Recipient } from "@/lib/rewards/recipients";
  * keep the damage bounded:
  *
  *   - Best XP is capped per lesson at the most that lesson can award, from
- *     the content registry. The whole course is worth MAX_COURSE_XP, however
- *     the rows were written.
+ *     the content registry, and a watched video is worth its listed length,
+ *     once. The whole course is worth MAX_COURSE_XP, however the rows were
+ *     written.
  *   - Minutes are stamped by the server's clock, one row each. Nothing can be
  *     backfilled, and a day can never hold more than 24 hours.
  */
@@ -65,7 +67,13 @@ const MAX_XP_BY_LESSON: ReadonlyMap<string, number> = new Map(
   ),
 );
 
-export const MAX_COURSE_XP = [...MAX_XP_BY_LESSON.values()].reduce((a, b) => a + b, 0);
+/** Every course video's listed running time, by `video_progress` key: what a watched video is worth. */
+const VIDEO_MINUTES = videoMinutesByKey(MODULES);
+
+/** Every lesson at its best, and every video watched once. */
+export const MAX_COURSE_XP =
+  [...MAX_XP_BY_LESSON.values()].reduce((a, b) => a + b, 0) +
+  [...VIDEO_MINUTES.values()].reduce((sum, minutes) => sum + videoXp(minutes), 0);
 
 /** Statuses that count as money gone, or possibly gone. */
 const WITHDRAWN_STATUSES = ["UNCLAIMED", "CLAIM_PENDING", "PAID", "FAILED"] as const;
@@ -133,7 +141,9 @@ export async function recordActiveMinute(userId: string): Promise<boolean> {
  *
  * Earned XP is each lesson's best score, capped at the most that lesson can
  * award, summed — the same rule as before minting — plus any speed bonus
- * from an assigned exam. A replay counts only when
+ * from an assigned exam, plus XP for each course video watched (90% or more,
+ * migration 0013; `videoXpForRow`, worth its listed length, never the
+ * player's). A replay counts only when
  * it beats the old best, and then only by the difference. Whatever the sum
  * has grown by since the last mint is minted now, at the recipient's current
  * rate, and never re-priced.
@@ -144,12 +154,17 @@ export async function recordActiveMinute(userId: string): Promise<boolean> {
 async function mintNewXp(userId: string, recipient: Recipient): Promise<void> {
   const db = getSupabaseAdmin();
 
-  const [progress, mints, exams] = await Promise.all([
+  const [progress, mints, exams, videos] = await Promise.all([
     db.from("lesson_progress").select("lesson_id, best_xp").eq("user_id", userId),
     db.from("xp_mints").select("xp").eq("user_id", userId),
     db.from("assigned_exams").select("bonus_xp, item_count").eq("user_id", userId),
+    db
+      .from("video_progress")
+      .select("video_key, duration_seconds, completed_at")
+      .eq("user_id", userId)
+      .not("completed_at", "is", null),
   ]);
-  for (const result of [progress, mints, exams]) {
+  for (const result of [progress, mints, exams, videos]) {
     // Minting from a partial read could mint twice what was earned.
     if (result.error) throw new Error(`xp mint read failed: ${result.error.message}`);
   }
@@ -167,7 +182,22 @@ async function mintNewXp(userId: string, recipient: Recipient): Promise<void> {
     const cap = (row.item_count as number) * EXAM_SPEED_BONUS.xpPerQuestion;
     return sum + Math.min(Math.max(0, (row.bonus_xp as number) ?? 0), cap);
   }, 0);
-  const earned = fromLessons + fromExams;
+  // Videos watched (0013): written only by record_video_progress; each worth
+  // its listed length, and nothing for a video the course does not have.
+  const fromVideos = (videos.data ?? []).reduce(
+    (sum, row) =>
+      sum +
+      videoXpForRow(
+        {
+          video_key: row.video_key as string,
+          duration_seconds: row.duration_seconds as number,
+          completed_at: row.completed_at as string | null,
+        },
+        VIDEO_MINUTES,
+      ),
+    0,
+  );
+  const earned = fromLessons + fromExams + fromVideos;
   const minted = (mints.data ?? []).reduce((sum, row) => sum + (row.xp as number), 0);
 
   // Minted XP only grows: if the best scores ever read lower, nothing happens.

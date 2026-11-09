@@ -24,6 +24,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
+  applyBonusXp,
   applyLessonResult,
   localDateKey,
   reconcileSnapshot,
@@ -155,6 +156,15 @@ export const asyncStorageDataProvider: LearningDataProvider = {
       // Reconcile first: the app may have been open across midnight.
       const current = reconcileSnapshot(await hydrate(), today);
       const next = applyLessonResult(current, result, today);
+      await persist(next);
+      return { profile: { ...next.profile }, progress: { ...next.progress } };
+    });
+  },
+
+  async recordBonusXp(xp: number) {
+    return enqueue(async () => {
+      const current = reconcileSnapshot(await hydrate(), localDateKey());
+      const next = applyBonusXp(current, xp);
       await persist(next);
       return { profile: { ...next.profile }, progress: { ...next.progress } };
     });

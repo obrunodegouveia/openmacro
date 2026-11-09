@@ -215,6 +215,7 @@ export const esES: UiDictionary = {
   'lesson.combo': '{count, number} seguidas',
   'lesson.video.play': 'Reproducir {title}',
   'lesson.video.minutes': '{count, number} min',
+  'lesson.video.xpEarned': "✓ Visto · +{xp} XP",
   'lesson.video.watchFirst': 'Míralo primero',
   'lesson.video.rewatch': 'Ver el vídeo',
   'lesson.video.privacy': 'No se carga nada hasta que pulses reproducir',

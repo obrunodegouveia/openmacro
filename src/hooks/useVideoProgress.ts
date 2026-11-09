@@ -9,6 +9,9 @@ import {
   shouldSaveVideoProgress,
   videoProgressArgs,
   videoProgressFromRow,
+  videoWatched,
+  watchedSeconds,
+  watchedShare,
   type VideoProgress,
   type WatchSegment,
   type WatchTracker,
@@ -29,10 +32,14 @@ import { supabase as client } from '@/services/supabaseClient';
  *
  * @param key Where the video is (`lessonVideoKey`, `moduleVideoKey`).
  * @param videoId The YouTube id.
+ * @param onWatched Called once, the first time 90% of the video has been
+ *   played by a learner who had not watched it before: the moment it earns
+ *   its XP (`videoXp`).
  */
 export function useVideoProgressRecorder(
   key: string,
   videoId: string | null,
+  onWatched?: () => void,
 ): (report: { time: number; duration: number; playing: boolean }) => void {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
@@ -40,11 +47,23 @@ export function useVideoProgressRecorder(
   const stored = useRef<WatchSegment[]>([]);
   const duration = useRef(0);
   const lastSaved = useRef(0);
+  // Whether the stored row has been read, whether it was already watched, and
+  // whether this card has already said so: XP is earned once per video.
+  const loaded = useRef(false);
+  const wasWatched = useRef(false);
+  const awarded = useRef(false);
+  const watchedRef = useRef(onWatched);
+  useEffect(() => {
+    watchedRef.current = onWatched;
+  }, [onWatched]);
 
   // What this learner had already watched of this video.
   useEffect(() => {
     tracker.current = null;
     stored.current = [];
+    loaded.current = false;
+    wasWatched.current = false;
+    awarded.current = false;
     const supabase = client;
     if (!supabase || !userId || !videoId) return;
     let live = true;
@@ -54,7 +73,10 @@ export function useVideoProgressRecorder(
         .select(VIDEO_PROGRESS_RESUME_COLUMNS)
         .eq('video_key', key)
         .maybeSingle();
-      if (!live || !data) return;
+      if (!live) return;
+      loaded.current = true;
+      if (!data) return;
+      wasWatched.current = Boolean(data.completed_at);
       const segments = mergeSegments(Array.isArray(data.segments) ? data.segments : []);
       stored.current = segments;
       // Already playing when the read came back: fold it into what is counted.
@@ -96,6 +118,14 @@ export function useVideoProgressRecorder(
       if (!tracker.current) tracker.current = createWatchTracker(stored.current);
       const now = Date.now();
       tracker.current.observe(report.time, report.playing, now);
+      const share = watchedShare(watchedSeconds(tracker.current.segments()), duration.current);
+      if (loaded.current && !wasWatched.current && !awarded.current && videoWatched(share)) {
+        // Saved at once, so the row says 'watched' before anything counts it.
+        awarded.current = true;
+        save();
+        watchedRef.current?.();
+        return;
+      }
       if (shouldSaveVideoProgress(tracker.current, report.playing, lastSaved.current, now)) save();
     },
     [userId, save],
