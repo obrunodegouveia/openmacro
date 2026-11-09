@@ -245,6 +245,7 @@ export const en = {
   'lesson.combo': '{count, number} in a row',
   'lesson.video.play': 'Play {title}',
   'lesson.video.minutes': '{count, number} min',
+  'lesson.video.xpEarned': "✓ Watched · +{xp} XP",
   'lesson.video.watchFirst': 'Watch first',
   'lesson.video.rewatch': 'Watch the video',
   'lesson.video.privacy': 'Nothing loads until you press play',

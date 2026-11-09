@@ -46,6 +46,10 @@ export interface LearningDataProvider {
   recordLessonResult(
     result: LessonResult,
   ): Promise<{ profile: LearnerProfile; progress: Record<string, LessonProgress> }>;
+  /** Adds XP earned outside a lesson (a video watched) and returns the updated snapshot. */
+  recordBonusXp(
+    xp: number,
+  ): Promise<{ profile: LearnerProfile; progress: Record<string, LessonProgress> }>;
   /** Wipes everything — handy in development and for a "start over" button. */
   reset(): Promise<void>;
 }

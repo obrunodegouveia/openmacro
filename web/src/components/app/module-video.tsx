@@ -15,6 +15,10 @@ import {
 import { YouTubePlayer } from "@/components/app/youtube-player";
 import { setWatching } from "@/lib/activity";
 import { useVideoProgressRecorder } from "@/lib/use-video-progress";
+import { recordBonusXp } from "@/lib/progress";
+import { getSupabase } from "@/lib/supabase";
+import { useAuth } from "@/components/site/auth-provider";
+import { videoXp } from "@openmacro/core/engine/videoProgress";
 
 /**
  * Watch-first overview for a module.
@@ -66,7 +70,17 @@ export function ModuleVideo({
   }, []);
   const site = useSiteText();
   const id = youTubeId(video.url);
-  const onProgress = useVideoProgressRecorder(progressKey, id);
+  const { learner } = useAuth();
+  // XP once, the first time this video has been watched; said under the card.
+  const [earned, setEarned] = React.useState(0);
+  const onWatched = React.useCallback(() => {
+    const xp = videoXp(video.minutes);
+    const supabase = getSupabase();
+    if (xp <= 0 || !learner || !supabase) return;
+    setEarned(xp);
+    void recordBonusXp(xp, { client: supabase, userId: learner.id, displayName: learner.name }).catch(() => {});
+  }, [video.minutes, learner]);
+  const onProgress = useVideoProgressRecorder(progressKey, id, onWatched);
   if (!id) return null;
 
   const toggle = () => {
@@ -158,6 +172,11 @@ export function ModuleVideo({
         </button>
       )}
       </div>
+      {earned > 0 ? (
+        <p role="status" className="px-4 pb-3 text-xs font-bold text-mint-bright">
+          {t("lesson.video.xpEarned", { xp: earned })}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -57,6 +57,8 @@ interface ProgressContextValue {
   /** Cloud sync state while signed in; null when signed out. */
   sync: SyncState | null;
   recordResult: (result: LessonResult) => Promise<void>;
+  /** XP earned outside a lesson: a video watched. */
+  recordBonusXp: (xp: number) => Promise<void>;
   reset: () => Promise<void>;
   isLessonComplete: (lessonId: string) => boolean;
 }
@@ -174,6 +176,19 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     [provider],
   );
 
+  const recordBonusXp = useCallback(
+    async (xp: number) => {
+      try {
+        const snapshot = await provider.recordBonusXp(xp);
+        setProfile(snapshot.profile);
+        setProgress(snapshot.progress);
+      } catch (cause) {
+        setError(cause instanceof Error ? cause.message : 'Failed to save your progress.');
+      }
+    },
+    [provider],
+  );
+
   const reset = useCallback(async () => {
     try {
       await provider.reset();
@@ -206,6 +221,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       syncing: Boolean(supabase && identity),
       sync,
       recordResult,
+      recordBonusXp,
       reset,
       isLessonComplete,
     }),
@@ -219,6 +235,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       identity,
       sync,
       recordResult,
+      recordBonusXp,
       reset,
       isLessonComplete,
     ],

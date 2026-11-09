@@ -20,6 +20,7 @@
  */
 
 import {
+  applyBonusXp,
   applyLessonResult,
   localDateKey,
   seedSnapshot,
@@ -48,6 +49,11 @@ export const mockDataProvider: LearningDataProvider = {
 
   async recordLessonResult(result: LessonResult) {
     state = applyLessonResult(state, result, localDateKey());
+    return delay({ profile: { ...state.profile }, progress: { ...state.progress } });
+  },
+
+  async recordBonusXp(xp: number) {
+    state = applyBonusXp(state, xp);
     return delay({ profile: { ...state.profile }, progress: { ...state.progress } });
   },
 

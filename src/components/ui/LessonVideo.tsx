@@ -67,7 +67,7 @@
  */
 
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
@@ -79,7 +79,9 @@ import {
 } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
+import { videoXp } from '@openmacro/core/engine/videoProgress';
 import { useVideoProgressRecorder } from '@/hooks/useVideoProgress';
+import { useProgress } from '@/providers/ProgressProvider';
 import { useLocale } from '@/providers/LocaleProvider';
 import {
   nextCaptions,
@@ -136,7 +138,16 @@ export function LessonVideo({
   // The second the embed last reported, for reopening at the same moment.
   const position = useRef(0);
   const id = youTubeId(url);
-  const record = useVideoProgressRecorder(progressKey, id);
+  const { recordBonusXp } = useProgress();
+  // XP once, the first time this video has been watched; said under the card.
+  const [earned, setEarned] = useState(0);
+  const onWatched = useCallback(() => {
+    const xp = videoXp(minutes);
+    if (xp <= 0) return;
+    setEarned(xp);
+    void recordBonusXp(xp);
+  }, [minutes, recordBonusXp]);
+  const record = useVideoProgressRecorder(progressKey, id, onWatched);
   const playing = load !== null;
   // Once answering starts the video shrinks to its bar, so the question keeps
   // the screen, but it never goes away. One already playing is left playing.
@@ -313,6 +324,12 @@ export function LessonVideo({
         </View>
       )}
 
+      {earned > 0 ? (
+        <Text accessibilityLiveRegion="polite" style={styles.earned}>
+          {t('lesson.video.xpEarned', { xp: earned })}
+        </Text>
+      ) : null}
+
       <Modal
         visible={fullscreen && playing}
         animationType="fade"
@@ -371,6 +388,7 @@ function youTubeId(url: string): string | null {
 }
 
 const styles = StyleSheet.create({
+  earned: { ...typography.caption, color: palette.mintDark, paddingHorizontal: spacing.md, paddingBottom: spacing.sm, fontWeight: '700' },
   card: {
     marginBottom: spacing.lg,
     borderRadius: radius.lg,

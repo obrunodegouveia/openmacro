@@ -150,6 +150,63 @@ export function videoProgressArgs(
   };
 }
 
+/**
+ * ---------------------------------------------------------------------------
+ * XP for watching
+ * ---------------------------------------------------------------------------
+ *
+ * A video watched (90% or more played) earns XP once: `VIDEO_XP_PER_MINUTE`
+ * for each minute of its listed running time (`video.minutes` in the
+ * content), at most `VIDEO_XP_CAP`. The length comes from the content, never
+ * from the player, so a doctored report cannot make a video worth more. For a
+ * learner on the earnings scheme the server mints it like lesson XP
+ * (`web/src/lib/rewards/earnings.ts`), and only for a recorded length close to
+ * the listed one (`VIDEO_MIN_LENGTH_SHARE`).
+ */
+export const VIDEO_XP_PER_MINUTE = 3;
+export const VIDEO_XP_CAP = 60;
+
+/** A recorded length below this share of the listed running time earns nothing. */
+export const VIDEO_MIN_LENGTH_SHARE = 0.75;
+
+/** The XP a video of this listed length earns, once, when watched. */
+export function videoXp(minutes: number | null | undefined): number {
+  if (!minutes || minutes <= 0) return 0;
+  return Math.min(VIDEO_XP_CAP, Math.round(minutes * VIDEO_XP_PER_MINUTE));
+}
+
+/** Every video in these modules, by key, with its listed running time in minutes. */
+export function videoMinutesByKey(
+  modules: readonly {
+    id: string;
+    video?: { minutes?: number } | null;
+    lessons: readonly { id: string; video?: { minutes?: number } | null }[];
+  }[],
+): ReadonlyMap<string, number> {
+  const out = new Map<string, number>();
+  for (const module of modules) {
+    if (module.video?.minutes) out.set(moduleVideoKey(module.id), module.video.minutes);
+    for (const lesson of module.lessons) {
+      if (lesson.video?.minutes) out.set(lessonVideoKey(lesson.id), lesson.video.minutes);
+    }
+  }
+  return out;
+}
+
+/**
+ * The XP a recorded row earns, as the server counts it: watched, a video the
+ * course has, and a recorded length close to the listed one.
+ */
+export function videoXpForRow(
+  row: { video_key: string; duration_seconds: number; completed_at?: string | null },
+  minutesByKey: ReadonlyMap<string, number>,
+): number {
+  const minutes = minutesByKey.get(row.video_key);
+  if (!row.completed_at || !minutes) return 0;
+  if (row.duration_seconds < minutes * 60 * VIDEO_MIN_LENGTH_SHARE) return 0;
+  return videoXp(minutes);
+}
+
 /** While a video plays, what was watched is saved at most this often; and at once on pause and on close. */
 export const VIDEO_SAVE_EVERY_MS = 15_000;
 

@@ -227,6 +227,7 @@ export const ptPT: UiDictionary = {
   'lesson.combo': '{count, plural, one {# seguida} other {# seguidas}}',
   'lesson.video.play': 'Reproduzir {title}',
   'lesson.video.minutes': '{count, number} min',
+  'lesson.video.xpEarned': "✓ Visto · +{xp} XP",
   'lesson.video.watchFirst': 'Vê primeiro',
   'lesson.video.rewatch': 'Ver o vídeo',
   'lesson.video.privacy': 'Nada é carregado até premires reproduzir',
