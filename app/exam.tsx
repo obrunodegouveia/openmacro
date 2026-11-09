@@ -16,9 +16,14 @@
  * the learner comes back (`leave_assigned_exam`), and costs the speed bonus.
  * The screen is kept awake meanwhile, so the phone locking itself while the
  * learner thinks is not mistaken for leaving.
+ *
+ * A teacher can give each question a time limit (`seconds_per_question`,
+ * migration 0012). The countdown is `questionSecondsLeft` from core, so this
+ * screen and the website end a question at the same moment: the exam moves on
+ * with the answer chosen so far, or with none, which counts as wrong.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -43,6 +48,7 @@ import {
   examStudyPlan,
   examTimingFromReply,
   formatExamClock,
+  questionSecondsLeft,
   type AssignedExam,
   type ExamTiming,
   type StudyPlan,
@@ -113,6 +119,13 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
   const [timing, setTiming] = useState<ExamTiming | null>(null);
   const [starting, setStarting] = useState(false);
   const [leaves, setLeaves] = useState(0);
+  // When the current question appeared, for the limit per question.
+  const [questionAt, setQuestionAt] = useState(0);
+  const [timedOut, setTimedOut] = useState(false);
+  const draftRef = useRef<ChallengeAnswer | null>(null);
+  useEffect(() => {
+    draftRef.current = draft;
+  }, [draft]);
 
   const start = useCallback(async () => {
     setStarting(true);
@@ -130,6 +143,7 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
       // Offline: the exam still runs.
     }
     setClock({ seconds, at: Date.now() });
+    setQuestionAt(Date.now());
     setStarting(false);
     setStarted(true);
   }, [exam.id]);
@@ -201,21 +215,49 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
   const challenge = item ? lookup(item) : undefined;
   const last = index === paper.items.length - 1;
 
+  // Moves on with `answer`, or with none when the time ran out unanswered.
+  const advance = useCallback(
+    (answer: ChallengeAnswer | null, outOfTime: boolean) => {
+      if (!item) return;
+      emitFeedback('advance');
+      const nextAnswers = answer ? { ...answers, [item.id]: answer } : answers;
+      setAnswers(nextAnswers);
+      setDraft(null);
+      setTimedOut(outOfTime);
+      if (!last) {
+        setIndex(index + 1);
+        setQuestionAt(Date.now());
+        return;
+      }
+      emitFeedback('complete');
+      const graded = gradeExam(paper, nextAnswers, lookup, t);
+      setResult(graded);
+      void send(graded);
+    },
+    [answers, index, item, last, lookup, paper, send, t],
+  );
+
   const handleNext = useCallback(() => {
-    if (!item || !draft) return;
-    emitFeedback('advance');
-    const nextAnswers = { ...answers, [item.id]: draft };
-    setAnswers(nextAnswers);
-    setDraft(null);
-    if (!last) {
-      setIndex(index + 1);
+    if (draft) advance(draft, false);
+  }, [advance, draft]);
+
+  // The limit per question: checked every second while the exam runs, and on
+  // coming back from the background, against the wall clock.
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  useEffect(() => {
+    if (!running || exam.secondsPerQuestion === null) {
+      setSecondsLeft(null);
       return;
     }
-    emitFeedback('complete');
-    const graded = gradeExam(paper, nextAnswers, lookup, t);
-    setResult(graded);
-    void send(graded);
-  }, [answers, draft, index, item, last, lookup, paper, send, t]);
+    const tick = () => {
+      const left = questionSecondsLeft(exam, Date.now() - questionAt);
+      setSecondsLeft(left);
+      if (left === 0) advance(draftRef.current, true);
+    };
+    tick();
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, [running, exam, questionAt, advance]);
 
   if (paper.items.length === 0) {
     return <Nothing kind="empty" />;
@@ -328,6 +370,11 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
           })}
         </Text>
         <Text style={styles.doneBody}>{t('exam.intro.leave')}</Text>
+        {exam.secondsPerQuestion !== null ? (
+          <Text style={[styles.doneBody, { fontWeight: '700' }]}>
+            {t('exam.intro.perQuestion', { seconds: exam.secondsPerQuestion })}
+          </Text>
+        ) : null}
         {exam.isFinal ? (
           <Text style={[styles.doneBody, { fontWeight: '700' }]}>{t('exam.intro.final')}</Text>
         ) : null}
@@ -367,6 +414,25 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
           {clock ? <Clock from={clock} label={t('exam.clock')} /> : null}
         </View>
         <ProgressBar progress={index / paper.items.length} />
+        {secondsLeft !== null && exam.secondsPerQuestion !== null ? (
+          <View style={styles.questionTimer}>
+            <View style={styles.questionTimerBar}>
+              <ProgressBar progress={secondsLeft / exam.secondsPerQuestion} />
+            </View>
+            <Text
+              accessibilityLabel={`${t('exam.questionTime')} ${formatExamClock(secondsLeft)}`}
+              maxFontSizeMultiplier={fontScale.chrome}
+              style={[styles.clock, secondsLeft <= 10 && styles.urgent]}
+            >
+              {formatExamClock(secondsLeft)}
+            </Text>
+          </View>
+        ) : null}
+        {timedOut ? (
+          <Text accessibilityLiveRegion="polite" style={styles.left}>
+            {t('exam.timeUp')}
+          </Text>
+        ) : null}
         {leaves > 0 ? (
           <Text accessibilityLiveRegion="polite" style={styles.left}>
             {t('exam.left', { count: leaves })}
@@ -412,6 +478,34 @@ function StudyPlanView({ plan }: { plan: StudyPlan }) {
   return (
     <View style={styles.study}>
       <Text style={styles.weakTitle}>{t('exam.study.title')}</Text>
+      {plan.note ? (
+        <View style={styles.studyGroup}>
+          <Text style={styles.levelName}>{t('exam.study.note')}</Text>
+          <Text style={styles.note}>{plan.note}</Text>
+        </View>
+      ) : null}
+      {plan.videos.length > 0 ? (
+        <View style={styles.studyGroup}>
+          <Text style={styles.levelName}>{t('exam.study.videos')}</Text>
+          {plan.videos.map((video) => (
+            <Pressable
+              key={video.lessonId}
+              accessibilityRole="button"
+              onPress={() => router.push(`/lesson/${video.lessonId}`)}
+              style={({ pressed }) => [styles.studyLesson, pressed && styles.pressed]}
+            >
+              <Text style={styles.studyLessonTitle}>
+                {video.watched ? '✓ ' : '▶ '}
+                {video.title}
+              </Text>
+              <Text style={styles.levelScore}>
+                {video.moduleTitle} ·{' '}
+                {video.watched ? t('exam.study.watched') : t('exam.study.watch')}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
       {plan.missed.length > 0 ? (
         <View style={styles.studyGroup}>
           <Text style={styles.levelName}>{t('exam.study.missed')}</Text>
@@ -483,6 +577,10 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.6 },
   headerTitle: { ...typography.title, color: palette.ink, flexShrink: 1, flexGrow: 1 },
   clock: { ...typography.heading, color: palette.inkMuted, fontVariant: ['tabular-nums'] },
+  urgent: { color: palette.ink, fontWeight: '700' },
+  questionTimer: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  questionTimerBar: { flex: 1 },
+  note: { ...typography.body, color: palette.ink },
   content: { padding: spacing.lg, gap: spacing.lg },
   footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
   centred: {
