@@ -15,6 +15,10 @@
  * scores, and synthesised by `scripts/generate-music.mjs` (which explains the
  * sources). The Grieg plays a whole tone below the score, in A minor, so it
  * cannot clash with the C major feedback chimes.
+ *
+ * El Salvador plays the chorus of its national anthem (Aberle, 1879, public
+ * domain), read off the 1917 official edition and synthesised the same way,
+ * a semitone down in C major. A lone track loops on itself.
  */
 
 import type { AudioSource } from 'expo-audio';
@@ -41,13 +45,25 @@ const HALLOWEEN: readonly AppTrack[] = [
   },
 ];
 
+/** El Salvador: the chorus of the national anthem, looping. */
+const EL_SALVADOR: readonly AppTrack[] = [
+  {
+    id: 'el-salvador-anthem',
+    title: 'Himno Nacional de El Salvador',
+    credit: 'Juan Aberle (1879), public domain; arrangement OpenMacro, in C major',
+    asset: require('../../assets/audio/music/el-salvador-anthem.m4a'),
+  },
+];
+
 /** Each season's music, by id. A season not listed plays the default (Korobeiniki). */
 export const SEASON_MUSIC: Partial<Record<SeasonId, HasMusic<AudioSource>>> = {
   halloween: { music: HALLOWEEN },
+  'el-salvador': { music: EL_SALVADOR },
 };
 
 /** The presets, with this app's music added, for `SeasonProvider`. */
 export const SEASON_PACKS_WITH_MUSIC: Readonly<Record<SeasonId, SeasonPack>> = {
   ...SEASON_PACKS,
   halloween: { ...SEASON_PACKS.halloween, music: HALLOWEEN },
+  'el-salvador': { ...SEASON_PACKS['el-salvador'], music: EL_SALVADOR },
 };

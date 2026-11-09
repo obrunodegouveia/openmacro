@@ -21,6 +21,7 @@ holidays have `priority: 1`, so they win the days they share.
 | Winter | 21 December | 19 March | Wraps the new year; Christmas covers its first days |
 | Halloween | 1 October | 1 November | Priority 1, over autumn |
 | Christmas | 1 December | 26 December | Priority 1, over the end of autumn and the start of winter |
+| El Salvador | 9 November | 13 November | 2026 only (the year is checked in `SEASONS`); priority 1, over autumn. OpenMacro's own pack, in `packages/core/src/season.ts` |
 
 Switch a holiday off remotely and the nature season beneath it shows
 instead: with Halloween disabled, October is autumn.
@@ -111,12 +112,13 @@ package only decides: `musicFor` / `useSeasonMusic` return a season's
 tracks while it is on, in the full look, with the learner's switch On, and
 `null` otherwise, meaning the app's default music.
 
-In OpenMacro, only Halloween has music, and only the app plays it:
+In OpenMacro, Halloween and El Salvador have music, and only the app plays it:
 
 | Track | Source | File |
 | --- | --- | --- |
 | "Funeral March of a Marionette" | Gounod, Lemoine 1882 piano edition | `assets/audio/music/funeral-march.m4a` |
 | "In the Hall of the Mountain King" | Grieg, Schirmer 1899 piano edition, played in A minor (a whole tone down) | `assets/audio/music/mountain-king.m4a` |
+| "Himno Nacional de El Salvador", the chorus | Aberle, Imprenta Nacional 1917 official edition, played in C major (a semitone down) | `assets/audio/music/el-salvador-anthem.m4a` |
 
 Both are public domain, synthesised from the printed scores by
 `scripts/generate-music.mjs` (`npm run gen:music`; the header explains the

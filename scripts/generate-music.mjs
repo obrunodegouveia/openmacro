@@ -10,6 +10,9 @@
  *   funeral-march.m4a   Gounod, "Funeral March of a Marionette" (Halloween)
  *   mountain-king.m4a   Grieg, "In the Hall of the Mountain King" (Halloween),
  *                       transposed from Grieg's B minor to A minor
+ *   el-salvador-anthem.m4a
+ *                       Aberle, "Himno Nacional de El Salvador", the chorus
+ *                       (the El Salvador season), from D flat major to C major
  *
  * `npm run gen:music` writes all of them; name tracks to write only those,
  * e.g. `npm run gen:music -- funeral-march mountain-king`. `--stems <dir>`
@@ -701,6 +704,135 @@ function renderMountainKing(log) {
 }
 
 /* ==========================================================================
+ * ABERLE — HIMNO NACIONAL DE EL SALVADOR
+ * ==========================================================================
+ *
+ * The chorus ("Saludemos la patria orgullosos…"), the part everyone sings,
+ * played twice: first by the reed, then by the reed with the music box an
+ * octave above. Underneath, a plucked march: the root on the first and third
+ * beats, a soft chord on the second and fourth, on the harmony the piano part
+ * gives. Andante maestoso, quarter = 84, so the loop is sixteen bars, about
+ * 46 seconds. It starts on the two-note pickup ("Sa-lu-") and ends two beats
+ * into the last bar, so the pickup of the next pass closes the bar and the
+ * loop has no seam.
+ *
+ * WHY IT IS SAFE TO SHIP. Music by Juan Aberle (1846-1930), adopted in 1879;
+ * the composer died more than seventy years ago, so the music is in the
+ * public domain. Read off the voice line of the official edition, "Himno
+ * Nacional de El Salvador", Letra de Juan J. Cañas, Música de Juan Aberle,
+ * San Salvador, Imprenta Nacional, 1917 (scan: REDICCES, handle 10972/2659;
+ * IMSLP #1006255), pages 1-2, "CORO". No recording or MIDI file was used.
+ * The accompaniment is original, following the printed bass.
+ *
+ * TRANSCRIPTION NOTES. Five flats, D flat major, common time. Bars 1 and 5
+ * are the same figure (quarter, eighth, sixteenth rest, sixteenth, quarter,
+ * dotted eighth, sixteenth); bars 3 and 4 open with three eighths under a
+ * "3", read as a triplet so each bar adds up to four beats; bar 7's
+ * "con-sa-" is the same triplet, slurred. Every note was checked at 400 dpi
+ * against the staff lines.
+ *
+ * Harmony, from the printed bass: E flat minor and D flat under bars 1 and 5;
+ * G flat, then D flat over F, then A flat seventh under bars 2 and 6; A flat
+ * seventh under bar 3; D flat, then A flat, under bar 4; D flat over F and
+ * A flat over E flat under bar 7; A flat on the last note and the pickup.
+ * Written in D flat, as printed; played a semitone down, in C major, the key
+ * of the feedback chimes (`SV_TRANSPOSE`).
+ */
+
+/** Semitones from Aberle's D flat major to the C major the loop plays in. */
+const SV_TRANSPOSE = -1;
+
+/** One bar of the chorus's opening figure, used for bars 1 and 5. */
+const SV_FIGURE = [['Gb4', 1], ['F4', 0.5], [null, 0.25], ['F4', 0.25], ['F4', 1], ['Gb4', 0.75], ['Gb4', 0.25]];
+const SV_ANSWER = [['Bb4', 1], ['Ab4', 0.5], [null, 0.5], ['Ab4', 1], ['Db5', 0.75], ['C5', 0.25]];
+const T = 1 / 3;
+
+/** The chorus as printed, in quarters: pickup, bars 1-7, and the first half of bar 8. */
+const SV_CHORUS = [
+  // Sa- lu-
+  ['Db4', 1], ['Eb4', 1],
+  // 1  -de-mos la Pa-tria or-
+  ...SV_FIGURE,
+  // 2  -gu-llo-sos De hi-
+  ...SV_ANSWER,
+  // 3  -jos su-yos po-der-nos lla-
+  ['C5', T], ['Bb4', T], ['Ab4', T], ['Gb4', 0.5], [null, 0.25], ['Gb4', 0.25], ['Gb4', 1], ['Eb5', 0.75], ['Db5', 0.25],
+  // 4  -mar. Y ju-
+  ['Bb4', T], ['Ab4', T], ['Gb4', T], ['F4', 0.5], [null, 0.5], ['Db4', 1], ['Eb4', 1],
+  // 5  -re-mos la vi-da a-ni-
+  ...SV_FIGURE,
+  // 6  -mo-sos Sin des-
+  ...SV_ANSWER,
+  // 7  -can-so a su bien con-sa-
+  ['Db5', 1], ['Db5', 0.75], ['F5', 0.25], ['Eb5', 1], ['C5', T], ['Db5', T], ['Bb4', T],
+  // 8  -grar.
+  ['Ab4', 1], [null, 1],
+];
+
+/** The chords, one per beat, matching `SV_CHORUS` (32 beats): [bass, chord], as written. */
+const SV_CHORDS = {
+  Ebm: ['Eb2', ['Gb3', 'Bb3', 'Eb4']],
+  Db: ['Db2', ['F3', 'Ab3', 'Db4']],
+  DbF: ['F2', ['F3', 'Ab3', 'Db4']],
+  Gb: ['Gb2', ['Gb3', 'Bb3', 'Db4']],
+  Ab: ['Ab2', ['Eb3', 'Ab3', 'C4']],
+  Ab7: ['Ab2', ['Eb3', 'Gb3', 'C4']],
+  AbEb: ['Eb2', ['Eb3', 'Ab3', 'C4']],
+};
+const SV_HARMONY = [
+  'Ab7', 'Ab7',
+  'Ebm', 'Db', 'Db', 'Ebm',
+  'Gb', 'Gb', 'DbF', 'Ab7',
+  'Ab7', 'Ab7', 'Ab7', 'Db',
+  'Db', 'Db', 'Ab', 'Ab',
+  'Ebm', 'Db', 'Db', 'Ebm',
+  'Gb', 'Gb', 'DbF', 'Ab7',
+  'DbF', 'DbF', 'AbEb', 'Ab7',
+  'Ab', 'Ab',
+];
+
+/**
+ * Renders the chorus of the anthem.
+ *
+ * @param {Array<{at: number, dur: number, notes: string[]}>} [log] Collects the lead line.
+ * @returns {{loop: Float64Array, lead: Float64Array}} The loop, and the dry lead for checking.
+ */
+function renderSalvadorAnthem(log) {
+  const quarter = 60 / 84;
+  const beats = span(SV_CHORUS);
+  if (Math.abs(beats - 32) > 1e-9) throw new Error(`anthem: the chorus is ${beats} beats, not 32`);
+  if (SV_HARMONY.length !== 32) throw new Error('anthem: the harmony is not one chord per beat');
+
+  const passes = 2;
+  const length = Math.round(passes * beats * quarter * SAMPLE_RATE);
+  const tail = 3 * SAMPLE_RATE;
+  const buf = new Float64Array(length + tail);
+  const lead = new Float64Array(length + tail);
+  const transpose = SV_TRANSPOSE;
+
+  for (let pass = 0; pass < passes; pass++) {
+    const at = pass * beats * quarter;
+    play(buf, SV_CHORUS, { at, unit: quarter, instrument: 'reed', gain: 0.34, transpose, legato: 0.88 });
+    play(lead, SV_CHORUS, { at, unit: quarter, instrument: 'reed', gain: 0.34, transpose, legato: 0.88, log });
+    if (pass === 1) {
+      play(buf, SV_CHORUS, { at, unit: quarter, instrument: 'celesta', gain: 0.12, shift: 1, transpose, legato: 0.6 });
+    }
+    SV_HARMONY.forEach((name, beat) => {
+      const [bass, chord] = SV_CHORDS[name];
+      const time = at + beat * quarter;
+      if (beat % 2 === 0) {
+        tone(buf, time, hz(semitones(bass, transpose)), quarter, beat % 4 === 2 ? 0.32 : 0.26, 'pizz');
+      } else {
+        const each = 0.17 / Math.sqrt(chord.length);
+        for (const n of chord) tone(buf, time, hz(semitones(n, transpose)), quarter * 0.5, each, 'pizz');
+      }
+    });
+  }
+
+  return { loop: finish(buf, length), lead: lead.slice(0, length) };
+}
+
+/* ==========================================================================
  * OUTPUT
  * ========================================================================== */
 
@@ -709,6 +841,7 @@ const TRACKS = {
   korobeiniki: renderKorobeiniki,
   'funeral-march': renderFuneralMarch,
   'mountain-king': renderMountainKing,
+  'el-salvador-anthem': renderSalvadorAnthem,
 };
 
 /** 16-bit mono PCM WAV. */
