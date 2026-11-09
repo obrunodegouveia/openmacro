@@ -465,6 +465,20 @@ The cost is that a release occupies your laptop for twenty minutes and the
 GitHub workflow cannot do it, since no runner here has Xcode. A paid EAS plan
 is what makes that workflow real; until then, releases are a local job.
 
+### iOS builds use Xcode 26, not 27
+
+Built with the iOS 27 SDK (Xcode 27), an app that has not adopted the UIKit
+scene life cycle crashes at launch on iOS 27, before any JavaScript runs
+(`_UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption`). Expo SDK 57's
+template does not adopt it, and Xcode 27 is all this Mac has since November
+2026.
+
+So `eas.json` pins the production iOS build to `macos-tahoe-26.5-xcode-26.6`,
+the toolchain every shipped build used (iOS 26.5 SDK). A local build on this
+Mac would use Xcode 27 and must not be uploaded. Move to Xcode 27 together with
+an SDK that supports scenes (SDK 58, or `ios.enableSceneSupport` in
+`expo-build-properties`), and launch it on an iOS 27 simulator first.
+
 ### Screenshots
 
 The only part of the listing that is not in this repository, because they are
