@@ -17,6 +17,7 @@
 import { MODULE_LEVELS, type Module, type ModuleLevel } from '../content/schema';
 import { isOptionalModule } from '../content/optional';
 import { isLocale, type Locale } from '../i18n/locales';
+import { videoWatched } from './videoProgress';
 import {
   assembleExam,
   type AssembledExam,
@@ -140,7 +141,25 @@ export interface StudyPlan {
    * The lessons of the plan that are built around a video, listed again on
    * their own so the videos to watch stand out. Opening one plays it.
    */
-  videos: readonly { lessonId: string; title: string; moduleTitle: string; watched: boolean }[];
+  videos: readonly {
+    lessonId: string;
+    title: string;
+    moduleTitle: string;
+    /**
+     * Watched: 90% or more of the video played (`video_progress`), or, where
+     * nothing was recorded (signed out, or before 0013), the lesson finished
+     * again since the exam was assigned.
+     */
+    watched: boolean;
+    /** The share of the video played, 0..1, or null when nothing was recorded. */
+    share: number | null;
+  }[];
+}
+
+/** Every lesson a study plan can list: those of the missed questions, then `reviewLessons`. */
+export function examStudyLessonIds(exam: Pick<AssignedExam, 'reviewItems' | 'reviewLessons'>): string[] {
+  const missed = exam.reviewItems.map((itemId) => itemId.split('#')[0] ?? '').filter(Boolean);
+  return [...new Set([...missed, ...exam.reviewLessons])];
 }
 
 export function examStudyPlan(
@@ -148,6 +167,8 @@ export function examStudyPlan(
   exam: Pick<AssignedExam, 'reviewItems' | 'reviewLessons' | 'assignedAt'> &
     Partial<Pick<AssignedExam, 'studyNote'>>,
   lastCompletedAt: (lessonId: string) => string | null | undefined,
+  /** The share of a lesson's video played, from `video_progress`, or null if none recorded. */
+  videoShare: (lessonId: string) => number | null | undefined = () => null,
 ): StudyPlan | null {
   const lessons = new Map(
     modules.flatMap((module) =>
@@ -188,12 +209,16 @@ export function examStudyPlan(
     redoneCount: plan.filter((lesson) => lesson.redone).length,
     videos: plan
       .filter((lesson) => lesson.hasVideo)
-      .map(({ lessonId, title, moduleTitle, redone }) => ({
-        lessonId,
-        title,
-        moduleTitle,
-        watched: redone,
-      })),
+      .map(({ lessonId, title, moduleTitle, redone }) => {
+        const share = videoShare(lessonId) ?? null;
+        return {
+          lessonId,
+          title,
+          moduleTitle,
+          watched: share === null ? redone : videoWatched(share),
+          share,
+        };
+      }),
   };
 }
 

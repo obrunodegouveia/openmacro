@@ -13,6 +13,7 @@ import type { LessonProgress } from "@openmacro/core/progress/types";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import { Permalink } from "@/components/ui/permalink";
 import { ModuleVideo } from "@/components/app/module-video";
+import { moduleVideoKey } from "@openmacro/core/engine/videoProgress";
 import { useLessonMode } from "@/components/app/kids-mode";
 import { lessonsForMode, moduleHasKidsPath } from "@openmacro/core/engine/lessonMode";
 import { cn } from "@/lib/utils";
@@ -425,7 +426,7 @@ export function CourseMap() {
                         ) : null}
                         {module.video ? (
                           <div className="max-w-2xl">
-                            <ModuleVideo video={module.video} moduleTitle={module.title} />
+                            <ModuleVideo video={module.video} moduleTitle={module.title} progressKey={moduleVideoKey(module.id)} />
                           </div>
                         ) : null}
 

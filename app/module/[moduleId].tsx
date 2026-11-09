@@ -35,6 +35,7 @@ import { SymbolView } from 'expo-symbols';
 
 import { ActionButton } from '@/components/ui/ActionButton';
 import { LessonRow, type LessonState } from '@/components/ui/CourseRows';
+import { moduleVideoKey } from '@openmacro/core/engine/videoProgress';
 import { LessonVideo } from '@/components/ui/LessonVideo';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { useCourse } from '@/hooks/useCourse';
@@ -179,6 +180,7 @@ export default function ModuleScreen() {
             title={module.title}
             minutes={module.video.minutes}
             source={module.video.source}
+            progressKey={moduleVideoKey(module.id)}
           />
         ) : null}
 

@@ -398,4 +398,5 @@ export const esES: UiDictionary = {
   'exam.study.videos': "Mira estos vídeos:",
   'exam.study.watched': "Ya visto",
   'exam.study.watch': "Ver el vídeo",
+  'exam.study.watchedShare': "{share} % visto",
 };

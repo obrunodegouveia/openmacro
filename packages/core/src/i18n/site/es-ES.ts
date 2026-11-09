@@ -375,7 +375,7 @@ export const esES = {
   // ---- privacy & COPPA notice ---------------------------------------------
   'privacy.back': 'Volver a openmacro.org',
   'privacy.title': 'Aviso de privacidad general e infantil',
-  'privacy.updated': 'Última actualización: 5 de noviembre de 2026. Cubre {domain} y la app móvil de OpenMacro.',
+  'privacy.updated': 'Última actualización: 9 de noviembre de 2026. Cubre {domain} y la app móvil de OpenMacro.',
   'privacy.authoritative': 'Esta es una traducción de cortesía. En caso de discrepancia, prevalece la versión inglesa.',
   'privacy.short.title': 'La versión corta',
   'privacy.short.body':
@@ -386,7 +386,7 @@ export const esES = {
     'Pedimos a Apple o a Google un nombre y una dirección de correo electrónico, y nada más. Google también envía una foto de perfil, que aparece en la fila de tu propia cuenta y en ningún otro sitio. Iniciar sesión con Apple te permite ocultar tu dirección real y, si lo haces, solo vemos la dirección de reenvío: nada de esto necesita llegarte por correo. Iniciar sesión con Apple solo se ofrece en la app de iOS, así que una cuenta creada de esa forma no se puede abrir en la web. Guardamos el nombre junto a tu progreso, y la dirección la conserva nuestro proveedor de autenticación para que puedas volver a iniciar sesión.',
   'privacy.collect.progress.label': 'Tu progreso, una vez iniciada la sesión.',
   'privacy.collect.progress.body':
-    'El total de XP, tu racha de días, la fecha de tu última lección terminada y, para cada lección, tu mejor puntuación, cuántas veces la has terminado y cuándo. Ni respuestas, ni tiempos, ni nada sobre cómo has jugado. Si un profesor te asigna un examen, también guardamos cuándo lo entregaste, tu nota global y por nivel, y los módulos en los que no acertaste nada, pero nunca tus respuestas. El examen te lo indica antes de empezar, y al eliminar la cuenta se elimina el resultado.',
+    'El total de XP, tu racha de días, la fecha de tu última lección terminada y, para cada lección, tu mejor puntuación, cuántas veces la has terminado y cuándo. Ni respuestas, ni tiempos, ni nada sobre cómo has jugado. Si un profesor te asigna un examen, también guardamos cuándo lo entregaste, tu nota global y por nivel, y los módulos en los que no acertaste nada, pero nunca tus respuestas. El examen te lo indica antes de empezar, y al eliminar la cuenta se elimina el resultado. Para cada vídeo de lección o de módulo que reproduces, guardamos cuánto has visto (qué partes, en segundos) y cuándo viste nueve décimas partes por primera vez. Así un profesor sabe que el vídeo se ha visto. No guardamos cuándo hiciste pausa, ni nada de YouTube.',
   'privacy.collect.logs.label': 'Registros del servidor.',
   'privacy.collect.logs.body':
     'Nuestro proveedor de alojamiento guarda registros estándar de peticiones (dirección IP, fecha y hora, ruta solicitada, agente de usuario) para mantener el servicio en marcha y bloquear abusos. Se conservan 30 días y después se eliminan.',

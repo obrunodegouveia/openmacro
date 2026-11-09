@@ -17,6 +17,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 
 import { ChallengeView } from '@/components/challenges/ChallengeView';
 import { readVersioned, removeVersioned, writeVersioned } from '@/services/localStore';
+import { lessonVideoKey } from '@openmacro/core/engine/videoProgress';
 import { LessonVideo } from '@/components/ui/LessonVideo';
 import { SignedOutWarning } from '@/components/ui/SignedOutWarning';
 import { ActionButton } from '@/components/ui/ActionButton';
@@ -349,6 +350,7 @@ function LessonRunner({ lesson, mode, resumeAs }: LessonRunnerProps) {
             title={lesson.title}
             minutes={lesson.video.minutes}
             source={lesson.video.source}
+            progressKey={lessonVideoKey(lesson.id)}
             exercising={state.stepSerial > 0 || Boolean(state.feedback)}
           />
         </View>

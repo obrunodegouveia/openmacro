@@ -34,6 +34,7 @@ import { ActionButton } from '@/components/ui/ActionButton';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { emitFeedback } from '@/feedback';
 import { useAssignedExam } from '@/hooks/useAssignedExam';
+import { useVideoProgress } from '@/hooks/useVideoProgress';
 import { ForcedLocale, useLocale } from '@/providers/LocaleProvider';
 import { useProgress } from '@/providers/ProgressProvider';
 import { supabase } from '@/services/supabaseClient';
@@ -45,6 +46,7 @@ import {
   assembleAssignedExam,
   assignedExamSubmission,
   examStartFromReply,
+  examStudyLessonIds,
   examStudyPlan,
   examTimingFromReply,
   formatExamClock,
@@ -54,6 +56,7 @@ import {
   type StudyPlan,
 } from '@openmacro/core/engine/assignedExam';
 import { gradeExam, type ExamResult } from '@openmacro/core/engine/exam';
+import { lessonVideoKey } from '@openmacro/core/engine/videoProgress';
 
 export default function ExamRoute() {
   const { exam, loading } = useAssignedExam();
@@ -94,9 +97,16 @@ function ExamRunner({ exam }: { exam: AssignedExam }) {
   const insets = useSafeAreaInsets();
   const { t, modules, lessonById } = useLocale();
   const { isLessonComplete, progress } = useProgress();
+  const watched = useVideoProgress(examStudyLessonIds(exam).map(lessonVideoKey));
   const plan = useMemo(
-    () => examStudyPlan(modules, exam, (lessonId) => progress[lessonId]?.lastCompletedAt),
-    [modules, exam, progress],
+    () =>
+      examStudyPlan(
+        modules,
+        exam,
+        (lessonId) => progress[lessonId]?.lastCompletedAt,
+        (lessonId) => watched.get(lessonVideoKey(lessonId))?.share ?? null,
+      ),
+    [modules, exam, progress, watched],
   );
 
   // Drawn once: finishing a lesson elsewhere must not change a paper in hand.
@@ -500,7 +510,11 @@ function StudyPlanView({ plan }: { plan: StudyPlan }) {
               </Text>
               <Text style={styles.levelScore}>
                 {video.moduleTitle} ·{' '}
-                {video.watched ? t('exam.study.watched') : t('exam.study.watch')}
+                {video.watched
+                  ? t('exam.study.watched')
+                  : video.share
+                    ? t('exam.study.watchedShare', { share: Math.round(video.share * 100) })
+                    : t('exam.study.watch')}
               </Text>
             </Pressable>
           ))}

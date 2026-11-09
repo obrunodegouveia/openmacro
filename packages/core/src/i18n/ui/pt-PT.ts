@@ -410,4 +410,5 @@ export const ptPT: UiDictionary = {
   'exam.study.videos': "Vê estes vídeos:",
   'exam.study.watched': "Já visto",
   'exam.study.watch': "Ver o vídeo",
+  'exam.study.watchedShare': "{share}% visto",
 };
