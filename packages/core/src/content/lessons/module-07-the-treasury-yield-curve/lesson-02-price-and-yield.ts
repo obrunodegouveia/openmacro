@@ -12,7 +12,7 @@ export const priceAndYieldLesson = defineLesson({
     'A bond pays what it pays. If the yield moves, it is the price that did the moving.',
   icon: '⚖️',
   difficulty: 'core',
-  estimatedMinutes: 9,
+  estimatedMinutes: 12,
   challenges: [
     {
       id: 'mc-which-moves',
@@ -297,6 +297,156 @@ export const priceAndYieldLesson = defineLesson({
       correctOptionId: 'thirty',
       explanation:
         'Roughly, price falls by duration times the yield change. A 2-year note has a duration near 2 and loses about 2%; a 30-year bond has a duration near 17 and loses about 17%. This is why "safe" and "no price risk" are different claims, and why a portfolio of long Treasuries is a bet on rates however impeccable the credit.',
+    },
+
+    {
+      id: 'mc-hold-or-sell',
+      type: 'multiple_choice',
+      tags: ['bonds', 'capital', 'banking'],
+      xp: 20,
+      prompt:
+        'Two banks each bought $100m of the same Treasuries at par. Yields rose and the bonds are now worth $85m. Bank A keeps them. Bank B sells them to pay depositors who are leaving. Which bank lost money?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'only-b',
+          label: 'Only Bank B, because Bank A sold nothing',
+          feedback:
+            'Bank A owns bonds worth $15m less than it paid, just like Bank B did. Not selling hides the loss from the books; it does not undo it.',
+        },
+        {
+          id: 'both-b-books',
+          label: 'Both lost value, but only Bank B must book it now',
+        },
+        {
+          id: 'neither',
+          label: 'Neither, because Treasuries always repay in full',
+          feedback:
+            'They will repay $100m at maturity. But money paid back years from now, at an old low rate, is worth less today when new bonds pay more.',
+        },
+        {
+          id: 'only-a',
+          label: 'Only Bank A, because it is stuck with the bonds',
+          feedback:
+            'Bank A is not worse off than Bank B; both own, or owned, bonds worth $85m. Holding them only means the loss has not been booked yet.',
+        },
+      ],
+      correctOptionId: 'both-b-books',
+      explanation:
+        'The loss happened the moment yields rose, for every owner of the bond. Selling only decides when the loss shows up on the balance sheet. A bank that must sell, because depositors want their money, books the whole loss at once, and it comes straight out of its equity.',
+    },
+
+    {
+      id: 'mc-which-line-absorbs',
+      type: 'multiple_choice',
+      tags: ['bonds', 'capital', 'banking'],
+      xp: 20,
+      prompt:
+        'A bank sells $50m of bonds it bought at par for $46m. On its balance sheet, which line takes the $4m loss?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'deposits',
+          label: 'Customer deposits fall by $4m',
+          feedback:
+            'Depositors are owed exactly what they were owed yesterday. A loss on the bank’s own investments is not passed on to them.',
+        },
+        {
+          id: 'equity',
+          label: 'Equity falls by $4m',
+        },
+        {
+          id: 'reserves-only',
+          label: 'Reserves fall by $4m',
+          feedback:
+            'Reserves go up, by the $46m the buyer pays. The bonds go down by $50m. The $4m gap between the two has to land on the other side of the sheet.',
+        },
+        {
+          id: 'buyer',
+          label: 'Nobody on the bank’s side; the buyer takes the loss',
+          feedback:
+            'The buyer paid $46m for bonds worth $46m, so it lost nothing. The loss belongs to whoever owned the bonds when yields rose: the bank.',
+        },
+      ],
+      correctOptionId: 'equity',
+      explanation:
+        'Assets fall by $50m of bonds and rise by $46m of reserves, so the bank is $4m smaller. Debts to depositors do not change, so the owners’ share, equity, absorbs the difference. The buyer paid the market price and lost nothing.',
+    },
+
+    {
+      id: 'flow-bank-loss',
+      type: 'order_flow',
+      tags: ['bonds', 'banking', 'yield'],
+      xp: 25,
+      prompt: 'Put the story of a bank’s bond loss in order.',
+      instructions: 'Earliest first',
+      events: [
+        {
+          id: 'buys',
+          label: 'The bank buys long Treasuries at par while yields are low',
+          detail: 'Its deposits pay little, so the bonds look like easy income',
+        },
+        {
+          id: 'rates-rise',
+          label: 'Yields rise quickly',
+          detail: 'New bonds now pay more than the ones the bank holds',
+        },
+        {
+          id: 'price-falls',
+          label: 'The bonds’ price falls, but the loss is not yet on the books',
+          detail: 'Held to maturity, it stays hidden',
+        },
+        {
+          id: 'deposits-leave',
+          label: 'Depositors start taking their money out',
+          detail: 'They can earn more elsewhere, or they get worried',
+        },
+        {
+          id: 'sells',
+          label: 'The bank sells the bonds and the loss hits its equity',
+          detail: 'The cash raised is less than the bank paid',
+        },
+      ],
+      correctOrder: ['buys', 'rates-rise', 'price-falls', 'deposits-leave', 'sells'],
+      explanation:
+        'No one defaulted at any step. A safe bond lost price because yields rose, and the loss stayed hidden until the bank needed cash. That chain, from a rate move to a forced sale, is the one behind the bank failures of spring 2023.',
+    },
+
+    {
+      id: 'mc-yield-falls-back',
+      type: 'multiple_choice',
+      tags: ['bonds', 'yield'],
+      xp: 15,
+      prompt:
+        'You bought a 10-year Treasury paying a fixed $4 a year on $100 when its yield was 5%, so you paid less than $100. Later the yield falls back to 4%. What happens to your bond?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'coupon-down',
+          label: 'It now pays only $3 a year',
+          feedback:
+            'The $4 is fixed in the contract. A falling yield cannot change it; only the price can move.',
+        },
+        {
+          id: 'no-change',
+          label: 'Nothing, because you already own it',
+          feedback:
+            'The price moves every day with the yield, whether you sell or not. Owning it means you feel the change, up or down.',
+        },
+        {
+          id: 'price-rises',
+          label: 'Its price rises to $100, a gain on what you paid',
+        },
+        {
+          id: 'price-falls',
+          label: 'Its price falls, because a lower yield means a worse bond',
+          feedback:
+            'A lower yield means buyers accept a lower return, so they pay more for the same fixed $4. The price goes up, not down.',
+        },
+      ],
+      correctOptionId: 'price-rises',
+      explanation:
+        'Price and yield move in opposite directions, both ways. When the yield falls to the coupon rate of 4%, the bond is worth exactly its $100 face value. You bought below that, so the fall in yield is a gain, the mirror image of the loss a bank takes when yields rise.',
     },
   ],
   keyTakeaways: [

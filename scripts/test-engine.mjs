@@ -577,3 +577,55 @@ test('a final exam passes at 70%, the same mark as the speed bonus', async () =>
   assert.equal(assignedExamFromRow(row)?.isFinal, false);
   assert.equal(assignedExamFromRow({ ...row, is_final: true })?.isFinal, true);
 });
+
+test('a time limit per question, and the teacher’s note and videos in the study plan', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { assignedExamFromRow, questionSecondsLeft, examStudyPlan, ASSIGNED_EXAM_COLUMNS } =
+    await import('@openmacro/core/engine/assignedExam');
+  const { localisedModules } = await import('@openmacro/core/i18n/content');
+
+  const row = { id: 'x', locale: 'pt-PT', seed: 's', item_count: 20 };
+  assert.equal(assignedExamFromRow(row)?.secondsPerQuestion, null);
+  assert.equal(assignedExamFromRow({ ...row, seconds_per_question: 0 })?.secondsPerQuestion, null);
+  const timed = assignedExamFromRow({ ...row, seconds_per_question: 60, study_note: '  Estuda a curva.  ' });
+  assert.equal(timed.secondsPerQuestion, 60);
+  assert.equal(timed.studyNote, 'Estuda a curva.');
+  assert.equal(assignedExamFromRow({ ...row, study_note: '   ' })?.studyNote, null);
+
+  // Counts down in whole seconds, never below zero; untimed exams have no clock.
+  assert.equal(questionSecondsLeft(timed, 0), 60);
+  assert.equal(questionSecondsLeft(timed, 59_001), 1);
+  assert.equal(questionSecondsLeft(timed, 60_000), 0);
+  assert.equal(questionSecondsLeft(timed, 90_000), 0);
+  assert.equal(questionSecondsLeft({ secondsPerQuestion: null }, 5_000), null);
+
+  // Both clients select what the migration adds.
+  const sql = readFileSync(new URL('../supabase/migrations/0012_exam_question_timer.sql', import.meta.url), 'utf8');
+  for (const column of ['seconds_per_question', 'study_note']) {
+    assert.ok(ASSIGNED_EXAM_COLUMNS.includes(column), `${column} is read`);
+    assert.match(sql, new RegExp(`add column if not exists ${column}\\b`));
+  }
+
+  const modules = localisedModules('pt-PT');
+  const withVideo = modules.flatMap((module) => module.lessons).find((lesson) => lesson.video);
+  const without = modules.flatMap((module) => module.lessons).find((lesson) => !lesson.video);
+  const plan = examStudyPlan(
+    modules,
+    {
+      reviewItems: [],
+      reviewLessons: [without.id, withVideo.id],
+      assignedAt: '2026-11-08T12:00:00Z',
+      studyNote: 'Estuda a curva.',
+    },
+    (id) => (id === withVideo.id ? '2026-11-09T10:00:00Z' : null),
+  );
+  assert.equal(plan.note, 'Estuda a curva.');
+  assert.deepEqual(plan.videos.map((video) => [video.lessonId, video.watched]), [[withVideo.id, true]]);
+  // A note alone is still a plan.
+  const noteOnly = examStudyPlan(
+    modules,
+    { reviewItems: [], reviewLessons: [], assignedAt: '2026-11-08T12:00:00Z', studyNote: 'Lê.' },
+    () => null,
+  );
+  assert.equal(noteOnly?.note, 'Lê.');
+});

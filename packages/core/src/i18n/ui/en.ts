@@ -399,6 +399,13 @@ export const en = {
   'exam.study.redone': 'Done again',
   'exam.study.progress': '{done, number} of {total, number} lessons done again',
   'exam.study.ready': 'When you have gone through them, start the exam. The questions will be new.',
+  'exam.intro.perQuestion': "You have {seconds, number} seconds for each question. When the time runs out, the exam moves on by itself with the answer you chose. With no answer chosen, the question counts as wrong.",
+  'exam.questionTime': "Time left on this question",
+  'exam.timeUp': "Time is up for that question.",
+  'exam.study.note': "From your teacher:",
+  'exam.study.videos': "Watch these videos:",
+  'exam.study.watched': "Watched",
+  'exam.study.watch': "Watch the video",
 
   /**
    * What finishing a level lets you do.

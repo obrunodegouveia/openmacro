@@ -16,7 +16,7 @@ export const theLongInversionLesson = defineLesson({
     'The curve was upside down for years, and the two most-quoted versions of it disagreed by thirteen months.',
   icon: '🙃',
   difficulty: 'advanced',
-  estimatedMinutes: 9,
+  estimatedMinutes: 12,
   challenges: [
     {
       id: 'mc-what-inversion-is',
@@ -195,6 +195,152 @@ export const theLongInversionLesson = defineLesson({
       correctOptionId: 'weaken-mechanism',
       explanation:
         'The traditional story is that an inversion squeezes banks, which borrow short and lend long, so credit dries up and a recession follows. But this inversion ran while banks were sitting on trillions of reserves earning interest, and while the Fed’s balance sheet still had years of run-off ahead. When the mechanism behind an indicator changes, the indicator’s record stops transferring — which is a better lesson than either believing it or discarding it.',
+    },
+
+    {
+      id: 'flow-bank-squeeze',
+      type: 'order_flow',
+      tags: ['inversion', 'banking', 'forecasting'],
+      xp: 25,
+      prompt: 'Put the classic story of why an inversion leads to a recession in order.',
+      instructions: 'Earliest first',
+      events: [
+        {
+          id: 'hike',
+          label: 'The Fed raises short rates',
+          detail: 'Short yields climb above long ones',
+        },
+        {
+          id: 'funding-cost',
+          label: 'What banks pay to borrow short goes up',
+          detail: 'Deposits and short loans follow the Fed',
+        },
+        {
+          id: 'margin',
+          label: 'Their margin on long loans shrinks',
+          detail: 'Long loans pay rates set by the lower long end',
+        },
+        {
+          id: 'lend-less',
+          label: 'Banks lend less',
+          detail: 'A thin margin makes new loans less worth the risk',
+        },
+        {
+          id: 'slowdown',
+          label: 'Spending and hiring slow down',
+          detail: 'Less credit means less investment',
+        },
+      ],
+      correctOrder: ['hike', 'funding-cost', 'margin', 'lend-less', 'slowdown'],
+      explanation:
+        'This is the mechanism behind the inversion’s record as a recession signal. Each step can be weaker or stronger in a given cycle. If one link breaks, for example because banks earn well on something else, the signal loses some of its power.',
+    },
+
+    {
+      id: 'mc-first-to-turn',
+      type: 'multiple_choice',
+      tags: ['yield-curve', 'inversion'],
+      xp: 20,
+      prompt:
+        'The curve is inverted and the market starts to expect the Fed to cut within a year or two, but the Fed has not cut yet. Which spread turns positive first?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'ten-two',
+          label: '10Y−2Y, because the 2-year prices cuts before they happen',
+        },
+        {
+          id: 'ten-three-month',
+          label: '10Y−3M, because bills react fastest to news',
+          feedback:
+            'Bills track where the Fed stands today. Until the Fed actually cuts, the 3-month yield stays high and 10Y−3M stays inverted.',
+        },
+        {
+          id: 'both-together',
+          label: 'Both on the same day, because they share the 10-year',
+          feedback:
+            'They share the 10-year but not the other leg. In this cycle they turned positive thirteen months apart.',
+        },
+        {
+          id: 'neither',
+          label: 'Neither, until a recession has started',
+          feedback:
+            'The spreads follow expectations and policy, not the official date of a recession. In this cycle both turned positive without one being declared.',
+        },
+      ],
+      correctOptionId: 'ten-two',
+      explanation:
+        'The 2-year is a forecast of the Fed over two years, so it falls as soon as cuts are expected. The 3-month bill moves only when the Fed moves. That is why 10Y−2Y turned positive in September 2024 and 10Y−3M only in October 2025.',
+    },
+
+    {
+      id: 'match-inversion-stages',
+      type: 'concept_match',
+      tags: ['yield-curve', 'inversion', 'policy'],
+      xp: 20,
+      prompt: 'Match each stage of the 2022–2025 inversion to what the curve did.',
+      instructions: 'Pick a term, then its definition',
+      pairs: [
+        {
+          id: 'hiking',
+          term: 'Fast hikes',
+          definition: 'Short yields jumped, while the long end rose much less',
+        },
+        {
+          id: 'deepest',
+          term: 'Deepest point',
+          definition: '10Y−3M reached −1.89 points in May 2023',
+        },
+        {
+          id: 'cuts-expected',
+          term: 'Cuts expected',
+          definition: '10Y−2Y turned positive in September 2024',
+        },
+        {
+          id: 'cuts-made',
+          term: 'Cuts made',
+          definition: '10Y−3M turned positive in October 2025',
+        },
+      ],
+      explanation:
+        'The inversion started because the Fed can push the front end but not the long end, and it ended in two steps: first the forecast changed, then the policy did. By 3 September 2026 the curve sloped upward all the way, with 3M10Y at +88 basis points.',
+    },
+
+    {
+      id: 'mc-why-softer',
+      type: 'multiple_choice',
+      tags: ['inversion', 'forecasting', 'banking'],
+      xp: 20,
+      prompt:
+        'The classic story says an inversion squeezes banks until they stop lending. Why was that squeeze weaker in 2022–2025?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'reserves-paid',
+          label: 'Banks held large reserves that earned the Fed’s rising rate',
+        },
+        {
+          id: 'not-inverted',
+          label: 'The curve was never really inverted',
+          feedback:
+            'Both main spreads were inverted for years: 10Y−2Y from April 2022 and 10Y−3M from October 2022.',
+        },
+        {
+          id: 'no-hikes',
+          label: 'The Fed did not raise rates in this cycle',
+          feedback:
+            'It raised them fast, which is what pushed short yields above long ones in the first place.',
+        },
+        {
+          id: 'no-deposits',
+          label: 'Banks stopped taking deposits, so they had no costs',
+          feedback:
+            'Banks kept taking deposits, and many had to pay more on them as rates rose. The difference was on the income side, not the cost side.',
+        },
+      ],
+      correctOptionId: 'reserves-paid',
+      explanation:
+        'Trillions of dollars of reserves earned interest at the Fed, and that rate rose with every hike. So a big part of bank income moved up with short rates instead of being stuck at old long rates. One link in the chain was weaker, so the signal was weaker too. The lesson is to check the mechanism, not just the record.',
     },
   ],
   keyTakeaways: [

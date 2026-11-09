@@ -397,4 +397,11 @@ export const ptPT: UiDictionary = {
   'exam.study.redone': 'Já repetida',
   'exam.study.progress': '{done, number} de {total, number} lições repetidas',
   'exam.study.ready': 'Quando as tiveres revisto, começa o exame. As perguntas vão ser novas.',
+  'exam.intro.perQuestion': "Tens {seconds, number} segundos para cada pergunta. Quando o tempo acaba, o exame avança sozinho com a resposta que escolheste. Se não escolheste nenhuma, a pergunta conta como errada.",
+  'exam.questionTime': "Tempo que falta nesta pergunta",
+  'exam.timeUp': "Acabou o tempo dessa pergunta.",
+  'exam.study.note': "Do teu professor:",
+  'exam.study.videos': "Vê estes vídeos:",
+  'exam.study.watched': "Já visto",
+  'exam.study.watch': "Ver o vídeo",
 };

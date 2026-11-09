@@ -47,11 +47,19 @@ export interface AssignedExam {
    * (migration 0011), so the intro says what is at stake.
    */
   isFinal: boolean;
+  /**
+   * Seconds allowed for each question (migration 0012). When they run out the
+   * exam moves on by itself, keeping whatever answer was chosen; with none
+   * chosen the question counts as wrong. Null: no limit per question.
+   */
+  secondsPerQuestion: number | null;
+  /** The teacher's advice, shown first in the study plan. Null: none. */
+  studyNote: string | null;
 }
 
 /** The `assigned_exams` columns a client reads. */
 export const ASSIGNED_EXAM_COLUMNS =
-  'id, locale, seed, item_count, assigned_at, focus_lessons, exclude_items, review_items, review_lessons, is_final';
+  'id, locale, seed, item_count, assigned_at, focus_lessons, exclude_items, review_items, review_lessons, is_final, seconds_per_question, study_note';
 
 /** A database row as an exam, or null if its language is not one we ship. */
 export function assignedExamFromRow(row: {
@@ -65,6 +73,8 @@ export function assignedExamFromRow(row: {
   review_items?: string[] | null;
   review_lessons?: string[] | null;
   is_final?: boolean | null;
+  seconds_per_question?: number | null;
+  study_note?: string | null;
 }): AssignedExam | null {
   if (!isLocale(row.locale)) return null;
   return {
@@ -78,7 +88,25 @@ export function assignedExamFromRow(row: {
     reviewLessons: row.review_lessons ?? [],
     assignedAt: row.assigned_at ?? new Date(0).toISOString(),
     isFinal: row.is_final === true,
+    secondsPerQuestion:
+      typeof row.seconds_per_question === 'number' && row.seconds_per_question > 0
+        ? row.seconds_per_question
+        : null,
+    studyNote: row.study_note?.trim() ? row.study_note.trim() : null,
   };
+}
+
+/**
+ * Seconds left on the current question, or null when the exam has no limit
+ * per question. `elapsedMs` is the time since the question appeared. Both
+ * clients count down with this, so they agree on when a question ends.
+ */
+export function questionSecondsLeft(
+  exam: Pick<AssignedExam, 'secondsPerQuestion'>,
+  elapsedMs: number,
+): number | null {
+  if (exam.secondsPerQuestion === null) return null;
+  return Math.max(0, Math.ceil(exam.secondsPerQuestion - elapsedMs / 1000));
 }
 
 /**
@@ -94,6 +122,8 @@ export function assignedExamFromRow(row: {
  * `modules` must be in the exam's language, so the questions read in it.
  */
 export interface StudyPlan {
+  /** The teacher's own advice, shown first. */
+  note: string | null;
   /** Questions answered wrong before, in the order the teacher listed them. */
   missed: readonly { itemId: string; lessonId: string; prompt: string }[];
   /** Lessons to go back to: those of the missed questions, then the rest. */
@@ -106,11 +136,17 @@ export interface StudyPlan {
     redone: boolean;
   }[];
   redoneCount: number;
+  /**
+   * The lessons of the plan that are built around a video, listed again on
+   * their own so the videos to watch stand out. Opening one plays it.
+   */
+  videos: readonly { lessonId: string; title: string; moduleTitle: string; watched: boolean }[];
 }
 
 export function examStudyPlan(
   modules: readonly Module[],
-  exam: Pick<AssignedExam, 'reviewItems' | 'reviewLessons' | 'assignedAt'>,
+  exam: Pick<AssignedExam, 'reviewItems' | 'reviewLessons' | 'assignedAt'> &
+    Partial<Pick<AssignedExam, 'studyNote'>>,
   lastCompletedAt: (lessonId: string) => string | null | undefined,
 ): StudyPlan | null {
   const lessons = new Map(
@@ -143,8 +179,22 @@ export function examStudyPlan(
     ];
   });
 
-  if (missed.length === 0 && plan.length === 0) return null;
-  return { missed, lessons: plan, redoneCount: plan.filter((lesson) => lesson.redone).length };
+  const note = exam.studyNote?.trim() ? exam.studyNote.trim() : null;
+  if (!note && missed.length === 0 && plan.length === 0) return null;
+  return {
+    note,
+    missed,
+    lessons: plan,
+    redoneCount: plan.filter((lesson) => lesson.redone).length,
+    videos: plan
+      .filter((lesson) => lesson.hasVideo)
+      .map(({ lessonId, title, moduleTitle, redone }) => ({
+        lessonId,
+        title,
+        moduleTitle,
+        watched: redone,
+      })),
+  };
 }
 
 /**

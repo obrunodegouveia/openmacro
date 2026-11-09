@@ -385,4 +385,11 @@ export const esES: UiDictionary = {
   'exam.study.redone': 'Ya repetida',
   'exam.study.progress': '{done, number} de {total, number} lecciones repetidas',
   'exam.study.ready': 'Cuando las hayas repasado, empieza el examen. Las preguntas serán nuevas.',
+  'exam.intro.perQuestion': "Tienes {seconds, number} segundos para cada pregunta. Cuando se acaba el tiempo, el examen avanza solo con la respuesta que elegiste. Si no elegiste ninguna, la pregunta cuenta como fallada.",
+  'exam.questionTime': "Tiempo que queda en esta pregunta",
+  'exam.timeUp': "Se acabó el tiempo de esa pregunta.",
+  'exam.study.note': "De tu profesor:",
+  'exam.study.videos': "Mira estos vídeos:",
+  'exam.study.watched': "Ya visto",
+  'exam.study.watch': "Ver el vídeo",
 };

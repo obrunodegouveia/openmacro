@@ -102,6 +102,31 @@ rebuilt offline from the seed and the lessons the student had finished, and
 checked against `fingerprint`, because the fingerprint is a hash of the seed
 and the exact questions.
 
+## A time limit on each question, and a note from the teacher
+
+Migration 0012 adds two optional columns:
+
+- `seconds_per_question`: the time allowed for each question, from 10 to 600
+  seconds. A bar and a countdown show it on every question. When it runs out,
+  the exam moves on by itself with the answer the student had chosen; with
+  none chosen, the question counts as wrong. The screen before Start says so.
+  Null (the default) means no limit per question. The whole-exam clock and the
+  speed bonus below apply either way. Like the grading, the limit is kept on
+  the student's device.
+- `study_note`: a few lines of advice, in the exam's language, shown first on
+  the screen before Start. Up to 1,000 characters.
+
+The screen before Start also lists, on their own, the lessons of the plan that
+are built around a video ("Watch these videos"), ticked once watched again.
+Add video lessons to `review_lessons` to have them listed.
+
+```sql
+update public.assigned_exams
+   set seconds_per_question = 60,
+       study_note = 'Revê a curva de rendimentos: porque sobe com o prazo, e o que diz uma inversão.'
+ where id = '<exam id>' and started_at is null;
+```
+
 ## The clock and the speed bonus
 
 - The clock starts the first time the student taps Start and keeps running if

@@ -11,6 +11,7 @@ import {
   examStudyPlan,
   examTimingFromReply,
   formatExamClock,
+  questionSecondsLeft,
   type AssignedExam,
   type ExamTiming,
   type StudyPlan,
@@ -47,6 +48,11 @@ import type { ProgressSnapshot } from "@/lib/progress";
  * (`leave_assigned_exam`), and costs the speed bonus. The screen is kept
  * awake where the browser allows it, so a phone locking itself while the
  * learner thinks is not mistaken for leaving.
+ *
+ * A teacher can give each question a time limit (`seconds_per_question`,
+ * migration 0012). The countdown is `questionSecondsLeft` from core, so this
+ * screen and the app end a question at the same moment: the exam moves on
+ * with the answer chosen so far, or with none, which counts as wrong.
  */
 export function AssignedExamScreen() {
   const { exam, loading } = useAssignedExam();
@@ -120,6 +126,13 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
   const [timing, setTiming] = React.useState<ExamTiming | null>(null);
   const [starting, setStarting] = React.useState(false);
   const [leaves, setLeaves] = React.useState(0);
+  // When the current question appeared, for the limit per question.
+  const [questionAt, setQuestionAt] = React.useState(0);
+  const [timedOut, setTimedOut] = React.useState(false);
+  const draftRef = React.useRef<ChallengeAnswer | null>(null);
+  React.useEffect(() => {
+    draftRef.current = draft;
+  }, [draft]);
 
   // While the exam is in progress: keep the screen on, and count every time
   // the tab is hidden.
@@ -184,6 +197,7 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
       // Offline: the exam still runs.
     }
     setClock({ seconds, at: Date.now() });
+    setQuestionAt(Date.now());
     setStarting(false);
     setStarted(true);
   }
@@ -299,6 +313,11 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
           })}
         </p>
         <p className="text-ink-muted">{t("exam.intro.leave")}</p>
+        {exam.secondsPerQuestion !== null ? (
+          <p className="font-bold text-ink">
+            {t("exam.intro.perQuestion", { seconds: exam.secondsPerQuestion })}
+          </p>
+        ) : null}
         {exam.isFinal ? (
           <p className="font-bold text-ink">{t("exam.intro.final")}</p>
         ) : null}
@@ -316,19 +335,26 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
   const challenge = item ? lookup(item) : undefined;
   const last = index === paper.items.length - 1;
 
-  function next() {
-    if (!item || !draft) return;
-    const nextAnswers = { ...answers, [item.id]: draft };
+  // Moves on with `answer`, or with none when the time ran out unanswered.
+  function advance(answer: ChallengeAnswer | null, outOfTime: boolean) {
+    if (!item) return;
+    const nextAnswers = answer ? { ...answers, [item.id]: answer } : answers;
     setAnswers(nextAnswers);
     setDraft(null);
+    setTimedOut(outOfTime);
     if (!last) {
       setIndex(index + 1);
+      setQuestionAt(Date.now());
       window.scrollTo({ top: 0 });
       return;
     }
     const graded = gradeExam(paper, nextAnswers, lookup, t);
     setResult(graded);
     void send(graded);
+  }
+
+  function next() {
+    if (draft) advance(draft, false);
   }
 
   return (
@@ -342,6 +368,20 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
         </h1>
         {clock ? <Clock from={clock} label={t("exam.clock")} /> : null}
       </header>
+      {exam.secondsPerQuestion !== null ? (
+        <QuestionCountdown
+          key={index}
+          exam={exam}
+          since={questionAt}
+          label={t("exam.questionTime")}
+          onTimeUp={() => advance(draftRef.current, true)}
+        />
+      ) : null}
+      {timedOut ? (
+        <p role="status" className="text-sm font-semibold">
+          {t("exam.timeUp")}
+        </p>
+      ) : null}
       {leaves > 0 ? (
         <p role="status" className="text-sm font-semibold">
           {t("exam.left", { count: leaves })}
@@ -377,6 +417,36 @@ function StudyPlanView({ plan }: { plan: StudyPlan }) {
   return (
     <section className="glass grid gap-4 rounded-card p-5 sm:p-7">
       <h2 className="font-display text-xl font-extrabold">{t("exam.study.title")}</h2>
+      {plan.note ? (
+        <div className="grid gap-2">
+          <p>{t("exam.study.note")}</p>
+          <p className="whitespace-pre-line font-semibold text-ink">{plan.note}</p>
+        </div>
+      ) : null}
+      {plan.videos.length > 0 ? (
+        <div className="grid gap-2">
+          <p>{t("exam.study.videos")}</p>
+          <ul className="grid gap-2">
+            {plan.videos.map((video) => (
+              <li key={video.lessonId}>
+                <LocaleLink
+                  href={`/learn/${video.lessonId}`}
+                  className="grid gap-0.5 rounded-lg py-1 hover:opacity-80"
+                >
+                  <span className="font-display font-extrabold">
+                    <span aria-hidden>{video.watched ? "✓ " : "▶ "}</span>
+                    {video.title}
+                  </span>
+                  <span className="text-sm text-ink-muted">
+                    {video.moduleTitle} ·{" "}
+                    {video.watched ? t("exam.study.watched") : t("exam.study.watch")}
+                  </span>
+                </LocaleLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       {plan.missed.length > 0 ? (
         <div className="grid gap-2">
           <p>{t("exam.study.missed")}</p>
@@ -423,6 +493,75 @@ function StudyPlanView({ plan }: { plan: StudyPlan }) {
       ) : null}
       <p>{t("exam.study.ready")}</p>
     </section>
+  );
+}
+
+/**
+ * The time left on one question. Remounted for each question (keyed by its
+ * index), and checked against the wall clock every second, so a hidden tab
+ * that throttles timers still ends the question on time when it comes back.
+ */
+function QuestionCountdown({
+  exam,
+  since,
+  label,
+  onTimeUp,
+}: {
+  exam: AssignedExam;
+  since: number;
+  label: string;
+  onTimeUp: () => void;
+}) {
+  const [left, setLeft] = React.useState(() => questionSecondsLeft(exam, Date.now() - since));
+  const timeUp = React.useRef(onTimeUp);
+  React.useEffect(() => {
+    timeUp.current = onTimeUp;
+  }, [onTimeUp]);
+  React.useEffect(() => {
+    let done = false;
+    const tick = () => {
+      const next = questionSecondsLeft(exam, Date.now() - since);
+      setLeft(next);
+      if (next === 0 && !done) {
+        done = true;
+        timeUp.current();
+      }
+    };
+    tick();
+    const timer = window.setInterval(tick, 1000);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", tick);
+    };
+  }, [exam, since]);
+  if (left === null || exam.secondsPerQuestion === null) return null;
+  const share = left / exam.secondsPerQuestion;
+  const time = formatExamClock(left);
+  return (
+    <div className="flex items-center gap-3">
+      <div
+        className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-veil/10"
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={exam.secondsPerQuestion}
+        aria-valuenow={left}
+      >
+        {share > 0.001 ? (
+          <div
+            className="h-full rounded-full bg-mint transition-[width] duration-1000 ease-linear"
+            style={{ width: `${share * 100}%` }}
+          />
+        ) : null}
+      </div>
+      <span
+        aria-label={`${label} ${time}`}
+        className={`font-display text-lg font-extrabold tabular-nums ${left <= 10 ? "text-ink" : "text-ink-muted"}`}
+      >
+        {time}
+      </span>
+    </div>
   );
 }
 
