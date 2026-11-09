@@ -629,3 +629,81 @@ test('a time limit per question, and the teacher’s note and videos in the stud
   );
   assert.equal(noteOnly?.note, 'Lê.');
 });
+
+test('video progress: stretches played, merged; seeks add nothing', async () => {
+  const {
+    createWatchTracker,
+    mergeSegments,
+    watchedSeconds,
+    videoProgressArgs,
+    videoProgressFromRow,
+    videoWatched,
+    MAX_SEGMENTS,
+    VIDEO_WATCHED_SHARE,
+  } = await import('@openmacro/core/engine/videoProgress');
+  const { readFileSync } = await import('node:fs');
+
+  assert.deepEqual(mergeSegments([[10, 20], [0, 5], [5, 8], [19, 30], [40, 40], [-1, 3], [1]]), [[0, 8], [10, 30]]);
+  assert.equal(watchedSeconds([[0, 8], [10, 30]]), 28);
+
+  // Played 0 → 6 s in real time, then a seek to 300, then on to 304.
+  const tracker = createWatchTracker();
+  tracker.observe(0, true, 0);
+  tracker.observe(2, true, 2000);
+  tracker.observe(4, true, 4000);
+  tracker.observe(6, true, 6000);
+  tracker.observe(300, true, 8000); // a seek: 294 s in 2 s
+  tracker.observe(302, true, 10000);
+  tracker.observe(304, false, 12000);
+  tracker.observe(400, false, 14000); // paused: nothing counts
+  assert.deepEqual(tracker.segments(), [[0, 6], [300, 304]]);
+  assert.equal(tracker.changed, true);
+  tracker.saved();
+  assert.equal(tracker.changed, false);
+
+  // Resuming starts from what was stored, and watching it again adds nothing.
+  const again = createWatchTracker([[0, 6]]);
+  again.observe(0, true, 0);
+  again.observe(2, true, 2000);
+  assert.equal(again.changed, false);
+  assert.deepEqual(again.segments(), [[0, 6]]);
+
+  // Too many stretches: the closest are joined, never more than allowed.
+  const many = Array.from({ length: MAX_SEGMENTS + 5 }, (_, i) => [i * 10, i * 10 + 2]);
+  assert.equal(mergeSegments(many).length, MAX_SEGMENTS);
+
+  const args = videoProgressArgs('kab-treasuries', 'JBWdbzzYbtU', 600.4, [[0, 300], [290, 700]]);
+  assert.deepEqual(args, {
+    p_video_key: 'kab-treasuries',
+    p_video_id: 'JBWdbzzYbtU',
+    p_duration: 600,
+    p_segments: [[0, 601]],
+    p_watched: 600,
+  });
+
+  const row = videoProgressFromRow({ video_key: 'x', duration_seconds: 600, watched_seconds: 540, completed_at: null });
+  assert.equal(row.share, 0.9);
+  assert.equal(videoWatched(row.share), true);
+  assert.equal(videoWatched(0.89), false);
+  assert.equal(videoWatched(null), false);
+
+  // The database's 90% is the same.
+  const sql = readFileSync(new URL('../supabase/migrations/0013_video_progress.sql', import.meta.url), 'utf8');
+  assert.match(sql, new RegExp(`p_duration \\* ${VIDEO_WATCHED_SHARE}\\b`));
+  assert.match(sql, new RegExp(`jsonb_array_length\\(p_segments\\) > ${MAX_SEGMENTS}\\b`));
+});
+
+test('the study plan ticks a video by how much of it was played', async () => {
+  const { examStudyPlan } = await import('@openmacro/core/engine/assignedExam');
+  const { localisedModules } = await import('@openmacro/core/i18n/content');
+  const modules = localisedModules('pt-PT');
+  const videos = modules.flatMap((module) => module.lessons).filter((lesson) => lesson.video).slice(0, 3);
+  const exam = { reviewItems: [], reviewLessons: videos.map((l) => l.id), assignedAt: '2026-11-08T12:00:00Z' };
+  const shares = { [videos[0].id]: 0.95, [videos[1].id]: 0.4 };
+  const plan = examStudyPlan(modules, exam, () => '2026-11-09T10:00:00Z', (id) => shares[id] ?? null);
+  assert.deepEqual(
+    plan.videos.map((video) => [video.watched, video.share]),
+    // 95%: watched. 40%: not, though the lesson was finished. Nothing recorded: the lesson decides.
+    [[true, 0.95], [false, 0.4], [true, null]],
+  );
+});

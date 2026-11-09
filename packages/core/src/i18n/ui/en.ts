@@ -412,6 +412,7 @@ export const en = {
   'exam.study.videos': "Watch these videos:",
   'exam.study.watched': "Watched",
   'exam.study.watch': "Watch the video",
+  'exam.study.watchedShare': "{share}% watched",
 
   /**
    * What finishing a level lets you do.

@@ -378,7 +378,7 @@ export const en = {
   // ---- privacy & COPPA notice ---------------------------------------------
   'privacy.back': 'Back to openmacro.org',
   'privacy.title': 'Privacy & children’s privacy notice',
-  'privacy.updated': 'Last updated 5 November 2026. Covers {domain} and the OpenMacro mobile app.',
+  'privacy.updated': 'Last updated 9 November 2026. Covers {domain} and the OpenMacro mobile app.',
   'privacy.authoritative': '',
   'privacy.short.title': 'The short version',
   'privacy.short.body':
@@ -389,7 +389,7 @@ export const en = {
     'We ask Apple or Google for a name and an email address, and nothing else. Google also sends a profile picture, which appears on your own account row and nowhere else. Sign in with Apple lets you hide your real address, and if you do we only ever see the relay one — nothing here needs to reach you by email. Sign in with Apple is offered in the iOS app only, so an account made with it cannot be opened on the website. We store the name against your progress, and the address is held by our authentication provider so you can sign back in.',
   'privacy.collect.progress.label': 'Your progress, once signed in.',
   'privacy.collect.progress.body':
-    'Total XP, your day streak, the date of your last completed lesson, and for each lesson your best score, how many times you have finished it and when. No answers, no timings, nothing about how you played. If a teacher assigns you an exam, we also keep when you handed it in, your score overall and per level, and the modules where you got nothing right, but never your answers. The exam tells you this before you start, and deleting your account deletes the result.',
+    'Total XP, your day streak, the date of your last completed lesson, and for each lesson your best score, how many times you have finished it and when. No answers, no timings, nothing about how you played. If a teacher assigns you an exam, we also keep when you handed it in, your score overall and per level, and the modules where you got nothing right, but never your answers. The exam tells you this before you start, and deleting your account deletes the result. For each lesson or module video you play, we keep how much of it you have watched (which parts, in seconds) and when you first watched nine tenths of it. That lets a teacher see that a video was watched. We keep nothing about when you paused, and nothing from YouTube.',
   'privacy.collect.logs.label': 'Server logs.',
   'privacy.collect.logs.body':
     'Our host records standard request logs — IP address, timestamp, requested path, user agent — to keep the service running and to block abuse. These are retained for 30 days and then deleted.',

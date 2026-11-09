@@ -79,6 +79,7 @@ import {
 } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
+import { useVideoProgressRecorder } from '@/hooks/useVideoProgress';
 import { useLocale } from '@/providers/LocaleProvider';
 import {
   nextCaptions,
@@ -98,6 +99,11 @@ export interface LessonVideoProps {
   source?: string;
   /** The learner has started the questions, so the video stays as a bar until asked for. */
   exercising?: boolean;
+  /**
+   * Where to record how much of it the signed-in learner watched
+   * (`lessonVideoKey`, `moduleVideoKey`). The website records the same videos.
+   */
+  progressKey: string;
 }
 
 /**
@@ -110,7 +116,14 @@ interface EmbedLoad {
   start: number;
 }
 
-export function LessonVideo({ url, title, minutes, source, exercising = false }: LessonVideoProps) {
+export function LessonVideo({
+  url,
+  title,
+  minutes,
+  source,
+  exercising = false,
+  progressKey,
+}: LessonVideoProps) {
   const [load, setLoad] = useState<EmbedLoad | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [preferCollapsed, setPreferCollapsed] = useVideosCollapsed();
@@ -123,6 +136,7 @@ export function LessonVideo({ url, title, minutes, source, exercising = false }:
   // The second the embed last reported, for reopening at the same moment.
   const position = useRef(0);
   const id = youTubeId(url);
+  const record = useVideoProgressRecorder(progressKey, id);
   const playing = load !== null;
   // Once answering starts the video shrinks to its bar, so the question keeps
   // the screen, but it never goes away. One already playing is left playing.
@@ -158,9 +172,18 @@ export function LessonVideo({ url, title, minutes, source, exercising = false }:
 
   const onMessage = (event: WebViewMessageEvent) => {
     try {
-      const message = JSON.parse(event.nativeEvent.data) as { type?: string; time?: unknown };
+      const message = JSON.parse(event.nativeEvent.data) as {
+        type?: string;
+        time?: unknown;
+        duration?: unknown;
+        playing?: unknown;
+      };
       if (message.type === 'video' && typeof message.time === 'number') {
         position.current = message.time;
+        // An embed from before the length was reported sends none: nothing is counted.
+        if (typeof message.duration === 'number' && message.duration > 0) {
+          record({ time: message.time, duration: message.duration, playing: message.playing === true });
+        }
       }
     } catch {
       // Not ours.

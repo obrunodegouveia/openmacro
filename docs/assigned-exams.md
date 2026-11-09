@@ -127,6 +127,27 @@ update public.assigned_exams
  where id = '<exam id>' and started_at is null;
 ```
 
+## Did they watch the videos?
+
+Migration 0013. For a signed-in student, both clients record how much of each
+lesson or module video was played, in `video_progress`: the stretches played
+(skipping ahead does not count, watching twice counts once), their total, and
+when 90% or more was first reached. The study plan shows each video as
+"85% watched", or ticked at 90%. Nothing is recorded signed out, or by app
+versions from before the update.
+
+```sql
+select v.video_key, v.watched_seconds, v.duration_seconds,
+       round(100.0 * v.watched_seconds / v.duration_seconds) as pct,
+       v.completed_at, v.updated_at
+from public.video_progress v
+join auth.users u on u.id = v.user_id
+where u.id = '<student id>'
+order by v.updated_at desc;
+```
+
+`video_key` is the lesson id, or `module:<module id>` for a module's video.
+
 ## The clock and the speed bonus
 
 - The clock starts the first time the student taps Start and keeps running if

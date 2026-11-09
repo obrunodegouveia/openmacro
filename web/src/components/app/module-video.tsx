@@ -14,6 +14,7 @@ import {
 } from "@/components/app/video-preference";
 import { YouTubePlayer } from "@/components/app/youtube-player";
 import { setWatching } from "@/lib/activity";
+import { useVideoProgressRecorder } from "@/lib/use-video-progress";
 
 /**
  * Watch-first overview for a module.
@@ -32,10 +33,16 @@ import { setWatching } from "@/lib/activity";
 export function ModuleVideo({
   video,
   moduleTitle,
+  progressKey,
   exercising = false,
 }: {
   video: ModuleVideoData;
   moduleTitle: string;
+  /**
+   * Where to record how much of it the signed-in learner watched
+   * (`lessonVideoKey`, `moduleVideoKey`). The app records the same videos.
+   */
+  progressKey: string;
   /** The learner has started the questions, so the video stays as a bar until asked for. */
   exercising?: boolean;
 }) {
@@ -59,6 +66,7 @@ export function ModuleVideo({
   }, []);
   const site = useSiteText();
   const id = youTubeId(video.url);
+  const onProgress = useVideoProgressRecorder(progressKey, id);
   if (!id) return null;
 
   const toggle = () => {
@@ -81,6 +89,7 @@ export function ModuleVideo({
               captions={resolveCaptions(captions, locale)}
               title={site("video.overview", { title: moduleTitle })}
               onPlayingChange={onPlayingChange}
+              onProgress={onProgress}
             />
           ) : (
             <button

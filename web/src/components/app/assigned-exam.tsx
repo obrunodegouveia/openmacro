@@ -8,6 +8,7 @@ import {
   assembleAssignedExam,
   assignedExamSubmission,
   examStartFromReply,
+  examStudyLessonIds,
   examStudyPlan,
   examTimingFromReply,
   formatExamClock,
@@ -17,6 +18,7 @@ import {
   type StudyPlan,
 } from "@openmacro/core/engine/assignedExam";
 import { gradeExam, type ExamResult } from "@openmacro/core/engine/exam";
+import { lessonVideoKey } from "@openmacro/core/engine/videoProgress";
 
 import { ChallengeView } from "@/components/challenges/challenge-view";
 import { LocaleLink } from "@/components/site/locale-link";
@@ -24,6 +26,7 @@ import { LocaleProvider, useLocale } from "@/components/site/locale-provider";
 import { Button } from "@/components/ui/button";
 import { getSupabase } from "@/lib/supabase";
 import { useAssignedExam } from "@/lib/use-assigned-exam";
+import { useVideoProgress } from "@/lib/use-video-progress";
 import { useProgressSnapshot } from "@/lib/use-progress";
 import type { ProgressSnapshot } from "@/lib/progress";
 
@@ -106,10 +109,12 @@ function ExamRunner({ exam, snapshot }: { exam: AssignedExam; snapshot: Progress
         exam,
       ).exam,
   );
+  const watched = useVideoProgress(examStudyLessonIds(exam).map(lessonVideoKey));
   const plan = examStudyPlan(
     modules,
     exam,
     (lessonId) => snapshot.progress[lessonId]?.lastCompletedAt,
+    (lessonId) => watched.get(lessonVideoKey(lessonId))?.share ?? null,
   );
   const lookup = (item: { lessonId: string; challengeId: string }) =>
     lessonById(item.lessonId)?.challenges.find((entry) => entry.id === item.challengeId);
@@ -439,7 +444,11 @@ function StudyPlanView({ plan }: { plan: StudyPlan }) {
                   </span>
                   <span className="text-sm text-ink-muted">
                     {video.moduleTitle} ·{" "}
-                    {video.watched ? t("exam.study.watched") : t("exam.study.watch")}
+                    {video.watched
+                      ? t("exam.study.watched")
+                      : video.share
+                        ? t("exam.study.watchedShare", { share: Math.round(video.share * 100) })
+                        : t("exam.study.watch")}
                   </span>
                 </LocaleLink>
               </li>

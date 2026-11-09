@@ -30,6 +30,7 @@ import { ChallengeView } from "@/components/challenges/challenge-view";
 import { CharacterAvatar, usePreloadSpeakers } from "@/components/challenges/character-avatar";
 import { speakerReaction, verdictMoment, type SpeakerReaction } from "@openmacro/core/engine/speaker";
 import { ModuleVideo } from "@/components/app/module-video";
+import { lessonVideoKey } from "@openmacro/core/engine/videoProgress";
 import { useLessonMode } from "@/components/app/kids-mode";
 import {
   effectiveMode,
@@ -305,7 +306,12 @@ function LessonRun({
         */}
         {playing && lesson.video ? (
           <div className="mb-6">
-            <ModuleVideo video={lesson.video} moduleTitle={lesson.title} exercising={started} />
+            <ModuleVideo
+              video={lesson.video}
+              moduleTitle={lesson.title}
+              progressKey={lessonVideoKey(lesson.id)}
+              exercising={started}
+            />
           </div>
         ) : null}
 

@@ -42,6 +42,11 @@ import * as React from "react";
  *     `window.openmacro.setCaptions`, so switching does not restart it.
  *   - The playback position is posted with play/pause and every few seconds,
  *     so the app can reopen the video at the same moment (`start`).
+ *
+ * THE POSITION AND LENGTH ARE REPORTED while it plays, every two seconds and
+ * on play and pause: to the app through the same message (`duration` added),
+ * and on the site to `onProgress`. Both count how much was watched with
+ * `@openmacro/core/engine/videoProgress`, for a signed-in learner only.
  */
 
 /** 'off', or a language whose subtitles to show. */
@@ -56,6 +61,7 @@ interface CaptionTrack {
 interface YTPlayer {
   getOption(module: "captions", option: "tracklist"): CaptionTrack[] | undefined;
   getCurrentTime(): number;
+  getDuration(): number;
   setOption(module: "captions", option: "track", value: Partial<CaptionTrack>): void;
   setOption(module: "captions", option: "fontSize", value: number): void;
   loadModule(module: "captions"): void;
@@ -151,6 +157,7 @@ export function YouTubePlayer({
   captions: captionsProp,
   title,
   onPlayingChange,
+  onProgress,
   inApp = false,
   start = 0,
 }: {
@@ -158,6 +165,8 @@ export function YouTubePlayer({
   captions: CaptionChoice;
   title: string;
   onPlayingChange?: (playing: boolean) => void;
+  /** Position and length, in seconds, on play, pause and every two seconds while playing. */
+  onProgress?: (report: { time: number; duration: number; playing: boolean }) => void;
   /** Rendered by /embed for the mobile app. See the header. */
   inApp?: boolean;
   /** Whole seconds to start from. */
@@ -178,6 +187,10 @@ export function YouTubePlayer({
   React.useEffect(() => {
     playingRef.current = onPlayingChange;
   }, [onPlayingChange]);
+  const progressRef = React.useRef(onProgress);
+  React.useEffect(() => {
+    progressRef.current = onProgress;
+  }, [onProgress]);
 
   const applyCaptions = React.useCallback(() => {
     const p = player.current;
@@ -236,18 +249,29 @@ export function YouTubePlayer({
         return 0;
       }
     };
-    const post = (playing: boolean) =>
-      window.ReactNativeWebView?.postMessage(
-        JSON.stringify({ type: "video", playing, time: position() }),
-      );
+    const length = () => {
+      try {
+        return Math.round(player.current?.getDuration() ?? 0);
+      } catch {
+        return 0;
+      }
+    };
+    const post = (playing: boolean) => {
+      const report = { time: position(), duration: length(), playing };
+      progressRef.current?.(report);
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: "video", ...report }));
+    };
     const report = (playing: boolean) => {
       playingRef.current?.(playing);
       post(playing);
       if (ticker) clearInterval(ticker);
       ticker = null;
-      // While playing, keep the app's idea of the position fresh, so going full
-      // screen (which reloads this page larger) resumes where the learner was.
-      if (playing && window.ReactNativeWebView) ticker = setInterval(() => post(true), 2000);
+      // While playing, keep the position fresh: the app reopens full screen
+      // (which reloads this page larger) where the learner was, and both
+      // clients count what was watched from these reports.
+      if (playing && (window.ReactNativeWebView || progressRef.current)) {
+        ticker = setInterval(() => post(true), 2000);
+      }
     };
 
     loadApi()
