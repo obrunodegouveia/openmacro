@@ -49,6 +49,14 @@
       "expo-web-browser",
       "expo-apple-authentication",
       "expo-localization",
+      "./plugins/withoutPushEntitlement",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/brand/v3/openmacro-notification-icon.png",
+          "color": "#2FBF71"
+        }
+      ],
       [
         "expo-splash-screen",
         {

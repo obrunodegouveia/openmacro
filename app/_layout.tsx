@@ -28,6 +28,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { LocaleProvider, UnlockedModules } from '@/providers/LocaleProvider';
 import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';
+import { ReminderSchedule } from '@/hooks/useReminderSchedule';
 import { SeasonsProvider } from '@/seasons';
 import { palette, resolvePalette } from '@/theme/tokens';
 
@@ -100,6 +101,7 @@ export default function RootLayout() {
           <UnlockedModules>
           <ContentUpdateProvider>
           <ProgressProvider>
+            <ReminderSchedule />
             <StatusBar style="auto" />
             <ThemeProvider value={navigationTheme}>
             <Stack

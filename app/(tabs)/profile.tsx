@@ -28,6 +28,7 @@ import { BitcoinModeToggle } from '@/components/ui/BitcoinModeToggle';
 import { KidsModeToggle } from '@/components/ui/KidsModeToggle';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { ReminderToggle } from '@/components/ui/ReminderToggle';
 import { MusicToggle } from '@/components/ui/MusicToggle';
 import { SeasonToggle } from '@/components/ui/SeasonToggle';
 import { SeasonalAtmosphere, SeasonalFooter, SeasonalScreenCorner, useSeasonalEmoji } from '@/components/ui/SeasonalDecor';
@@ -147,6 +148,9 @@ export default function ProfileScreen() {
         <View style={styles.card}>
           <LanguagePicker />
         </View>
+
+        {/* Renders nothing on the web export. */}
+        <ReminderToggle />
 
         <KidsModeToggle lessons={kidsPathLessonCount(MODULES)} />
 
