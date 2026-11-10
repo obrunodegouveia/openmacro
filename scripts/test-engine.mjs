@@ -737,3 +737,64 @@ test('a watched video earns XP once, by its listed length, never the player’s'
   assert.equal(applyBonusXp(seed, -5), seed);
   assert.equal(applyBonusXp(seed, Number.NaN), seed);
 });
+
+// ---------------------------------------------------------------------------
+// Daily reminders
+// ---------------------------------------------------------------------------
+
+const { planReminders, isReminderTime, REMINDER_DAYS } = await import('@openmacro/core/progress/reminders');
+
+const at19 = { hour: 19, minute: 0 };
+const kinds = (plan) => plan.map((r) => r.kind);
+
+test('reminders: a week of reminders, the last one saying so', () => {
+  const plan = planReminders({ now: new Date(2026, 10, 9, 10, 0), time: at19, dayStreak: 0, streakActiveToday: false });
+  assert.equal(plan.length, REMINDER_DAYS);
+  assert.deepEqual(kinds(plan), ['daily', 'comeback', 'comeback', 'comeback', 'comeback', 'comeback', 'last']);
+  assert.equal(plan[0].at.getDate(), 9);
+  assert.equal(plan[0].at.getHours(), 19);
+});
+
+test('reminders: today is skipped once the streak has been kept today', () => {
+  const plan = planReminders({ now: new Date(2026, 10, 9, 10, 0), time: at19, dayStreak: 4, streakActiveToday: true });
+  assert.equal(plan[0].at.getDate(), 10);
+  assert.equal(plan[0].kind, 'keep-streak');
+  assert.equal(plan[0].streak, 4);
+  assert.equal(plan[1].kind, 'comeback');
+  assert.equal(plan.length, REMINDER_DAYS - 1);
+});
+
+test('reminders: a streak not yet kept today is named on today’s reminder', () => {
+  const plan = planReminders({ now: new Date(2026, 10, 9, 10, 0), time: at19, dayStreak: 12, streakActiveToday: false });
+  assert.equal(plan[0].kind, 'save-streak');
+  assert.equal(plan[0].streak, 12);
+  assert.equal(plan[1].kind, 'comeback');
+});
+
+test('reminders: a time already past today starts tomorrow, as an ordinary reminder', () => {
+  const plan = planReminders({ now: new Date(2026, 10, 9, 20, 0), time: at19, dayStreak: 12, streakActiveToday: false });
+  assert.equal(plan[0].at.getDate(), 10);
+  assert.equal(plan[0].kind, 'daily');
+  assert.equal(plan[0].streak, 0);
+});
+
+test('reminders: never in the past, one per day, at the chosen local time across a clock change', () => {
+  // Europe moves its clocks on 29 March 2026; the reminder stays at 08:00 local.
+  const now = new Date(2026, 2, 26, 8, 0);
+  const plan = planReminders({ now, time: { hour: 8, minute: 0 }, dayStreak: 0, streakActiveToday: false });
+  assert.ok(plan.every((r) => r.at.getTime() > now.getTime()));
+  assert.ok(plan.every((r) => r.at.getHours() === 8 && r.at.getMinutes() === 0));
+  assert.equal(new Set(plan.map((r) => r.at.toDateString())).size, plan.length);
+});
+
+test('reminders: a plan of one is not a goodbye', () => {
+  const plan = planReminders({ now: new Date(2026, 10, 9, 10, 0), time: at19, dayStreak: 0, streakActiveToday: false, days: 1 });
+  assert.deepEqual(kinds(plan), ['daily']);
+});
+
+test('reminders: stored times are validated', () => {
+  assert.equal(isReminderTime({ hour: 19, minute: 0 }), true);
+  assert.equal(isReminderTime({ hour: 24, minute: 0 }), false);
+  assert.equal(isReminderTime({ hour: 7.5, minute: 0 }), false);
+  assert.equal(isReminderTime(null), false);
+});

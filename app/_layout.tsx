@@ -28,6 +28,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { LocaleProvider, UnlockedModules } from '@/providers/LocaleProvider';
 import { ContentUpdateProvider } from '@/providers/ContentUpdateProvider';
 import { ProgressProvider } from '@/providers/ProgressProvider';
+import { ReminderSchedule } from '@/hooks/useReminderSchedule';
 import { SeasonsProvider } from '@/seasons';
 import { palette, resolvePalette } from '@/theme/tokens';
 
@@ -100,6 +101,7 @@ export default function RootLayout() {
           <UnlockedModules>
           <ContentUpdateProvider>
           <ProgressProvider>
+            <ReminderSchedule />
             <StatusBar style="auto" />
             <ThemeProvider value={navigationTheme}>
             <Stack
@@ -111,6 +113,9 @@ export default function RootLayout() {
               {/* The tab bar owns the top level; the runner sits outside it
                   so a lesson is not interruptible by a tab. */}
               <Stack.Screen name="(tabs)" />
+              {/* Google sign-in's return address on Android: shows nothing
+                  and goes straight back (see the file). */}
+              <Stack.Screen name="auth-callback" options={{ animation: 'none' }} />
               {/* A module's page: a plain push, so the system back swipe
                   returns to wherever the learner came from. The bar carries
                   only "Module N" and the share button; the full title is in
