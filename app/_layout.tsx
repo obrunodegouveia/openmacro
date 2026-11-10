@@ -113,6 +113,9 @@ export default function RootLayout() {
               {/* The tab bar owns the top level; the runner sits outside it
                   so a lesson is not interruptible by a tab. */}
               <Stack.Screen name="(tabs)" />
+              {/* Google sign-in's return address on Android: shows nothing
+                  and goes straight back (see the file). */}
+              <Stack.Screen name="auth-callback" options={{ animation: 'none' }} />
               {/* A module's page: a plain push, so the system back swipe
                   returns to wherever the learner came from. The bar carries
                   only "Module N" and the share button; the full title is in
