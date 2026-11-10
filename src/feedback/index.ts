@@ -175,17 +175,24 @@ let audioConfigured: Promise<void> | null = null;
 /**
  * Set the audio session before the first sound.
  *
- * Two choices worth stating. `playsInSilentMode: false` means the silent
- * switch silences us, which is what a person flicking that switch is asking
- * for. `interruptionMode: 'mixWithOthers'` means we duck nothing — someone
- * doing a lesson on a walk keeps their podcast.
+ * Two choices worth stating. On iOS, `playsInSilentMode: false` means the
+ * silent switch silences us, which is what a person flicking that switch is
+ * asking for. `interruptionMode: 'mixWithOthers'` means we duck nothing —
+ * someone doing a lesson on a walk keeps their podcast.
+ *
+ * Android has no silent switch, and there the same flag means something
+ * else: expo-audio refuses to play at all unless the ringer is on Normal
+ * (`shouldPlayInSilentMode` in its `AudioModule.kt`). Many people keep their
+ * phone on vibrate for good, so the app was mute for them, music and cues
+ * alike, with no error. Android apps follow the media volume, not the
+ * ringer, so on Android the flag is on and the volume keys decide.
  *
  * The background music (`./music.ts`) plays in this same session, so the
- * same two choices hold for every track it plays, seasonal or not.
+ * same choices hold for every track it plays, seasonal or not.
  */
 export function configureAudio(): Promise<void> {
   audioConfigured ??= setAudioModeAsync({
-    playsInSilentMode: false,
+    playsInSilentMode: Platform.OS === 'android',
     shouldPlayInBackground: false,
     interruptionMode: 'mixWithOthers',
   }).catch(() => {
