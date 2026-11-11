@@ -23,7 +23,7 @@ export const ANSWERS_PT: Record<string, { question?: string; answer?: string }> 
   'where-to-start': {
     question: 'Por onde começo se não sei nada sobre como funciona o dinheiro?',
     answer:
-      'Começa por uma pergunta — de onde vem o dinheiro? — e responde-lhe a sério antes de avançar. A maior parte do dinheiro não é impressa por um Estado: é criada pelos bancos comerciais quando emprestam, e o resto pelos bancos centrais quando compram ativos. O primeiro percurso do OpenMacro trata exatamente disto, de graça e sem conta, e a demonstração jogável põe-te a fazer tu mesmo um lançamento real de um banco central em vez de ler sobre ele.',
+      'Começa por duas perguntas, por esta ordem: de que trata a economia, e de onde vem o dinheiro? A economia estuda como as pessoas lidam com a escassez: o que dão, em trabalho e tempo, pelo que querem, com o dinheiro como a ferramenta que o leva de uma pessoa para outra. E a maior parte do dinheiro não é impressa por um Estado: é criada pelos bancos comerciais quando emprestam, e o resto pelos bancos centrais quando compram ativos. Os dois primeiros módulos do OpenMacro tratam exatamente disto, de graça e sem conta, e a demonstração jogável põe-te a fazer tu mesmo um lançamento real de um banco central em vez de ler sobre ele.',
   },
   'maths-background': {
     question: 'Preciso de saber matemática ou economia para aprender macroeconomia?',

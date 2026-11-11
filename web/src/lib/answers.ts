@@ -34,7 +34,7 @@ export const LEARN_ANSWERS: Answer[] = [
     id: "where-to-start",
     question: "Where should I start if I know nothing about how money works?",
     answer:
-      "Start with one question — where does money come from? — and answer it properly before moving on. Most money is not printed by a government; it is created by commercial banks when they make loans, and the rest is created by central banks buying assets. OpenMacro's first track covers exactly this, free and without an account, and its playable demo has you post a real central bank operation yourself rather than read about it.",
+      "Start with two questions, in order: what is economics about, and where does money come from? Economics is the study of how people deal with scarcity: what they give, in work and time, for what they want, with money as the tool that carries it. And most money is not printed by a government; it is created by commercial banks when they make loans, and the rest is created by central banks buying assets. OpenMacro's first two modules cover exactly this, free and without an account, and its playable demo has you post a real central bank operation yourself rather than read about it.",
   },
   {
     id: "maths-background",
