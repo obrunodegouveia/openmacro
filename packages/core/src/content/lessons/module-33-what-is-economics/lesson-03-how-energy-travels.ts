@@ -50,9 +50,9 @@ export const howEnergyTravelsLesson = defineLesson({
         },
         {
           id: 'grown-ups',
-          label: 'Only grown-ups are allowed to buy guitar strings',
+          label: 'A set of strings is worth more than one song',
           feedback:
-            'Anyone can buy strings. The question is what Olivia pays with.',
+            'The trouble is not which is worth more. Even a song worth €100 would not help: Breno’s landlord cannot use a song.',
         },
       ],
       correctOptionId: 'pass-on',
@@ -102,7 +102,7 @@ export const howEnergyTravelsLesson = defineLesson({
       xp: 15,
       tags: ['basics', 'money', 'inflation'],
       prompt:
-        'In May the pedal cost €30. In December it costs €33, and so does almost everything else in the shop. Olivia still has her €30. What happened?',
+        'In May the pedal cost €30. In December it costs €31, and almost everything in every shop in town has gone up too. Olivia still has her €30. What happened?',
       instructions: 'Pick the best answer',
       options: [
         { id: 'leak', label: 'Her stored energy leaked: the same money now buys less' },
@@ -110,7 +110,7 @@ export const howEnergyTravelsLesson = defineLesson({
           id: 'nothing',
           label: 'Nothing, because she still has €30',
           feedback:
-            'The number in the piggy bank did not change, but what it can buy did. She cannot get the pedal with it anymore.',
+            'The number in the piggy bank did not change, but what it can buy did. €30 is no longer enough for the pedal.',
         },
         {
           id: 'mean',
@@ -127,7 +127,7 @@ export const howEnergyTravelsLesson = defineLesson({
       ],
       correctOptionId: 'leak',
       explanation:
-        'When prices rise across the board, each euro buys less. That is called inflation. Olivia did the same work, but her savings now hold less of it. Who decides how much money there is, and why it can lose value, is what the rest of this course is about.',
+        'When prices rise across the board, each euro buys less. That is called inflation. Olivia did the same work, but her savings now buy less with it. Her energy did not simply vanish: where it went, who decides how much money there is, and why money can lose value is what the rest of this course is about.',
     },
     {
       id: 'olivia-what-money-is',
@@ -139,7 +139,7 @@ export const howEnergyTravelsLesson = defineLesson({
       prompt: 'So, in one sentence, what is money?',
       instructions: 'Pick the best answer',
       options: [
-        { id: 'tool', label: 'A tool that carries people’s energy to the things they want' },
+        { id: 'tool', label: 'A tool to swap the energy you put in for products and services, now or later' },
         {
           id: 'paper',
           label: 'Special paper and metal that are valuable in themselves',
@@ -148,9 +148,9 @@ export const howEnergyTravelsLesson = defineLesson({
         },
         {
           id: 'banks-only',
-          label: 'Something only banks are allowed to use',
+          label: 'Exactly the same thing as how much something is worth',
           feedback:
-            'Olivia uses money, and so do Breno and his landlord. Banks keep a lot of it, but money is for everyone.',
+            'People dropped different coins into Olivia’s case for the same song, because it was worth more to some of them. Money is what you give; value is what something is worth to you.',
         },
         {
           id: 'prize',
@@ -190,12 +190,12 @@ export const howEnergyTravelsLesson = defineLesson({
           id: 'bank',
           label: 'A bank loan',
           feedback:
-            'A loan is a promise to pay later, and it needs a unit to count in. The first problem is having something both sides accept.',
+            'A loan would only let the farmer pay later. He would still need something the shoemaker accepts, and the shoemaker wants fish.',
         },
       ],
       correctOptionId: 'double-coincidence',
       explanation:
-        'Barter needs each side to want exactly what the other has, at the same time: a double coincidence of wants. Money removes it. The farmer sells wheat to anyone for money, and pays the shoemaker with it. Most historians add that early societies also relied on credit and favours between neighbours, long before coins.',
+        'Barter needs each side to want exactly what the other has, at the same time: a double coincidence of wants. Money removes it. The farmer sells wheat to anyone for money, and pays the shoemaker with it. Anthropologists add that no pure barter economy has ever been found: early societies ran on credit and favours between neighbours, long before coins.',
     },
     {
       id: 'match-what-money-does',
@@ -235,22 +235,22 @@ export const howEnergyTravelsLesson = defineLesson({
         {
           id: 'shift',
           label: 'A nurse works a night shift',
-          detail: 'Twelve hours of her energy and skill.',
+          detail: 'Twelve hours of energy and skill.',
         },
         {
           id: 'paid',
           label: 'The hospital pays her €150',
-          detail: 'Her energy is now stored as money.',
+          detail: 'Energy stored as money.',
         },
         {
           id: 'ukulele',
           label: 'She buys her son a €40 ukulele at Breno’s shop',
-          detail: 'Part of her shift reaches Breno.',
+          detail: 'Spent in a music shop.',
         },
         {
           id: 'factory',
           label: 'Breno pays the factory that made the ukulele',
-          detail: 'And on to the people who built it.',
+          detail: 'To the people who built it.',
         },
       ],
       correctOrder: ['shift', 'paid', 'ukulele', 'factory'],

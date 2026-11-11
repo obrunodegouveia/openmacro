@@ -31,7 +31,7 @@ export const energyInGoodsOutLesson = defineLesson({
       xp: 10,
       tags: ['basics', 'services'],
       prompt:
-        'Olivia spends weeks writing a song and practising it. On Saturday she plays it in the town square, and people stop, smile and sing along. What did they get from her?',
+        'In this course, your work, your time and your skill are called your energy. Olivia spends weeks writing a song and practising it. On Saturday she plays it in the town square, and people stop, smile and sing along. What did they get from her?',
       instructions: 'Pick the best answer',
       options: [
         { id: 'service', label: 'A service: her energy, turned into joy they wanted' },
@@ -51,7 +51,7 @@ export const energyInGoodsOutLesson = defineLesson({
           id: 'worthless',
           label: 'Free fun, so it has no value',
           feedback:
-            'Joy is something people want, and Olivia can only play in one square for one afternoon. Wanted and scarce: that is exactly what has value.',
+            'Joy is something people want, and Olivia’s time is scarce: she can only play in one square, for one afternoon. Wanted, and made with scarce time: that is what has value.',
         },
       ],
       correctOptionId: 'service',
@@ -69,7 +69,7 @@ export const energyInGoodsOutLesson = defineLesson({
         'By the end of the afternoon, people have dropped €30 into Olivia’s guitar case. Nobody had to. Why did they pay?',
       instructions: 'Pick the best answer',
       options: [
-        { id: 'valued', label: 'Her song gave them joy, and they wanted to give something back for it' },
+        { id: 'valued', label: 'Her song was worth more to them than the coins they gave' },
         {
           id: 'worked-hard',
           label: 'She practised for weeks, so she deserved it',
@@ -91,7 +91,7 @@ export const energyInGoodsOutLesson = defineLesson({
       ],
       correctOptionId: 'valued',
       explanation:
-        'This is an exchange. Olivia gave her energy, as music. The crowd gave theirs back, as money: the €30 came from work they had done. Each person decided for themselves what the song was worth to them.',
+        'This is an exchange, and both sides give something. Olivia gave her energy, as music. The people who paid gave theirs, as money they had earned with their own work. Many people listened and paid nothing; the ones who paid decided the song was worth more to them than their coins.',
     },
     {
       id: 'olivia-energy-chain',
@@ -100,33 +100,33 @@ export const energyInGoodsOutLesson = defineLesson({
       kids: true,
       xp: 15,
       tags: ['basics', 'exchange'],
-      prompt: 'Follow Olivia’s energy, from her bedroom to Breno’s shop. Put it in order.',
+      prompt: 'Follow the energy, from Olivia’s bedroom to Breno’s shop. Put it in order.',
       instructions: 'Earliest first',
       events: [
         {
           id: 'practise',
           label: 'Olivia practises her song every evening',
-          detail: 'Energy goes in: her time and her skill.',
+          detail: 'Her time and her skill.',
         },
         {
           id: 'play',
           label: 'She plays it in the town square',
-          detail: 'The crowd gets a service they want: joy.',
+          detail: 'A service people want: joy.',
         },
         {
           id: 'paid',
           label: 'People drop €30 into her guitar case',
-          detail: 'They give back energy of their own, as money.',
+          detail: 'Money the crowd earned with their own work.',
         },
         {
           id: 'strings',
           label: 'She spends €10 on new strings at Breno’s shop',
-          detail: 'Her money carries her energy on to Breno.',
+          detail: 'The money she earned with her music, spent.',
         },
       ],
       correctOrder: ['practise', 'play', 'paid', 'strings'],
       explanation:
-        'Energy went in, a service came out, and money carried the value on to someone else. Breno never heard the song, but part of Olivia’s afternoon reached his shop anyway. That chain, repeated billions of times a day, is the economy.',
+        'Energy went in, a service came out, and money carried the value on. The €30 was earned by the crowd’s work; once Olivia earned it with her music, spending it passed her afternoon on to Breno. He never heard the song, but part of it reached his shop anyway. That chain, repeated billions of times a day, is the economy.',
     },
     {
       id: 'breno-product-or-service',
@@ -161,7 +161,7 @@ export const energyInGoodsOutLesson = defineLesson({
       ],
       correctOptionId: 'repair',
       explanation:
-        'When Breno fixes your guitar, you do not take a new thing home: you pay for his time and his skill. That is a service. His shop sells both, and both are made with someone’s energy.',
+        'When Breno fixes your guitar, you do not take a new thing home: you pay for the fix, which his time and skill made. That is a service. His shop sells both, and both are made with someone’s energy.',
     },
     // ---- The grown-up version -----------------------------------------------
     {
@@ -173,7 +173,7 @@ export const energyInGoodsOutLesson = defineLesson({
         'A plumber spends one hour fixing a leak under your sink and charges €60. What did you mostly pay for?',
       instructions: 'Pick the best answer',
       options: [
-        { id: 'energy', label: 'An hour of his work and skill, turned into a service you wanted' },
+        { id: 'energy', label: 'A fixed leak: a service made with an hour of his work and skill' },
         {
           id: 'tools',
           label: 'His pipes and tools',
@@ -195,7 +195,7 @@ export const energyInGoodsOutLesson = defineLesson({
       ],
       correctOptionId: 'energy',
       explanation:
-        'Economists call human work, time and skill labour, and it is the energy behind every product and service. They count two other inputs too: capital (tools and machines made earlier) and land (what nature provides). People exchange labour for money, and money for the labour of others.',
+        'Economists call human work, time and skill labour, and it is the energy behind every product and service. They count two other inputs too: capital (tools and machines made earlier) and land (what nature provides). People exchange their labour for money, and money for what others make. Money also pays for capital and land, rent for instance, which is why “energy” is the course’s shorthand and not the whole story.',
     },
     {
       id: 'mc-value',

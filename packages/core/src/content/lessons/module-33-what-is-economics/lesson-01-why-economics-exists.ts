@@ -82,9 +82,9 @@ export const whyEconomicsExistsLesson = defineLesson({
         },
         {
           id: 'zero',
-          label: '€0, because nobody pays her to practise',
+          label: 'The money she might win at the talent show',
           feedback:
-            'Costs are not only money. Her time is scarce: every hour can only be used once.',
+            'She hopes to win something, but that is what she might gain, not what she gives up. The cost is what she cannot do instead.',
         },
       ],
       correctOptionId: 'beach',
@@ -107,13 +107,13 @@ export const whyEconomicsExistsLesson = defineLesson({
           id: 'loudest',
           label: 'Give it to whoever shouts the loudest',
           feedback:
-            'That would be a system too, but a terrible one: it rewards shouting, not wanting the amp most. Shops use prices because they are fair to everyone who can pay.',
+            'That is a system too, but a bad one: it rewards shouting. A price gives the amp to whoever will give up the most for it, and it tells Breno to order more.',
         },
         {
           id: 'magic',
-          label: 'Make two more amps appear',
+          label: 'Give it to Breno’s favourite customer',
           feedback:
-            'Nobody can make an amp appear. Somebody has to build it, which takes work and time. That is exactly why there is only one.',
+            'That is a system too, but the other two never get a chance, however much they want it. Shops mostly use prices, because a price is open to anyone who will pay it.',
         },
         {
           id: 'cut',
@@ -159,7 +159,45 @@ export const whyEconomicsExistsLesson = defineLesson({
       ],
       correctOptionId: 'first-come',
       explanation:
-        'Even when something costs no money, if it is scarce somebody pays for it some other way. Here people pay with their time, by arriving early. Prices, queues and lotteries are all answers to the same problem: scarcity.',
+        'Even when something costs no money, if it is scarce somebody pays for it some other way. Here people pay with their time, by arriving early. Time, work and skill are what this course calls your energy: what people give up to get what is scarce.',
+    },
+    {
+      id: 'olivia-what-is-economics',
+      type: 'multiple_choice',
+      speaker: 'olivia',
+      kids: true,
+      xp: 15,
+      tags: ['basics', 'scarcity', 'definition'],
+      prompt:
+        'Seats, amps, Saturday afternoons: there is never enough for everyone. So what is economics?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'share',
+          label: 'How people share out things that are scarce and wanted, and what they give to get them',
+        },
+        {
+          id: 'money',
+          label: 'The study of money, coins and the banks that keep them',
+          feedback:
+            'Money comes into it later, as a tool. But economics starts before money: Olivia’s Saturday was a choice about scarce time, and no money was involved.',
+        },
+        {
+          id: 'rich',
+          label: 'Learning the best tricks for getting rich quickly',
+          feedback:
+            'Economics is about everybody, not only people trying to get rich. It explains how a whole town shares out what it does not have enough of.',
+        },
+        {
+          id: 'maths',
+          label: 'Doing sums about prices in shops and supermarkets',
+          feedback:
+            'Economics uses some sums, but the big question is not adding up a bill. It is why there is a bill at all: because the things in the shop are scarce.',
+        },
+      ],
+      correctOptionId: 'share',
+      explanation:
+        'Because good things are scarce, people have to give something to get them: their work, their time, their skill. This course calls that their energy. Economics is the study of how people deal with scarcity, and how they swap their energy for the things they want.',
     },
     // ---- The definition -----------------------------------------------------
     {
@@ -184,7 +222,7 @@ export const whyEconomicsExistsLesson = defineLesson({
           id: 'rich',
           label: 'The study of how people and companies get rich',
           feedback:
-            'That is personal finance. Economics explains how a whole society shares out what is scarce, which includes people who never get rich.',
+            'That is business and personal finance. Economics explains how a whole society shares out what is scarce, which includes people who never get rich.',
         },
         {
           id: 'markets',
