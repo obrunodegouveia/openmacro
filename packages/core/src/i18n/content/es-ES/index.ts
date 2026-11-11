@@ -36,6 +36,7 @@ import { theTreasuryOnThePhoneEsES } from './the-treasury-on-the-phone';
 import { theTreasuryYieldCurveEsES } from './the-treasury-yield-curve';
 import { whatCannotStopEsES } from './what-cannot-stop';
 import { whatGdpCountsEsES } from './what-gdp-counts';
+import { whatIsEconomicsEsES } from './what-is-economics';
 import { whatTheDebtCostsEsES } from './what-the-debt-costs';
 import { whatTheTargetShouldBeEsES } from './what-the-target-should-be';
 import { whatYouAreTargetingEsES } from './what-you-are-targeting';
@@ -74,6 +75,7 @@ export const esESContent: ContentTranslation = {
     'the-treasury-yield-curve': theTreasuryYieldCurveEsES,
     'what-cannot-stop': whatCannotStopEsES,
     'what-gdp-counts': whatGdpCountsEsES,
+    'what-is-economics': whatIsEconomicsEsES,
     'what-the-debt-costs': whatTheDebtCostsEsES,
     'what-the-target-should-be': whatTheTargetShouldBeEsES,
     'what-you-are-targeting': whatYouAreTargetingEsES,

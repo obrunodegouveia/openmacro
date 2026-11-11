@@ -40,9 +40,9 @@ import { readingOneHeadlineLesson } from './lesson-06-reading-one-headline';
 
 export const moduleStartHere = defineModule({
   id: 'start-here',
-  // Was "Start Here". It is the second module now that Banking and Money
-  // leads, so the name described a position it no longer had. The id stays
-  // `start-here`: saved progress and shared links are keyed on it.
+  // Was "Start Here". It is the third module now that What Is Economics? and
+  // Banking and Money lead, so the name described a position it no longer had.
+  // The id stays `start-here`: saved progress and shared links are keyed on it.
   title: 'Everyday Money',
   description:
     'No background needed. What the number in your banking app really is, what a bank does with it, what an interest rate is for, and how a decision in Frankfurt reaches your mortgage.',

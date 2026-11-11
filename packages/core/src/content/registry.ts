@@ -53,6 +53,7 @@ import { moduleTheForecastRound } from './lessons/module-29-the-forecast-round';
 import { moduleHowItReachesTheEconomy } from './lessons/module-30-how-it-reaches-the-economy';
 import { moduleWhereTheRiskWent } from './lessons/module-31-where-the-risk-went';
 import { moduleWhatTheDebtCosts } from './lessons/module-32-what-the-debt-costs';
+import { moduleWhatIsEconomics } from './lessons/module-33-what-is-economics';
 
 /**
  * Ordered list of every module shipped with the app. Add yours here.
@@ -69,7 +70,13 @@ import { moduleWhatTheDebtCosts } from './lessons/module-32-what-the-debt-costs'
  * drifting apart. A module added out of level order will render under the
  * wrong heading, so add it beside its peers.
  *
- * Banking and Money leads because it is the only module with a video on
+ * What Is Economics? leads. It is three short lessons on the question every
+ * other module assumes an answer to — what economics is about — and it is
+ * where money is first introduced, as the tool that carries people's work to
+ * the products and services they want. It ends by asking who creates money,
+ * which is the question Banking and Money opens with.
+ *
+ * Banking and Money comes next because it is the only module with a video on
  * every lesson. A complete beginner does better watching somebody explain a
  * balance sheet before being asked to post one, and Khan Academy's series
  * does that better than any text we would write.
@@ -81,6 +88,7 @@ import { moduleWhatTheDebtCosts } from './lessons/module-32-what-the-debt-costs'
  */
 export const MODULES: readonly Module[] = [
   // ---- beginner: assumes nothing ------------------------------------------
+  moduleWhatIsEconomics,
   moduleBankingAndMoney,
   moduleStartHere,
   moduleFoundationsFiduciaryCurrency,
