@@ -2,15 +2,15 @@
 -- OpenMacro — the bounty exam: a final exam for anyone who joins and learns
 -- ============================================================================
 --
--- A one-off challenge announced at a talk on 11 November 2026: anyone who
--- creates an account from that day on, finishes the first half of Banking
+-- A one-off challenge announced at a talk on 11 November 2026: anyone, with
+-- a new account or an old one, who finishes the first half of Banking
 -- and Money (lessons 1 to 13) and reaches 2,100 XP gets a 21-question exam on
 -- those lessons. The first to pass wins 21,000 sats. The organiser pays by
 -- hand from their own wallet, so nothing here moves money: this decides who
 -- gets an exam and keeps the address the winner wants to be paid at.
 --
 -- How it works: whenever a lesson result is saved, a trigger checks the
--- learner. If they joined on or after the start, finished all 13 lessons,
+-- learner. If they have finished all 13 lessons,
 -- their lesson XP adds up to the threshold, they have never had a bounty exam
 -- and nobody has passed one yet, it inserts an exam for them. Both clients
 -- already show any assigned exam that has not been handed in, so no app
@@ -47,8 +47,6 @@ security definer
 set search_path = public
 as $$
 declare
-  -- Midnight in San Salvador on the day of the talk.
-  v_start     constant timestamptz := timestamptz '2026-11-11 00:00:00-06';
   v_threshold constant integer     := 2100;
   v_lessons   constant text[]      := array[
     'kab-what-a-bank-is-for', 'kab-income-statement', 'kab-fractional-reserve',
@@ -56,15 +54,9 @@ declare
     'kab-lending-without-gold', 'kab-reserve-ratios', 'kab-more-on-reserve-ratios',
     'kab-leverage', 'kab-a-reserve-bank', 'kab-treasuries',
     'kab-open-market-operations'];
-  v_joined    timestamptz;
   v_xp        integer;
   v_done      integer;
 begin
-  select created_at into v_joined from auth.users where id = new.user_id;
-  if v_joined is null or v_joined < v_start then
-    return new;
-  end if;
-
   if exists (select 1 from public.assigned_exams where user_id = new.user_id and bounty) then
     return new;
   end if;

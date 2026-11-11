@@ -6,8 +6,6 @@ import type { Locale } from "@openmacro/core/i18n/locales";
  * who gets an exam; change both together.
  */
 export const BOUNTY = {
-  /** Midnight in San Salvador. Accounts created before this do not count. */
-  start: "2026-11-11T06:00:00Z",
   xp: 2100,
   sats: 21000,
   questions: 21,
@@ -36,7 +34,7 @@ const EN = {
   lead: "Learn how banks create money. The first person to prove it wins 21,000 sats (about US$15), paid in bitcoin.",
   rulesTitle: "The rules",
   rules: [
-    "Create a free OpenMacro account on or after 11 November 2026, in the app or on this site.",
+    "Sign in to OpenMacro with a free account, in the app or on this site. New and existing accounts both count.",
     "Study the first half of Banking and Money (Khan Academy): lessons 1 to 13, from “Why We Have Banks” to “The Two Printing Presses”. Watch the videos.",
     "Finish all 13 lessons and reach 2,100 XP. That is 10 sats for every XP.",
     "Your exam appears on the home screen by itself: 21 questions from those lessons, 60 seconds each, one attempt.",
@@ -49,7 +47,6 @@ const EN = {
   statusTitle: "Where you stand",
   loading: "Loading…",
   signIn: "Sign in with the account you study with to see your progress.",
-  notEligible: "This account was created before 11 November 2026, so it does not count for the challenge. Every lesson is still free.",
   xpLabel: "XP:",
   lessonsLabel: "Lessons 1–13 finished:",
   examLabel: "Exam:",
@@ -76,7 +73,7 @@ const ES: BountyCopy = {
   lead: "Aprende cómo los bancos crean dinero. La primera persona que lo demuestre gana 21.000 sats (unos 15 US$), pagados en bitcoin.",
   rulesTitle: "Las reglas",
   rules: [
-    "Crea una cuenta gratuita de OpenMacro a partir del 11 de noviembre de 2026, en la app o en esta web.",
+    "Inicia sesión en OpenMacro con una cuenta gratuita, en la app o en esta web. Valen tanto las cuentas nuevas como las que ya existían.",
     "Estudia la primera mitad de Banca y dinero (Khan Academy): las lecciones 1 a 13, de «Por qué tenemos bancos» a «Las dos imprentas». Mira los vídeos.",
     "Termina las 13 lecciones y llega a 2.100 XP. Son 10 sats por cada XP.",
     "Tu examen aparece solo en la pantalla de inicio: 21 preguntas de esas lecciones, 60 segundos cada una, un solo intento.",
@@ -89,7 +86,6 @@ const ES: BountyCopy = {
   statusTitle: "Cómo vas",
   loading: "Cargando…",
   signIn: "Inicia sesión con la cuenta con la que estudias para ver tu progreso.",
-  notEligible: "Esta cuenta se creó antes del 11 de noviembre de 2026, así que no cuenta para el reto. Todas las lecciones siguen siendo gratis.",
   xpLabel: "XP:",
   lessonsLabel: "Lecciones 1–13 terminadas:",
   examLabel: "Examen:",

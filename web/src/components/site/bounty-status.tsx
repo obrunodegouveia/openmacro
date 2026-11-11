@@ -12,7 +12,6 @@ import { getSupabase } from "@/lib/supabase";
 import { BOUNTY, bountyCopy } from "@/lib/bounty";
 
 interface Status {
-  joined: string | null;
   xp: number;
   lessonsDone: number;
   exam: { submitted: boolean; asked: number | null; correct: number | null } | null;
@@ -20,8 +19,7 @@ interface Status {
 }
 
 /**
- * Where the signed-in learner stands in the bounty: whether their account
- * counts, their XP and lessons against the bar, their exam, and, once they
+ * Where the signed-in learner stands in the bounty: their XP and lessons against the bar, their exam, and, once they
  * have passed, the form for the address the prize is sent to.
  *
  * Everything is read under row-level security, so it only ever shows the
@@ -43,8 +41,7 @@ export function BountyStatus() {
     if (!supabase || !learner) return;
     let live = true;
     void (async () => {
-      const [{ data: user }, { data: lessons }, { data: exam }, { data: payout }] = await Promise.all([
-        supabase.auth.getUser(),
+      const [{ data: lessons }, { data: exam }, { data: payout }] = await Promise.all([
         supabase.from("lesson_progress").select("lesson_id, best_xp"),
         supabase
           .from("assigned_exams")
@@ -57,7 +54,6 @@ export function BountyStatus() {
       const rows = (lessons ?? []) as { lesson_id: string; best_xp: number }[];
       const focus = new Set<string>(BOUNTY.lessons);
       setStatus({
-        joined: user.user?.created_at ?? null,
         xp: rows.reduce((sum, row) => sum + (row.best_xp ?? 0), 0),
         lessonsDone: rows.filter((row) => focus.has(row.lesson_id) && row.best_xp > 0).length,
         exam: exam
@@ -87,7 +83,6 @@ export function BountyStatus() {
   }
   if (!status) return <Panel>{c.loading}</Panel>;
 
-  const eligible = status.joined !== null && Date.parse(status.joined) >= Date.parse(BOUNTY.start);
   const passed =
     status.exam?.submitted === true &&
     status.exam.asked !== null &&
@@ -118,9 +113,6 @@ export function BountyStatus() {
 
   return (
     <Panel>
-      {!eligible ? (
-        <p>{c.notEligible}</p>
-      ) : (
         <ul className="space-y-2">
           <li>
             <strong className="text-ink">{c.xpLabel}</strong> {status.xp.toLocaleString(locale)} /{" "}
@@ -138,7 +130,6 @@ export function BountyStatus() {
                 : `${status.exam.correct} / ${status.exam.asked} · ${passed ? c.passed : c.failed}`}
           </li>
         </ul>
-      )}
 
       {status.exam && !status.exam.submitted ? (
         <LocaleLink href="/dashboard/exam" className="mt-4 inline-block font-bold text-mint-bright">

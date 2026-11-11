@@ -1,7 +1,7 @@
 # The bounty exam
 
-A one-off challenge announced on 11 November 2026: the first person who
-creates an account from that day on, finishes **lessons 1 to 13 of Banking and
+A one-off challenge announced on 11 November 2026, open to every account, new
+or old: the first person who finishes **lessons 1 to 13 of Banking and
 Money** and reaches **2,100 XP**, then passes a 21-question exam with **15 or
 more right**, wins **21,000 sats** (10 sats per XP of the threshold). The
 public rules are at [openmacro.org/bounty](https://openmacro.org/bounty)
@@ -11,8 +11,7 @@ wallet. The app never holds a key or sends bitcoin.
 Migration `0014_bounty_exam.sql` does the rest:
 
 - Every time a lesson result is saved, a trigger checks the learner. If they
-  joined on or after 11 November 2026 (midnight, San Salvador time), they have
-  finished all 13 lessons, their lesson XP adds up to 2,100 or more, and they
+  have finished all 13 lessons, their lesson XP adds up to 2,100 or more, and they
   have never had a bounty exam, it assigns them one: 21 questions drawn from
   those 13 lessons, 60 seconds each, in Spanish.
 - The exam appears in the app and on the website the next time they open the
