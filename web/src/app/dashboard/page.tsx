@@ -7,6 +7,7 @@ import { ModuleRewards } from "@/components/app/module-rewards";
 import { EarningsPanel } from "@/components/app/earnings";
 import { DeleteAccount } from "@/components/app/delete-account";
 import { BountyAdminNotice } from "@/components/app/bounty-admin-notice";
+import { BountyCard } from "@/components/app/bounty-card";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 
@@ -38,6 +39,8 @@ export default function DashboardPage() {
         <Section className="pt-28 sm:pt-32">
           <div className="mx-auto max-w-3xl">
             <BountyAdminNotice />
+            {/* The 21,000 sats bounty, for everyone. */}
+            <BountyCard />
             <Dashboard
               money={
                 <>

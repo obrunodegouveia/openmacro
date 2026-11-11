@@ -38,6 +38,7 @@ import { SymbolView } from 'expo-symbols';
 import { ActionButton } from '@/components/ui/ActionButton';
 import { SignedOutWarning } from '@/components/ui/SignedOutWarning';
 import { EurcLink } from '@/components/ui/EurcLink';
+import { BountyCard } from '@/components/ui/BountyCard';
 import { Chevron } from '@/components/ui/CourseRows';
 import { TAB_BAR_SPACE } from '@/components/ui/GlassTabBar';
 import { ProgressRing } from '@/components/ui/ProgressRing';
@@ -130,6 +131,9 @@ export default function TodayScreen() {
 
         {/* Only for accounts with an active EURC wallet; see EurcLink. */}
         <EurcLink />
+
+        {/* The 21,000 sats bounty, for everyone; see BountyCard. */}
+        <BountyCard />
 
         <UpdateBanner />
 

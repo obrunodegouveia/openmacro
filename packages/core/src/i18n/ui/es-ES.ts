@@ -366,6 +366,11 @@ export const esES: UiDictionary = {
   'language.choose': 'Mostrar el curso en {name}',
   'language.partial': 'Este idioma aún se está traduciendo. Lo que falta por traducir aparece en inglés.',
 
+  'bounty.card.eyebrow': 'Premio en bitcoin',
+  'bounty.card.title': 'Llega a 2.100 XP y puedes ganar 21.000 sats',
+  'bounty.card.body': 'Termina las lecciones 1 a 13 de Banca y dinero con 2.100 XP y se desbloquea un examen. La primera persona que lo apruebe gana 21.000 sats. Mira las reglas.',
+  'bounty.card.hint': 'Abre las reglas en openmacro.org',
+
   'exam.card.eyebrow': 'Examen',
   'exam.card.title': 'Tu profesor te ha enviado un examen',
   'exam.intro.title': 'Examen de tu profesor',

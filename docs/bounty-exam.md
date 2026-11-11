@@ -89,6 +89,10 @@ limit 20;
 
 ## Ending it
 
+Every learner sees a card about the prize on Today in the app
+(`src/components/ui/BountyCard.tsx`) and on the website's dashboard
+(`web/src/components/app/bounty-card.tsx`). Remove both when it ends.
+
 To stop handing out exams before anyone wins, drop the trigger:
 
 ```sql

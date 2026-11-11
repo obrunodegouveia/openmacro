@@ -365,6 +365,11 @@ export const en = {
   'level.advanced': 'Advanced',
   'level.advanced.blurb': 'Assumes the interface and the levers',
 
+  'bounty.card.eyebrow': 'Bitcoin prize',
+  'bounty.card.title': 'Reach 2,100 XP and you could win 21,000 sats',
+  'bounty.card.body': 'Finish lessons 1 to 13 of Banking and Money with 2,100 XP and an exam unlocks. The first person to pass it wins 21,000 sats. See the rules.',
+  'bounty.card.hint': 'Opens the rules on openmacro.org',
+
   'exam.card.eyebrow': 'Exam',
   'exam.card.title': 'Your teacher has sent you an exam',
   'exam.intro.title': 'Exam from your teacher',
