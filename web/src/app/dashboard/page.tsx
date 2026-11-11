@@ -6,6 +6,7 @@ import { AssignedExamCard } from "@/components/app/assigned-exam-card";
 import { ModuleRewards } from "@/components/app/module-rewards";
 import { EarningsPanel } from "@/components/app/earnings";
 import { DeleteAccount } from "@/components/app/delete-account";
+import { BountyAdminNotice } from "@/components/app/bounty-admin-notice";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 
@@ -36,6 +37,7 @@ export default function DashboardPage() {
       <main id="main">
         <Section className="pt-28 sm:pt-32">
           <div className="mx-auto max-w-3xl">
+            <BountyAdminNotice />
             <Dashboard
               money={
                 <>

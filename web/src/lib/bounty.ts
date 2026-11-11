@@ -108,3 +108,29 @@ const ES: BountyCopy = {
 export function bountyCopy(locale: Locale): BountyCopy {
   return locale === "es-ES" ? ES : EN;
 }
+
+/** The organiser's notice. Only the admin ever sees it, so English only. */
+export const BOUNTY_ADMIN_COPY = {
+  toPay: "You have a bounty to pay",
+  waiting: "Someone passed the bounty exam. Waiting for their Bitcoin address.",
+  paidTitle: "Bounty paid",
+  amount: "21,000 sats to:",
+  passed: "Passed",
+  took: "in",
+  left: "left the exam",
+  times: "times",
+  lessons: "lessons",
+  xp: "XP,",
+  from: "finished between",
+  and: "and",
+  check: "Check the record before paying. Twenty lessons finished in the same minute is not a real learner.",
+  txidLabel: "Transaction ID, after you have sent it",
+  txidPlaceholder: "64 hexadecimal characters",
+  markPaid: "Mark as paid",
+  saving: "Saving…",
+  failed: "Could not save:",
+  viewTx: "View transaction",
+  mempool: "https://mempool.space/tx/",
+  copy: "Copy address",
+  copied: "Copied",
+} as const;
