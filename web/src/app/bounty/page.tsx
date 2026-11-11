@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 
+import { BountyAdminNotice } from "@/components/app/bounty-admin-notice";
 import { BountyStatus } from "@/components/site/bounty-status";
 import { Footer } from "@/components/site/footer";
 import { LocaleLink } from "@/components/site/locale-link";
@@ -26,6 +27,7 @@ export default async function BountyPage() {
     <>
       <Nav />
       <main id="main" className="mx-auto w-full max-w-3xl px-5 py-20 sm:px-8">
+        <BountyAdminNotice showPaid />
         <h1 className="font-display text-4xl font-extrabold tracking-tight">{c.title}</h1>
         <p className="mt-4 text-lg text-ink-muted">{c.lead}</p>
 
