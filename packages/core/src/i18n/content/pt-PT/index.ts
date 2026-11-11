@@ -36,6 +36,7 @@ import { theTreasuryOnThePhonePtPT } from './the-treasury-on-the-phone';
 import { theTreasuryYieldCurvePtPT } from './the-treasury-yield-curve';
 import { whatCannotStopPtPT } from './what-cannot-stop';
 import { whatGdpCountsPtPT } from './what-gdp-counts';
+import { whatIsEconomicsPtPT } from './what-is-economics';
 import { whatTheDebtCostsPtPT } from './what-the-debt-costs';
 import { whatTheTargetShouldBePtPT } from './what-the-target-should-be';
 import { whatYouAreTargetingPtPT } from './what-you-are-targeting';
@@ -74,6 +75,7 @@ export const ptPTContent: ContentTranslation = {
     'the-treasury-yield-curve': theTreasuryYieldCurvePtPT,
     'what-cannot-stop': whatCannotStopPtPT,
     'what-gdp-counts': whatGdpCountsPtPT,
+    'what-is-economics': whatIsEconomicsPtPT,
     'what-the-debt-costs': whatTheDebtCostsPtPT,
     'what-the-target-should-be': whatTheTargetShouldBePtPT,
     'what-you-are-targeting': whatYouAreTargetingPtPT,

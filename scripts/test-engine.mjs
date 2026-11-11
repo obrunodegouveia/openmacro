@@ -303,10 +303,29 @@ test('the kids path: the first ten Khan lessons, then it ends', () => {
   assert.equal(nextKidsLesson(module, path[0].id)?.id, path[1].id);
   assert.equal(nextKidsLesson(module, path.at(-1).id), null);
   assert.equal(lessonsForMode(module, 'standard'), module.lessons);
-  for (const other of MODULES.filter((candidate) => candidate !== module)) {
+  // What Is Economics? is the other module with a kids path, checked below.
+  const withKids = new Set(['banking-and-money', 'what-is-economics']);
+  for (const other of MODULES.filter((candidate) => !withKids.has(candidate.id))) {
     assert.equal(moduleHasKidsPath(other), false, `${other.id} has no kids path`);
     assert.equal(lessonsForMode(other, 'kids'), other.lessons);
   }
+});
+
+test('the kids path: every lesson of What Is Economics?, voiced throughout', () => {
+  const module = MODULES.find((candidate) => candidate.id === 'what-is-economics');
+  assert.equal(MODULES[0], module, 'it opens the course');
+  assert.ok(moduleHasKidsPath(module));
+  const path = lessonsForMode(module, 'kids');
+  assert.deepEqual(
+    path.map((lesson) => lesson.id),
+    module.lessons.map((lesson) => lesson.id),
+  );
+  for (const lesson of path) {
+    assert.ok(lesson.challenges.every((challenge) => challenge.kids && challenge.speaker), lesson.id);
+    assert.ok(lesson.challenges.length >= 4, `${lesson.id} has ${lesson.challenges.length}`);
+    assert.ok(lesson.challenges.length >= (lesson.hearts ?? 3), `${lesson.id}: fewer steps than hearts`);
+  }
+  assert.equal(nextKidsLesson(module, path.at(-1).id), null);
 });
 
 test('a kids run earns no more XP than the whole lesson can', () => {
