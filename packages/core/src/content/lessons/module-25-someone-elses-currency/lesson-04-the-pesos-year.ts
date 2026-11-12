@@ -26,10 +26,10 @@ export const thePesosYearLesson = defineLesson({
   id: 'the-pesos-year',
   title: 'The Peso’s Year',
   subtitle:
-    'The dollar lost about an eighth of its value in Colombian pesos in a year. Most of it went in ten weeks.',
+    'A dollar bought about 3,750 Colombian pesos a year ago and about 3,300 now. Who bought the pesos, why, and why most of it happened in ten weeks.',
   icon: '🇨🇴',
   difficulty: 'advanced',
-  estimatedMinutes: 10,
+  estimatedMinutes: 12,
   challenges: [
     {
       id: 'mc-how-much',
@@ -65,7 +65,40 @@ export const thePesosYearLesson = defineLesson({
       ],
       correctOptionId: 'fourteen',
       explanation:
-        'Exchange rates are quoted as pesos per dollar, so a falling number means a stronger peso. That trips people up twice: the number goes down when the currency goes up, and the two percentages are not the same. The dollar fell 12% in pesos; the peso rose about 14% in dollars. At its strongest, around 3,150 in August, the peso had gained about 19% on the year before.',
+        'The rate is quoted as pesos per dollar, so when the number falls, the peso has got stronger. The two percentages differ because they start from different places: the dollar lost 450 of its 3,750 pesos, which is 12%, while the peso went from buying 1/3,750 of a dollar to 1/3,300, which is about 14% more. At its strongest, around 3,150 in August, a peso was worth about 19% more than a year before.',
+    },
+    {
+      id: 'match-dollars-in',
+      type: 'concept_match',
+      tags: ['balance-of-payments', 'emerging-markets'],
+      xp: 30,
+      prompt:
+        'An exchange rate is a price. Each time someone sells dollars to buy pesos, the peso is pushed up. Match the four big sources of those dollars in 2026.',
+      instructions: 'Tap a term, then its definition',
+      pairs: [
+        {
+          id: 'remittances',
+          term: 'Remittances',
+          definition: 'Colombians working abroad sending wages home; a record year',
+        },
+        {
+          id: 'exports',
+          term: 'Oil and coal exports',
+          definition: 'Sold in dollars, and converted to pay wages and taxes in pesos',
+        },
+        {
+          id: 'portfolio',
+          term: 'Portfolio inflows',
+          definition: 'Foreign investors buying peso bonds for the high rate',
+        },
+        {
+          id: 'global',
+          term: 'A weaker dollar worldwide',
+          definition: 'The dollar falling against most currencies, not only the peso',
+        },
+      ],
+      explanation:
+        'Remittances and exports are slow and steady: they held the peso up all year. Portfolio money is fast and fickle, and it follows the interest rate, which is the next question. The weaker dollar is not about Colombia at all, and that is the trap in reading a currency: part of what looked like a verdict on Colombia was a verdict on the dollar.',
     },
     {
       id: 'mc-carry',
@@ -73,7 +106,7 @@ export const thePesosYearLesson = defineLesson({
       tags: ['carry-trade', 'interest-rates'],
       xp: 35,
       prompt:
-        'Through 2026 Banco de la República raised its policy rate from 9.25% to 12.25%, while a yen could be borrowed at around 1%. What does a carry trade bet on?',
+        'Borrow yen at about 1%, swap them for pesos, and lend the pesos in Colombia at about 12%. That is a carry trade. What is it betting on?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -101,40 +134,7 @@ export const thePesosYearLesson = defineLesson({
       ],
       correctOptionId: 'not-fall',
       explanation:
-        'Borrow where money is cheap, convert, lend where it is dear. With an eleven-point gap, the peso can fall about eleven percent in a year before the investor loses money. The more investors do it, the more pesos they buy, and the stronger the peso gets — which makes the trade look even better. It also means the money can leave just as fast: a carry trade unwinds when the currency starts to fall, which is when the country needs the money most. That is the surge from the previous lesson, from the other side.',
-    },
-    {
-      id: 'match-dollars-in',
-      type: 'concept_match',
-      tags: ['balance-of-payments', 'emerging-markets'],
-      xp: 30,
-      prompt:
-        'Every peso bought with a dollar strengthens the peso. Four places those dollars came from in 2026.',
-      instructions: 'Tap a term, then its definition',
-      pairs: [
-        {
-          id: 'remittances',
-          term: 'Remittances',
-          definition: 'Colombians working abroad sending wages home; a record year',
-        },
-        {
-          id: 'exports',
-          term: 'Oil and coal exports',
-          definition: 'Sold in dollars, and converted to pay wages and taxes in pesos',
-        },
-        {
-          id: 'portfolio',
-          term: 'Portfolio inflows',
-          definition: 'Foreign investors buying peso bonds for the high rate',
-        },
-        {
-          id: 'global',
-          term: 'A weaker dollar worldwide',
-          definition: 'The dollar falling against most currencies, not only the peso',
-        },
-      ],
-      explanation:
-        'An exchange rate is a price, and like any price it moves when more people want to buy than sell. The first two are slow and steady: they are why the peso had support all year. The third is fast and fickle. The fourth is not about Colombia at all, which is the trap in reading a currency: part of what looks like a judgement on a country is a judgement on the dollar.',
+        'The investor earns about eleven points of interest a year, so the peso can fall about ten percent before the trade loses money. Every investor who does it buys pesos, which pushes the peso up and makes the trade look even better, so more arrive. The rate was that high because Banco de la República had raised it from 9.25% to 12.25% between December 2025 and September 2026 to fight inflation. The same money can leave as fast: a carry trade unwinds when the currency starts to fall, which is when the country needs it most. That is the surge from “Money That Arrives and Money That Leaves”, seen from the investor’s side.',
     },
     {
       id: 'mc-timing',
@@ -159,7 +159,7 @@ export const thePesosYearLesson = defineLesson({
           id: 'nothing',
           label: 'Nothing: currencies move at random',
           feedback:
-            'Day to day they nearly do. But a move of about 15% in ten weeks, lining up with a known event, is worth asking about.',
+            'Day to day they nearly do. But a fall from about 3,680 to about 3,150 in ten weeks, lining up with a known event, is worth asking about.',
         },
         {
           id: 'rates',
@@ -170,7 +170,7 @@ export const thePesosYearLesson = defineLesson({
       ],
       correctOptionId: 'trigger',
       explanation:
-        'The weeks in question held a presidential election: a first round on 31 May and a runoff on 21 June, won narrowly by the pro-business candidate. The peso jumped the day after the first round. High rates, remittances and exports were the dry wood; the election was the match. Markets price expectations, so the move came when the odds changed, not when any policy did. That also cuts the other way: a rally built on expectations is only as firm as the expectations.',
+        'The weeks in question held a presidential election: a first round on 31 May and a runoff on 21 June, won narrowly by the candidate markets favoured. The peso jumped the day after the first round. High rates, remittances and exports were the dry wood; the election was the match. Markets price expectations, so the move came when the odds changed, not when any policy did. That also cuts the other way: a rally built on expectations is only as firm as the expectations.',
     },
     {
       id: 'order-strong-peso',
@@ -182,13 +182,49 @@ export const thePesosYearLesson = defineLesson({
       events: [
         { id: 'inflow', label: 'Dollars flow in and buy pesos' },
         { id: 'stronger', label: 'The peso strengthens', detail: 'About 3,750 to about 3,150' },
-        { id: 'fewer', label: 'Each dollar of coffee sold abroad brings fewer pesos' },
-        { id: 'squeeze', label: 'Wages and costs, paid in pesos, do not fall' },
-        { id: 'margin', label: 'Exporters’ margins shrink' },
+        { id: 'fewer', label: 'Each dollar of coffee sold abroad converts into fewer pesos' },
+        { id: 'margin', label: 'Wages are still paid in pesos, so the farm’s margin shrinks' },
+        { id: 'cut', label: 'The farm cuts costs, starting with next harvest’s hiring' },
       ],
-      correctOrder: ['inflow', 'stronger', 'fewer', 'squeeze', 'margin'],
+      correctOrder: ['inflow', 'stronger', 'fewer', 'margin', 'cut'],
       explanation:
         'A strong currency is good news for anyone who buys abroad — imports, travel, a dollar loan — and bad news for anyone who sells abroad and pays bills at home. Colombian coffee, flower and oil producers took the second side in 2026. From 3,750 to 3,150 pesos per dollar, the same sales bring in 16% fewer pesos. Neither side is the "real" economy; a central bank watching the exchange rate is choosing whom to listen to.',
+    },
+    {
+      id: 'mc-real-rate',
+      type: 'multiple_choice',
+      tags: ['interest-rates', 'inflation'],
+      xp: 35,
+      prompt:
+        'Suppose inflation rises from 5% to 7% and is expected to stay there, and the central bank raises its rate from 10% to 11%. Did borrowing get dearer or cheaper?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'cheaper',
+          label: 'Cheaper: the real rate fell from 5% to 4%',
+        },
+        {
+          id: 'dearer',
+          label: 'Dearer: the rate went up',
+          feedback:
+            'The headline rate did. But the loan is now repaid in money losing 7% a year instead of 5%. The part left over after inflation fell from 5 points to 4.',
+        },
+        {
+          id: 'same',
+          label: 'No change: both went up',
+          feedback:
+            'By different amounts. Inflation rose two points and the rate only one.',
+        },
+        {
+          id: 'exchange-rate',
+          label: 'You cannot tell without the exchange rate',
+          feedback:
+            'The real rate is the rate minus expected inflation; the exchange rate is not part of it. It matters for what a foreign investor earns, which is the next question.',
+        },
+      ],
+      correctOptionId: 'cheaper',
+      explanation:
+        'What savers, borrowers and carry investors feel is the real rate: the rate minus the inflation they expect. So when inflation rises, a central bank has to raise its rate by more than inflation rose just to keep money as dear as before. Economists call this the Taylor principle. It is the thread to watch in Colombia: a rate held at 12.25% while inflation rises is a real rate that is falling, even though the headline never moves.',
     },
     {
       id: 'mc-reversal',
@@ -232,5 +268,6 @@ export const thePesosYearLesson = defineLesson({
     'High rates attract carry money, which strengthens the peso and can leave as fast.',
     'Slow causes give a currency support; news decides when it moves.',
     'A strong currency helps importers and hurts exporters at the same moment.',
+    'A rate rise only tightens if it beats the rise in inflation: watch the real rate.',
   ],
 });
