@@ -191,6 +191,20 @@ export const FORMULAS = {
     return (1 + nominal) / (1 + inflation) - 1;
   },
 
+  /**
+   * What a €100 loan repaid after one year is worth in today's prices: the
+   * real rate as a sum of money, for learners who find a percentage of a
+   * percentage hard to picture.
+   *
+   * Expects: `nominalRate`, `inflationRate`.
+   */
+  loan_real_payback: (inputs) => {
+    const nominal = read(inputs, 'nominalRate');
+    const inflation = read(inputs, 'inflationRate');
+    if (inflation <= -1) return 0;
+    return (100 * (1 + nominal)) / (1 + inflation);
+  },
+
   // -------------------------------------------------------------------------
   // Reserves, settlement and central bank operations
   // -------------------------------------------------------------------------

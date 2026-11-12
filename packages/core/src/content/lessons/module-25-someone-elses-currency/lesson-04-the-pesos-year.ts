@@ -29,7 +29,7 @@ export const thePesosYearLesson = defineLesson({
     'A dollar bought about 3,750 Colombian pesos a year ago and about 3,300 now. Who bought the pesos, why, and why most of it happened in ten weeks.',
   icon: '🇨🇴',
   difficulty: 'advanced',
-  estimatedMinutes: 12,
+  estimatedMinutes: 15,
   challenges: [
     {
       id: 'mc-how-much',
@@ -191,40 +191,171 @@ export const thePesosYearLesson = defineLesson({
         'A strong currency is good news for anyone who buys abroad — imports, travel, a dollar loan — and bad news for anyone who sells abroad and pays bills at home. Colombian coffee, flower and oil producers took the second side in 2026. From 3,750 to 3,150 pesos per dollar, the same sales bring in 16% fewer pesos. Neither side is the "real" economy; a central bank watching the exchange rate is choosing whom to listen to.',
     },
     {
-      id: 'mc-real-rate',
+      id: 'mc-loan-before',
       type: 'multiple_choice',
       tags: ['interest-rates', 'inflation'],
-      xp: 35,
+      xp: 25,
       prompt:
-        'Suppose inflation rises from 5% to 7% and is expected to stay there, and the central bank raises its rate from 10% to 11%. Did borrowing get dearer or cheaper?',
+        'You borrow €100 for a year at 10%, so you pay back €110. Over the year, prices rise 5%. What will that €110 buy, in today’s prices?',
       instructions: 'Pick the best answer',
       options: [
         {
-          id: 'cheaper',
-          label: 'Cheaper: the real rate fell from 5% to 4%',
+          id: 'about-105',
+          label: 'About €105',
         },
         {
-          id: 'dearer',
-          label: 'Dearer: the rate went up',
+          id: 'exactly-110',
+          label: '€110',
           feedback:
-            'The headline rate did. But the loan is now repaid in money losing 7% a year instead of 5%. The part left over after inflation fell from 5 points to 4.',
+            'That is how many euros the bank gets. But each of them buys 5% less than today, so the €110 buys less than €110 does now.',
+        },
+        {
+          id: 'about-115',
+          label: 'About €115',
+          feedback:
+            'Rising prices shrink what money buys, so take inflation away rather than adding it: €110 ÷ 1.05.',
+        },
+        {
+          id: 'exactly-100',
+          label: '€100',
+          feedback:
+            'Only if prices rose by the full 10%. They rose 5%, so the bank still comes out ahead.',
+        },
+      ],
+      correctOptionId: 'about-105',
+      explanation:
+        'The bank gets €110 back, but €110 next year buys what about €105 buys today. So the loan really cost you about 5%, not 10%: the interest rate minus inflation. That is the real interest rate. Inflation quietly pays part of every borrower’s interest, because the debt is repaid in money that is worth less.',
+    },
+    {
+      id: 'mc-loan-after',
+      type: 'multiple_choice',
+      tags: ['interest-rates', 'inflation'],
+      xp: 30,
+      prompt:
+        'Now inflation jumps to 7%, and the central bank raises the rate from 10% to 11%. You borrow €100 and pay back €111. What will that €111 buy, in today’s prices?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'about-104',
+          label: 'About €104',
+        },
+        {
+          id: 'about-106',
+          label: 'About €106',
+          feedback:
+            'That uses last year’s 5% inflation. Prices now rise 7%: €111 ÷ 1.07.',
+        },
+        {
+          id: 'exactly-111',
+          label: '€111',
+          feedback:
+            'That is the number of euros. Each one buys 7% less by the time you repay.',
+        },
+        {
+          id: 'about-118',
+          label: 'About €118',
+          feedback:
+            'Inflation shrinks what money buys, so divide by it rather than adding it.',
+        },
+      ],
+      correctOptionId: 'about-104',
+      explanation:
+        'Before, the loan really cost you about €5 in today’s money. Now it costs about €4. You pay back more euros but less value, so borrowing got cheaper, even though the rate went up. The reason: the bank added 1 point of interest, but inflation rose 2 points, so inflation now pays a bigger part of your interest than before.',
+    },
+    {
+      id: 'sim-real-rate',
+      type: 'interactive_sim',
+      tags: ['interest-rates', 'inflation'],
+      xp: 40,
+      currency: 'EUR',
+      prompt: 'You are the central bank. Inflation has risen from 5% to 7%.',
+      instructions: 'Set inflation to 7%, then find the rate that makes borrowing dearer than before',
+      narrative:
+        'Before, the rate was 10% with 5% inflation, so a €100 loan cost about €4.76 in today’s money. Move inflation to 7%, then raise the rate until the loan costs more than that again.',
+      constants: {},
+      sliders: [
+        {
+          key: 'inflationRate',
+          label: 'Inflation',
+          min: 0.05,
+          max: 0.07,
+          step: 0.01,
+          defaultValue: 0.05,
+          format: 'percent',
+        },
+        {
+          key: 'nominalRate',
+          label: 'Central bank rate',
+          min: 0.1,
+          max: 0.14,
+          step: 0.01,
+          defaultValue: 0.1,
+          format: 'percent',
+          hint: 'Before: 10%',
+        },
+      ],
+      readouts: [
+        {
+          key: 'payback',
+          label: 'A €100 loan repaid, in today’s prices',
+          formulaId: 'loan_real_payback',
+          format: 'currency',
+          emphasis: true,
+          caption: 'Before: about €104.76',
+        },
+        {
+          key: 'real',
+          label: 'Real interest rate',
+          formulaId: 'real_interest_rate',
+          format: 'percent',
+          caption: '(1 + rate) ÷ (1 + inflation) − 1',
+        },
+      ],
+      objective: {
+        description: 'With inflation at 7%, try 11%, 12% and 13%',
+        requiredObservations: [
+          { sliderKey: 'inflationRate', values: [0.05, 0.07] },
+          { sliderKey: 'nominalRate', values: [0.11, 0.12, 0.13] },
+        ],
+      },
+      explanation:
+        'With inflation at 7%, a rate of 11% leaves the loan costing about €3.74, and even 12% only about €4.67, still a little less than before. It takes 13%, a rise of 3 points, to make borrowing dearer than it was. So when inflation rises 2 points, a central bank has to raise its rate by more than 2 just to stand still. Economists call this the Taylor principle.',
+    },
+    {
+      id: 'mc-colombia-real-rate',
+      type: 'multiple_choice',
+      tags: ['interest-rates', 'inflation'],
+      xp: 30,
+      prompt:
+        'In October 2026 Banco de la República held its rate at 12.25%, while Colombian inflation was rising. What happened to the real rate a foreign investor earns on pesos?',
+      instructions: 'Pick the best answer',
+      options: [
+        {
+          id: 'fell',
+          label: 'It fell, even though the rate did not move',
         },
         {
           id: 'same',
-          label: 'No change: both went up',
+          label: 'Nothing: the rate stayed at 12.25%',
           feedback:
-            'By different amounts. Inflation rose two points and the rate only one.',
+            'The rate stayed. But the pesos the investor is paid back in now lose value faster, so less of that 12.25% is a real gain.',
+        },
+        {
+          id: 'rose',
+          label: 'It rose, because inflation makes rates go up',
+          feedback:
+            'Inflation may push the bank to raise rates later. Until it does, higher inflation with the same rate means a lower real rate.',
         },
         {
           id: 'exchange-rate',
           label: 'You cannot tell without the exchange rate',
           feedback:
-            'The real rate is the rate minus expected inflation; the exchange rate is not part of it. It matters for what a foreign investor earns, which is the next question.',
+            'The real rate is the rate minus inflation; the exchange rate is not part of it. It decides what the investor earns in dollars, which is the next question.',
         },
       ],
-      correctOptionId: 'cheaper',
+      correctOptionId: 'fell',
       explanation:
-        'What savers, borrowers and carry investors feel is the real rate: the rate minus the inflation they expect. So when inflation rises, a central bank has to raise its rate by more than inflation rose just to keep money as dear as before. Economists call this the Taylor principle. It is the thread to watch in Colombia: a rate held at 12.25% while inflation rises is a real rate that is falling, even though the headline never moves.',
+        'A rate that stays put while inflation rises is a real rate that is falling. It is the same loan arithmetic from the investor’s side: the peso bonds pay the same 12.25%, but in pesos that buy less each month. Fewer reasons to hold pesos means less money flowing in, which is what the last question is about.',
     },
     {
       id: 'mc-reversal',
