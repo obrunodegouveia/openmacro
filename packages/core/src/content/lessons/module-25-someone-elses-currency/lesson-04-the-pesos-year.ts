@@ -4,17 +4,22 @@ import { defineLesson } from '../../schema';
  * A case study of the module's ideas, in a currency that floats: the
  * Colombian peso from November 2025 to November 2026.
  *
- * The figures are rounded from press reports of the official reference rate
- * (TRM) and of Banco de la República's decisions, checked against each
- * other on 12 November 2026:
+ * The figures are rounded from the official reference rate (TRM) and from
+ * Banco de la República's and DANE's published figures, checked on
+ * 12 November 2026:
  *
- *   - about 3,750 pesos per dollar on 11 November 2025;
+ *   - about 3,760 pesos per dollar on 11 November 2025;
  *   - about 3,680 at the end of May 2026, before the first round of the
  *     presidential election (31 May; runoff 21 June);
- *   - about 3,150 in early August, the strongest in roughly seven years;
- *   - about 3,300 on 11 November 2026.
- *   - Policy rate: 9.25% in December 2025, raised in steps to 12.25% by
- *     September 2026, against rising inflation; held in October.
+ *   - about 3,130 on 31 July; the low of the year, about 3,050, on
+ *     22 August;
+ *   - about 3,300 on 11 November 2026, most of the rise since 1 November.
+ *   - Policy rate: 9.25% in December 2025; 10.25% in January, 11.25% in
+ *     March, 12% on 31 July, 12.25% from 1 October; held on 30 October.
+ *     The bank's stated reasons: inflation, and household and government
+ *     spending above sustainable levels.
+ *   - Annual inflation (DANE): 5.51% in October 2025, 6.30% in October
+ *     2026. Target 3%.
  *   - Record remittances, strong oil and coal exports, and a weaker dollar
  *     worldwide through most of the year.
  *
@@ -26,7 +31,7 @@ export const thePesosYearLesson = defineLesson({
   id: 'the-pesos-year',
   title: 'The Peso’s Year',
   subtitle:
-    'A dollar bought about 3,750 Colombian pesos a year ago and about 3,300 now. Who bought the pesos, why, and why most of it happened in ten weeks.',
+    'A dollar bought about 3,750 Colombian pesos a year ago and about 3,300 now. Who bought the pesos, why, and why most of it happened in two months.',
   icon: '🇨🇴',
   difficulty: 'advanced',
   estimatedMinutes: 15,
@@ -65,7 +70,7 @@ export const thePesosYearLesson = defineLesson({
       ],
       correctOptionId: 'fourteen',
       explanation:
-        'The rate is quoted as pesos per dollar, so when the number falls, the peso has got stronger. The two percentages differ because they start from different places: the dollar lost 450 of its 3,750 pesos, which is 12%, while the peso went from buying 1/3,750 of a dollar to 1/3,300, which is about 14% more. At its strongest, around 3,150 in August, a peso was worth about 19% more than a year before.',
+        'The rate is quoted as pesos per dollar, so when the number falls, the peso has got stronger. The two percentages differ because they start from different places: the dollar lost 450 of its 3,750 pesos, which is 12%, while the peso went from buying 1/3,750 of a dollar to 1/3,300, which is about 14% more. At its strongest, around 3,050 in late August, a peso was worth about 23% more than a year before.',
     },
     {
       id: 'match-dollars-in',
@@ -142,7 +147,7 @@ export const thePesosYearLesson = defineLesson({
       tags: ['exchange-rates', 'expectations'],
       xp: 35,
       prompt:
-        'The rate was about 3,750 in November 2025 and still about 3,680 at the end of May. By early August it was about 3,150. What does the timing tell you?',
+        'The rate was about 3,750 in November 2025 and still about 3,680 at the end of May. By the end of July it was about 3,130. What does the timing tell you?',
       instructions: 'Pick the best answer',
       options: [
         {
@@ -159,18 +164,18 @@ export const thePesosYearLesson = defineLesson({
           id: 'nothing',
           label: 'Nothing: currencies move at random',
           feedback:
-            'Day to day they nearly do. But a fall from about 3,680 to about 3,150 in ten weeks, lining up with a known event, is worth asking about.',
+            'Day to day they nearly do. But a fall from about 3,680 to about 3,130 in two months, lining up with a known event, is worth asking about.',
         },
         {
           id: 'rates',
           label: 'The rate rises finally worked through',
           feedback:
-            'Part of the story, since the rate was raised again in June. But most of the rises had come earlier, while the peso stood still.',
+            'The timing does not fit. The rises in January and March came while the peso stood still, and the next one, to 12%, came on 31 July, when most of the move had already happened.',
         },
       ],
       correctOptionId: 'trigger',
       explanation:
-        'The weeks in question held a presidential election: a first round on 31 May and a runoff on 21 June, won narrowly by the candidate markets favoured. The peso jumped the day after the first round. High rates, remittances and exports were the dry wood; the election was the match. Markets price expectations, so the move came when the odds changed, not when any policy did. That also cuts the other way: a rally built on expectations is only as firm as the expectations.',
+        'Those two months held a presidential election: a first round on 31 May and a runoff on 21 June, won narrowly by the candidate markets favoured. The peso jumped the day after the first round. High rates, remittances and exports were the dry wood; the election was the match. Markets price expectations, so the move came when the odds changed, not when any policy did. That also cuts the other way: a rally built on expectations is only as firm as the expectations.',
     },
     {
       id: 'order-strong-peso',
@@ -181,14 +186,14 @@ export const thePesosYearLesson = defineLesson({
       instructions: 'Drag the steps into causal order',
       events: [
         { id: 'inflow', label: 'Dollars flow in and buy pesos' },
-        { id: 'stronger', label: 'The peso strengthens', detail: 'About 3,750 to about 3,150' },
+        { id: 'stronger', label: 'The peso strengthens', detail: 'About 3,750 to about 3,050' },
         { id: 'fewer', label: 'Each dollar of coffee sold abroad converts into fewer pesos' },
         { id: 'margin', label: 'Wages are still paid in pesos, so the farm’s margin shrinks' },
         { id: 'cut', label: 'The farm cuts costs, starting with next harvest’s hiring' },
       ],
       correctOrder: ['inflow', 'stronger', 'fewer', 'margin', 'cut'],
       explanation:
-        'A strong currency is good news for anyone who buys abroad — imports, travel, a dollar loan — and bad news for anyone who sells abroad and pays bills at home. Colombian coffee, flower and oil producers took the second side in 2026. From 3,750 to 3,150 pesos per dollar, the same sales bring in 16% fewer pesos. Neither side is the "real" economy; a central bank watching the exchange rate is choosing whom to listen to.',
+        'A strong currency is good news for anyone who buys abroad — imports, travel, a dollar loan — and bad news for anyone who sells abroad and pays bills at home. Colombian coffee, flower and oil producers took the second side in 2026. From 3,750 to 3,050 pesos per dollar, the same sales bring in almost 19% fewer pesos. Neither side is the "real" economy; a central bank watching the exchange rate is choosing whom to listen to.',
     },
     {
       id: 'mc-loan-before',
@@ -327,24 +332,24 @@ export const thePesosYearLesson = defineLesson({
       tags: ['interest-rates', 'inflation'],
       xp: 30,
       prompt:
-        'In October 2026 Banco de la República held its rate at 12.25%, while Colombian inflation was rising. What happened to the real rate a foreign investor earns on pesos?',
+        'In October 2025 Colombia’s rate was 9.25% and inflation was 5.5%. In October 2026 the rate was 12.25% and inflation was 6.3%. What happened to the real rate an investor earns on pesos?',
       instructions: 'Pick the best answer',
       options: [
         {
+          id: 'rose',
+          label: 'It rose, from about 3.5% to about 5.6%',
+        },
+        {
           id: 'fell',
-          label: 'It fell, even though the rate did not move',
+          label: 'It fell, because inflation went up',
+          feedback:
+            'Inflation did go up, by 0.8 points. But the rate went up 3 points, so the bank more than made up for it.',
         },
         {
           id: 'same',
-          label: 'Nothing: the rate stayed at 12.25%',
+          label: 'No change: both went up',
           feedback:
-            'The rate stayed. But the pesos the investor is paid back in now lose value faster, so less of that 12.25% is a real gain.',
-        },
-        {
-          id: 'rose',
-          label: 'It rose, because inflation makes rates go up',
-          feedback:
-            'Inflation may push the bank to raise rates later. Until it does, higher inflation with the same rate means a lower real rate.',
+            'By very different amounts: 3 points for the rate, 0.8 for inflation.',
         },
         {
           id: 'exchange-rate',
@@ -353,9 +358,9 @@ export const thePesosYearLesson = defineLesson({
             'The real rate is the rate minus inflation; the exchange rate is not part of it. It decides what the investor earns in dollars, which is the next question.',
         },
       ],
-      correctOptionId: 'fell',
+      correctOptionId: 'rose',
       explanation:
-        'A rate that stays put while inflation rises is a real rate that is falling. It is the same loan arithmetic from the investor’s side: the peso bonds pay the same 12.25%, but in pesos that buy less each month. Fewer reasons to hold pesos means less money flowing in, which is what the last question is about.',
+        'A year ago: 1.0925 ÷ 1.055 ≈ 1.035, a real rate of about 3.5%. Now: 1.1225 ÷ 1.063 ≈ 1.056, about 5.6%. The bank raised its rate by more than inflation rose, which is what the simulation showed it must do to make money dearer. So holding pesos paid about 2 points more after inflation, and that is a big part of why money flowed in and the peso got stronger. The risk now runs the other way: inflation is still rising and analysts expect cuts, and either one lowers the real rate.',
     },
     {
       id: 'mc-reversal',
@@ -374,7 +379,7 @@ export const thePesosYearLesson = defineLesson({
           id: 'crash',
           label: 'A sudden stop has begun',
           feedback:
-            'Giving back a quarter of a big gain is not a stop. A sudden stop is a currency falling fast enough to break balance sheets, and the peso is still much stronger than a year earlier.',
+            'Giving back about a third of a big gain is not a stop. A sudden stop is a currency falling fast enough to break balance sheets, and the peso is still much stronger than a year earlier.',
         },
         {
           id: 'rates-fail',
