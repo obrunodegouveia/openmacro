@@ -27,10 +27,22 @@
  * It is also a deep link: openmacro://module/<id> opens straight here.
  */
 
-import { useCallback } from 'react';
-import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  View,
+  type LayoutChangeEvent,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useHeaderHeight } from 'expo-router/react-navigation';
 import { SymbolView } from 'expo-symbols';
 
 import { ActionButton } from '@/components/ui/ActionButton';
@@ -60,6 +72,28 @@ export default function ModuleScreen() {
   const status = moduleId ? statusOf(moduleId) : undefined;
   const mode = useLessonMode();
   const router = useRouter();
+
+  // Like an iOS large title: the bar stays empty while the page's own title
+  // is on screen, and takes the module's name once it has scrolled under the
+  // bar. On iOS the bar is transparent and the page starts below it, so the
+  // resting offset is minus the bar's height; on Android it is zero.
+  const headerHeight = useHeaderHeight();
+  const restingOffset = Platform.OS === 'ios' ? -headerHeight : 0;
+  const [titleBottom, setTitleBottom] = useState(0);
+  const [titleHidden, setTitleHidden] = useState(false);
+  const onTitleLayout = useCallback((event: LayoutChangeEvent) => {
+    // Measured inside the head, which sits below the content's top padding.
+    const { y, height } = event.nativeEvent.layout;
+    setTitleBottom(spacing.sm + y + height);
+  }, []);
+  const onScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const scrolled = event.nativeEvent.contentOffset.y - restingOffset;
+      const hidden = titleBottom > 0 && scrolled > titleBottom;
+      setTitleHidden((was) => (was === hidden ? was : hidden));
+    },
+    [restingOffset, titleBottom],
+  );
 
   const share = useCallback(async () => {
     if (!status) return;
@@ -111,7 +145,12 @@ export default function ModuleScreen() {
     <View style={styles.screen}>
       <Stack.Screen
         options={{
-          title: t('path.module', { number }),
+          // Empty until the page's own title has scrolled away, so the
+          // name is never shown twice. "Module N" is the eyebrow above it.
+          title: titleHidden ? module.title : '',
+          // A hairline under the solid Android bar, only once content
+          // scrolls beneath it. iOS draws its own as the blur appears.
+          headerShadowVisible: Platform.OS !== 'ios' && titleHidden,
           headerRight: () => (
             <Pressable
               accessibilityRole="button"
@@ -133,6 +172,8 @@ export default function ModuleScreen() {
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         contentContainerStyle={[
           styles.content,
           { paddingBottom: insets.bottom + FOOTER_SPACE },
@@ -142,7 +183,9 @@ export default function ModuleScreen() {
           <Text style={styles.eyebrow}>
             {t('today.where', { level: t(`level.${level}`), number })}
           </Text>
-          <Text maxFontSizeMultiplier={fontScale.title} style={styles.title}>{module.title}</Text>
+          <Text onLayout={onTitleLayout} maxFontSizeMultiplier={fontScale.title} style={styles.title}>
+            {module.title}
+          </Text>
           <Text style={styles.description}>{module.description}</Text>
         </View>
 

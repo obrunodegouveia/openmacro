@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useMemo } from 'react';
-import { useColorScheme } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -124,8 +124,13 @@ export default function RootLayout() {
                 name="module/[moduleId]"
                 options={{
                   headerShown: true,
-                  headerTransparent: true,
+                  // Transparent and blurred on iOS only, where the page's
+                  // contentInsetAdjustmentBehavior moves it below the bar.
+                  // Android ignores that, so a transparent bar sat on top of
+                  // the module's title; there the bar is solid instead.
+                  headerTransparent: Platform.OS === 'ios',
                   headerBlurEffect: 'systemChromeMaterial',
+                  headerStyle: Platform.OS === 'ios' ? undefined : { backgroundColor: palette.canvas },
                   headerShadowVisible: false,
                   headerTintColor: palette.mintDark,
                   headerTitleStyle: { color: palette.ink },
