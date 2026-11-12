@@ -191,6 +191,20 @@ export const FORMULAS = {
     return (1 + nominal) / (1 + inflation) - 1;
   },
 
+  /**
+   * What a €100 loan repaid after one year is worth in today's prices: the
+   * real rate as a sum of money, for learners who find a percentage of a
+   * percentage hard to picture.
+   *
+   * Expects: `nominalRate`, `inflationRate`.
+   */
+  loan_real_payback: (inputs) => {
+    const nominal = read(inputs, 'nominalRate');
+    const inflation = read(inputs, 'inflationRate');
+    if (inflation <= -1) return 0;
+    return (100 * (1 + nominal)) / (1 + inflation);
+  },
+
   // -------------------------------------------------------------------------
   // Reserves, settlement and central bank operations
   // -------------------------------------------------------------------------
@@ -1304,6 +1318,119 @@ export const FORMULAS = {
     const depreciation = read(inputs, 'depreciation');
     if (depreciation <= -1) return 0;
     return (ratio * fxShare) / (1 - depreciation) - ratio * fxShare;
+  },
+
+  // -------------------------------------------------------------------------
+  // The carry trade (module 25, "Inside the Carry Trade")
+  // -------------------------------------------------------------------------
+  //
+  // One unit of a cheap funding currency is borrowed at `fundingRate`,
+  // converted into pesos, lent at `localRate` for one period, converted back
+  // and repaid. `pesoMove` is the change in pesos per unit of the funding
+  // currency over the period: +0.10 means the peso weakened by 10%, -0.10
+  // that it strengthened. Every result is a profit or loss per unit
+  // borrowed, after repaying the loan and its interest.
+
+  /**
+   * Unhedged carry: (1 + i_local) / (1 + move) - (1 + i_funding).
+   *
+   * Expects: `localRate`, `fundingRate`, `pesoMove`.
+   */
+  carry_unhedged_return: (inputs) => {
+    const move = read(inputs, 'pesoMove');
+    if (move <= -1) return 0;
+    return (1 + read(inputs, 'localRate')) / (1 + move) - (1 + read(inputs, 'fundingRate'));
+  },
+
+  /**
+   * The same trade with a share `hedgeRatio` of it sold forward. Under
+   * covered interest parity the forward rate is spot x (1 + i_local) /
+   * (1 + i_funding), so the hedged part earns exactly the funding cost back
+   * and nothing more: its profit is zero whatever the peso does.
+   *
+   * Expects: `localRate`, `fundingRate`, `pesoMove`, `hedgeRatio` (0 to 1).
+   */
+  carry_hedged_return: (inputs) => {
+    const move = read(inputs, 'pesoMove');
+    if (move <= -1) return 0;
+    const hedge = Math.min(1, Math.max(0, read(inputs, 'hedgeRatio')));
+    const unhedged = (1 + read(inputs, 'localRate')) / (1 + move) - (1 + read(inputs, 'fundingRate'));
+    return (1 - hedge) * unhedged;
+  },
+
+  /**
+   * How far the peso can weaken before the trade loses money:
+   * (1 + i_local) / (1 + i_funding) - 1. Also the forward discount.
+   *
+   * Expects: `localRate`, `fundingRate`.
+   */
+  carry_break_even: (inputs) => {
+    const funding = 1 + read(inputs, 'fundingRate');
+    if (funding <= 0) return 0;
+    return (1 + read(inputs, 'localRate')) / funding - 1;
+  },
+
+  /**
+   * Carry insured with a put on the peso: a premium `putPremium` (per unit
+   * borrowed, paid up front and not earning interest, a simplification) buys
+   * the right to convert back at no worse than a move of `putStrike`. Below
+   * the strike it is the unhedged trade minus the premium.
+   *
+   * Expects: `localRate`, `fundingRate`, `pesoMove`, `putStrike`, `putPremium`.
+   */
+  carry_insured_return: (inputs) => {
+    const move = Math.min(read(inputs, 'pesoMove'), read(inputs, 'putStrike'));
+    if (move <= -1) return 0;
+    return (
+      (1 + read(inputs, 'localRate')) / (1 + move) -
+      (1 + read(inputs, 'fundingRate')) -
+      read(inputs, 'putPremium')
+    );
+  },
+
+  /**
+   * The worst the insured trade can do: the result at the strike.
+   *
+   * Expects: `localRate`, `fundingRate`, `putStrike`, `putPremium`.
+   */
+  carry_insured_worst: (inputs) => {
+    const strike = read(inputs, 'putStrike');
+    if (strike <= -1) return 0;
+    return (
+      (1 + read(inputs, 'localRate')) / (1 + strike) -
+      (1 + read(inputs, 'fundingRate')) -
+      read(inputs, 'putPremium')
+    );
+  },
+
+  /**
+   * The unhedged trade on borrowed money: `leverage` units of position per
+   * unit of the investor's own capital. The result is on that capital, and
+   * cannot be worse than losing all of it (-100%), because that is where the
+   * lender closes the position.
+   *
+   * Expects: `localRate`, `fundingRate`, `pesoMove`, `leverage`.
+   */
+  carry_levered_return: (inputs) => {
+    const move = read(inputs, 'pesoMove');
+    if (move <= -1) return 0;
+    const unhedged = (1 + read(inputs, 'localRate')) / (1 + move) - (1 + read(inputs, 'fundingRate'));
+    return Math.max(-1, read(inputs, 'leverage') * unhedged);
+  },
+
+  /**
+   * How far the peso has to weaken to wipe out the investor's own capital at
+   * a given leverage: solves leverage x unhedged = -1 for the move. Returns 0
+   * when no move could (leverage too low to lose it all).
+   *
+   * Expects: `localRate`, `fundingRate`, `leverage`.
+   */
+  carry_wipeout_move: (inputs) => {
+    const leverage = read(inputs, 'leverage');
+    if (leverage <= 0) return 0;
+    const denominator = 1 + read(inputs, 'fundingRate') - 1 / leverage;
+    if (denominator <= 0) return 0;
+    return (1 + read(inputs, 'localRate')) / denominator - 1;
   },
 
   // -------------------------------------------------------------------------
