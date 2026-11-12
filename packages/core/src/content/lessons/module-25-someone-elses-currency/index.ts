@@ -15,6 +15,7 @@ import { originalSinLesson } from './lesson-01-original-sin';
 import { surgesAndStopsLesson } from './lesson-02-surges-and-stops';
 import { fiscalDominanceLesson } from './lesson-03-fiscal-dominance';
 import { thePesosYearLesson } from './lesson-04-the-pesos-year';
+import { insideTheCarryTradeLesson } from './lesson-05-inside-the-carry-trade';
 
 export const moduleSomeoneElsesCurrency = defineModule({
   id: 'someone-elses-currency',
@@ -23,5 +24,5 @@ export const moduleSomeoneElsesCurrency = defineModule({
     'Currency mismatch, capital flow cycles and fiscal dominance — running a central bank without the assumptions the textbooks make.',
   accent: 'coral',
   level: 'advanced',
-  lessons: [originalSinLesson, surgesAndStopsLesson, fiscalDominanceLesson, thePesosYearLesson],
+  lessons: [originalSinLesson, surgesAndStopsLesson, fiscalDominanceLesson, thePesosYearLesson, insideTheCarryTradeLesson],
 });
