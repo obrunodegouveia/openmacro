@@ -16,6 +16,7 @@
 
 import { MODULE_LEVELS, type Module, type ModuleLevel } from '../content/schema';
 import { isOptionalModule } from '../content/optional';
+import type { Translator } from '../i18n';
 import { isLocale, type Locale } from '../i18n/locales';
 import { videoWatched } from './videoProgress';
 import {
@@ -56,13 +57,27 @@ export interface AssignedExam {
   secondsPerQuestion: number | null;
   /** The teacher's advice, shown first in the study plan. Null: none. */
   studyNote: string | null;
+  /**
+   * Handed out by the bounty trigger (migration 0014), not by a teacher. Its
+   * row says Spanish, but it is open to everyone, so it is set in the
+   * learner's own language instead (see `assignedExamFromRow`).
+   */
+  bounty: boolean;
 }
 
 /** The `assigned_exams` columns a client reads. */
 export const ASSIGNED_EXAM_COLUMNS =
-  'id, locale, seed, item_count, assigned_at, focus_lessons, exclude_items, review_items, review_lessons, is_final, seconds_per_question, study_note';
+  'id, locale, seed, item_count, assigned_at, focus_lessons, exclude_items, review_items, review_lessons, is_final, seconds_per_question, study_note, bounty';
 
-/** A database row as an exam, or null if its language is not one we ship. */
+/**
+ * A database row as an exam, or null if its language is not one we ship.
+ *
+ * A teacher's exam is in the language the teacher chose, whatever the app is
+ * set to. The bounty exam is the exception: it is in `learner.locale`, the
+ * language the learner reads the app in, with its note in that language too.
+ * The questions are the same in every language, so this changes only how the
+ * paper reads, never what is asked.
+ */
 export function assignedExamFromRow(row: {
   id: string;
   locale: string;
@@ -76,11 +91,15 @@ export function assignedExamFromRow(row: {
   is_final?: boolean | null;
   seconds_per_question?: number | null;
   study_note?: string | null;
-}): AssignedExam | null {
+  bounty?: boolean | null;
+}, learner?: { locale: Locale; t: Translator }): AssignedExam | null {
   if (!isLocale(row.locale)) return null;
+  const bounty = row.bounty === true;
+  const locale = bounty && learner ? learner.locale : row.locale;
+  const note = bounty && learner ? learner.t('exam.bounty.note') : row.study_note;
   return {
     id: row.id,
-    locale: row.locale,
+    locale,
     seed: row.seed,
     itemCount: row.item_count,
     focusLessons: row.focus_lessons && row.focus_lessons.length > 0 ? row.focus_lessons : null,
@@ -93,7 +112,8 @@ export function assignedExamFromRow(row: {
       typeof row.seconds_per_question === 'number' && row.seconds_per_question > 0
         ? row.seconds_per_question
         : null,
-    studyNote: row.study_note?.trim() ? row.study_note.trim() : null,
+    studyNote: note?.trim() ? note.trim() : null,
+    bounty,
   };
 }
 

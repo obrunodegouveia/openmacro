@@ -407,6 +407,7 @@ export const ptPT: UiDictionary = {
   'exam.result.noBonus': 'Desta vez não houve bónus de rapidez.',
   'exam.intro.leave': 'Fica no exame até acabares. Mudar para outra aplicação ou separador, ou fechar o exame, faz-te perder o bónus de rapidez, e o teu professor vê quantas vezes saíste.',
   'exam.intro.final': 'Este é o teu exame final. Passa com 70% ou mais para libertar os teus ganhos. Tens uma só tentativa.',
+  'exam.bounty.note': 'Exame do desafio: 21 perguntas das lições 1 a 13 de Banca e Dinheiro. Passa com 70% ou mais (15 de 21). O primeiro a passar ganha 21 000 sats: deixa o teu endereço bitcoin em openmacro.org/bounty.',
   'exam.left': '{count, plural, one {Já saíste do exame uma vez.} other {Já saíste do exame # vezes.}} Já não há bónus de rapidez, e o teu professor vai ver isto.',
   'exam.result.leaves': '{count, plural, one {Saíste do exame uma vez.} other {Saíste do exame # vezes.}}',
   'exam.result.finalPassed': 'Passaste. Os teus ganhos estão libertados.',

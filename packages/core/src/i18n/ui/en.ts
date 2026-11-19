@@ -394,6 +394,7 @@ export const en = {
   'exam.result.noBonus': 'No speed bonus this time.',
   'exam.intro.leave': 'Stay in the exam until you finish. Switching to another app or tab, or closing the exam, costs you the speed bonus, and your teacher sees how many times you left.',
   'exam.intro.final': 'This is your final exam. Pass it with 70% or more to release your earnings. You have one attempt.',
+  'exam.bounty.note': 'Bounty exam: 21 questions from lessons 1 to 13 of Banking and Money. Pass with 70% or more (15 of 21). The first to pass wins 21,000 sats: leave your Bitcoin address at openmacro.org/bounty.',
   'exam.left': '{count, plural, one {You have left the exam once.} other {You have left the exam # times.}} There is no speed bonus now, and your teacher will see this.',
   'exam.result.leaves': '{count, plural, one {You left the exam once.} other {You left the exam # times.}}',
   'exam.result.finalPassed': 'Passed. Your earnings are released.',
