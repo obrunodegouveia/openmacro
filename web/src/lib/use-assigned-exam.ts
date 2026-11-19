@@ -8,6 +8,7 @@ import {
 } from "@openmacro/core/engine/assignedExam";
 
 import { useAuth } from "@/components/site/auth-provider";
+import { useLocale } from "@/components/site/locale-provider";
 import { getSupabase } from "@/lib/supabase";
 
 /**
@@ -16,13 +17,16 @@ import { getSupabase } from "@/lib/supabase";
  * Read under row-level security, so it can only ever return this learner's own
  * row. A failed read shows no exam: a learner who has no exam should never see
  * an error about one.
+ *
+ * The bounty exam comes back in the site's language (`assignedExamFromRow`).
  */
+type ExamRow = Parameters<typeof assignedExamFromRow>[0];
+
 export function useAssignedExam(): { exam: AssignedExam | null; loading: boolean } {
   const { learner, loading: restoring } = useAuth();
+  const { locale, t } = useLocale();
   const userId = learner?.id ?? null;
-  const [found, setFound] = React.useState<{ userId: string; exam: AssignedExam | null } | null>(
-    null,
-  );
+  const [found, setFound] = React.useState<{ userId: string; row: ExamRow | null } | null>(null);
 
   React.useEffect(() => {
     const supabase = getSupabase();
@@ -36,17 +40,23 @@ export function useAssignedExam(): { exam: AssignedExam | null; loading: boolean
         .order("assigned_at", { ascending: true })
         .limit(1)
         .maybeSingle();
-      if (live) setFound({ userId, exam: data ? assignedExamFromRow(data) : null });
+      if (live) setFound({ userId, row: data ?? null });
     })().catch(() => {
-      if (live) setFound({ userId, exam: null });
+      if (live) setFound({ userId, row: null });
     });
     return () => {
       live = false;
     };
   }, [userId]);
 
+  const current = userId && found?.userId === userId ? found : null;
+  const row = current?.row ?? null;
+  const exam = React.useMemo(
+    () => (row ? assignedExamFromRow(row, { locale, t }) : null),
+    [row, locale, t],
+  );
+
   if (restoring) return { exam: null, loading: true };
   if (!userId) return { exam: null, loading: false };
-  const current = found?.userId === userId ? found : null;
-  return { exam: current?.exam ?? null, loading: current === null };
+  return { exam, loading: current === null };
 }

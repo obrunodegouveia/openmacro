@@ -13,7 +13,12 @@ Migration `0014_bounty_exam.sql` does the rest:
 - Every time a lesson result is saved, a trigger checks the learner. If they
   have finished all 13 lessons, their lesson XP adds up to 2,100 or more, and they
   have never had a bounty exam, it assigns them one: 21 questions drawn from
-  those 13 lessons, 60 seconds each, in Spanish.
+  those 13 lessons, 60 seconds each.
+- The row says `es-ES`, but the exam is shown in the language the learner has
+  the app or the site in: English, Portuguese or Spanish, with the note on the
+  screen before Start in that language too (`exam.bounty.note`). The questions
+  are the same in all three. Until the app update reaches a learner's phone,
+  their app still shows it in Spanish.
 - The exam appears in the app and on the website the next time they open the
   home screen. No release is needed.
 - One attempt per person.

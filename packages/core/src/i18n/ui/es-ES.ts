@@ -395,6 +395,7 @@ export const esES: UiDictionary = {
   'exam.result.noBonus': 'Esta vez no hay premio por rapidez.',
   'exam.intro.leave': 'Quédate en el examen hasta terminar. Cambiar a otra aplicación o pestaña, o cerrar el examen, te hace perder el premio por rapidez, y tu profesor ve cuántas veces saliste.',
   'exam.intro.final': 'Este es tu examen final. Apruébalo con un 70 % o más para liberar tus ganancias. Tienes un solo intento.',
+  'exam.bounty.note': 'Examen del reto: 21 preguntas de las lecciones 1 a 13 de Banca y dinero. Aprueba con un 70 % o más (15 de 21). El primero en aprobar gana 21.000 sats: deja tu dirección bitcoin en openmacro.org/bounty.',
   'exam.left': '{count, plural, one {Has salido del examen una vez.} other {Has salido del examen # veces.}} Ya no hay premio por rapidez, y tu profesor lo verá.',
   'exam.result.leaves': '{count, plural, one {Saliste del examen una vez.} other {Saliste del examen # veces.}}',
   'exam.result.finalPassed': 'Aprobado. Tus ganancias están liberadas.',

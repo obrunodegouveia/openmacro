@@ -597,6 +597,51 @@ test('a final exam passes at 70%, the same mark as the speed bonus', async () =>
   assert.equal(assignedExamFromRow({ ...row, is_final: true })?.isFinal, true);
 });
 
+test('the bounty exam is set in the learner’s language; a teacher’s exam keeps its own', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { assignedExamFromRow, assembleAssignedExam, ASSIGNED_EXAM_COLUMNS } = await import(
+    '@openmacro/core/engine/assignedExam'
+  );
+  const { createTranslator } = await import('@openmacro/core/i18n');
+  const { localisedModules } = await import('@openmacro/core/i18n/content');
+  const learner = (locale) => ({ locale, t: createTranslator(locale) });
+
+  // As migration 0014 inserts it: Spanish, with a Spanish note.
+  const sql = readFileSync(new URL('../supabase/migrations/0014_bounty_exam.sql', import.meta.url), 'utf8');
+  assert.match(sql, /add column if not exists bounty\b/);
+  assert.ok(ASSIGNED_EXAM_COLUMNS.includes('bounty'));
+  const bountyRow = {
+    id: 'b', locale: 'es-ES', seed: 'seed', item_count: 21, study_note: 'Examen del reto…', bounty: true,
+  };
+
+  for (const locale of ['en', 'pt-PT', 'es-ES']) {
+    const exam = assignedExamFromRow(bountyRow, learner(locale));
+    assert.equal(exam.locale, locale);
+    assert.equal(exam.bounty, true);
+    assert.equal(exam.studyNote, createTranslator(locale)('exam.bounty.note'));
+    assert.match(exam.studyNote, /21/);
+  }
+  // The three notes really are three languages, not English fallbacks.
+  const notes = new Set(['en', 'pt-PT', 'es-ES'].map((l) => createTranslator(l)('exam.bounty.note')));
+  assert.equal(notes.size, 3);
+
+  // A teacher’s exam stays in the language the teacher chose.
+  const teacher = assignedExamFromRow({ ...bountyRow, bounty: false }, learner('en'));
+  assert.equal(teacher.locale, 'es-ES');
+  assert.equal(teacher.studyNote, 'Examen del reto…');
+  assert.equal(assignedExamFromRow({ ...bountyRow, bounty: undefined })?.bounty, false);
+
+  // Same seed, same progress: the same questions in every language.
+  const focus = ['kab-what-a-bank-is-for', 'kab-income-statement', 'kab-fractional-reserve'];
+  const papers = ['en', 'pt-PT', 'es-ES'].map((locale) => {
+    const exam = assignedExamFromRow({ ...bountyRow, focus_lessons: focus }, learner(locale));
+    return assembleAssignedExam(localisedModules(locale), () => true, exam).exam.items.map((item) => item.id);
+  });
+  assert.ok(papers[0].length > 0);
+  assert.deepEqual(papers[1], papers[0]);
+  assert.deepEqual(papers[2], papers[0]);
+});
+
 test('a time limit per question, and the teacher’s note and videos in the study plan', async () => {
   const { readFileSync } = await import('node:fs');
   const { assignedExamFromRow, questionSecondsLeft, examStudyPlan, ASSIGNED_EXAM_COLUMNS } =
